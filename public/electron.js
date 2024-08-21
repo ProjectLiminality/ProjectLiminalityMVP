@@ -11,7 +11,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      worldSafeExecuteJavaScript: true,
+      enableRemoteModule: false,
     },
   });
 
@@ -62,5 +62,31 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
+  }
+});
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const path = require('path');
+
+// ... (existing code)
+
+ipcMain.handle('open-directory-dialog', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  });
+  if (result.canceled) {
+    return null;
+  } else {
+    return result.filePaths[0];
+  }
+});
+
+ipcMain.handle('open-file-dialog', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openFile']
+  });
+  if (result.canceled) {
+    return null;
+  } else {
+    return result.filePaths[0];
   }
 });

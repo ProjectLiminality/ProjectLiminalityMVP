@@ -2,10 +2,13 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 console.log('Preload script is running');
 
-const electronAPI = {
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('electron', {
   openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
   openFileDialog: () => ipcRenderer.invoke('open-file-dialog'),
   isElectron: true
+});
 };
 
 console.log('Exposing electron API:', electronAPI);

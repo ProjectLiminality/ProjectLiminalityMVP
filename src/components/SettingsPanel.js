@@ -7,10 +7,11 @@ const SettingsPanel = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     const checkElectron = () => {
+      console.log('Window object:', window);
+      console.log('Electron object:', window.electron);
       const electronAvailable = !!(window.electron && window.electron.isElectron);
       setIsElectronAvailable(electronAvailable);
       console.log('Is Electron available:', electronAvailable);
-      console.log('Electron object:', window.electron);
     };
 
     checkElectron();
