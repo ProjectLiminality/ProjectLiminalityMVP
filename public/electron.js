@@ -1,5 +1,5 @@
 const path = require('path');
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const isDev = require('electron-is-dev');
 
 function createWindow() {
@@ -24,6 +24,19 @@ function createWindow() {
   if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
   }
+
+  // Handle directory selection
+  ipcMain.on('open-directory-dialog', (event) => {
+    dialog.showOpenDialog(win, {
+      properties: ['openDirectory']
+    }).then(result => {
+      if (!result.canceled) {
+        event.reply('selected-directory', result.filePaths[0]);
+      }
+    }).catch(err => {
+      console.log(err);
+    });
+  });
 }
 
 // This method will be called when Electron has finished
