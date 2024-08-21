@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
@@ -65,11 +65,8 @@ const DreamNode = ({ scene, position = new THREE.Vector3(0, 0, 0) }) => {
 
   useEffect(() => {
     if (frontRef.current && backRef.current) {
-      const frontRoot = ReactDOM.createRoot(frontRef.current.element);
-      frontRoot.render(<DreamTalk />);
-      
-      const backRoot = ReactDOM.createRoot(backRef.current.element);
-      backRoot.render(<DreamSong />);
+      ReactDOM.render(<DreamTalk />, frontRef.current.element);
+      ReactDOM.render(<DreamSong />, backRef.current.element);
     }
   }, []);
 
