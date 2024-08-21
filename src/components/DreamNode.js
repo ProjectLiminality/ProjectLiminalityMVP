@@ -58,8 +58,8 @@ class DreamNode {
     root.render(React.createElement(Component));
 
     const object = new CSS3DObject(div);
-    // Add a small vertical offset (0.1 units upward)
-    object.position.set(this.position.x, this.position.y + 0.1, this.position.z + zOffset);
+    // Change the vertical offset to move downward (-0.1 units)
+    object.position.set(this.position.x, this.position.y - 0.1, this.position.z + zOffset);
     object.scale.set(0.01, 0.01, 0.01);
 
     return object;
