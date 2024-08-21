@@ -6,15 +6,17 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   const [isManualInput, setIsManualInput] = useState(false);
 
   useEffect(() => {
+    console.log('Window object:', window);
     console.log('Window electron object:', window.electron);
-    setIsElectronAvailable(!!window.electron);
-    console.log('Is Electron available:', !!window.electron);
+    const electronAvailable = !!window.electron;
+    setIsElectronAvailable(electronAvailable);
+    console.log('Is Electron available:', electronAvailable);
   }, []);
 
   const handleSelectDirectory = async () => {
     console.log('handleSelectDirectory called');
     console.log('Is Electron available (in handler):', isElectronAvailable);
-    if (isElectronAvailable) {
+    if (isElectronAvailable && window.electron.openDirectoryDialog) {
       try {
         console.log('Attempting to open directory dialog');
         const path = await window.electron.openDirectoryDialog();
@@ -27,7 +29,8 @@ const SettingsPanel = ({ isOpen, onClose }) => {
         setIsManualInput(true);
       }
     } else {
-      console.warn('Electron API not available');
+      console.warn('Electron API not available or openDirectoryDialog not found');
+      console.log('window.electron:', window.electron);
       setIsManualInput(true);
     }
   };
