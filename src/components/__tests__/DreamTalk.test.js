@@ -25,4 +25,37 @@ describe('DreamTalk', () => {
       borderRadius: '50%',
     });
   });
+
+  test('has correct layout styles', () => {
+    render(<DreamTalk />);
+    
+    const dreamTalkDiv = screen.getByText('DreamTalk').closest('div');
+    expect(dreamTalkDiv).toHaveStyle({
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      textAlign: 'center',
+    });
+  });
+
+  test('heading has correct font size', () => {
+    render(<DreamTalk />);
+    
+    const headingElement = screen.getByText('DreamTalk');
+    expect(headingElement).toHaveStyle({
+      fontSize: '24px',
+      marginBottom: '10px',
+    });
+  });
+
+  test('paragraph has correct font size and padding', () => {
+    render(<DreamTalk />);
+    
+    const paragraphElement = screen.getByText('Front side of the DreamNode');
+    expect(paragraphElement).toHaveStyle({
+      fontSize: '16px',
+      padding: '0 20px',
+    });
+  });
 });

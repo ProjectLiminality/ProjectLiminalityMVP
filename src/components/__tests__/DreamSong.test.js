@@ -25,4 +25,37 @@ describe('DreamSong', () => {
       borderRadius: '50%',
     });
   });
+
+  test('has correct layout styles', () => {
+    render(<DreamSong />);
+    
+    const dreamSongDiv = screen.getByText('DreamSong').closest('div');
+    expect(dreamSongDiv).toHaveStyle({
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      textAlign: 'center',
+    });
+  });
+
+  test('heading has correct font size', () => {
+    render(<DreamSong />);
+    
+    const headingElement = screen.getByText('DreamSong');
+    expect(headingElement).toHaveStyle({
+      fontSize: '24px',
+      marginBottom: '10px',
+    });
+  });
+
+  test('paragraph has correct font size and padding', () => {
+    render(<DreamSong />);
+    
+    const paragraphElement = screen.getByText('Back side of the DreamNode');
+    expect(paragraphElement).toHaveStyle({
+      fontSize: '16px',
+      padding: '0 20px',
+    });
+  });
 });
