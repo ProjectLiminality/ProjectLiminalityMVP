@@ -1,4 +1,3 @@
-// This file is intentionally left empty as per new testing conventions.
 import React from 'react';
 import { render } from '@testing-library/react';
 import DreamSong from '../DreamSong';
