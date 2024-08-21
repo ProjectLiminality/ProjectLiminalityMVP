@@ -68,50 +68,28 @@ class DreamNode {
   }
 
   createHTMLElement(Component, position, rotation) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = 1024;
-    const reactRoot = document.createElement('div');
-    reactRoot.style.width = '1024px';
-    reactRoot.style.height = '1024px';
+    const div = document.createElement('div');
+    div.style.width = '512px';
+    div.style.height = '512px';
+    div.style.background = 'rgba(0,0,0,0.1)';
+    div.style.border = '1px solid white';
     
-    ReactDOM.render(React.createElement(Component), reactRoot);
+    ReactDOM.render(React.createElement(Component), div);
 
-    const htmlRenderer = new CSS3DRenderer();
-    htmlRenderer.setSize(1024, 1024);
-    htmlRenderer.domElement.style.position = 'absolute';
-    htmlRenderer.domElement.style.top = '0';
-    document.body.appendChild(htmlRenderer.domElement);
+    const object = new CSS3DObject(div);
+    object.position.copy(position);
+    object.rotation.copy(rotation);
+    object.scale.set(0.01, 0.01, 0.01); // Scale down to fit in the scene
 
-    const tempScene = new THREE.Scene();
-    const tempCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    tempCamera.position.z = 1;
-    
-    const cssObject = new CSS3DObject(reactRoot);
-    tempScene.add(cssObject);
+    this.object.add(object);
 
-    htmlRenderer.render(tempScene, tempCamera);
-
-    const texture = new THREE.CanvasTexture(canvas);
-    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-    const geometry = new THREE.PlaneGeometry(4, 4);
-    const plane = new THREE.Mesh(geometry, material);
-
-    plane.position.copy(position);
-    plane.rotation.copy(rotation);
-
-    this.object.add(plane);
-
-    // Remove the temporary renderer
-    document.body.removeChild(htmlRenderer.domElement);
-
-    return { element: reactRoot, object: plane };
+    return { element: div, object: object };
   }
 
   createFrontElement() {
     this.frontRef = this.createHTMLElement(
       DreamTalk,
-      new THREE.Vector3(0, 0.051, 0),
+      new THREE.Vector3(0, 0, 0.051),
       new THREE.Euler(0, 0, 0)
     );
   }
@@ -119,7 +97,7 @@ class DreamNode {
   createBackElement() {
     this.backRef = this.createHTMLElement(
       DreamSong,
-      new THREE.Vector3(0, -0.051, 0),
+      new THREE.Vector3(0, 0, -0.051),
       new THREE.Euler(0, Math.PI, 0)
     );
   }
