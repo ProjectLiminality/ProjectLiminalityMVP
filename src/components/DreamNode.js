@@ -1,7 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import * as THREE from 'three';
-import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 
@@ -28,7 +27,7 @@ class DreamNode {
 
   createDisc() {
     const geometry = new THREE.CylinderGeometry(2, 2, 0.1, 32);
-    const material = new THREE.MeshBasicMaterial({ color: 0x4287f5 });  // Blue disc
+    const material = new THREE.MeshPhongMaterial({ color: 0x4287f5 });  // Blue disc
     const disc = new THREE.Mesh(geometry, material);
     disc.rotation.x = Math.PI / 2; // Rotate 90 degrees around X-axis
     disc.position.copy(this.position);
@@ -68,25 +67,44 @@ class DreamNode {
   }
 
   createHTMLElement(Component, position, rotation) {
-    const element = document.createElement('div');
-    element.style.width = '400px';
-    element.style.height = '400px';
-    element.style.background = 'rgba(0,0,0,0.1)';
-    element.style.border = '1px solid white';
-
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 1024;
     const reactRoot = document.createElement('div');
-    element.appendChild(reactRoot);
-
-    const cssObject = new CSS3DObject(element);
-    cssObject.position.copy(position);
-    cssObject.rotation.copy(rotation);
-    cssObject.scale.set(0.005, 0.005, 0.005);  // Scale down to fit on the disc
-
-    this.object.add(cssObject);
-
+    reactRoot.style.width = '1024px';
+    reactRoot.style.height = '1024px';
+    
     ReactDOM.render(React.createElement(Component), reactRoot);
 
-    return { element: reactRoot, object: cssObject };
+    const htmlRenderer = new THREE.CSS3DRenderer();
+    htmlRenderer.setSize(1024, 1024);
+    htmlRenderer.domElement.style.position = 'absolute';
+    htmlRenderer.domElement.style.top = '0';
+    document.body.appendChild(htmlRenderer.domElement);
+
+    const tempScene = new THREE.Scene();
+    const tempCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    tempCamera.position.z = 1;
+    
+    const cssObject = new THREE.CSS3DObject(reactRoot);
+    tempScene.add(cssObject);
+
+    htmlRenderer.render(tempScene, tempCamera);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+    const geometry = new THREE.PlaneGeometry(4, 4);
+    const plane = new THREE.Mesh(geometry, material);
+
+    plane.position.copy(position);
+    plane.rotation.copy(rotation);
+
+    this.object.add(plane);
+
+    // Remove the temporary renderer
+    document.body.removeChild(htmlRenderer.domElement);
+
+    return { element: reactRoot, object: plane };
   }
 
   createFrontElement() {
