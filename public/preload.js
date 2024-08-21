@@ -1,7 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
-  openDirectoryDialog: () => ipcRenderer.send('open-directory-dialog'),
-  onSelectedDirectory: (callback) => ipcRenderer.on('selected-directory', callback),
-  removeSelectedDirectoryListener: () => ipcRenderer.removeAllListeners('selected-directory')
+  openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
+  openFileDialog: () => ipcRenderer.invoke('open-file-dialog')
 });

@@ -5,6 +5,7 @@ import SettingsPanel from './components/SettingsPanel';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [selectedPath, setSelectedPath] = useState(null);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -20,6 +21,30 @@ function App() {
     };
   }, []);
 
+  const handleOpenDirectory = async () => {
+    try {
+      const path = await window.electron.openDirectoryDialog();
+      if (path) {
+        setSelectedPath(path);
+        console.log('Selected directory:', path);
+      }
+    } catch (error) {
+      console.error('Error opening directory:', error);
+    }
+  };
+
+  const handleOpenFile = async () => {
+    try {
+      const path = await window.electron.openFileDialog();
+      if (path) {
+        setSelectedPath(path);
+        console.log('Selected file:', path);
+      }
+    } catch (error) {
+      console.error('Error opening file:', error);
+    }
+  };
+
   return (
     <div className="App">
       <Three />
@@ -27,6 +52,11 @@ function App() {
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
       />
+      <div>
+        <button onClick={handleOpenDirectory}>Open Directory</button>
+        <button onClick={handleOpenFile}>Open File</button>
+        {selectedPath && <p>Selected path: {selectedPath}</p>}
+      </div>
     </div>
   );
 }

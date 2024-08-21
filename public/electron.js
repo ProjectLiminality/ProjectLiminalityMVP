@@ -28,18 +28,23 @@ function createWindow() {
   }
 
   // Handle directory selection
-  ipcMain.on('open-directory-dialog', (event) => {
-    dialog.showOpenDialog(win, {
+  ipcMain.handle('open-directory-dialog', async () => {
+    const result = await dialog.showOpenDialog(win, {
       properties: ['openDirectory'],
-      title: 'Select DreamVault Directory',
+      title: 'Select Directory',
       buttonLabel: 'Select'
-    }).then(result => {
-      if (!result.canceled) {
-        event.reply('selected-directory', result.filePaths[0]);
-      }
-    }).catch(err => {
-      console.error('Error opening directory dialog:', err);
     });
+    return result.canceled ? null : result.filePaths[0];
+  });
+
+  // Handle file selection
+  ipcMain.handle('open-file-dialog', async () => {
+    const result = await dialog.showOpenDialog(win, {
+      properties: ['openFile'],
+      title: 'Select File',
+      buttonLabel: 'Select'
+    });
+    return result.canceled ? null : result.filePaths[0];
   });
 }
 
