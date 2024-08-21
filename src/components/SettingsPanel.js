@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 const SettingsPanel = ({ isOpen, onClose }) => {
   const [dreamVaultPath, setDreamVaultPath] = useState('');
   const [isElectronAvailable, setIsElectronAvailable] = useState(false);
+  const [isManualInput, setIsManualInput] = useState(false);
 
   useEffect(() => {
     setIsElectronAvailable(!!window.electron);
@@ -23,17 +24,17 @@ const SettingsPanel = ({ isOpen, onClose }) => {
       window.electron.openDirectoryDialog();
     } else {
       console.warn('Electron API not available');
-      // Fallback for web environment
-      const path = prompt('Enter the DreamVault path:');
-      if (path) {
-        setDreamVaultPath(path);
-      }
+      setIsManualInput(true);
     }
   };
 
+  const handleManualInput = (e) => {
+    setDreamVaultPath(e.target.value);
+  };
+
   const handleSave = () => {
-    // Save the settings (you can implement this later)
     console.log('Saving DreamVault path:', dreamVaultPath);
+    setIsManualInput(false);
     onClose();
   };
 
@@ -52,7 +53,7 @@ const SettingsPanel = ({ isOpen, onClose }) => {
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         zIndex: 1000,
       }}
-      onClick={(e) => e.stopPropagation()} // Prevent clicks from propagating to underlying elements
+      onClick={(e) => e.stopPropagation()}
     >
       <h2>Settings</h2>
       <div style={{ marginBottom: '15px' }}>
@@ -62,17 +63,25 @@ const SettingsPanel = ({ isOpen, onClose }) => {
             type="text"
             id="dreamVaultPath"
             value={dreamVaultPath}
-            readOnly
+            onChange={handleManualInput}
+            readOnly={!isManualInput}
             style={{ marginRight: '10px', padding: '5px', flex: 1 }}
           />
-          <button 
-            onClick={handleSelectDirectory} 
-            style={{ padding: '5px 10px' }}
-          >
-            📁
-          </button>
+          {!isManualInput && (
+            <button 
+              onClick={handleSelectDirectory} 
+              style={{ padding: '5px 10px' }}
+            >
+              📁
+            </button>
+          )}
         </div>
       </div>
+      {isManualInput && (
+        <p style={{ fontSize: '0.8em', color: '#666' }}>
+          Enter the DreamVault path manually and click Save.
+        </p>
+      )}
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <button onClick={onClose} style={{ marginRight: '10px', padding: '5px 10px' }}>Cancel</button>
         <button onClick={handleSave} style={{ padding: '5px 10px' }}>Save</button>
