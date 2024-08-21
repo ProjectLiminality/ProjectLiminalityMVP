@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { useEffect, useRef } from "react";
+import ReactDOM from 'react-dom';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamNode from './components/DreamNode';
 
