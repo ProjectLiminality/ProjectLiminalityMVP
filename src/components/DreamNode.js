@@ -16,8 +16,10 @@ class DreamNode {
   }
 
   init() {
+    console.log("Initializing DreamNode");
     this.createNode();
     this.addClickListener();
+    console.log("DreamNode initialized");
   }
 
   createNode() {

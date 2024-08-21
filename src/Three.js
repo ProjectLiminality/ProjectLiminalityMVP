@@ -6,10 +6,12 @@ import DreamNode from './components/DreamNode';
 function Three() {
   const refContainer = useRef(null);
   useEffect(() => {
+    console.log("Three.js component mounted");
     if (refContainer.current) {
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);  // Black background
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      try {
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000);  // Black background
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -78,9 +80,17 @@ function Three() {
         refContainer.current.removeChild(cssRenderer.domElement);
       };
     }
-  }, []);
+  } catch (error) {
+    console.error("Error in Three.js setup:", error);
+  }
+}, []);
 
-  return <div ref={refContainer} style={{ width: '100vw', height: '100vh' }} />;
+  return (
+    <>
+      <div ref={refContainer} style={{ width: '100vw', height: '100vh' }} />
+      {!refContainer.current && <div>Loading 3D scene...</div>}
+    </>
+  );
 }
 
 export default Three;
