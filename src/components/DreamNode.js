@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as THREE from 'three';
+import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 
@@ -76,7 +77,7 @@ class DreamNode {
     
     ReactDOM.render(React.createElement(Component), reactRoot);
 
-    const htmlRenderer = new THREE.CSS3DRenderer();
+    const htmlRenderer = new CSS3DRenderer();
     htmlRenderer.setSize(1024, 1024);
     htmlRenderer.domElement.style.position = 'absolute';
     htmlRenderer.domElement.style.top = '0';
@@ -86,7 +87,7 @@ class DreamNode {
     const tempCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     tempCamera.position.z = 1;
     
-    const cssObject = new THREE.CSS3DObject(reactRoot);
+    const cssObject = new CSS3DObject(reactRoot);
     tempScene.add(cssObject);
 
     htmlRenderer.render(tempScene, tempCamera);
