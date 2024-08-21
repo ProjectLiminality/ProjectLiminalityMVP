@@ -10,8 +10,8 @@ function Three() {
     if (refContainer.current) {
       try {
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x2196F3);  // Blue background
-        console.log("Scene created with blue background");
+        scene.background = new THREE.Color(0x000000);  // Black background
+        console.log("Scene created with black background");
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         console.log("Camera created");
