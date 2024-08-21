@@ -29,7 +29,9 @@ function Three() {
       scene.add(pointLight);
       
       // Create DreamNode
-      const dreamNode = <DreamNode scene={scene} />;
+      const dreamNodeElement = document.createElement('div');
+      scene.userData.dreamNodeContainer = dreamNodeElement;
+      ReactDOM.render(<DreamNode scene={scene} />, dreamNodeElement);
       
       camera.position.z = 5;
       

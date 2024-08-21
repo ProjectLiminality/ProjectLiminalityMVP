@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
@@ -7,11 +7,14 @@ import DreamSong from './DreamSong';
 
 const DreamNode = ({ scene, position = new THREE.Vector3(0, 0, 0) }) => {
   console.log('DreamNode rendering', { scene, position });
+  const [isInitialized, setIsInitialized] = useState(false);
   const discRef = useRef(null);
   const frontRef = useRef(null);
   const backRef = useRef(null);
 
   useEffect(() => {
+    if (!scene || isInitialized) return;
+
     const createDisc = () => {
       const geometry = new THREE.CylinderGeometry(2, 2, 0.05, 32);
       const material = new THREE.MeshBasicMaterial({ color: 0x4287f5 });  // Blue disc
@@ -42,10 +45,9 @@ const DreamNode = ({ scene, position = new THREE.Vector3(0, 0, 0) }) => {
       return { element: reactRoot, object: cssObject };
     };
 
-    if (scene) {
-      createDisc();
+    createDisc();
 
-      const frontElement = createHTMLElement(
+    const frontElement = createHTMLElement(
       DreamTalk,
       new THREE.Vector3(0, 0.03, 0),
       new THREE.Euler(-Math.PI / 2, 0, 0)
@@ -59,14 +61,15 @@ const DreamNode = ({ scene, position = new THREE.Vector3(0, 0, 0) }) => {
     );
     backRef.current = backElement;
 
-      // Clean up function
-      return () => {
-        if (scene && discRef.current) {
-          scene.remove(discRef.current);
-        }
-      };
-    }
-  }, [scene, position]);
+    setIsInitialized(true);
+
+    // Clean up function
+    return () => {
+      if (scene && discRef.current) {
+        scene.remove(discRef.current);
+      }
+    };
+  }, [scene, position, isInitialized]);
 
   useEffect(() => {
     if (frontRef.current && backRef.current) {
