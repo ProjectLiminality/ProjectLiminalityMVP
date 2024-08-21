@@ -30,13 +30,15 @@ function createWindow() {
   // Handle directory selection
   ipcMain.on('open-directory-dialog', (event) => {
     dialog.showOpenDialog(win, {
-      properties: ['openDirectory']
+      properties: ['openDirectory'],
+      title: 'Select DreamVault Directory',
+      buttonLabel: 'Select'
     }).then(result => {
       if (!result.canceled) {
         event.reply('selected-directory', result.filePaths[0]);
       }
     }).catch(err => {
-      console.log(err);
+      console.error('Error opening directory dialog:', err);
     });
   });
 }

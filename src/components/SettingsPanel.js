@@ -32,17 +32,20 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      backgroundColor: 'white',
-      padding: '20px',
-      borderRadius: '8px',
-      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-      zIndex: 1000,
-    }}>
+    <div 
+      style={{
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000,
+      }}
+      onClick={(e) => e.stopPropagation()} // Prevent clicks from propagating to underlying elements
+    >
       <h2>Settings</h2>
       <div style={{ marginBottom: '15px' }}>
         <label htmlFor="dreamVaultPath">DreamVault Path:</label>
@@ -51,7 +54,7 @@ const SettingsPanel = ({ isOpen, onClose }) => {
             type="text"
             id="dreamVaultPath"
             value={dreamVaultPath}
-            onChange={(e) => setDreamVaultPath(e.target.value)}
+            readOnly
             style={{ marginRight: '10px', padding: '5px', flex: 1 }}
           />
           <button onClick={handleSelectDirectory} style={{ padding: '5px 10px' }}>
