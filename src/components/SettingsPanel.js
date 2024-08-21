@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 
 const SettingsPanel = ({ isOpen, onClose }) => {
   const [dreamVaultPath, setDreamVaultPath] = useState('');
+  const [isElectronAvailable, setIsElectronAvailable] = useState(false);
 
   useEffect(() => {
+    setIsElectronAvailable(!!window.electron);
+
     if (window.electron) {
       window.electron.onSelectedDirectory((event, path) => {
         setDreamVaultPath(path);
@@ -16,10 +19,12 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   }, []);
 
   const handleSelectDirectory = () => {
-    if (window.electron) {
+    if (isElectronAvailable) {
       window.electron.openDirectoryDialog();
     } else {
       console.warn('Electron API not available');
+      // Fallback for web environment
+      alert('Directory selection is not available in web environment.');
     }
   };
 
@@ -57,7 +62,11 @@ const SettingsPanel = ({ isOpen, onClose }) => {
             readOnly
             style={{ marginRight: '10px', padding: '5px', flex: 1 }}
           />
-          <button onClick={handleSelectDirectory} style={{ padding: '5px 10px' }}>
+          <button 
+            onClick={handleSelectDirectory} 
+            style={{ padding: '5px 10px' }}
+            disabled={!isElectronAvailable}
+          >
             📁
           </button>
         </div>
