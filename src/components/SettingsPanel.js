@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { ipcRenderer } from 'electron';
 
 const SettingsPanel = ({ isOpen, onClose }) => {
   const [dreamVaultPath, setDreamVaultPath] = useState('');
 
   useEffect(() => {
-    ipcRenderer.on('selected-directory', (event, path) => {
+    window.electron.onSelectedDirectory((event, path) => {
       setDreamVaultPath(path);
     });
 
     return () => {
-      ipcRenderer.removeAllListeners('selected-directory');
+      window.electron.removeSelectedDirectoryListener();
     };
   }, []);
 
   const handleSelectDirectory = () => {
-    ipcRenderer.send('open-directory-dialog');
+    window.electron.openDirectoryDialog();
   };
 
   const handleSave = () => {
