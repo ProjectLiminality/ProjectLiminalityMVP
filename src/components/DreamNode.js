@@ -53,7 +53,7 @@ class DreamNode {
     root.render(React.createElement(Component));
 
     const object = new CSS3DObject(div);
-    object.position.z = zOffset;
+    object.position.set(0, 0, zOffset);
     object.scale.set(0.01, 0.01, 0.01);
 
     return object;
