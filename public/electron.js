@@ -15,6 +15,16 @@ function createWindow() {
     },
   });
 
+  // Set Content Security Policy
+  win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': ['default-src \'self\'; script-src \'self\'']
+      }
+    })
+  });
+
   // Load the index.html from a url
   win.loadURL(
     isDev
