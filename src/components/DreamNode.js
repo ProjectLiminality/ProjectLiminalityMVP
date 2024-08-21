@@ -27,7 +27,7 @@ class DreamNode {
   }
 
   createDisc() {
-    const geometry = new THREE.CylinderGeometry(2, 2, 0.05, 32);
+    const geometry = new THREE.CylinderGeometry(2, 2, 0.1, 32);
     const material = new THREE.MeshBasicMaterial({ color: 0x4287f5 });  // Blue disc
     const disc = new THREE.Mesh(geometry, material);
     disc.rotation.x = Math.PI / 2; // Rotate 90 degrees around X-axis
@@ -92,7 +92,7 @@ class DreamNode {
   createFrontElement() {
     this.frontRef = this.createHTMLElement(
       DreamTalk,
-      new THREE.Vector3(0, 0.03, 0),
+      new THREE.Vector3(0, 0.051, 0),
       new THREE.Euler(0, 0, 0)
     );
   }
@@ -100,7 +100,7 @@ class DreamNode {
   createBackElement() {
     this.backRef = this.createHTMLElement(
       DreamSong,
-      new THREE.Vector3(0, -0.03, 0),
+      new THREE.Vector3(0, -0.051, 0),
       new THREE.Euler(0, Math.PI, 0)
     );
   }
