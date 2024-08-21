@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { useEffect, useRef } from "react";
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 
 function Three() {
   const refContainer = useRef(null);
@@ -12,17 +14,41 @@ function Three() {
       renderer.setSize(window.innerWidth, window.innerHeight);
       refContainer.current.appendChild(renderer.domElement);
       
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
-      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-      const cube = new THREE.Mesh(geometry, material);
-      scene.add(cube);
+      // Create a circular plane (disc)
+      const geometry = new THREE.CircleGeometry(2, 32);
+      const materialFront = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.FrontSide });
+      const materialBack = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.BackSide });
+      const disc = new THREE.Mesh(geometry, [materialFront, materialBack]);
+      scene.add(disc);
+      
+      // Add text to both sides
+      const loader = new FontLoader();
+      loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
+        const textGeometryFront = new TextGeometry('DreamTalk', {
+          font: font,
+          size: 0.5,
+          height: 0.1,
+        });
+        const textMeshFront = new THREE.Mesh(textGeometryFront, new THREE.MeshBasicMaterial({ color: 0x000000 }));
+        textMeshFront.position.set(-1.5, 0, 0.01);
+        disc.add(textMeshFront);
+
+        const textGeometryBack = new TextGeometry('DreamSong', {
+          font: font,
+          size: 0.5,
+          height: 0.1,
+        });
+        const textMeshBack = new THREE.Mesh(textGeometryBack, new THREE.MeshBasicMaterial({ color: 0x000000 }));
+        textMeshBack.position.set(-1.5, 0, -0.01);
+        textMeshBack.rotation.y = Math.PI;
+        disc.add(textMeshBack);
+      });
       
       camera.position.z = 5;
       
       const animate = function () {
         requestAnimationFrame(animate);
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
+        disc.rotation.y += 0.01;
         renderer.render(scene, camera);
       };
       
