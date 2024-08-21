@@ -22,6 +22,12 @@ class DreamNode {
     this.init();
   }
 
+  easeInOutCubic(t) {
+    return t < 0.5
+      ? 4 * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
   init() {
     console.log("Initializing DreamNode");
     this.createNode();
@@ -107,10 +113,11 @@ class DreamNode {
       const progress = Math.min(elapsedTime / this.movementDuration, 1);
 
       if (progress < 1) {
+        const easedProgress = this.easeInOutCubic(progress);
         const newPosition = new THREE.Vector3().lerpVectors(
           this.startPosition,
           this.targetPosition,
-          progress
+          easedProgress
         );
         this.setPosition(newPosition);
       } else {
