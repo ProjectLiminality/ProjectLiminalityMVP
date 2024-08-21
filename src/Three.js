@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { useEffect, useRef } from "react";
 import DreamNode from './components/DreamNode';
 
@@ -13,6 +14,12 @@ function Three() {
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       refContainer.current.appendChild(renderer.domElement);
+
+      const cssRenderer = new CSS3DRenderer();
+      cssRenderer.setSize(window.innerWidth, window.innerHeight);
+      cssRenderer.domElement.style.position = 'absolute';
+      cssRenderer.domElement.style.top = '0';
+      refContainer.current.appendChild(cssRenderer.domElement);
       
       // Add lighting
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -31,6 +38,7 @@ function Three() {
         requestAnimationFrame(animate);
         dreamNode.update();
         renderer.render(scene, camera);
+        cssRenderer.render(scene, camera);
       };
       
       animate();
@@ -58,6 +66,7 @@ function Three() {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        cssRenderer.setSize(window.innerWidth, window.innerHeight);
       };
       
       window.addEventListener('resize', handleResize);
@@ -66,6 +75,7 @@ function Three() {
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('click', onClick);
         refContainer.current.removeChild(renderer.domElement);
+        refContainer.current.removeChild(cssRenderer.domElement);
       };
     }
   }, []);
