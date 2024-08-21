@@ -8,18 +8,17 @@ function Three() {
   useEffect(() => {
     if (refContainer.current) {
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xf0f0f0);  // Light gray background
+      scene.background = new THREE.Color(0x000000);  // Black background
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       
       renderer.setSize(window.innerWidth, window.innerHeight);
       refContainer.current.appendChild(renderer.domElement);
       
-      // Create a circular plane (disc)
-      const geometry = new THREE.CircleGeometry(2, 32);
-      const materialFront = new THREE.MeshPhongMaterial({ color: 0x4287f5, side: THREE.FrontSide });  // Blue front
-      const materialBack = new THREE.MeshPhongMaterial({ color: 0xf54242, side: THREE.BackSide });  // Red back
-      const disc = new THREE.Mesh(geometry, [materialFront, materialBack]);
+      // Create a thin cylinder (disc)
+      const geometry = new THREE.CylinderGeometry(2, 2, 0.05, 32);
+      const material = new THREE.MeshPhongMaterial({ color: 0x4287f5 });  // Blue disc
+      const disc = new THREE.Mesh(geometry, material);
       scene.add(disc);
       
       // Add lighting
@@ -37,8 +36,9 @@ function Three() {
           size: 0.3,
           height: 0.05,
         });
-        const textMeshFront = new THREE.Mesh(textGeometryFront, new THREE.MeshPhongMaterial({ color: 0xffffff }));
-        textMeshFront.position.set(-0.9, 0, 0.01);
+        const textMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });  // White text
+        const textMeshFront = new THREE.Mesh(textGeometryFront, textMaterial);
+        textMeshFront.position.set(-0.9, 0, 0.03);  // Slightly above the disc surface
         disc.add(textMeshFront);
 
         const textGeometryBack = new TextGeometry('DreamSong', {
@@ -46,8 +46,8 @@ function Three() {
           size: 0.3,
           height: 0.05,
         });
-        const textMeshBack = new THREE.Mesh(textGeometryBack, new THREE.MeshPhongMaterial({ color: 0xffffff }));
-        textMeshBack.position.set(0.9, 0, -0.01);
+        const textMeshBack = new THREE.Mesh(textGeometryBack, textMaterial);
+        textMeshBack.position.set(0.9, 0, -0.03);  // Slightly below the disc surface
         textMeshBack.rotation.y = Math.PI;
         disc.add(textMeshBack);
       });
