@@ -6,13 +6,19 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   const [isManualInput, setIsManualInput] = useState(false);
 
   useEffect(() => {
-    setIsElectronAvailable(!!window.electron?.isElectron);
+    console.log('Window electron object:', window.electron);
+    setIsElectronAvailable(!!window.electron);
+    console.log('Is Electron available:', !!window.electron);
   }, []);
 
   const handleSelectDirectory = async () => {
+    console.log('handleSelectDirectory called');
+    console.log('Is Electron available (in handler):', isElectronAvailable);
     if (isElectronAvailable) {
       try {
+        console.log('Attempting to open directory dialog');
         const path = await window.electron.openDirectoryDialog();
+        console.log('Directory dialog result:', path);
         if (path) {
           setDreamVaultPath(path);
         }
