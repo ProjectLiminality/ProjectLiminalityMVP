@@ -31,10 +31,14 @@ function Three() {
         scene.add(pointLight);
       
         // Create DreamNode
+        console.log("Creating DreamNode");
         const dreamNode = new DreamNode({ scene });
-        scene.add(dreamNode.getObject());
+        const dreamNodeObject = dreamNode.getObject();
+        console.log("DreamNode object:", dreamNodeObject);
+        scene.add(dreamNodeObject);
       
-        camera.position.z = 5;
+        camera.position.z = 10;
+        console.log("Camera position:", camera.position);
       
         const animate = function () {
           requestAnimationFrame(animate);
@@ -44,6 +48,8 @@ function Three() {
         };
       
         animate();
+
+        console.log("Scene children:", scene.children);
 
         // Add raycaster for click detection
         const raycaster = new THREE.Raycaster();
