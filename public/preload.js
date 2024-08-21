@@ -9,9 +9,8 @@ contextBridge.exposeInMainWorld('electron', {
   openFileDialog: () => ipcRenderer.invoke('open-file-dialog'),
   isElectron: true
 });
-};
 
-console.log('Exposing electron API:', electronAPI);
+console.log('Exposing electron API:', window.electron);
 
 contextBridge.exposeInMainWorld('electron', electronAPI);
 console.log('Electron API exposed to renderer');
