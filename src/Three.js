@@ -83,7 +83,6 @@ function Three() {
   } catch (error) {
     console.error("Error in Three.js setup:", error);
   }
-  }
 }, []);
 
   return (
