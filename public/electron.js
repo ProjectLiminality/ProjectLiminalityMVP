@@ -64,29 +64,3 @@ app.on('activate', () => {
     createWindow();
   }
 });
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
-const path = require('path');
-
-// ... (existing code)
-
-ipcMain.handle('open-directory-dialog', async () => {
-  const result = await dialog.showOpenDialog({
-    properties: ['openDirectory']
-  });
-  if (result.canceled) {
-    return null;
-  } else {
-    return result.filePaths[0];
-  }
-});
-
-ipcMain.handle('open-file-dialog', async () => {
-  const result = await dialog.showOpenDialog({
-    properties: ['openFile']
-  });
-  if (result.canceled) {
-    return null;
-  } else {
-    return result.filePaths[0];
-  }
-});
