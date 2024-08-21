@@ -10,18 +10,23 @@ function Three() {
     if (refContainer.current) {
       try {
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x000000);  // Black background
+        scene.background = new THREE.Color(0x2196F3);  // Blue background
+        console.log("Scene created with blue background");
+
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      
+        console.log("Camera created");
+
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         refContainer.current.appendChild(renderer.domElement);
+        console.log("WebGL renderer created and added to DOM");
 
         const cssRenderer = new CSS3DRenderer();
         cssRenderer.setSize(window.innerWidth, window.innerHeight);
         cssRenderer.domElement.style.position = 'absolute';
         cssRenderer.domElement.style.top = '0';
         refContainer.current.appendChild(cssRenderer.domElement);
+        console.log("CSS renderer created and added to DOM");
       
         // Add lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -45,10 +50,12 @@ function Three() {
           dreamNode.update();
           renderer.render(scene, camera);
           cssRenderer.render(scene, camera);
+          console.log("Frame rendered");
         };
       
         animate();
 
+        console.log("Animation loop started");
         console.log("Scene children:", scene.children);
 
         // Add raycaster for click detection
