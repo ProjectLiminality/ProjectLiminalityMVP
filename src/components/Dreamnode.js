@@ -1,63 +1,75 @@
+import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
+import DreamTalk from './DreamTalk';
+import DreamSong from './DreamSong';
 
-class DreamNode {
-  constructor(scene, position = new THREE.Vector3(0, 0, 0)) {
-    this.scene = scene;
-    this.position = position;
-    this.disc = null;
-    this.textMeshFront = null;
-    this.textMeshBack = null;
+const DreamNode = ({ scene, position = new THREE.Vector3(0, 0, 0) }) => {
+  const discRef = useRef(null);
+  const frontRef = useRef(null);
+  const backRef = useRef(null);
 
-    this.createDisc();
-    this.createText();
-  }
+  useEffect(() => {
+    const createDisc = () => {
+      const geometry = new THREE.CylinderGeometry(2, 2, 0.05, 32);
+      const material = new THREE.MeshPhongMaterial({ color: 0x4287f5 });  // Blue disc
+      const disc = new THREE.Mesh(geometry, material);
+      disc.rotation.x = Math.PI / 2; // Rotate 90 degrees around X-axis
+      disc.position.copy(position);
+      scene.add(disc);
+      discRef.current = disc;
+    };
 
-  createDisc() {
-    const geometry = new THREE.CylinderGeometry(2, 2, 0.05, 32);
-    const material = new THREE.MeshPhongMaterial({ color: 0x4287f5 });  // Blue disc
-    this.disc = new THREE.Mesh(geometry, material);
-    this.disc.rotation.x = Math.PI / 2; // Rotate 90 degrees around X-axis
-    this.disc.position.copy(this.position);
-    this.scene.add(this.disc);
-  }
+    const createHTMLElement = (Component, position, rotation) => {
+      const element = document.createElement('div');
+      element.style.width = '400px';
+      element.style.height = '400px';
+      element.style.background = 'rgba(0,0,0,0.1)';
+      element.style.border = '1px solid white';
 
-  createText() {
-    const loader = new FontLoader();
-    loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-      const textMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });  // White text
+      const reactRoot = document.createElement('div');
+      element.appendChild(reactRoot);
 
-      // DreamTalk (front)
-      const textGeometryFront = new TextGeometry('DreamTalk', {
-        font: font,
-        size: 0.3,
-        height: 0.05,
-      });
-      this.textMeshFront = new THREE.Mesh(textGeometryFront, textMaterial);
-      this.textMeshFront.position.set(-0.9, 0.03, 0);
-      this.textMeshFront.rotation.x = -Math.PI / 2;
-      this.disc.add(this.textMeshFront);
+      const cssObject = new CSS3DObject(element);
+      cssObject.position.copy(position);
+      cssObject.rotation.copy(rotation);
+      cssObject.scale.set(0.005, 0.005, 0.005);  // Scale down to fit on the disc
 
-      // DreamSong (back)
-      const textGeometryBack = new TextGeometry('DreamSong', {
-        font: font,
-        size: 0.3,
-        height: 0.05,
-      });
-      this.textMeshBack = new THREE.Mesh(textGeometryBack, textMaterial);
-      this.textMeshBack.position.set(0.9, -0.03, 0);
-      this.textMeshBack.rotation.x = Math.PI / 2;
-      this.textMeshBack.rotation.y = Math.PI;
-      this.disc.add(this.textMeshBack);
-    });
-  }
+      discRef.current.add(cssObject);
 
-  rotate(speed) {
-    if (this.disc) {
-      this.disc.rotation.y += speed;
+      return { element: reactRoot, object: cssObject };
+    };
+
+    createDisc();
+
+    const frontElement = createHTMLElement(
+      DreamTalk,
+      new THREE.Vector3(0, 0.03, 0),
+      new THREE.Euler(-Math.PI / 2, 0, 0)
+    );
+    frontRef.current = frontElement;
+
+    const backElement = createHTMLElement(
+      DreamSong,
+      new THREE.Vector3(0, -0.03, 0),
+      new THREE.Euler(Math.PI / 2, 0, Math.PI)
+    );
+    backRef.current = backElement;
+
+    // Clean up function
+    return () => {
+      scene.remove(discRef.current);
+    };
+  }, [scene, position]);
+
+  useEffect(() => {
+    if (frontRef.current && backRef.current) {
+      ReactDOM.render(<DreamTalk />, frontRef.current.element);
+      ReactDOM.render(<DreamSong />, backRef.current.element);
     }
-  }
-}
+  }, []);
+
+  return null;  // This component doesn't render anything directly in React
+};
 
 export default DreamNode;

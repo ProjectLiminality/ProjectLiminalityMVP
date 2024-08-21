@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { useEffect, useRef } from "react";
+import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamNode from './components/Dreamnode';
 
 function Three() {
@@ -9,10 +10,16 @@ function Three() {
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0x000000);  // Black background
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
       
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      refContainer.current.appendChild(renderer.domElement);
+      const webGLRenderer = new THREE.WebGLRenderer({ antialias: true });
+      webGLRenderer.setSize(window.innerWidth, window.innerHeight);
+      refContainer.current.appendChild(webGLRenderer.domElement);
+      
+      const css3DRenderer = new CSS3DRenderer();
+      css3DRenderer.setSize(window.innerWidth, window.innerHeight);
+      css3DRenderer.domElement.style.position = 'absolute';
+      css3DRenderer.domElement.style.top = '0';
+      refContainer.current.appendChild(css3DRenderer.domElement);
       
       // Add lighting
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -22,14 +29,14 @@ function Three() {
       scene.add(pointLight);
       
       // Create DreamNode
-      const dreamNode = new DreamNode(scene);
+      const dreamNode = <DreamNode scene={scene} />;
       
       camera.position.z = 5;
       
       const animate = function () {
         requestAnimationFrame(animate);
-        dreamNode.rotate(0.01);
-        renderer.render(scene, camera);
+        webGLRenderer.render(scene, camera);
+        css3DRenderer.render(scene, camera);
       };
       
       animate();
@@ -37,14 +44,16 @@ function Three() {
       const handleResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        webGLRenderer.setSize(window.innerWidth, window.innerHeight);
+        css3DRenderer.setSize(window.innerWidth, window.innerHeight);
       };
       
       window.addEventListener('resize', handleResize);
       
       return () => {
         window.removeEventListener('resize', handleResize);
-        refContainer.current.removeChild(renderer.domElement);
+        refContainer.current.removeChild(webGLRenderer.domElement);
+        refContainer.current.removeChild(css3DRenderer.domElement);
       };
     }
   }, []);
