@@ -24,7 +24,10 @@ const SettingsPanel = ({ isOpen, onClose }) => {
     } else {
       console.warn('Electron API not available');
       // Fallback for web environment
-      alert('Directory selection is not available in web environment.');
+      const path = prompt('Enter the DreamVault path:');
+      if (path) {
+        setDreamVaultPath(path);
+      }
     }
   };
 
@@ -65,7 +68,6 @@ const SettingsPanel = ({ isOpen, onClose }) => {
           <button 
             onClick={handleSelectDirectory} 
             style={{ padding: '5px 10px' }}
-            disabled={!isElectronAvailable}
           >
             📁
           </button>
