@@ -15,7 +15,9 @@ class DreamNode {
     this.yOffset = 0.06; // Y offset variable
     this.isMoving = false;
     this.targetPosition = new THREE.Vector3();
-    this.moveSpeed = 0.1; // Adjust this value to change the speed of movement
+    this.startPosition = new THREE.Vector3();
+    this.movementStartTime = 0;
+    this.movementDuration = 1000; // 1 second in milliseconds
 
     this.init();
   }
@@ -100,11 +102,19 @@ class DreamNode {
     }
 
     if (this.isMoving) {
-      const newPosition = this.object.position.lerp(this.targetPosition, this.moveSpeed);
-      this.updatePosition(newPosition);
-      
-      if (this.object.position.distanceTo(this.targetPosition) < 0.01) {
-        this.updatePosition(this.targetPosition);
+      const currentTime = Date.now();
+      const elapsedTime = currentTime - this.movementStartTime;
+      const progress = Math.min(elapsedTime / this.movementDuration, 1);
+
+      if (progress < 1) {
+        const newPosition = new THREE.Vector3().lerpVectors(
+          this.startPosition,
+          this.targetPosition,
+          progress
+        );
+        this.setPosition(newPosition);
+      } else {
+        this.setPosition(this.targetPosition);
         this.isMoving = false;
       }
     }
@@ -115,17 +125,15 @@ class DreamNode {
   }
 
   updatePosition(newPosition) {
-    if (this.isMoving) {
-      // If already moving, update the target position
-      this.targetPosition.copy(newPosition);
-    } else {
-      // Start a new movement
-      this.targetPosition.copy(newPosition);
-      this.isMoving = true;
-    }
+    this.startPosition.copy(this.object.position);
+    this.targetPosition.copy(newPosition);
+    this.movementStartTime = Date.now();
+    this.isMoving = true;
+  }
 
-    // Immediate update for the object's own position
+  setPosition(newPosition) {
     this.position.copy(newPosition);
+    this.object.position.copy(newPosition);
     
     // Update the position of the disc and CSS3D objects
     this.object.children.forEach(child => {
