@@ -12,6 +12,7 @@ class DreamNode {
     this.object = new THREE.Object3D();
     this.isRotating = false;
     this.targetRotation = 0;
+    this.yOffset = 0.05; // New Y offset variable
 
     this.init();
   }
@@ -58,8 +59,8 @@ class DreamNode {
     root.render(React.createElement(Component));
 
     const object = new CSS3DObject(div);
-    // Change the vertical offset to move downward (-0.1 units)
-    object.position.set(this.position.x, this.position.y - 0.1, this.position.z + zOffset);
+    // Use the new yOffset variable for vertical positioning
+    object.position.set(this.position.x, this.position.y - this.yOffset, this.position.z + zOffset);
     object.scale.set(0.01, 0.01, 0.01);
 
     return object;
