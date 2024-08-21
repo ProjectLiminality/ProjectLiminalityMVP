@@ -37,11 +37,31 @@ function Three() {
       
       const animate = function () {
         requestAnimationFrame(animate);
+        dreamNode.update();
         webGLRenderer.render(scene, camera);
         css3DRenderer.render(scene, camera);
       };
       
       animate();
+
+      // Add raycaster for click detection
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      const onClick = (event) => {
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+
+        const intersects = raycaster.intersectObjects(scene.children, true);
+
+        if (intersects.length > 0) {
+          scene.dispatchEvent({ type: 'click', intersects: intersects });
+        }
+      };
+
+      window.addEventListener('click', onClick);
       
       const handleResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;

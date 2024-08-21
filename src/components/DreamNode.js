@@ -13,6 +13,8 @@ class DreamNode {
     this.discRef = null;
     this.frontRef = null;
     this.backRef = null;
+    this.isRotating = false;
+    this.targetRotation = 0;
 
     this.init();
   }
@@ -21,6 +23,7 @@ class DreamNode {
     this.createDisc();
     this.createFrontElement();
     this.createBackElement();
+    this.addClickListener();
   }
 
   createDisc() {
@@ -31,6 +34,37 @@ class DreamNode {
     disc.position.copy(this.position);
     this.object.add(disc);
     this.discRef = disc;
+  }
+
+  addClickListener() {
+    this.discRef.userData.clickable = true;
+    this.scene.addEventListener('click', this.onNodeClick.bind(this));
+  }
+
+  onNodeClick(event) {
+    const intersects = event.intersects;
+    if (intersects.length > 0) {
+      const clickedObject = intersects[0].object;
+      if (clickedObject === this.discRef && !this.isRotating) {
+        this.rotateNode();
+      }
+    }
+  }
+
+  rotateNode() {
+    this.isRotating = true;
+    this.targetRotation = this.object.rotation.y + Math.PI;
+  }
+
+  update() {
+    if (this.isRotating) {
+      const rotationSpeed = 0.1;
+      this.object.rotation.y += rotationSpeed;
+      if (Math.abs(this.object.rotation.y - this.targetRotation) < 0.1) {
+        this.object.rotation.y = this.targetRotation;
+        this.isRotating = false;
+      }
+    }
   }
 
   createHTMLElement(Component, position, rotation) {
