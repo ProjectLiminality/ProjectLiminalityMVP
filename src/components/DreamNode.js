@@ -93,7 +93,7 @@ class DreamNode {
     this.frontRef = this.createHTMLElement(
       DreamTalk,
       new THREE.Vector3(0, 0.03, 0),
-      new THREE.Euler(-Math.PI / 2, 0, 0)
+      new THREE.Euler(0, 0, 0)
     );
   }
 
@@ -101,7 +101,7 @@ class DreamNode {
     this.backRef = this.createHTMLElement(
       DreamSong,
       new THREE.Vector3(0, -0.03, 0),
-      new THREE.Euler(Math.PI / 2, 0, Math.PI)
+      new THREE.Euler(0, Math.PI, 0)
     );
   }
 
