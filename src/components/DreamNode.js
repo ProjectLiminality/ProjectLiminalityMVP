@@ -17,7 +17,7 @@ class DreamNode {
     this.targetPosition = new THREE.Vector3();
     this.startPosition = new THREE.Vector3();
     this.movementStartTime = 0;
-    this.movementDuration = 1000; // 1 second in milliseconds
+    this.movementDuration = 2000; // 2 seconds in milliseconds
 
     this.init();
   }
