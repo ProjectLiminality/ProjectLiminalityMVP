@@ -12,7 +12,10 @@ class DreamNode {
     this.object = new THREE.Object3D();
     this.isRotating = false;
     this.targetRotation = 0;
-    this.yOffset = 0.06; // New Y offset variable
+    this.yOffset = 0.06; // Y offset variable
+    this.isMoving = false;
+    this.targetPosition = new THREE.Vector3();
+    this.moveSpeed = 0.1; // Adjust this value to change the speed of movement
 
     this.init();
   }
@@ -95,6 +98,16 @@ class DreamNode {
         this.isRotating = false;
       }
     }
+
+    if (this.isMoving) {
+      const newPosition = this.object.position.lerp(this.targetPosition, this.moveSpeed);
+      this.updatePosition(newPosition);
+      
+      if (this.object.position.distanceTo(this.targetPosition) < 0.01) {
+        this.updatePosition(this.targetPosition);
+        this.isMoving = false;
+      }
+    }
   }
 
   getObject() {
@@ -102,8 +115,17 @@ class DreamNode {
   }
 
   updatePosition(newPosition) {
+    if (this.isMoving) {
+      // If already moving, update the target position
+      this.targetPosition.copy(newPosition);
+    } else {
+      // Start a new movement
+      this.targetPosition.copy(newPosition);
+      this.isMoving = true;
+    }
+
+    // Immediate update for the object's own position
     this.position.copy(newPosition);
-    this.object.position.copy(newPosition);
     
     // Update the position of the disc and CSS3D objects
     this.object.children.forEach(child => {
