@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { useEffect, useRef } from "react";
-import Dreamnode from './components/Dreamnode';
+import DreamNode from './components/Dreamnode';
 
 function Three() {
   const refContainer = useRef(null);
@@ -21,14 +21,14 @@ function Three() {
       pointLight.position.set(5, 5, 5);
       scene.add(pointLight);
       
-      // Create Dreamnode
-      const dreamnode = new Dreamnode(scene);
+      // Create DreamNode
+      const dreamNode = new DreamNode(scene);
       
       camera.position.z = 5;
       
       const animate = function () {
         requestAnimationFrame(animate);
-        dreamnode.rotate(0.01);
+        dreamNode.rotate(0.01);
         renderer.render(scene, camera);
       };
       

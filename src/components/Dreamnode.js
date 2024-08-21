@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 
-class Dreamnode {
+class DreamNode {
   constructor(scene, position = new THREE.Vector3(0, 0, 0)) {
     this.scene = scene;
     this.position = position;
@@ -60,4 +60,4 @@ class Dreamnode {
   }
 }
 
-export default Dreamnode;
+export default DreamNode;
