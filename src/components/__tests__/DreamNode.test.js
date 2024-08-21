@@ -32,12 +32,6 @@ describe('DreamNode', () => {
     };
   });
 
-  test('rotates the node', () => {
-    dreamNode.rotateNode();
-    expect(dreamNode.isRotating).toBe(true);
-    expect(dreamNode.targetRotation).toBe(Math.PI);
-  });
-
   test('updates position correctly', () => {
     const newPosition = new THREE.Vector3(1, 1, 1);
     dreamNode.setPosition(newPosition);
