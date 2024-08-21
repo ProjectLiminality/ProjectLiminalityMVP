@@ -16,7 +16,11 @@ jest.mock('three', () => ({
   })),
   CircleGeometry: jest.fn(),
   MeshBasicMaterial: jest.fn(),
-  Mesh: jest.fn(),
+  Mesh: jest.fn(() => ({
+    position: {
+      copy: jest.fn()
+    }
+  })),
   Scene: jest.fn(() => ({
     addEventListener: jest.fn(),
   })),
@@ -35,7 +39,15 @@ describe('DreamNode', () => {
 
   beforeEach(() => {
     mockScene = new THREE.Scene();
-    dreamNode = new DreamNode({ scene: mockScene });
+    dreamNode = new DreamNode({ 
+      scene: mockScene,
+      position: new THREE.Vector3(0, 0, 0)
+    });
+    dreamNode.object = {
+      rotation: { y: 0 },
+      position: { copy: jest.fn() },
+      add: jest.fn()
+    };
   });
 
   test('initializes correctly', () => {
@@ -52,6 +64,7 @@ describe('DreamNode', () => {
     expect(THREE.CircleGeometry).toHaveBeenCalled();
     expect(THREE.MeshBasicMaterial).toHaveBeenCalled();
     expect(THREE.Mesh).toHaveBeenCalled();
+    expect(THREE.Mesh().position.copy).toHaveBeenCalledWith(dreamNode.position);
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
