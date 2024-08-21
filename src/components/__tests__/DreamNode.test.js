@@ -18,7 +18,8 @@ jest.mock('three', () => ({
   MeshBasicMaterial: jest.fn(),
   Mesh: jest.fn(() => ({
     position: {
-      copy: jest.fn()
+      copy: jest.fn(),
+      set: jest.fn()
     }
   })),
   Scene: jest.fn(() => ({
@@ -64,7 +65,11 @@ describe('DreamNode', () => {
     expect(THREE.CircleGeometry).toHaveBeenCalled();
     expect(THREE.MeshBasicMaterial).toHaveBeenCalled();
     expect(THREE.Mesh).toHaveBeenCalled();
-    expect(THREE.Mesh().position.copy).toHaveBeenCalledWith(dreamNode.position);
+    expect(THREE.Mesh().position.set).toHaveBeenCalledWith(
+      dreamNode.position.x,
+      dreamNode.position.y,
+      dreamNode.position.z
+    );
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
