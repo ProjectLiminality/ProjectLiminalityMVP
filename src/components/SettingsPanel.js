@@ -10,23 +10,29 @@ const SettingsPanel = ({ isOpen, onClose }) => {
       const electronAvailable = !!(window.electron && window.electron.isElectron);
       setIsElectronAvailable(electronAvailable);
       console.log('Is Electron available:', electronAvailable);
+      console.log('Electron object:', window.electron);
     };
 
     checkElectron();
   }, []);
 
   const handleSelectDirectory = async () => {
+    console.log('handleSelectDirectory called');
     if (isElectronAvailable) {
       try {
+        console.log('Attempting to open directory dialog');
         const path = await window.electron.openDirectoryDialog();
+        console.log('Directory dialog result:', path);
         if (path) {
           setDreamVaultPath(path);
+          setIsManualInput(false);
         }
       } catch (error) {
         console.error('Error opening directory dialog:', error);
         setIsManualInput(true);
       }
     } else {
+      console.log('Electron not available, switching to manual input');
       setIsManualInput(true);
     }
   };
@@ -70,14 +76,12 @@ const SettingsPanel = ({ isOpen, onClose }) => {
             readOnly={!isManualInput}
             style={{ marginRight: '10px', padding: '5px', flex: 1 }}
           />
-          {!isManualInput && (
-            <button 
-              onClick={handleSelectDirectory} 
-              style={{ padding: '5px 10px' }}
-            >
-              📁
-            </button>
-          )}
+          <button 
+            onClick={handleSelectDirectory} 
+            style={{ padding: '5px 10px' }}
+          >
+            📁 Select Directory
+          </button>
         </div>
       </div>
       {isManualInput && (
