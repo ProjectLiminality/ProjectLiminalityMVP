@@ -24,7 +24,11 @@ class DreamNode {
   }
 
   createNode() {
-    const geometry = new THREE.CircleGeometry(2, 32);
+    const radius = 2;
+    const segments = 64;
+
+    // Create a circular disc
+    const geometry = new THREE.CircleGeometry(radius, segments);
     const material = new THREE.MeshBasicMaterial({ color: 0x4287f5, side: THREE.DoubleSide });
     const disc = new THREE.Mesh(geometry, material);
     disc.position.copy(this.position);
@@ -42,8 +46,8 @@ class DreamNode {
     const div = document.createElement('div');
     div.style.width = '400px';
     div.style.height = '400px';
-    div.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-    div.style.border = '1px solid white';
+    div.style.borderRadius = '50%';
+    div.style.overflow = 'hidden';
 
     const reactRoot = document.createElement('div');
     div.appendChild(reactRoot);
