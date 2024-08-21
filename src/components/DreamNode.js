@@ -100,6 +100,20 @@ class DreamNode {
   getObject() {
     return this.object;
   }
+
+  updatePosition(newPosition) {
+    this.position.copy(newPosition);
+    this.object.position.copy(newPosition);
+    
+    // Update the position of the disc and CSS3D objects
+    this.object.children.forEach(child => {
+      if (child instanceof THREE.Mesh) {
+        child.position.copy(newPosition);
+      } else if (child instanceof CSS3DObject) {
+        child.position.set(newPosition.x, newPosition.y - this.yOffset, newPosition.z + (child.position.z > 0 ? 0.01 : -0.01));
+      }
+    });
+  }
 }
 
 export default DreamNode;

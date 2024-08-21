@@ -72,6 +72,16 @@ function Three() {
 
           if (intersects.length > 0) {
             scene.dispatchEvent({ type: 'click', intersects: intersects });
+          } else {
+            // Convert 2D mouse position to 3D world position
+            const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
+            vector.unproject(camera);
+            const dir = vector.sub(camera.position).normalize();
+            const distance = -camera.position.z / dir.z;
+            const pos = camera.position.clone().add(dir.multiplyScalar(distance));
+            
+            // Update DreamNode position
+            dreamNode.updatePosition(pos);
           }
         };
 
