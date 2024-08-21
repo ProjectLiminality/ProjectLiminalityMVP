@@ -9,8 +9,9 @@ const SettingsPanel = ({ isOpen, onClose }) => {
     console.log('SettingsPanel mounted');
     console.log('Window object:', window);
     console.log('Window electron object:', window.electron);
+    
     const checkElectron = () => {
-      const electronAvailable = !!window.electron;
+      const electronAvailable = !!(window.electron && window.electron.isElectron);
       setIsElectronAvailable(electronAvailable);
       console.log('Is Electron available:', electronAvailable);
       if (electronAvailable) {
@@ -29,7 +30,7 @@ const SettingsPanel = ({ isOpen, onClose }) => {
     console.log('handleSelectDirectory called');
     console.log('Is Electron available (in handler):', isElectronAvailable);
     console.log('window.electron:', window.electron);
-    if (isElectronAvailable && window.electron.openDirectoryDialog) {
+    if (isElectronAvailable && window.electron && window.electron.openDirectoryDialog) {
       try {
         console.log('Attempting to open directory dialog');
         const path = await window.electron.openDirectoryDialog();

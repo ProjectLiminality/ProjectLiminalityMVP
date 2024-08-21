@@ -41,3 +41,8 @@ window.addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded event fired');
   console.log('window.electron:', window.electron);
 });
+
+// Add a delay to check if the API is available after a short time
+setTimeout(() => {
+  console.log('Delayed check for window.electron:', window.electron);
+}, 1000);
