@@ -6,22 +6,20 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   const [isManualInput, setIsManualInput] = useState(false);
 
   useEffect(() => {
-    setIsElectronAvailable(!!window.electron);
-
-    if (window.electron) {
-      window.electron.onSelectedDirectory((event, path) => {
-        setDreamVaultPath(path);
-      });
-
-      return () => {
-        window.electron.removeSelectedDirectoryListener();
-      };
-    }
+    setIsElectronAvailable(!!window.electron?.isElectron);
   }, []);
 
-  const handleSelectDirectory = () => {
+  const handleSelectDirectory = async () => {
     if (isElectronAvailable) {
-      window.electron.openDirectoryDialog();
+      try {
+        const path = await window.electron.openDirectoryDialog();
+        if (path) {
+          setDreamVaultPath(path);
+        }
+      } catch (error) {
+        console.error('Error opening directory dialog:', error);
+        setIsManualInput(true);
+      }
     } else {
       console.warn('Electron API not available');
       setIsManualInput(true);
