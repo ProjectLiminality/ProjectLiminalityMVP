@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { useEffect, useRef } from "react";
-import DreamNode from './components/DreamNode';
+import DreamNode from './components/Dreamnode';
 
 function Three() {
   const refContainer = useRef(null);
