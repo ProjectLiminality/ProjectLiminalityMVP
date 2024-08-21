@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { useEffect, useRef } from "react";
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import Dreamnode from './components/Dreamnode';
 
 function Three() {
   const refContainer = useRef(null);
@@ -15,13 +14,6 @@ function Three() {
       renderer.setSize(window.innerWidth, window.innerHeight);
       refContainer.current.appendChild(renderer.domElement);
       
-      // Create a thin cylinder (disc)
-      const geometry = new THREE.CylinderGeometry(2, 2, 0.05, 32);
-      const material = new THREE.MeshPhongMaterial({ color: 0x4287f5 });  // Blue disc
-      const disc = new THREE.Mesh(geometry, material);
-      disc.rotation.x = Math.PI / 2; // Rotate 90 degrees around X-axis
-      scene.add(disc);
-      
       // Add lighting
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       scene.add(ambientLight);
@@ -29,37 +21,14 @@ function Three() {
       pointLight.position.set(5, 5, 5);
       scene.add(pointLight);
       
-      // Add text to both sides
-      const loader = new FontLoader();
-      loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
-        const textGeometryFront = new TextGeometry('DreamTalk', {
-          font: font,
-          size: 0.3,
-          height: 0.05,
-        });
-        const textMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });  // White text
-        const textMeshFront = new THREE.Mesh(textGeometryFront, textMaterial);
-        textMeshFront.position.set(-0.9, 0.03, 0);  // Slightly in front of the disc surface
-        textMeshFront.rotation.x = -Math.PI / 2; // Rotate to face outward
-        disc.add(textMeshFront);
-
-        const textGeometryBack = new TextGeometry('DreamSong', {
-          font: font,
-          size: 0.3,
-          height: 0.05,
-        });
-        const textMeshBack = new THREE.Mesh(textGeometryBack, textMaterial);
-        textMeshBack.position.set(0.9, -0.03, 0);  // Slightly behind the disc surface
-        textMeshBack.rotation.x = Math.PI / 2; // Rotate to face outward
-        textMeshBack.rotation.y = Math.PI; // Flip horizontally
-        disc.add(textMeshBack);
-      });
+      // Create Dreamnode
+      const dreamnode = new Dreamnode(scene);
       
       camera.position.z = 5;
       
       const animate = function () {
         requestAnimationFrame(animate);
-        disc.rotation.y += 0.01;
+        dreamnode.rotate(0.01);
         renderer.render(scene, camera);
       };
       
