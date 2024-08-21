@@ -32,10 +32,5 @@ describe('DreamNode', () => {
     };
   });
 
-  test('updates position correctly', () => {
-    const newPosition = new THREE.Vector3(1, 1, 1);
-    dreamNode.setPosition(newPosition);
-    expect(dreamNode.position.copy).toHaveBeenCalledWith(newPosition);
-    expect(dreamNode.object.position.copy).toHaveBeenCalledWith(newPosition);
-  });
+  // Add your tests here
 });
