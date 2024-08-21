@@ -12,7 +12,7 @@ class DreamNode {
     this.object = new THREE.Object3D();
     this.isRotating = false;
     this.targetRotation = 0;
-    this.yOffset = 0.05; // New Y offset variable
+    this.yOffset = 0.06; // New Y offset variable
 
     this.init();
   }
