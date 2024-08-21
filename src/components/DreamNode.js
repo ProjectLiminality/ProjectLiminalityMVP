@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
@@ -47,8 +48,7 @@ class DreamNode {
     const reactRoot = document.createElement('div');
     div.appendChild(reactRoot);
 
-    const root = React.createRoot(reactRoot);
-    root.render(React.createElement(Component));
+    ReactDOM.render(React.createElement(Component), reactRoot);
 
     const object = new CSS3DObject(div);
     object.position.z = zOffset;
