@@ -37,6 +37,11 @@ class DreamNode {
     const backSide = this.createSide(DreamSong, -0.01);
     backSide.rotation.y = Math.PI;
 
+    // Adjust the scale of the CSS3DObjects to match the disc size
+    const scale = (radius * 2) / 400; // 400px is the width/height of the div
+    frontSide.scale.set(scale, scale, scale);
+    backSide.scale.set(scale, scale, scale);
+
     this.object.add(disc);
     this.object.add(frontSide);
     this.object.add(backSide);
@@ -53,7 +58,7 @@ class DreamNode {
     root.render(React.createElement(Component));
 
     const object = new CSS3DObject(div);
-    object.position.set(0, 0, zOffset);
+    object.position.set(this.position.x, this.position.y, this.position.z + zOffset);
     object.scale.set(0.01, 0.01, 0.01);
 
     return object;
