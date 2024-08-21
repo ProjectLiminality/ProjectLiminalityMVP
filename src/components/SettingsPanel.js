@@ -6,35 +6,19 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   const [isManualInput, setIsManualInput] = useState(false);
 
   useEffect(() => {
-    console.log('SettingsPanel mounted');
-    console.log('Window object:', window);
-    console.log('Window electron object:', window.electron);
-    
     const checkElectron = () => {
       const electronAvailable = !!(window.electron && window.electron.isElectron);
       setIsElectronAvailable(electronAvailable);
       console.log('Is Electron available:', electronAvailable);
-      if (electronAvailable) {
-        console.log('Electron API methods:', Object.keys(window.electron));
-      }
     };
 
     checkElectron();
-    // Check again after a short delay to ensure the API is fully loaded
-    const timeoutId = setTimeout(checkElectron, 1000);
-
-    return () => clearTimeout(timeoutId);
   }, []);
 
   const handleSelectDirectory = async () => {
-    console.log('handleSelectDirectory called');
-    console.log('Is Electron available (in handler):', isElectronAvailable);
-    console.log('window.electron:', window.electron);
-    if (isElectronAvailable && window.electron && window.electron.openDirectoryDialog) {
+    if (isElectronAvailable) {
       try {
-        console.log('Attempting to open directory dialog');
         const path = await window.electron.openDirectoryDialog();
-        console.log('Directory dialog result:', path);
         if (path) {
           setDreamVaultPath(path);
         }
@@ -43,8 +27,6 @@ const SettingsPanel = ({ isOpen, onClose }) => {
         setIsManualInput(true);
       }
     } else {
-      console.warn('Electron API not available or openDirectoryDialog not found');
-      console.log('window.electron:', window.electron);
       setIsManualInput(true);
     }
   };
