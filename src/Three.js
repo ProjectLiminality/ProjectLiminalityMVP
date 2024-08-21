@@ -89,8 +89,10 @@ function Three() {
         return () => {
           window.removeEventListener('resize', handleResize);
           window.removeEventListener('click', onClick);
-          refContainer.current.removeChild(renderer.domElement);
-          refContainer.current.removeChild(cssRenderer.domElement);
+          if (refContainer.current) {
+            refContainer.current.removeChild(renderer.domElement);
+            refContainer.current.removeChild(cssRenderer.domElement);
+          }
         };
       } catch (error) {
         console.error("Error in Three.js setup:", error);

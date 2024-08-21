@@ -4,17 +4,23 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   const [dreamVaultPath, setDreamVaultPath] = useState('');
 
   useEffect(() => {
-    window.electron.onSelectedDirectory((event, path) => {
-      setDreamVaultPath(path);
-    });
+    if (window.electron) {
+      window.electron.onSelectedDirectory((event, path) => {
+        setDreamVaultPath(path);
+      });
 
-    return () => {
-      window.electron.removeSelectedDirectoryListener();
-    };
+      return () => {
+        window.electron.removeSelectedDirectoryListener();
+      };
+    }
   }, []);
 
   const handleSelectDirectory = () => {
-    window.electron.openDirectoryDialog();
+    if (window.electron) {
+      window.electron.openDirectoryDialog();
+    } else {
+      console.warn('Electron API not available');
+    }
   };
 
   const handleSave = () => {
