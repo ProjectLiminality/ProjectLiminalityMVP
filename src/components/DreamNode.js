@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
@@ -52,7 +52,8 @@ class DreamNode {
     const reactRoot = document.createElement('div');
     div.appendChild(reactRoot);
 
-    ReactDOM.render(React.createElement(Component), reactRoot);
+    const root = createRoot(reactRoot);
+    root.render(React.createElement(Component));
 
     const object = new CSS3DObject(div);
     object.position.z = zOffset;
