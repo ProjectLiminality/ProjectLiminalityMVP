@@ -6,6 +6,7 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 
 const DreamNode = ({ scene, position = new THREE.Vector3(0, 0, 0) }) => {
+  console.log('DreamNode rendering', { scene, position });
   const discRef = useRef(null);
   const frontRef = useRef(null);
   const backRef = useRef(null);
@@ -13,7 +14,7 @@ const DreamNode = ({ scene, position = new THREE.Vector3(0, 0, 0) }) => {
   useEffect(() => {
     const createDisc = () => {
       const geometry = new THREE.CylinderGeometry(2, 2, 0.05, 32);
-      const material = new THREE.MeshPhongMaterial({ color: 0x4287f5 });  // Blue disc
+      const material = new THREE.MeshBasicMaterial({ color: 0x4287f5 });  // Blue disc
       const disc = new THREE.Mesh(geometry, material);
       disc.rotation.x = Math.PI / 2; // Rotate 90 degrees around X-axis
       disc.position.copy(position);
@@ -41,9 +42,10 @@ const DreamNode = ({ scene, position = new THREE.Vector3(0, 0, 0) }) => {
       return { element: reactRoot, object: cssObject };
     };
 
-    createDisc();
+    if (scene) {
+      createDisc();
 
-    const frontElement = createHTMLElement(
+      const frontElement = createHTMLElement(
       DreamTalk,
       new THREE.Vector3(0, 0.03, 0),
       new THREE.Euler(-Math.PI / 2, 0, 0)
@@ -57,10 +59,13 @@ const DreamNode = ({ scene, position = new THREE.Vector3(0, 0, 0) }) => {
     );
     backRef.current = backElement;
 
-    // Clean up function
-    return () => {
-      scene.remove(discRef.current);
-    };
+      // Clean up function
+      return () => {
+        if (scene && discRef.current) {
+          scene.remove(discRef.current);
+        }
+      };
+    }
   }, [scene, position]);
 
   useEffect(() => {
