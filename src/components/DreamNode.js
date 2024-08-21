@@ -49,10 +49,7 @@ class DreamNode {
     div.style.borderRadius = '50%';
     div.style.overflow = 'hidden';
 
-    const reactRoot = document.createElement('div');
-    div.appendChild(reactRoot);
-
-    const root = createRoot(reactRoot);
+    const root = createRoot(div);
     root.render(React.createElement(Component));
 
     const object = new CSS3DObject(div);
