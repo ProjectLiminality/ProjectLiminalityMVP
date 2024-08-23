@@ -177,12 +177,11 @@ class DreamNode {
     this.position.copy(newPosition);
     this.object.position.copy(newPosition);
     
-    // Update the position of the disc and CSS3D objects
+    // Update the position of the CSS3D objects relative to the parent object
     this.object.children.forEach(child => {
-      if (child instanceof THREE.Mesh) {
-        child.position.copy(newPosition);
-      } else if (child instanceof CSS3DObject) {
-        child.position.set(newPosition.x, newPosition.y - this.yOffset, newPosition.z + (child.position.z > 0 ? 0.01 : -0.01));
+      if (child instanceof CSS3DObject) {
+        const zOffset = child.position.z > 0 ? 0.01 : -0.01;
+        child.position.set(0, -this.yOffset, zOffset);
       }
     });
   }
