@@ -97,17 +97,14 @@ class DreamNode {
 
   rotateNode() {
     this.isRotating = true;
-    this.targetRotation = this.object.rotation.y + Math.PI;
+    this.rotationStartTime = Date.now();
+    this.startRotation = this.object.rotation.y;
+    this.targetRotation = this.startRotation + Math.PI;
   }
 
   update() {
     if (this.isRotating) {
-      const rotationSpeed = 0.1;
-      this.object.rotation.y += rotationSpeed;
-      if (Math.abs(this.object.rotation.y - this.targetRotation) < 0.1) {
-        this.object.rotation.y = this.targetRotation;
-        this.isRotating = false;
-      }
+      this.updateRotation();
     }
 
     if (this.isMoving) {
@@ -188,6 +185,21 @@ class DreamNode {
         child.position.set(newPosition.x, newPosition.y - this.yOffset, newPosition.z + (child.position.z > 0 ? 0.01 : -0.01));
       }
     });
+  }
+
+  updateRotation() {
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - this.rotationStartTime;
+    const progress = Math.min(elapsedTime / this.movementDuration, 1);
+
+    if (progress < 1) {
+      const easedProgress = this.easeInOutCubic(progress);
+      const newRotation = this.startRotation + (this.targetRotation - this.startRotation) * easedProgress;
+      this.object.rotation.y = newRotation;
+    } else {
+      this.object.rotation.y = this.targetRotation;
+      this.isRotating = false;
+    }
   }
 }
 
