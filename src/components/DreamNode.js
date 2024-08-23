@@ -196,7 +196,7 @@ class DreamNode {
       const newRotation = this.startRotation + (this.targetRotation - this.startRotation) * easedProgress;
       this.object.rotation.y = newRotation;
     } else {
-      this.object.rotation.y = this.targetRotation;
+      this.object.rotation.y = this.targetRotation % (2 * Math.PI);
       this.isRotating = false;
     }
   }
