@@ -153,10 +153,14 @@ class DreamNode {
 
   setScale(scale) {
     this.currentScale = scale;
-    this.object.scale.set(scale, scale, scale);
     this.object.children.forEach(child => {
-      if (child instanceof CSS3DObject) {
+      if (child instanceof THREE.Mesh) {
+        child.scale.set(scale, scale, scale);
+      } else if (child instanceof CSS3DObject) {
         child.scale.set(0.01 * scale, 0.01 * scale, 0.01 * scale);
+        // Adjust position to maintain the same visual center
+        const zOffset = child.position.z > 0 ? 0.01 : -0.01;
+        child.position.set(this.position.x, this.position.y - this.yOffset * scale, this.position.z + zOffset * scale);
       }
     });
   }
