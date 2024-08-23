@@ -86,6 +86,22 @@ function Three() {
         };
 
         window.addEventListener('click', onClick);
+
+        // Add spacebar event listener for scaling
+        let isLarge = false;
+        const onKeyDown = (event) => {
+          if (event.code === 'Space') {
+            event.preventDefault();
+            if (isLarge) {
+              dreamNode.updateScale(1);
+            } else {
+              dreamNode.updateScale(2);
+            }
+            isLarge = !isLarge;
+          }
+        };
+
+        window.addEventListener('keydown', onKeyDown);
       
         const handleResize = () => {
           camera.aspect = window.innerWidth / window.innerHeight;
@@ -99,6 +115,7 @@ function Three() {
         return () => {
           window.removeEventListener('resize', handleResize);
           window.removeEventListener('click', onClick);
+          window.removeEventListener('keydown', onKeyDown);
           if (refContainer.current) {
             refContainer.current.removeChild(renderer.domElement);
             refContainer.current.removeChild(cssRenderer.domElement);

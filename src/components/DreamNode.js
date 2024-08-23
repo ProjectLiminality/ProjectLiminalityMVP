@@ -15,6 +15,9 @@ class DreamNode {
     this.yOffset = 0.06; // Y offset variable
     this.isMoving = false;
     this.targetPosition = new THREE.Vector3();
+    this.isScaling = false;
+    this.targetScale = 1;
+    this.currentScale = 1;
     this.startPosition = new THREE.Vector3();
     this.movementStartTime = 0;
     this.movementDuration = 1500; // 1.5 seconds in milliseconds
