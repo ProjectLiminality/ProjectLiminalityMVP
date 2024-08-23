@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import DreamNode from './components/DreamNode';
 
 function Three() {
   const refContainer = useRef(null);
+  const [dreamNodes, setDreamNodes] = useState([]);
   useEffect(() => {
     console.log("Three.js component mounted");
     if (refContainer.current) {
@@ -35,19 +36,35 @@ function Three() {
         pointLight.position.set(5, 5, 5);
         scene.add(pointLight);
       
-        // Create DreamNode
-        console.log("Creating DreamNode");
-        const dreamNode = new DreamNode({ scene });
-        const dreamNodeObject = dreamNode.getObject();
-        console.log("DreamNode object:", dreamNodeObject);
-        scene.add(dreamNodeObject);
+        // Scan DreamVault and create DreamNodes
+        console.log("Scanning DreamVault");
+        if (window.electron) {
+          const repos = await window.electron.scanDreamVault();
+          console.log("Found repositories:", repos);
+
+          const newDreamNodes = repos.map((repoName, index) => {
+            const angle = (index / repos.length) * Math.PI * 2;
+            const radius = 5;
+            const position = new THREE.Vector3(
+              Math.cos(angle) * radius,
+              Math.sin(angle) * radius,
+              0
+            );
+            const dreamNode = new DreamNode({ scene, position, repoName });
+            const dreamNodeObject = dreamNode.getObject();
+            scene.add(dreamNodeObject);
+            return dreamNode;
+          });
+
+          setDreamNodes(newDreamNodes);
+        }
       
         camera.position.z = 10;
         console.log("Camera position:", camera.position);
       
         const animate = function () {
           requestAnimationFrame(animate);
-          dreamNode.update();
+          dreamNodes.forEach(node => node.update());
           renderer.render(scene, camera);
           cssRenderer.render(scene, camera);
           console.log("Frame rendered");

@@ -56,6 +56,39 @@ function createWindow() {
   ipcMain.handle('set-dream-vault-path', (event, path) => {
     store.set('dreamVaultPath', path);
   });
+
+  ipcMain.handle('scan-dream-vault', async () => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      return [];
+    }
+
+    const fs = require('fs').promises;
+    const path = require('path');
+
+    try {
+      const entries = await fs.readdir(dreamVaultPath, { withFileTypes: true });
+      const gitRepos = [];
+
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const repoPath = path.join(dreamVaultPath, entry.name);
+          const gitDir = path.join(repoPath, '.git');
+          try {
+            await fs.access(gitDir);
+            gitRepos.push(entry.name);
+          } catch (error) {
+            // Not a git repository, skip
+          }
+        }
+      }
+
+      return gitRepos;
+    } catch (error) {
+      console.error('Error scanning DreamVault:', error);
+      return [];
+    }
+  });
 }
 
 // This method will be called when Electron has finished

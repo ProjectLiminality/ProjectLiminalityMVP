@@ -6,7 +6,8 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 
 class DreamNode {
-  constructor({ scene, position = new THREE.Vector3(0, 0, 0) }) {
+  constructor({ scene, position = new THREE.Vector3(0, 0, 0), repoName }) {
+    this.repoName = repoName;
     this.scene = scene;
     this.position = position;
     this.object = new THREE.Object3D();
@@ -48,7 +49,7 @@ class DreamNode {
     const disc = new THREE.Mesh(geometry, material);
     disc.position.copy(this.position);
 
-    const frontSide = this.createSide(DreamTalk, 0.01);
+    const frontSide = this.createSide(DreamTalk, 0.01, { repoName: this.repoName });
     const backSide = this.createSide(DreamSong, -0.01);
     backSide.rotation.y = Math.PI;
 
@@ -62,7 +63,7 @@ class DreamNode {
     this.object.add(backSide);
   }
 
-  createSide(Component, zOffset) {
+  createSide(Component, zOffset, props = {}) {
     const div = document.createElement('div');
     div.style.width = '400px';
     div.style.height = '400px';
@@ -70,7 +71,7 @@ class DreamNode {
     div.style.overflow = 'hidden';
 
     const root = createRoot(div);
-    root.render(React.createElement(Component));
+    root.render(React.createElement(Component, props));
 
     const object = new CSS3DObject(div);
     // Use the new yOffset variable for vertical positioning

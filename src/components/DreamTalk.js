@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DreamTalk = () => {
+const DreamTalk = ({ repoName }) => {
   return (
     <div className="dream-talk" style={{
       width: '100%',
@@ -14,8 +14,7 @@ const DreamTalk = () => {
       textAlign: 'center',
       borderRadius: '50%',
     }}>
-      <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>DreamTalk</h2>
-      <p style={{ fontSize: '16px', padding: '0 20px' }}>Front side of the DreamNode</p>
+      <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>{repoName}</h2>
     </div>
   );
 };
