@@ -43,8 +43,9 @@ function Three() {
             const repos = await window.electron.scanDreamVault();
             console.log("Found repositories:", repos);
 
-            const newDreamNodes = repos.map((repoName, index) => {
-              const angle = (index / repos.length) * Math.PI * 2;
+            const maxNodes = Math.min(repos.length, 10);  // Limit to 10 nodes
+            const newDreamNodes = repos.slice(0, maxNodes).map((repoName, index) => {
+              const angle = (index / maxNodes) * Math.PI * 2;
               const radius = 5;
               const position = new THREE.Vector3(
                 Math.cos(angle) * radius,
@@ -58,6 +59,7 @@ function Three() {
             });
 
             setDreamNodes(newDreamNodes);
+            console.log(`Created ${newDreamNodes.length} DreamNodes`);
           }
       
           camera.position.z = 10;
