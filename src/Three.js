@@ -9,55 +9,56 @@ function Three() {
   useEffect(() => {
     console.log("Three.js component mounted");
     if (refContainer.current) {
-      try {
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x000000);  // Black background
-        console.log("Scene created with black background");
+      const initScene = async () => {
+        try {
+          const scene = new THREE.Scene();
+          scene.background = new THREE.Color(0x000000);  // Black background
+          console.log("Scene created with black background");
 
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        console.log("Camera created");
+          const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+          console.log("Camera created");
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        refContainer.current.appendChild(renderer.domElement);
-        console.log("WebGL renderer created and added to DOM");
+          const renderer = new THREE.WebGLRenderer({ antialias: true });
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          refContainer.current.appendChild(renderer.domElement);
+          console.log("WebGL renderer created and added to DOM");
 
-        const cssRenderer = new CSS3DRenderer();
-        cssRenderer.setSize(window.innerWidth, window.innerHeight);
-        cssRenderer.domElement.style.position = 'absolute';
-        cssRenderer.domElement.style.top = '0';
-        refContainer.current.appendChild(cssRenderer.domElement);
-        console.log("CSS renderer created and added to DOM");
-      
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0xffffff, 1);
-        pointLight.position.set(5, 5, 5);
-        scene.add(pointLight);
-      
-        // Scan DreamVault and create DreamNodes
-        console.log("Scanning DreamVault");
-        if (window.electron) {
-          const repos = await window.electron.scanDreamVault();
-          console.log("Found repositories:", repos);
+          const cssRenderer = new CSS3DRenderer();
+          cssRenderer.setSize(window.innerWidth, window.innerHeight);
+          cssRenderer.domElement.style.position = 'absolute';
+          cssRenderer.domElement.style.top = '0';
+          refContainer.current.appendChild(cssRenderer.domElement);
+          console.log("CSS renderer created and added to DOM");
+        
+          // Add lighting
+          const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+          scene.add(ambientLight);
+          const pointLight = new THREE.PointLight(0xffffff, 1);
+          pointLight.position.set(5, 5, 5);
+          scene.add(pointLight);
+        
+          // Scan DreamVault and create DreamNodes
+          console.log("Scanning DreamVault");
+          if (window.electron) {
+            const repos = await window.electron.scanDreamVault();
+            console.log("Found repositories:", repos);
 
-          const newDreamNodes = repos.map((repoName, index) => {
-            const angle = (index / repos.length) * Math.PI * 2;
-            const radius = 5;
-            const position = new THREE.Vector3(
-              Math.cos(angle) * radius,
-              Math.sin(angle) * radius,
-              0
-            );
-            const dreamNode = new DreamNode({ scene, position, repoName });
-            const dreamNodeObject = dreamNode.getObject();
-            scene.add(dreamNodeObject);
-            return dreamNode;
-          });
+            const newDreamNodes = repos.map((repoName, index) => {
+              const angle = (index / repos.length) * Math.PI * 2;
+              const radius = 5;
+              const position = new THREE.Vector3(
+                Math.cos(angle) * radius,
+                Math.sin(angle) * radius,
+                0
+              );
+              const dreamNode = new DreamNode({ scene, position, repoName });
+              const dreamNodeObject = dreamNode.getObject();
+              scene.add(dreamNodeObject);
+              return dreamNode;
+            });
 
-          setDreamNodes(newDreamNodes);
-        }
+            setDreamNodes(newDreamNodes);
+          }
       
         camera.position.z = 10;
         console.log("Camera position:", camera.position);
@@ -67,7 +68,6 @@ function Three() {
           dreamNodes.forEach(node => node.update());
           renderer.render(scene, camera);
           cssRenderer.render(scene, camera);
-          console.log("Frame rendered");
         };
       
         animate();
@@ -97,8 +97,8 @@ function Three() {
             const distance = -camera.position.z / dir.z;
             const pos = camera.position.clone().add(dir.multiplyScalar(distance));
             
-            // Update DreamNode position
-            dreamNode.updatePosition(pos);
+            // Update all DreamNode positions
+            dreamNodes.forEach(dreamNode => dreamNode.updatePosition(pos));
           }
         };
 
@@ -109,11 +109,13 @@ function Three() {
         const onKeyDown = (event) => {
           if (event.code === 'Space') {
             event.preventDefault();
-            if (isLarge) {
-              dreamNode.updateScale(1);
-            } else {
-              dreamNode.updateScale(2);
-            }
+            dreamNodes.forEach(dreamNode => {
+              if (isLarge) {
+                dreamNode.updateScale(1);
+              } else {
+                dreamNode.updateScale(2);
+              }
+            });
             isLarge = !isLarge;
           }
         };
