@@ -12,13 +12,6 @@ function Three() {
       const initScene = async () => {
         try {
           const scene = new THREE.Scene();
-          // ... rest of the initScene function ...
-        } catch (error) {
-          console.error("Error in Three.js setup:", error);
-        }
-      };
-
-      initScene(); // Call the initScene function
           scene.background = new THREE.Color(0x000000);  // Black background
           console.log("Scene created with black background");
 
@@ -67,89 +60,92 @@ function Three() {
             setDreamNodes(newDreamNodes);
           }
       
-        camera.position.z = 10;
-        console.log("Camera position:", camera.position);
+          camera.position.z = 10;
+          console.log("Camera position:", camera.position);
       
-        const animate = function () {
-          requestAnimationFrame(animate);
-          dreamNodes.forEach(node => node.update());
-          renderer.render(scene, camera);
-          cssRenderer.render(scene, camera);
-        };
+          const animate = function () {
+            requestAnimationFrame(animate);
+            dreamNodes.forEach(node => node.update());
+            renderer.render(scene, camera);
+            cssRenderer.render(scene, camera);
+          };
       
-        animate();
+          animate();
 
-        console.log("Animation loop started");
-        console.log("Scene children:", scene.children);
+          console.log("Animation loop started");
+          console.log("Scene children:", scene.children);
 
-        // Add raycaster for click detection
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
+          // Add raycaster for click detection
+          const raycaster = new THREE.Raycaster();
+          const mouse = new THREE.Vector2();
 
-        const onClick = (event) => {
-          mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-          mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          const onClick = (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-          raycaster.setFromCamera(mouse, camera);
+            raycaster.setFromCamera(mouse, camera);
 
-          const intersects = raycaster.intersectObjects(scene.children, true);
+            const intersects = raycaster.intersectObjects(scene.children, true);
 
-          if (intersects.length > 0) {
-            scene.dispatchEvent({ type: 'click', intersects: intersects });
-          } else {
-            // Convert 2D mouse position to 3D world position
-            const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
-            vector.unproject(camera);
-            const dir = vector.sub(camera.position).normalize();
-            const distance = -camera.position.z / dir.z;
-            const pos = camera.position.clone().add(dir.multiplyScalar(distance));
-            
-            // Update all DreamNode positions
-            dreamNodes.forEach(dreamNode => dreamNode.updatePosition(pos));
-          }
-        };
+            if (intersects.length > 0) {
+              scene.dispatchEvent({ type: 'click', intersects: intersects });
+            } else {
+              // Convert 2D mouse position to 3D world position
+              const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
+              vector.unproject(camera);
+              const dir = vector.sub(camera.position).normalize();
+              const distance = -camera.position.z / dir.z;
+              const pos = camera.position.clone().add(dir.multiplyScalar(distance));
+              
+              // Update all DreamNode positions
+              dreamNodes.forEach(dreamNode => dreamNode.updatePosition(pos));
+            }
+          };
 
-        window.addEventListener('click', onClick);
+          window.addEventListener('click', onClick);
 
-        // Add spacebar event listener for scaling
-        let isLarge = false;
-        const onKeyDown = (event) => {
-          if (event.code === 'Space') {
-            event.preventDefault();
-            dreamNodes.forEach(dreamNode => {
-              if (isLarge) {
-                dreamNode.updateScale(1);
-              } else {
-                dreamNode.updateScale(2);
-              }
-            });
-            isLarge = !isLarge;
-          }
-        };
+          // Add spacebar event listener for scaling
+          let isLarge = false;
+          const onKeyDown = (event) => {
+            if (event.code === 'Space') {
+              event.preventDefault();
+              dreamNodes.forEach(dreamNode => {
+                if (isLarge) {
+                  dreamNode.updateScale(1);
+                } else {
+                  dreamNode.updateScale(2);
+                }
+              });
+              isLarge = !isLarge;
+            }
+          };
 
-        window.addEventListener('keydown', onKeyDown);
+          window.addEventListener('keydown', onKeyDown);
       
-        const handleResize = () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-          cssRenderer.setSize(window.innerWidth, window.innerHeight);
-        };
+          const handleResize = () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            cssRenderer.setSize(window.innerWidth, window.innerHeight);
+          };
       
-        window.addEventListener('resize', handleResize);
+          window.addEventListener('resize', handleResize);
       
-        return () => {
-          window.removeEventListener('resize', handleResize);
-          window.removeEventListener('click', onClick);
-          window.removeEventListener('keydown', onKeyDown);
-          if (refContainer.current) {
-            refContainer.current.removeChild(renderer.domElement);
-            refContainer.current.removeChild(cssRenderer.domElement);
-          }
-        };
-      } catch (error) {
-        console.error("Error in Three.js setup:", error);
-      }
+          return () => {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('click', onClick);
+            window.removeEventListener('keydown', onKeyDown);
+            if (refContainer.current) {
+              refContainer.current.removeChild(renderer.domElement);
+              refContainer.current.removeChild(cssRenderer.domElement);
+            }
+          };
+        } catch (error) {
+          console.error("Error in Three.js setup:", error);
+        }
+      };
+
+      initScene();
     }
   }, []);
 
