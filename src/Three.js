@@ -112,8 +112,15 @@ function Three() {
 
   return (
     <>
-      <div ref={refContainer} style={{ width: '100vw', height: '100vh' }} />
-      {!refContainer.current && <div>Loading 3D scene...</div>}
+      <div ref={refContainer} style={{ 
+        width: '100vw', 
+        height: '100vh', 
+        position: 'fixed', 
+        top: 0, 
+        left: 0, 
+        overflow: 'hidden'
+      }} />
+      {!refContainer.current && <div style={{ display: 'none' }}>Loading 3D scene...</div>}
     </>
   );
 }
