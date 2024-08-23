@@ -128,6 +128,37 @@ class DreamNode {
         this.isMoving = false;
       }
     }
+
+    if (this.isScaling) {
+      const currentTime = Date.now();
+      const elapsedTime = currentTime - this.scaleStartTime;
+      const progress = Math.min(elapsedTime / this.movementDuration, 1);
+
+      if (progress < 1) {
+        const easedProgress = this.easeInOutCubic(progress);
+        const newScale = this.currentScale + (this.targetScale - this.currentScale) * easedProgress;
+        this.setScale(newScale);
+      } else {
+        this.setScale(this.targetScale);
+        this.isScaling = false;
+      }
+    }
+  }
+
+  updateScale(newScale) {
+    this.targetScale = newScale;
+    this.scaleStartTime = Date.now();
+    this.isScaling = true;
+  }
+
+  setScale(scale) {
+    this.currentScale = scale;
+    this.object.scale.set(scale, scale, scale);
+    this.object.children.forEach(child => {
+      if (child instanceof CSS3DObject) {
+        child.scale.set(0.01 * scale, 0.01 * scale, 0.01 * scale);
+      }
+    });
   }
 
   getObject() {
