@@ -38,25 +38,7 @@ function createWindow() {
     win.webContents.openDevTools({ mode: 'detach' });
   }
 
-  // Handle directory selection
-  ipcMain.handle('open-directory-dialog', async () => {
-    const result = await dialog.showOpenDialog(win, {
-      properties: ['openDirectory'],
-      title: 'Select Directory',
-      buttonLabel: 'Select'
-    });
-    return result.canceled ? null : result.filePaths[0];
-  });
-
-  // Handle file selection
-  ipcMain.handle('open-file-dialog', async () => {
-    const result = await dialog.showOpenDialog(win, {
-      properties: ['openFile'],
-      title: 'Select File',
-      buttonLabel: 'Select'
-    });
-    return result.canceled ? null : result.filePaths[0];
-  });
+  // IPC handlers removed
 }
 
 // This method will be called when Electron has finished
