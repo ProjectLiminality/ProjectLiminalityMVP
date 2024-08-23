@@ -12,6 +12,13 @@ function Three() {
       const initScene = async () => {
         try {
           const scene = new THREE.Scene();
+          // ... rest of the initScene function ...
+        } catch (error) {
+          console.error("Error in Three.js setup:", error);
+        }
+      };
+
+      initScene(); // Call the initScene function
           scene.background = new THREE.Color(0x000000);  // Black background
           console.log("Scene created with black background");
 
