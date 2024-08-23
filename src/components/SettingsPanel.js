@@ -15,7 +15,14 @@ const SettingsPanel = ({ isOpen, onClose }) => {
     };
 
     checkElectron();
-  }, []);
+
+    // Load saved DreamVault path
+    if (isElectronAvailable) {
+      window.electron.getDreamVaultPath().then(path => {
+        setDreamVaultPath(path);
+      });
+    }
+  }, [isElectronAvailable]);
 
   const handleSelectDirectory = async () => {
     console.log('handleSelectDirectory called');
@@ -44,6 +51,9 @@ const SettingsPanel = ({ isOpen, onClose }) => {
 
   const handleSave = () => {
     console.log('Saving DreamVault path:', dreamVaultPath);
+    if (isElectronAvailable) {
+      window.electron.setDreamVaultPath(dreamVaultPath);
+    }
     setIsManualInput(false);
     onClose();
   };

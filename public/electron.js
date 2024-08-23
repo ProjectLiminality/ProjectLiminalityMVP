@@ -1,6 +1,9 @@
 const path = require('path');
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const isDev = require('electron-is-dev');
+const Store = require('electron-store');
+
+const store = new Store();
 
 function createWindow() {
   // Create the browser window.
@@ -44,6 +47,14 @@ function createWindow() {
       properties: ['openDirectory']
     });
     return result.filePaths[0];
+  });
+
+  ipcMain.handle('get-dream-vault-path', () => {
+    return store.get('dreamVaultPath', '');
+  });
+
+  ipcMain.handle('set-dream-vault-path', (event, path) => {
+    store.set('dreamVaultPath', path);
   });
 }
 
