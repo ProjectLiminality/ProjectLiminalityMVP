@@ -38,7 +38,13 @@ function createWindow() {
     win.webContents.openDevTools({ mode: 'detach' });
   }
 
-  // IPC handlers removed
+  // IPC handlers
+  ipcMain.handle('open-directory-dialog', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory']
+    });
+    return result.filePaths[0];
+  });
 }
 
 // This method will be called when Electron has finished
