@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import Three from './Three';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import DreamNodeGrid from './components/DreamNodeGrid';
 import SettingsPanel from './components/SettingsPanel';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const mountRef = useRef(null);
+  const sceneRef = useRef(null);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -20,28 +24,9 @@ function App() {
     };
   }, []);
 
-  return (
-    <div className="App">
-      <Three />
-      <SettingsPanel 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
-      />
-    </div>
-  );
-}
-
-export default App;
-import React, { useRef, useEffect } from 'react';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import DreamNodeGrid from './components/DreamNodeGrid';
-
-const App = () => {
-  const mountRef = useRef(null);
-
   useEffect(() => {
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer();
 
@@ -70,10 +55,16 @@ const App = () => {
   }, []);
 
   return (
-    <div ref={mountRef} style={{ width: '100vw', height: '100vh' }}>
-      <DreamNodeGrid scene={scene} />
+    <div className="App">
+      <div ref={mountRef} style={{ width: '100vw', height: '100vh' }}>
+        {sceneRef.current && <DreamNodeGrid scene={sceneRef.current} />}
+      </div>
+      <SettingsPanel 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
     </div>
   );
-};
+}
 
 export default App;
