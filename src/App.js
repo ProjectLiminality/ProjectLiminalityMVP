@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
-import Three from './Three';
+import ThreeScene from './components/ThreeScene';
 import SettingsPanel from './components/SettingsPanel';
 
 function App() {
