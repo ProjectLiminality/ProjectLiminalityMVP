@@ -39,6 +39,7 @@ class DreamNode {
   }
 
   async readMetadata() {
+    console.log(`Attempting to read metadata for ${this.repoName}`);
     try {
       const response = await fetch(`/${this.repoName}/.pl`);
       if (!response.ok) {
@@ -48,15 +49,38 @@ class DreamNode {
       }
 
       const text = await response.text();
+      if (!text) {
+        console.warn(`Empty .pl file for ${this.repoName}`);
+        this.metadata = this.getDefaultMetadata();
+        return;
+      }
+
       console.log(`Raw .pl content for ${this.repoName}:`, text);
 
-      // We're not parsing the content for now, just using it as is
-      this.metadata = { rawContent: text };
+      try {
+        this.metadata = JSON.parse(text);
+        console.log(`Parsed metadata for ${this.repoName}:`, this.metadata);
+      } catch (parseError) {
+        console.error(`Failed to parse .pl file as JSON for ${this.repoName}:`, parseError);
+        // If parsing fails, store the raw content
+        this.metadata = { rawContent: text };
+      }
 
-      // Ensure the metadata has a 'type' field (for compatibility with existing code)
+      // Check for expected fields
+      const expectedFields = ['type', 'lastUpdated', 'lastOpened'];
+      expectedFields.forEach(field => {
+        if (!this.metadata[field]) {
+          console.warn(`Missing expected field '${field}' in metadata for ${this.repoName}`);
+        }
+      });
+
+      // Ensure the metadata has a 'type' field
       if (!this.metadata.type) {
+        console.warn(`No 'type' field found in metadata for ${this.repoName}, using default.`);
         this.metadata.type = 'idea';
       }
+
+      console.log(`Final metadata for ${this.repoName}:`, this.metadata);
     } catch (error) {
       console.error(`Error reading metadata for ${this.repoName}:`, error);
       this.metadata = this.getDefaultMetadata();
