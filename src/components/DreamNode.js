@@ -136,8 +136,8 @@ class DreamNode {
   rotateNode() {
     this.isRotating = true;
     this.rotationStartTime = Date.now();
-    this.startRotation = this.object.rotation.y;
-    this.targetRotation = this.startRotation + Math.PI;
+    this.startRotation = this.nodeContainer.rotation.y;
+    this.targetRotation = Math.round(this.startRotation / Math.PI) % 2 === 0 ? Math.PI : 0;
   }
 
   update() {
@@ -238,7 +238,7 @@ class DreamNode {
       const newRotation = this.startRotation + (this.targetRotation - this.startRotation) * easedProgress;
       this.nodeContainer.rotation.y = newRotation;
     } else {
-      this.nodeContainer.rotation.y = this.targetRotation % (2 * Math.PI);
+      this.nodeContainer.rotation.y = this.targetRotation;
       this.isRotating = false;
     }
   }
