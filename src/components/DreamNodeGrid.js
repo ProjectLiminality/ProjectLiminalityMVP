@@ -84,56 +84,11 @@ class DreamNodeGrid {
   async createDreamNodes(repos) {
     this.dreamNodes = await Promise.all(repos.map(async (repoName, index) => {
       const position = this.layouts[this.currentLayout](index, repos.length);
-      const metadata = await this.readMetadata(repoName);
-      const dreamNode = new DreamNode({ scene: this.scene, position, repoName, metadata });
+      const dreamNode = new DreamNode({ scene: this.scene, position, repoName });
       this.scene.add(dreamNode.getObject());
       return dreamNode;
     }));
     console.log(`Created ${this.dreamNodes.length} DreamNodes`);
-  }
-
-  async readMetadata(repoName) {
-    try {
-      const response = await fetch(`/${repoName}/.pl`);
-      if (!response.ok) {
-        console.warn(`HTTP error for ${repoName}! status: ${response.status}`);
-        return this.getDefaultMetadata(repoName);
-      }
-
-      const text = await response.text();
-      console.log(`Raw .pl content for ${repoName}:`, text);
-
-      let metadata;
-      try {
-        metadata = JSON.parse(text);
-      } catch (parseError) {
-        console.error(`Failed to parse .pl file as JSON for ${repoName}:`, parseError);
-        return this.getDefaultMetadata(repoName);
-      }
-
-      console.log(`Parsed metadata for ${repoName}:`, metadata);
-
-      // Ensure the metadata has a 'type' field
-      if (!metadata.type) {
-        console.warn(`No 'type' field found in metadata for ${repoName}, using default.`);
-        metadata.type = 'idea';
-      }
-
-      return metadata;
-    } catch (error) {
-      console.error(`Error reading metadata for ${repoName}:`, error);
-      return this.getDefaultMetadata(repoName);
-    }
-  }
-
-  getDefaultMetadata(repoName) {
-    return {
-      type: 'idea',
-      dateCreated: new Date().toISOString(),
-      dateModified: new Date().toISOString(),
-      interactions: 0,
-      relatedNodes: []
-    };
   }
 
   calculateGridPosition(index, total) {

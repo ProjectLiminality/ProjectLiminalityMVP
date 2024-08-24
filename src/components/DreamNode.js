@@ -6,19 +6,17 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 
 class DreamNode {
-  constructor({ scene, position = new THREE.Vector3(0, 0, 0), repoName, metadata = {} }) {
+  constructor({ scene, position = new THREE.Vector3(0, 0, 0), repoName }) {
     this.repoName = repoName;
     this.scene = scene;
     this.position = position;
-    this.metadata = metadata;
-    console.log(`DreamNode created for ${repoName}:`, metadata); // Debug log
+    this.metadata = {};
     this.object = new THREE.Object3D();
     this.isRotating = false;
     this.targetRotation = 0;
     this.yOffset = 0.06;
     this.isMoving = false;
     this.mediaContent = null;
-    this.loadMediaContent();
     this.targetPosition = new THREE.Vector3();
     this.isScaling = false;
     this.targetScale = 1;
@@ -31,9 +29,60 @@ class DreamNode {
     this.init();
   }
 
+  async init() {
+    console.log("Initializing DreamNode");
+    await this.readMetadata();
+    await this.loadMediaContent();
+    this.createNode();
+    this.addClickListener();
+    console.log("DreamNode initialized");
+  }
+
+  async readMetadata() {
+    try {
+      const response = await fetch(`/${this.repoName}/.pl`);
+      if (!response.ok) {
+        console.warn(`HTTP error for ${this.repoName}! status: ${response.status}`);
+        this.metadata = this.getDefaultMetadata();
+        return;
+      }
+
+      const text = await response.text();
+      console.log(`Raw .pl content for ${this.repoName}:`, text);
+
+      try {
+        this.metadata = JSON.parse(text);
+      } catch (parseError) {
+        console.error(`Failed to parse .pl file as JSON for ${this.repoName}:`, parseError);
+        this.metadata = this.getDefaultMetadata();
+      }
+
+      console.log(`Parsed metadata for ${this.repoName}:`, this.metadata);
+
+      // Ensure the metadata has a 'type' field
+      if (!this.metadata.type) {
+        console.warn(`No 'type' field found in metadata for ${this.repoName}, using default.`);
+        this.metadata.type = 'idea';
+      }
+    } catch (error) {
+      console.error(`Error reading metadata for ${this.repoName}:`, error);
+      this.metadata = this.getDefaultMetadata();
+    }
+  }
+
+  getDefaultMetadata() {
+    return {
+      type: 'idea',
+      dateCreated: new Date().toISOString(),
+      dateModified: new Date().toISOString(),
+      interactions: 0,
+      relatedNodes: []
+    };
+  }
+
   getNodeColor() {
-    console.log("Node type:", this.metadata.type); // Debug log
-    if (this.metadata && this.metadata.type && this.metadata.type.toLowerCase() === 'person') {
+    console.log("Node type:", this.metadata.type);
+    if (this.metadata.type && this.metadata.type.toLowerCase() === 'person') {
       return 0xff0000; // Red for person
     } else {
       return 0x4287f5; // Blue for idea (default)
