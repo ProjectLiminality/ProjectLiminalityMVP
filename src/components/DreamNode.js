@@ -44,7 +44,7 @@ class DreamNode {
   }
 
   createNode() {
-    const radius = 1.4; // Reduced radius for smaller nodes
+    const radius = 1; // Further reduced radius for smaller nodes
     const segments = 64;
 
     // Create a container for all parts of the node
@@ -76,6 +76,10 @@ class DreamNode {
     const scale = (radius * 2) / 400; // 400px is the width/height of the div
     frontSide.scale.set(scale, scale, scale);
     backSide.scale.set(scale, scale, scale);
+    
+    // Adjust the position of the CSS3DObjects
+    frontSide.position.set(0, 0, 0.01);
+    backSide.position.set(0, 0, -0.01);
 
     // Add all parts to the container
     this.nodeContainer.add(disc);
@@ -185,12 +189,10 @@ class DreamNode {
     this.currentScale = scale;
     this.nodeContainer.scale.set(scale, scale, scale);
     
-    // Adjust CSS3DObject scales and positions
+    // Adjust CSS3DObject scales
     this.nodeContainer.children.forEach(child => {
       if (child instanceof CSS3DObject) {
-        child.scale.set(0.01 / scale, 0.01 / scale, 0.01 / scale);  // Adjust CSS3DObject scale
-        const zOffset = child.position.z > 0 ? 0.01 : -0.01;
-        child.position.set(0, -this.yOffset / scale, zOffset / scale);  // Adjust position relative to parent
+        child.scale.set(0.01 / scale, 0.01 / scale, 0.01 / scale);
       }
     });
   }
