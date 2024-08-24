@@ -11,6 +11,7 @@ class DreamNode {
     this.scene = scene;
     this.position = position;
     this.metadata = metadata;
+    console.log(`DreamNode created for ${repoName}:`, metadata); // Debug log
     this.object = new THREE.Object3D();
     this.isRotating = false;
     this.targetRotation = 0;
@@ -28,6 +29,15 @@ class DreamNode {
     this.isHovered = false;
 
     this.init();
+  }
+
+  getNodeColor() {
+    console.log("Node type:", this.metadata.type); // Debug log
+    if (this.metadata && this.metadata.type === 'person') {
+      return 0xff0000; // Red for person
+    } else {
+      return 0x4287f5; // Blue for idea (default)
+    }
   }
 
   easeInOutCubic(t) {
@@ -53,7 +63,7 @@ class DreamNode {
     // Create a circular disc
     const geometry = new THREE.CircleGeometry(radius, segments);
     const material = new THREE.MeshBasicMaterial({ 
-      color: this.metadata.type === 'person' ? 0xff0000 : 0x4287f5, 
+      color: this.getNodeColor(),
       side: THREE.DoubleSide 
     });
     const disc = new THREE.Mesh(geometry, material);
