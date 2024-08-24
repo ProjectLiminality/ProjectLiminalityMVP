@@ -97,22 +97,34 @@ class DreamNodeGrid {
       const response = await fetch(`/${repoName}/.pl`);
       if (!response.ok) {
         console.warn(`HTTP error for ${repoName}! status: ${response.status}`);
-        return this.getDefaultMetadata(repoName);
+        if (response.status === 404) {
+          console.log(`No .pl file found for ${repoName}, using default metadata.`);
+          return this.getDefaultMetadata(repoName);
+        } else {
+          throw new Error(`Failed to fetch metadata for ${repoName}`);
+        }
       }
+
       const contentType = response.headers.get("content-type");
       console.log(`Content type for ${repoName}: ${contentType}`);
 
-      const text = await response.text();
-      console.log(`Response text for ${repoName}:`, text.substring(0, 100) + '...'); // Log first 100 characters
-
-      try {
-        const metadata = JSON.parse(text);
-        return metadata;
-      } catch (parseError) {
-        console.error(`Failed to parse response as JSON for ${repoName}:`, parseError);
-        console.error(`Full response text for ${repoName}:`, text);
-        return this.getDefaultMetadata(repoName);
+      let metadata;
+      if (contentType && contentType.includes("application/json")) {
+        metadata = await response.json();
+      } else {
+        console.warn(`Unexpected content type for ${repoName}: ${contentType}`);
+        const text = await response.text();
+        console.log(`Response text for ${repoName}:`, text.substring(0, 100) + '...');
+        try {
+          metadata = JSON.parse(text);
+        } catch (parseError) {
+          console.error(`Failed to parse response as JSON for ${repoName}:`, parseError);
+          console.error(`Full response text for ${repoName}:`, text);
+          return this.getDefaultMetadata(repoName);
+        }
       }
+
+      return metadata;
     } catch (error) {
       console.error(`Error reading metadata for ${repoName}:`, error);
       return this.getDefaultMetadata(repoName);
