@@ -142,44 +142,35 @@ class DreamNode {
     }
 
     if (this.isMoving) {
-      const currentTime = Date.now();
-      const elapsedTime = currentTime - this.movementStartTime;
-      const progress = Math.min(elapsedTime / this.movementDuration, 1);
-
-      if (progress < 1) {
-        const easedProgress = this.easeInOutCubic(progress);
-        const newPosition = new THREE.Vector3().lerpVectors(
-          this.startPosition,
-          this.targetPosition,
-          easedProgress
-        );
-        this.setPosition(newPosition);
-      } else {
-        this.setPosition(this.targetPosition);
-        this.isMoving = false;
-      }
+      this.updatePosition();
     }
 
     if (this.isScaling) {
-      const currentTime = Date.now();
-      const elapsedTime = currentTime - this.scaleStartTime;
-      const progress = Math.min(elapsedTime / this.movementDuration, 1);
-
-      if (progress < 1) {
-        const easedProgress = this.easeInOutCubic(progress);
-        const newScale = this.currentScale + (this.targetScale - this.currentScale) * easedProgress;
-        this.setScale(newScale);
-      } else {
-        this.setScale(this.targetScale);
-        this.isScaling = false;
-      }
+      this.updateScale();
     }
   }
 
   updateScale(newScale) {
-    this.targetScale = newScale;
-    this.scaleStartTime = Date.now();
-    this.isScaling = true;
+    if (!this.isScaling) {
+      this.targetScale = newScale;
+      this.scaleStartTime = Date.now();
+      this.isScaling = true;
+    }
+  }
+
+  updateScaleAnimation() {
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - this.scaleStartTime;
+    const progress = Math.min(elapsedTime / this.movementDuration, 1);
+
+    if (progress < 1) {
+      const easedProgress = this.easeInOutCubic(progress);
+      const newScale = this.currentScale + (this.targetScale - this.currentScale) * easedProgress;
+      this.setScale(newScale);
+    } else {
+      this.setScale(this.targetScale);
+      this.isScaling = false;
+    }
   }
 
   setScale(scale) {
@@ -189,9 +180,9 @@ class DreamNode {
     // Adjust CSS3DObject scales and positions
     this.object.children.forEach(child => {
       if (child instanceof CSS3DObject) {
-        child.scale.set(0.01, 0.01, 0.01);  // Keep CSS3DObject scale constant
+        child.scale.set(0.01 / scale, 0.01 / scale, 0.01 / scale);  // Adjust CSS3DObject scale
         const zOffset = child.position.z > 0 ? 0.01 : -0.01;
-        child.position.set(0, -this.yOffset, zOffset);  // Position relative to parent
+        child.position.set(0, -this.yOffset / scale, zOffset / scale);  // Adjust position relative to parent
       }
     });
   }
@@ -201,10 +192,31 @@ class DreamNode {
   }
 
   updatePosition(newPosition) {
-    this.startPosition.copy(this.object.position);
-    this.targetPosition.copy(newPosition);
-    this.movementStartTime = Date.now();
-    this.isMoving = true;
+    if (!this.isMoving) {
+      this.startPosition.copy(this.object.position);
+      this.targetPosition.copy(newPosition);
+      this.movementStartTime = Date.now();
+      this.isMoving = true;
+    }
+  }
+
+  updatePositionAnimation() {
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - this.movementStartTime;
+    const progress = Math.min(elapsedTime / this.movementDuration, 1);
+
+    if (progress < 1) {
+      const easedProgress = this.easeInOutCubic(progress);
+      const newPosition = new THREE.Vector3().lerpVectors(
+        this.startPosition,
+        this.targetPosition,
+        easedProgress
+      );
+      this.setPosition(newPosition);
+    } else {
+      this.setPosition(this.targetPosition);
+      this.isMoving = false;
+    }
   }
 
   setPosition(newPosition) {
