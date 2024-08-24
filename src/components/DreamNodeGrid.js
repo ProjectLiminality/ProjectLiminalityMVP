@@ -1,45 +1,63 @@
-import React, { useEffect, useState } from 'react';
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
 
-const DreamNodeGrid = ({ scene }) => {
-  const [dreamNodes, setDreamNodes] = useState([]);
+class DreamNodeGrid {
+  constructor({ scene, camera }) {
+    this.scene = scene;
+    this.camera = camera;
+    this.dreamNodes = [];
+    this.init();
+  }
 
-  useEffect(() => {
-    const loadDreamNodes = async () => {
-      // Fetch the list of repositories from your backend
-      const response = await fetch('/api/repositories');
-      const repos = await response.json();
+  async init() {
+    console.log("Initializing DreamNodeGrid");
+    if (window.electron) {
+      const repos = await window.electron.scanDreamVault();
+      console.log("Found repositories:", repos);
+      this.createDreamNodes(repos);
+    }
+  }
 
-      const nodes = repos.map((repo, index) => {
-        const { x, y } = calculateHoneycombPosition(index, repos.length);
-        return new DreamNode({
-          scene,
-          position: new THREE.Vector3(x, y, 0),
-          repoName: repo.name
-        });
-      });
+  createDreamNodes(repos) {
+    this.dreamNodes = repos.map((repoName, index) => {
+      const position = this.calculateGridPosition(index, repos.length);
+      const isRed = index % 5 === 0; // Make every 5th node red
+      const dreamNode = new DreamNode({ scene: this.scene, position, repoName, isRed });
+      const dreamNodeObject = dreamNode.getObject();
+      this.scene.add(dreamNodeObject);
+      return dreamNode;
+    });
+    console.log(`Created ${this.dreamNodes.length} DreamNodes`);
+  }
 
-      setDreamNodes(nodes);
-    };
-
-    loadDreamNodes();
-  }, [scene]);
-
-  const calculateHoneycombPosition = (index, total) => {
-    const hexRadius = 2.2; // Adjust this value to change the spacing between nodes
+  calculateGridPosition(index, total) {
+    const hexRadius = 1.5; // Reduced radius for smaller nodes
     const columns = Math.ceil(Math.sqrt(total));
+    const rows = Math.ceil(total / columns);
+
+    const gridWidth = columns * hexRadius * 2 * Math.cos(Math.PI / 6);
+    const gridHeight = rows * hexRadius * 1.5;
+
+    const startX = -gridWidth / 2;
+    const startY = gridHeight / 2;
+
     const row = Math.floor(index / columns);
     const col = index % columns;
     const offset = row % 2 === 0 ? 0 : hexRadius * Math.cos(Math.PI / 6);
-    
-    const x = col * hexRadius * 2 * Math.cos(Math.PI / 6) + offset;
-    const y = row * hexRadius * 1.5;
 
-    return { x, y };
-  };
+    const x = startX + col * hexRadius * 2 * Math.cos(Math.PI / 6) + offset;
+    const y = startY - row * hexRadius * 1.5;
 
-  return null; // This component doesn't render anything directly
-};
+    return new THREE.Vector3(x, y, 0);
+  }
+
+  getDreamNodes() {
+    return this.dreamNodes;
+  }
+
+  update() {
+    this.dreamNodes.forEach(node => node.update());
+  }
+}
 
 export default DreamNodeGrid;

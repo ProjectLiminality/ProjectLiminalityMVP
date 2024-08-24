@@ -37,53 +37,17 @@ function Three() {
           pointLight.position.set(5, 5, 5);
           scene.add(pointLight);
         
-          // Scan DreamVault and create DreamNodes
-          console.log("Scanning DreamVault");
-          if (window.electron) {
-            const repos = await window.electron.scanDreamVault();
-            console.log("Found repositories:", repos);
-
-            const newDreamNodes = repos.map((repoName, index) => {
-              const position = calculateGridPosition(index, repos.length);
-              const isRed = index % 5 === 0; // Make every 5th node red
-              const dreamNode = new DreamNode({ scene, position, repoName, isRed });
-              const dreamNodeObject = dreamNode.getObject();
-              scene.add(dreamNodeObject);
-              return dreamNode;
-            });
-
-            setDreamNodes(newDreamNodes);
-            console.log(`Created ${newDreamNodes.length} DreamNodes`);
-          }
-
-          // Function to calculate grid position
-          function calculateGridPosition(index, total) {
-            const hexRadius = 1.5; // Reduced radius for smaller nodes
-            const columns = Math.ceil(Math.sqrt(total));
-            const rows = Math.ceil(total / columns);
-  
-            const gridWidth = columns * hexRadius * 2 * Math.cos(Math.PI / 6);
-            const gridHeight = rows * hexRadius * 1.5;
-  
-            const startX = -gridWidth / 2;
-            const startY = gridHeight / 2;
-  
-            const row = Math.floor(index / columns);
-            const col = index % columns;
-            const offset = row % 2 === 0 ? 0 : hexRadius * Math.cos(Math.PI / 6);
-
-            const x = startX + col * hexRadius * 2 * Math.cos(Math.PI / 6) + offset;
-            const y = startY - row * hexRadius * 1.5;
-
-            return new THREE.Vector3(x, y, 0);
-          }
+          // Create DreamNodeGrid
+          const dreamNodeGrid = new DreamNodeGrid({ scene, camera });
+          setDreamNodes(dreamNodeGrid.getDreamNodes());
+          console.log(`Created DreamNodeGrid with ${dreamNodeGrid.getDreamNodes().length} DreamNodes`);
       
           camera.position.z = 10;
           console.log("Camera position:", camera.position);
       
           const animate = function () {
             requestAnimationFrame(animate);
-            dreamNodes.forEach(node => node.update());
+            dreamNodeGrid.update();
             renderer.render(scene, camera);
             cssRenderer.render(scene, camera);
           };
