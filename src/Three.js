@@ -43,15 +43,8 @@ function Three() {
             const repos = await window.electron.scanDreamVault();
             console.log("Found repositories:", repos);
 
-            const maxNodes = Math.min(repos.length, 10);  // Limit to 10 nodes
-            const newDreamNodes = repos.slice(0, maxNodes).map((repoName, index) => {
-              const angle = (index / maxNodes) * Math.PI * 2;
-              const radius = 5;
-              const position = new THREE.Vector3(
-                Math.cos(angle) * radius,
-                Math.sin(angle) * radius,
-                0
-              );
+            const newDreamNodes = repos.map((repoName, index) => {
+              const position = calculateGridPosition(index, repos.length);
               const dreamNode = new DreamNode({ scene, position, repoName });
               const dreamNodeObject = dreamNode.getObject();
               scene.add(dreamNodeObject);
@@ -60,6 +53,21 @@ function Three() {
 
             setDreamNodes(newDreamNodes);
             console.log(`Created ${newDreamNodes.length} DreamNodes`);
+          }
+
+          // Function to calculate grid position
+          function calculateGridPosition(index, total) {
+            const itemsPerRow = Math.ceil(Math.sqrt(total));
+            const row = Math.floor(index / itemsPerRow);
+            const col = index % itemsPerRow;
+            const spacing = 5; // Adjust this value to change the gap between nodes
+            const offsetX = (itemsPerRow - 1) * spacing / 2;
+            const offsetY = (Math.ceil(total / itemsPerRow) - 1) * spacing / 2;
+            return new THREE.Vector3(
+              col * spacing - offsetX,
+              -row * spacing + offsetY,
+              0
+            );
           }
       
           camera.position.z = 10;
