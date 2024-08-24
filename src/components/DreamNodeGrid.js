@@ -105,7 +105,15 @@ class DreamNodeGrid {
         return metadata;
       } else {
         console.warn(`Unexpected content type for ${repoName}: ${contentType}`);
-        return this.getDefaultMetadata(repoName);
+        // Try to parse the response as text and then as JSON
+        const text = await response.text();
+        try {
+          const metadata = JSON.parse(text);
+          return metadata;
+        } catch (parseError) {
+          console.error(`Failed to parse response as JSON for ${repoName}:`, parseError);
+          return this.getDefaultMetadata(repoName);
+        }
       }
     } catch (error) {
       console.error(`Error reading metadata for ${repoName}:`, error);
