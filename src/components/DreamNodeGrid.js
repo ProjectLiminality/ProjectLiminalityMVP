@@ -1,7 +1,5 @@
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
-import fs from 'fs';
-import path from 'path';
 
 class DreamNodeGrid {
   constructor({ scene, camera }) {
@@ -79,26 +77,28 @@ class DreamNodeGrid {
     if (window.electron) {
       const repos = await window.electron.scanDreamVault();
       console.log("Found repositories:", repos);
-      this.createDreamNodes(repos);
+      await this.createDreamNodes(repos);
     }
   }
 
-  createDreamNodes(repos) {
-    this.dreamNodes = repos.map((repoName, index) => {
+  async createDreamNodes(repos) {
+    this.dreamNodes = await Promise.all(repos.map(async (repoName, index) => {
       const position = this.layouts[this.currentLayout](index, repos.length);
-      const metadata = this.readMetadata(repoName);
+      const metadata = await this.readMetadata(repoName);
       const dreamNode = new DreamNode({ scene: this.scene, position, repoName, metadata });
       this.scene.add(dreamNode.getObject());
       return dreamNode;
-    });
+    }));
     console.log(`Created ${this.dreamNodes.length} DreamNodes`);
   }
 
-  readMetadata(repoName) {
+  async readMetadata(repoName) {
     try {
-      const metadataPath = path.join(process.cwd(), repoName, '.pl');
-      const metadataContent = fs.readFileSync(metadataPath, 'utf8');
-      const metadata = JSON.parse(metadataContent);
+      const response = await fetch(`/${repoName}/.pl`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const metadata = await response.json();
       return metadata;
     } catch (error) {
       console.error(`Error reading metadata for ${repoName}:`, error);
