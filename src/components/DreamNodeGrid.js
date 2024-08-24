@@ -34,10 +34,20 @@ class DreamNodeGrid {
         object = object.parent;
       }
       if (object.userData.dreamNode) {
-        object.userData.dreamNode.onClick();
+        this.centerOnNode(object.userData.dreamNode);
         break;
       }
     }
+  }
+
+  centerOnNode(clickedNode) {
+    const centerPosition = new THREE.Vector3(0, 0, 0);
+    const offset = new THREE.Vector3().subVectors(centerPosition, clickedNode.position);
+
+    this.dreamNodes.forEach(node => {
+      const newPosition = new THREE.Vector3().addVectors(node.position, offset);
+      node.updatePosition(newPosition);
+    });
   }
 
   onMouseMove(event) {

@@ -202,6 +202,20 @@ class DreamNode {
     }
   }
 
+  update() {
+    if (this.isRotating) {
+      this.updateRotation();
+    }
+
+    if (this.isMoving) {
+      this.updatePositionAnimation();
+    }
+
+    if (this.isScaling) {
+      this.updateScale();
+    }
+  }
+
   updatePositionAnimation() {
     const currentTime = Date.now();
     const elapsedTime = currentTime - this.movementStartTime;
