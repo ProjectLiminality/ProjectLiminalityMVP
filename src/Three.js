@@ -58,34 +58,7 @@ function Three() {
           console.log("Animation loop started");
           console.log("Scene children:", scene.children);
 
-          // Add raycaster for click detection
-          const raycaster = new THREE.Raycaster();
-          const mouse = new THREE.Vector2();
-
-          const onClick = (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-
-            const intersects = raycaster.intersectObjects(scene.children, true);
-
-            if (intersects.length > 0) {
-              scene.dispatchEvent({ type: 'click', intersects: intersects });
-            } else {
-              // Convert 2D mouse position to 3D world position
-              const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
-              vector.unproject(camera);
-              const dir = vector.sub(camera.position).normalize();
-              const distance = -camera.position.z / dir.z;
-              const pos = camera.position.clone().add(dir.multiplyScalar(distance));
-              
-              // Update all DreamNode positions
-              dreamNodes.forEach(dreamNode => dreamNode.updatePosition(pos));
-            }
-          };
-
-          window.addEventListener('click', onClick);
+          // Click handling is now done in DreamNodeGrid
 
           // Add spacebar event listener for scaling
           let isLarge = false;

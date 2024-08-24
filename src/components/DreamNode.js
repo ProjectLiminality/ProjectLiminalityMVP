@@ -113,31 +113,23 @@ class DreamNode {
   }
 
   addClickListener() {
-    this.object.userData.clickable = true;
-    this.scene.addEventListener('click', this.onNodeClick.bind(this));
-    this.scene.addEventListener('mousemove', this.onMouseMove.bind(this));
+    this.nodeContainer.userData.clickable = true;
+    this.nodeContainer.userData.dreamNode = this;
   }
 
-  onMouseMove(event) {
-    const intersects = event.intersects;
-    const hovered = intersects.some(intersect => intersect.object.parent === this.object);
-  
-    if (hovered && !this.isHovered) {
-      this.isHovered = true;
-      this.hoverRing.material.opacity = 0.5;
-    } else if (!hovered && this.isHovered) {
-      this.isHovered = false;
-      this.hoverRing.material.opacity = 0;
+  onClick() {
+    if (!this.isRotating) {
+      this.rotateNode();
     }
   }
 
-  onNodeClick(event) {
-    const intersects = event.intersects;
-    if (intersects.length > 0) {
-      const clickedObject = intersects[0].object;
-      if (clickedObject.parent === this.object && !this.isRotating) {
-        this.rotateNode();
-      }
+  onHover(isHovered) {
+    if (isHovered && !this.isHovered) {
+      this.isHovered = true;
+      this.hoverRing.material.opacity = 0.5;
+    } else if (!isHovered && this.isHovered) {
+      this.isHovered = false;
+      this.hoverRing.material.opacity = 0;
     }
   }
 

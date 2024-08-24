@@ -12,7 +12,54 @@ class DreamNodeGrid {
       // Add more layouts as needed
     };
     this.currentLayout = 'grid';
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
     this.init();
+    this.addEventListeners();
+  }
+
+  addEventListeners() {
+    window.addEventListener('click', this.onClick.bind(this));
+    window.addEventListener('mousemove', this.onMouseMove.bind(this));
+  }
+
+  onClick(event) {
+    this.updateMousePosition(event);
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    
+    for (let intersect of intersects) {
+      let object = intersect.object;
+      while (object.parent && !object.userData.dreamNode) {
+        object = object.parent;
+      }
+      if (object.userData.dreamNode) {
+        object.userData.dreamNode.onClick();
+        break;
+      }
+    }
+  }
+
+  onMouseMove(event) {
+    this.updateMousePosition(event);
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    
+    this.dreamNodes.forEach(node => {
+      const isHovered = intersects.some(intersect => {
+        let object = intersect.object;
+        while (object.parent && !object.userData.dreamNode) {
+          object = object.parent;
+        }
+        return object.userData.dreamNode === node;
+      });
+      node.onHover(isHovered);
+    });
+  }
+
+  updateMousePosition(event) {
+    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   }
 
   async init() {
