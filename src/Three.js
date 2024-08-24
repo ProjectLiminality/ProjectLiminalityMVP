@@ -89,7 +89,6 @@ function Three() {
       
           return () => {
             window.removeEventListener('resize', handleResize);
-            window.removeEventListener('click', onClick);
             window.removeEventListener('keydown', onKeyDown);
             if (refContainer.current) {
               refContainer.current.removeChild(renderer.domElement);
