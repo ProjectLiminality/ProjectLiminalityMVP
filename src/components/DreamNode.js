@@ -50,18 +50,11 @@ class DreamNode {
       const text = await response.text();
       console.log(`Raw .pl content for ${this.repoName}:`, text);
 
-      try {
-        this.metadata = JSON.parse(text);
-      } catch (parseError) {
-        console.error(`Failed to parse .pl file as JSON for ${this.repoName}:`, parseError);
-        this.metadata = this.getDefaultMetadata();
-      }
+      // We're not parsing the content for now, just using it as is
+      this.metadata = { rawContent: text };
 
-      console.log(`Parsed metadata for ${this.repoName}:`, this.metadata);
-
-      // Ensure the metadata has a 'type' field
+      // Ensure the metadata has a 'type' field (for compatibility with existing code)
       if (!this.metadata.type) {
-        console.warn(`No 'type' field found in metadata for ${this.repoName}, using default.`);
         this.metadata.type = 'idea';
       }
     } catch (error) {
