@@ -100,20 +100,18 @@ class DreamNodeGrid {
         return this.getDefaultMetadata(repoName);
       }
       const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const metadata = await response.json();
+      console.log(`Content type for ${repoName}: ${contentType}`);
+
+      const text = await response.text();
+      console.log(`Response text for ${repoName}:`, text.substring(0, 100) + '...'); // Log first 100 characters
+
+      try {
+        const metadata = JSON.parse(text);
         return metadata;
-      } else {
-        console.warn(`Unexpected content type for ${repoName}: ${contentType}`);
-        // Try to parse the response as text and then as JSON
-        const text = await response.text();
-        try {
-          const metadata = JSON.parse(text);
-          return metadata;
-        } catch (parseError) {
-          console.error(`Failed to parse response as JSON for ${repoName}:`, parseError);
-          return this.getDefaultMetadata(repoName);
-        }
+      } catch (parseError) {
+        console.error(`Failed to parse response as JSON for ${repoName}:`, parseError);
+        console.error(`Full response text for ${repoName}:`, text);
+        return this.getDefaultMetadata(repoName);
       }
     } catch (error) {
       console.error(`Error reading metadata for ${repoName}:`, error);
