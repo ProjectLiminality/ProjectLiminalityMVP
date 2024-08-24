@@ -39,50 +39,47 @@ class DreamNode {
   }
 
   async readMetadata() {
-    console.log(`Attempting to read metadata for ${this.repoName}`);
+    console.log(`🔍 Reading metadata for ${this.repoName}`);
     try {
       const response = await fetch(`/${this.repoName}/.pl`);
       if (!response.ok) {
-        console.warn(`HTTP error for ${this.repoName}! status: ${response.status}`);
+        console.warn(`⚠️ HTTP error for ${this.repoName}! Status: ${response.status}`);
         this.metadata = this.getDefaultMetadata();
         return;
       }
 
       const text = await response.text();
       if (!text) {
-        console.warn(`Empty .pl file for ${this.repoName}`);
+        console.warn(`⚠️ Empty .pl file for ${this.repoName}`);
         this.metadata = this.getDefaultMetadata();
         return;
       }
 
-      console.log(`Raw .pl content for ${this.repoName}:`, text);
+      console.log(`📄 Raw .pl content for ${this.repoName}:\n${text}`);
 
       try {
         this.metadata = JSON.parse(text);
-        console.log(`Parsed metadata for ${this.repoName}:`, this.metadata);
+        console.log(`✅ Successfully parsed metadata for ${this.repoName}:`, this.metadata);
       } catch (parseError) {
-        console.error(`Failed to parse .pl file as JSON for ${this.repoName}:`, parseError);
-        // If parsing fails, store the raw content
+        console.error(`❌ Failed to parse .pl file as JSON for ${this.repoName}:`, parseError);
         this.metadata = { rawContent: text };
       }
 
-      // Check for expected fields
       const expectedFields = ['type', 'lastUpdated', 'lastOpened'];
       expectedFields.forEach(field => {
         if (!this.metadata[field]) {
-          console.warn(`Missing expected field '${field}' in metadata for ${this.repoName}`);
+          console.warn(`⚠️ Missing expected field '${field}' in metadata for ${this.repoName}`);
         }
       });
 
-      // Ensure the metadata has a 'type' field
       if (!this.metadata.type) {
-        console.warn(`No 'type' field found in metadata for ${this.repoName}, using default.`);
+        console.warn(`⚠️ No 'type' field found in metadata for ${this.repoName}, using default.`);
         this.metadata.type = 'idea';
       }
 
-      console.log(`Final metadata for ${this.repoName}:`, this.metadata);
+      console.log(`🏁 Final metadata for ${this.repoName}:`, JSON.stringify(this.metadata, null, 2));
     } catch (error) {
-      console.error(`Error reading metadata for ${this.repoName}:`, error);
+      console.error(`❌ Error reading metadata for ${this.repoName}:`, error);
       this.metadata = this.getDefaultMetadata();
     }
   }
@@ -99,15 +96,20 @@ class DreamNode {
 
   getNodeColor() {
     const nodeType = this.metadata.type ? this.metadata.type.toLowerCase() : 'idea';
-    console.log("Node type:", nodeType);
+    console.log(`🎨 Determining color for node type: ${nodeType}`);
     
+    let color;
     switch (nodeType) {
       case 'person':
-        return 0xff0000; // Red for person
+        color = 0xff0000; // Red for person
+        break;
       case 'idea':
       default:
-        return 0x4287f5; // Blue for idea (default)
+        color = 0x4287f5; // Blue for idea (default)
     }
+    
+    console.log(`🔢 Color value: ${color.toString(16)}`);
+    return color;
   }
 
   easeInOutCubic(t) {
@@ -124,21 +126,20 @@ class DreamNode {
   }
 
   createNode() {
+    console.log(`🔨 Creating node for ${this.repoName}`);
     const radius = 1; // Further reduced radius for smaller nodes
     const segments = 64;
 
-    // Create a container for all parts of the node
     this.nodeContainer = new THREE.Object3D();
 
-    // Create a circular disc
     const geometry = new THREE.CircleGeometry(radius, segments);
+    const color = this.getNodeColor();
     const material = new THREE.MeshBasicMaterial({ 
-      color: this.getNodeColor(),
+      color: color,
       side: THREE.DoubleSide 
     });
     this.disc = new THREE.Mesh(geometry, material);
 
-    // Create hover effect ring
     const hoverGeometry = new THREE.RingGeometry(radius, radius + 0.2, segments);
     const hoverMaterial = new THREE.MeshBasicMaterial({ 
       color: 0xffffff, 
@@ -152,28 +153,22 @@ class DreamNode {
     const backSide = this.createSide(DreamSong, -0.01);
     backSide.rotation.y = Math.PI;
 
-    // Adjust the scale of the CSS3DObjects to match the disc size
-    const scale = (radius * 2) / 400; // 400px is the width/height of the div
+    const scale = (radius * 2) / 400;
     frontSide.scale.set(scale, scale, scale);
     backSide.scale.set(scale, scale, scale);
     
-    // Adjust the position of the CSS3DObjects
     frontSide.position.set(0, 0, 0.01);
     backSide.position.set(0, 0, -0.01);
 
-    // Add all parts to the container
     this.nodeContainer.add(this.disc);
     this.nodeContainer.add(this.hoverRing);
     this.nodeContainer.add(frontSide);
     this.nodeContainer.add(backSide);
 
-    // Set the position of the main object
     this.object.position.copy(this.position);
-
-    // Add the container to the main object
     this.object.add(this.nodeContainer);
 
-    console.log(`Node created for ${this.repoName} with color:`, this.getNodeColor());
+    console.log(`✅ Node created for ${this.repoName} with color: ${color.toString(16)}`);
   }
 
   createSide(Component, zOffset, props = {}) {
