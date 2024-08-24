@@ -213,12 +213,15 @@ class DreamNode {
             type: format === 'mp4' ? 'video' : 'image',
             url: `/media/${this.repoName}.${format}`
           };
-          break;
+          return; // Exit the function once media is found
         }
       } catch (error) {
         console.error(`Error loading media for ${this.repoName}:`, error);
       }
     }
+    // If no media is found, set a default
+    this.mediaContent = null;
+    console.log(`No media found for ${this.repoName}`);
   }
 }
 
