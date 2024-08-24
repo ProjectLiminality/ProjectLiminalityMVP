@@ -35,7 +35,7 @@ class DreamNode {
     await this.loadMediaContent();
     this.createNode();
     this.addClickListener();
-    console.log("DreamNode initialized");
+    console.log("DreamNode initialized", this.metadata);
   }
 
   async readMetadata() {
@@ -81,11 +81,15 @@ class DreamNode {
   }
 
   getNodeColor() {
-    console.log("Node type:", this.metadata.type);
-    if (this.metadata.type && this.metadata.type.toLowerCase() === 'person') {
-      return 0xff0000; // Red for person
-    } else {
-      return 0x4287f5; // Blue for idea (default)
+    const nodeType = this.metadata.type ? this.metadata.type.toLowerCase() : 'idea';
+    console.log("Node type:", nodeType);
+    
+    switch (nodeType) {
+      case 'person':
+        return 0xff0000; // Red for person
+      case 'idea':
+      default:
+        return 0x4287f5; // Blue for idea (default)
     }
   }
 
@@ -115,7 +119,7 @@ class DreamNode {
       color: this.getNodeColor(),
       side: THREE.DoubleSide 
     });
-    const disc = new THREE.Mesh(geometry, material);
+    this.disc = new THREE.Mesh(geometry, material);
 
     // Create hover effect ring
     const hoverGeometry = new THREE.RingGeometry(radius, radius + 0.2, segments);
@@ -141,7 +145,7 @@ class DreamNode {
     backSide.position.set(0, 0, -0.01);
 
     // Add all parts to the container
-    this.nodeContainer.add(disc);
+    this.nodeContainer.add(this.disc);
     this.nodeContainer.add(this.hoverRing);
     this.nodeContainer.add(frontSide);
     this.nodeContainer.add(backSide);
@@ -151,6 +155,8 @@ class DreamNode {
 
     // Add the container to the main object
     this.object.add(this.nodeContainer);
+
+    console.log(`Node created for ${this.repoName} with color:`, this.getNodeColor());
   }
 
   createSide(Component, zOffset, props = {}) {
