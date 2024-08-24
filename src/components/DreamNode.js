@@ -33,7 +33,7 @@ class DreamNode {
 
   getNodeColor() {
     console.log("Node type:", this.metadata.type); // Debug log
-    if (this.metadata && this.metadata.type === 'person') {
+    if (this.metadata && this.metadata.type.toLowerCase() === 'person') {
       return 0xff0000; // Red for person
     } else {
       return 0x4287f5; // Blue for idea (default)

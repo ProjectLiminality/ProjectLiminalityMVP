@@ -97,31 +97,28 @@ class DreamNodeGrid {
       const response = await fetch(`/${repoName}/.pl`);
       if (!response.ok) {
         console.warn(`HTTP error for ${repoName}! status: ${response.status}`);
-        if (response.status === 404) {
-          console.log(`No .pl file found for ${repoName}, using default metadata.`);
-          return this.getDefaultMetadata(repoName);
-        } else {
-          throw new Error(`Failed to fetch metadata for ${repoName}`);
+        return this.getDefaultMetadata(repoName);
+      }
+
+      const text = await response.text();
+      console.log(`Raw .pl content for ${repoName}:`, text);
+
+      // Parse the .pl file content
+      const lines = text.split('\n');
+      const metadata = {};
+      for (const line of lines) {
+        const [key, value] = line.split(':').map(part => part.trim());
+        if (key && value) {
+          metadata[key] = value;
         }
       }
 
-      const contentType = response.headers.get("content-type");
-      console.log(`Content type for ${repoName}: ${contentType}`);
+      console.log(`Parsed metadata for ${repoName}:`, metadata);
 
-      let metadata;
-      if (contentType && contentType.includes("application/json")) {
-        metadata = await response.json();
-      } else {
-        console.warn(`Unexpected content type for ${repoName}: ${contentType}`);
-        const text = await response.text();
-        console.log(`Response text for ${repoName}:`, text.substring(0, 100) + '...');
-        try {
-          metadata = JSON.parse(text);
-        } catch (parseError) {
-          console.error(`Failed to parse response as JSON for ${repoName}:`, parseError);
-          console.error(`Full response text for ${repoName}:`, text);
-          return this.getDefaultMetadata(repoName);
-        }
+      // Ensure the metadata has a 'type' field
+      if (!metadata.type) {
+        console.warn(`No 'type' field found in metadata for ${repoName}, using default.`);
+        metadata.type = 'idea';
       }
 
       return metadata;
