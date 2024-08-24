@@ -83,8 +83,8 @@ class DreamNode {
     this.nodeContainer.add(frontSide);
     this.nodeContainer.add(backSide);
 
-    // Set the position of the container
-    this.nodeContainer.position.copy(this.position);
+    // Set the position of the main object
+    this.object.position.copy(this.position);
 
     // Add the container to the main object
     this.object.add(this.nodeContainer);
@@ -183,10 +183,10 @@ class DreamNode {
 
   setScale(scale) {
     this.currentScale = scale;
-    this.object.scale.set(scale, scale, scale);
+    this.nodeContainer.scale.set(scale, scale, scale);
     
     // Adjust CSS3DObject scales and positions
-    this.object.children.forEach(child => {
+    this.nodeContainer.children.forEach(child => {
       if (child instanceof CSS3DObject) {
         child.scale.set(0.01 / scale, 0.01 / scale, 0.01 / scale);  // Adjust CSS3DObject scale
         const zOffset = child.position.z > 0 ? 0.01 : -0.01;
@@ -230,6 +230,8 @@ class DreamNode {
   setPosition(newPosition) {
     this.position.copy(newPosition);
     this.object.position.copy(newPosition);
+    // Reset the nodeContainer's position to ensure it's centered on the object
+    this.nodeContainer.position.set(0, 0, 0);
   }
 
   updateRotation() {
