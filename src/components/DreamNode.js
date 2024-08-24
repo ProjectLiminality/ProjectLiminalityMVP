@@ -15,6 +15,8 @@ class DreamNode {
     this.targetRotation = 0;
     this.yOffset = 0.06; // Y offset variable
     this.isMoving = false;
+    this.mediaContent = null;
+    this.loadMediaContent();
     this.targetPosition = new THREE.Vector3();
     this.isScaling = false;
     this.targetScale = 1;
@@ -71,7 +73,7 @@ class DreamNode {
     div.style.overflow = 'hidden';
 
     const root = createRoot(div);
-    root.render(React.createElement(Component, props));
+    root.render(React.createElement(Component, { ...props, mediaContent: this.mediaContent }));
 
     const object = new CSS3DObject(div);
     // Use the new yOffset variable for vertical positioning
@@ -204,3 +206,20 @@ class DreamNode {
 }
 
 export default DreamNode;
+  async loadMediaContent() {
+    const mediaFormats = ['png', 'jpg', 'jpeg', 'gif', 'mp4'];
+    for (const format of mediaFormats) {
+      try {
+        const response = await fetch(`/media/${this.repoName}.${format}`);
+        if (response.ok) {
+          this.mediaContent = {
+            type: format === 'mp4' ? 'video' : 'image',
+            url: `/media/${this.repoName}.${format}`
+          };
+          break;
+        }
+      } catch (error) {
+        console.error(`Error loading media for ${this.repoName}:`, error);
+      }
+    }
+  }
