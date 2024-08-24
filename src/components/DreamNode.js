@@ -203,13 +203,26 @@ class DreamNode {
       this.isRotating = false;
     }
   }
-}
-
-export default DreamNode;
   async loadMediaContent() {
     const mediaFormats = ['png', 'jpg', 'jpeg', 'gif', 'mp4'];
     for (const format of mediaFormats) {
       try {
+        const response = await fetch(`/media/${this.repoName}.${format}`);
+        if (response.ok) {
+          this.mediaContent = {
+            type: format === 'mp4' ? 'video' : 'image',
+            url: `/media/${this.repoName}.${format}`
+          };
+          break;
+        }
+      } catch (error) {
+        console.error(`Error loading media for ${this.repoName}:`, error);
+      }
+    }
+  }
+}
+
+export default DreamNode;
         const response = await fetch(`/media/${this.repoName}.${format}`);
         if (response.ok) {
           this.mediaContent = {

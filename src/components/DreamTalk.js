@@ -22,13 +22,8 @@ const DreamTalk = ({ repoName, mediaContent }) => {
           <img src={mediaContent.url} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         )
       ) : (
-        <span style={{ fontSize: '24px', textAlign: 'center' }}>{repoName}</span>
+        <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>{repoName}</h2>
       )}
-      alignItems: 'center',
-      textAlign: 'center',
-      borderRadius: '50%',
-    }}>
-      <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>{repoName}</h2>
     </div>
   );
 };
