@@ -103,14 +103,12 @@ class DreamNodeGrid {
       const text = await response.text();
       console.log(`Raw .pl content for ${repoName}:`, text);
 
-      // Parse the .pl file content
-      const lines = text.split('\n');
-      const metadata = {};
-      for (const line of lines) {
-        const [key, value] = line.split(':').map(part => part.trim());
-        if (key && value) {
-          metadata[key] = value;
-        }
+      let metadata;
+      try {
+        metadata = JSON.parse(text);
+      } catch (parseError) {
+        console.error(`Failed to parse .pl file as JSON for ${repoName}:`, parseError);
+        return this.getDefaultMetadata(repoName);
       }
 
       console.log(`Parsed metadata for ${repoName}:`, metadata);
