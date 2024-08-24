@@ -226,16 +226,3 @@ class DreamNode {
 }
 
 export default DreamNode;
-        const response = await fetch(`/media/${this.repoName}.${format}`);
-        if (response.ok) {
-          this.mediaContent = {
-            type: format === 'mp4' ? 'video' : 'image',
-            url: `/media/${this.repoName}.${format}`
-          };
-          break;
-        }
-      } catch (error) {
-        console.error(`Error loading media for ${this.repoName}:`, error);
-      }
-    }
-  }
