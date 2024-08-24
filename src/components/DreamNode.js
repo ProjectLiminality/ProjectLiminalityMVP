@@ -65,19 +65,18 @@ class DreamNode {
         this.metadata = { rawContent: text };
       }
 
-      const expectedFields = ['type', 'lastUpdated', 'lastOpened'];
-      expectedFields.forEach(field => {
-        if (!this.metadata[field]) {
-          console.warn(`⚠️ Missing expected field '${field}' in metadata for ${this.repoName}`);
-        }
-      });
+      if (Object.keys(this.metadata).length === 0) {
+        console.warn(`⚠️ No content in metadata for ${this.repoName}`);
+        this.metadata = this.getDefaultMetadata();
+      } else {
+        console.log(`🏁 Metadata content for ${this.repoName}:`, JSON.stringify(this.metadata, null, 2));
+      }
 
       if (!this.metadata.type) {
         console.warn(`⚠️ No 'type' field found in metadata for ${this.repoName}, using default.`);
         this.metadata.type = 'idea';
       }
 
-      console.log(`🏁 Final metadata for ${this.repoName}:`, JSON.stringify(this.metadata, null, 2));
     } catch (error) {
       console.error(`❌ Error reading metadata for ${this.repoName}:`, error);
       this.metadata = this.getDefaultMetadata();
