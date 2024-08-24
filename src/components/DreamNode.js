@@ -47,6 +47,9 @@ class DreamNode {
     const radius = 1.4; // Reduced radius for smaller nodes
     const segments = 64;
 
+    // Create a container for all parts of the node
+    this.nodeContainer = new THREE.Object3D();
+
     // Create a circular disc
     const geometry = new THREE.CircleGeometry(radius, segments);
     const material = new THREE.MeshBasicMaterial({ 
@@ -54,7 +57,6 @@ class DreamNode {
       side: THREE.DoubleSide 
     });
     const disc = new THREE.Mesh(geometry, material);
-    disc.position.copy(this.position);
 
     // Create hover effect ring
     const hoverGeometry = new THREE.RingGeometry(radius, radius + 0.2, segments);
@@ -65,7 +67,6 @@ class DreamNode {
       opacity: 0
     });
     this.hoverRing = new THREE.Mesh(hoverGeometry, hoverMaterial);
-    this.hoverRing.position.copy(this.position);
 
     const frontSide = this.createSide(DreamTalk, 0.01, { repoName: this.repoName });
     const backSide = this.createSide(DreamSong, -0.01);
@@ -76,10 +77,17 @@ class DreamNode {
     frontSide.scale.set(scale, scale, scale);
     backSide.scale.set(scale, scale, scale);
 
-    this.object.add(disc);
-    this.object.add(this.hoverRing);
-    this.object.add(frontSide);
-    this.object.add(backSide);
+    // Add all parts to the container
+    this.nodeContainer.add(disc);
+    this.nodeContainer.add(this.hoverRing);
+    this.nodeContainer.add(frontSide);
+    this.nodeContainer.add(backSide);
+
+    // Set the position of the container
+    this.nodeContainer.position.copy(this.position);
+
+    // Add the container to the main object
+    this.object.add(this.nodeContainer);
   }
 
   createSide(Component, zOffset, props = {}) {
@@ -232,9 +240,9 @@ class DreamNode {
     if (progress < 1) {
       const easedProgress = this.easeInOutCubic(progress);
       const newRotation = this.startRotation + (this.targetRotation - this.startRotation) * easedProgress;
-      this.object.rotation.y = newRotation;
+      this.nodeContainer.rotation.y = newRotation;
     } else {
-      this.object.rotation.y = this.targetRotation % (2 * Math.PI);
+      this.nodeContainer.rotation.y = this.targetRotation % (2 * Math.PI);
       this.isRotating = false;
     }
   }
