@@ -96,22 +96,31 @@ class DreamNodeGrid {
     try {
       const response = await fetch(`/${repoName}/.pl`);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.warn(`HTTP error for ${repoName}! status: ${response.status}`);
+        return this.getDefaultMetadata(repoName);
       }
-      const text = await response.text(); // Get the response as text first
-      console.log(`Raw response for ${repoName}:`, text); // Log the raw response
-      try {
-        const metadata = JSON.parse(text);
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const metadata = await response.json();
         return metadata;
-      } catch (parseError) {
-        console.error(`Error parsing JSON for ${repoName}:`, parseError);
-        console.error(`Invalid JSON content:`, text);
-        return { type: 'idea' }; // Default to 'idea' if JSON is invalid
+      } else {
+        console.warn(`Unexpected content type for ${repoName}: ${contentType}`);
+        return this.getDefaultMetadata(repoName);
       }
     } catch (error) {
       console.error(`Error reading metadata for ${repoName}:`, error);
-      return { type: 'idea' }; // Default to 'idea' if metadata can't be read
+      return this.getDefaultMetadata(repoName);
     }
+  }
+
+  getDefaultMetadata(repoName) {
+    return {
+      type: 'idea',
+      dateCreated: new Date().toISOString(),
+      dateModified: new Date().toISOString(),
+      interactions: 0,
+      relatedNodes: []
+    };
   }
 
   calculateGridPosition(index, total) {

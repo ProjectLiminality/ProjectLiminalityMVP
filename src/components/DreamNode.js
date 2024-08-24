@@ -6,7 +6,7 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 
 class DreamNode {
-  constructor({ scene, position = new THREE.Vector3(0, 0, 0), repoName, metadata }) {
+  constructor({ scene, position = new THREE.Vector3(0, 0, 0), repoName, metadata = {} }) {
     this.repoName = repoName;
     this.scene = scene;
     this.position = position;
