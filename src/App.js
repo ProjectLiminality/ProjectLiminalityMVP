@@ -21,7 +21,7 @@ function App() {
 
   return (
     <div className="App">
-      <Three />
+      <ThreeScene />
       <SettingsPanel 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
