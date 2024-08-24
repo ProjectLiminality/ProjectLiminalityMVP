@@ -44,7 +44,7 @@ class DreamNode {
   }
 
   createNode() {
-    const radius = 2;
+    const radius = 1.4; // Reduced radius for smaller nodes
     const segments = 64;
 
     // Create a circular disc

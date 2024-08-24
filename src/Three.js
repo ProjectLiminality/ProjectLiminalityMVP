@@ -58,16 +58,24 @@ function Three() {
 
           // Function to calculate grid position
           function calculateGridPosition(index, total) {
-            const hexRadius = 2.2; // Adjust this value to change the spacing between nodes
+            const hexRadius = 1.5; // Reduced radius for smaller nodes
             const columns = Math.ceil(Math.sqrt(total));
+            const rows = Math.ceil(total / columns);
+  
+            const gridWidth = columns * hexRadius * 2 * Math.cos(Math.PI / 6);
+            const gridHeight = rows * hexRadius * 1.5;
+  
+            const startX = -gridWidth / 2;
+            const startY = gridHeight / 2;
+  
             const row = Math.floor(index / columns);
             const col = index % columns;
             const offset = row % 2 === 0 ? 0 : hexRadius * Math.cos(Math.PI / 6);
-  
-            const x = col * hexRadius * 2 * Math.cos(Math.PI / 6) + offset;
-            const y = row * hexRadius * 1.5;
 
-            return new THREE.Vector3(x, -y, 0);
+            const x = startX + col * hexRadius * 2 * Math.cos(Math.PI / 6) + offset;
+            const y = startY - row * hexRadius * 1.5;
+
+            return new THREE.Vector3(x, y, 0);
           }
       
           camera.position.z = 10;
