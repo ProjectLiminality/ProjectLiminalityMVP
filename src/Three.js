@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { useEffect, useRef, useState } from "react";
 import DreamNode from './components/DreamNode';
+import DreamNodeGrid from './components/DreamNodeGrid';
 
 function Three() {
   const refContainer = useRef(null);
