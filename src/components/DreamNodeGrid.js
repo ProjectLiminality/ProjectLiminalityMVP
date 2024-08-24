@@ -29,8 +29,7 @@ class DreamNodeGrid {
       const position = this.layouts[this.currentLayout](index, repos.length);
       const isRed = index % 5 === 0; // Make every 5th node red
       const dreamNode = new DreamNode({ scene: this.scene, position, repoName, isRed });
-      const dreamNodeObject = dreamNode.getObject();
-      this.scene.add(dreamNodeObject);
+      this.scene.add(dreamNode.getObject());
       return dreamNode;
     });
     console.log(`Created ${this.dreamNodes.length} DreamNodes`);
