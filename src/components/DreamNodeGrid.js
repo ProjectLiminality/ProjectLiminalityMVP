@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
+import fs from 'fs';
+import path from 'path';
 
 class DreamNodeGrid {
   constructor({ scene, camera }) {
@@ -84,12 +86,24 @@ class DreamNodeGrid {
   createDreamNodes(repos) {
     this.dreamNodes = repos.map((repoName, index) => {
       const position = this.layouts[this.currentLayout](index, repos.length);
-      const isRed = index % 5 === 0; // Make every 5th node red
-      const dreamNode = new DreamNode({ scene: this.scene, position, repoName, isRed });
+      const metadata = this.readMetadata(repoName);
+      const dreamNode = new DreamNode({ scene: this.scene, position, repoName, metadata });
       this.scene.add(dreamNode.getObject());
       return dreamNode;
     });
     console.log(`Created ${this.dreamNodes.length} DreamNodes`);
+  }
+
+  readMetadata(repoName) {
+    try {
+      const metadataPath = path.join(process.cwd(), repoName, '.pl');
+      const metadataContent = fs.readFileSync(metadataPath, 'utf8');
+      const metadata = JSON.parse(metadataContent);
+      return metadata;
+    } catch (error) {
+      console.error(`Error reading metadata for ${repoName}:`, error);
+      return { type: 'idea' }; // Default to 'idea' if metadata can't be read
+    }
   }
 
   calculateGridPosition(index, total) {

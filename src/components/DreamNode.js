@@ -6,11 +6,11 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 
 class DreamNode {
-  constructor({ scene, position = new THREE.Vector3(0, 0, 0), repoName, isRed = false }) {
+  constructor({ scene, position = new THREE.Vector3(0, 0, 0), repoName, metadata }) {
     this.repoName = repoName;
     this.scene = scene;
     this.position = position;
-    this.isRed = isRed;
+    this.metadata = metadata;
     this.object = new THREE.Object3D();
     this.isRotating = false;
     this.targetRotation = 0;
@@ -53,7 +53,7 @@ class DreamNode {
     // Create a circular disc
     const geometry = new THREE.CircleGeometry(radius, segments);
     const material = new THREE.MeshBasicMaterial({ 
-      color: this.isRed ? 0xff0000 : 0x4287f5, 
+      color: this.metadata.type === 'person' ? 0xff0000 : 0x4287f5, 
       side: THREE.DoubleSide 
     });
     const disc = new THREE.Mesh(geometry, material);
