@@ -45,7 +45,8 @@ function Three() {
 
             const newDreamNodes = repos.map((repoName, index) => {
               const position = calculateGridPosition(index, repos.length);
-              const dreamNode = new DreamNode({ scene, position, repoName });
+              const isRed = index % 5 === 0; // Make every 5th node red
+              const dreamNode = new DreamNode({ scene, position, repoName, isRed });
               const dreamNodeObject = dreamNode.getObject();
               scene.add(dreamNodeObject);
               return dreamNode;
@@ -57,17 +58,16 @@ function Three() {
 
           // Function to calculate grid position
           function calculateGridPosition(index, total) {
-            const itemsPerRow = Math.ceil(Math.sqrt(total));
-            const row = Math.floor(index / itemsPerRow);
-            const col = index % itemsPerRow;
-            const spacing = 5; // Adjust this value to change the gap between nodes
-            const offsetX = (itemsPerRow - 1) * spacing / 2;
-            const offsetY = (Math.ceil(total / itemsPerRow) - 1) * spacing / 2;
-            return new THREE.Vector3(
-              col * spacing - offsetX,
-              -row * spacing + offsetY,
-              0
-            );
+            const hexRadius = 2.2; // Adjust this value to change the spacing between nodes
+            const columns = Math.ceil(Math.sqrt(total));
+            const row = Math.floor(index / columns);
+            const col = index % columns;
+            const offset = row % 2 === 0 ? 0 : hexRadius * Math.cos(Math.PI / 6);
+  
+            const x = col * hexRadius * 2 * Math.cos(Math.PI / 6) + offset;
+            const y = row * hexRadius * 1.5;
+
+            return new THREE.Vector3(x, -y, 0);
           }
       
           camera.position.z = 10;

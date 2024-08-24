@@ -6,14 +6,15 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 
 class DreamNode {
-  constructor({ scene, position = new THREE.Vector3(0, 0, 0), repoName }) {
+  constructor({ scene, position = new THREE.Vector3(0, 0, 0), repoName, isRed = false }) {
     this.repoName = repoName;
     this.scene = scene;
     this.position = position;
+    this.isRed = isRed;
     this.object = new THREE.Object3D();
     this.isRotating = false;
     this.targetRotation = 0;
-    this.yOffset = 0.06; // Y offset variable
+    this.yOffset = 0.06;
     this.isMoving = false;
     this.mediaContent = null;
     this.loadMediaContent();
@@ -23,7 +24,8 @@ class DreamNode {
     this.currentScale = 1;
     this.startPosition = new THREE.Vector3();
     this.movementStartTime = 0;
-    this.movementDuration = 1500; // 1.5 seconds in milliseconds
+    this.movementDuration = 1500;
+    this.isHovered = false;
 
     this.init();
   }
@@ -47,9 +49,23 @@ class DreamNode {
 
     // Create a circular disc
     const geometry = new THREE.CircleGeometry(radius, segments);
-    const material = new THREE.MeshBasicMaterial({ color: 0x4287f5, side: THREE.DoubleSide });
+    const material = new THREE.MeshBasicMaterial({ 
+      color: this.isRed ? 0xff0000 : 0x4287f5, 
+      side: THREE.DoubleSide 
+    });
     const disc = new THREE.Mesh(geometry, material);
     disc.position.copy(this.position);
+
+    // Create hover effect ring
+    const hoverGeometry = new THREE.RingGeometry(radius, radius + 0.2, segments);
+    const hoverMaterial = new THREE.MeshBasicMaterial({ 
+      color: 0xffffff, 
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0
+    });
+    this.hoverRing = new THREE.Mesh(hoverGeometry, hoverMaterial);
+    this.hoverRing.position.copy(this.position);
 
     const frontSide = this.createSide(DreamTalk, 0.01, { repoName: this.repoName });
     const backSide = this.createSide(DreamSong, -0.01);
@@ -61,6 +77,7 @@ class DreamNode {
     backSide.scale.set(scale, scale, scale);
 
     this.object.add(disc);
+    this.object.add(this.hoverRing);
     this.object.add(frontSide);
     this.object.add(backSide);
   }
@@ -86,6 +103,20 @@ class DreamNode {
   addClickListener() {
     this.object.userData.clickable = true;
     this.scene.addEventListener('click', this.onNodeClick.bind(this));
+    this.scene.addEventListener('mousemove', this.onMouseMove.bind(this));
+  }
+
+  onMouseMove(event) {
+    const intersects = event.intersects;
+    const hovered = intersects.some(intersect => intersect.object.parent === this.object);
+  
+    if (hovered && !this.isHovered) {
+      this.isHovered = true;
+      this.hoverRing.material.opacity = 0.5;
+    } else if (!hovered && this.isHovered) {
+      this.isHovered = false;
+      this.hoverRing.material.opacity = 0;
+    }
   }
 
   onNodeClick(event) {
