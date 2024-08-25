@@ -191,11 +191,21 @@ class DreamNode {
     }
   }
 
+  updateNodeScale(scale, duration = 300) {
+    const newScale = new THREE.Vector3(scale, scale, scale);
+    updateScale(this.nodeContainer, newScale, duration);
+  }
+
   onHover(isHovered) {
     const newScale = isHovered ? 1.1 : 1.0;
-    const duration = 300; // 300ms duration for faster effect
-    updateScale(this.nodeContainer, new THREE.Vector3(newScale, newScale, newScale), duration);
+    this.updateNodeScale(newScale);
     this.isHovered = isHovered;
+  }
+
+  onSelect(isSelected) {
+    const newScale = isSelected ? 1.2 : 1.0;
+    this.updateNodeScale(newScale);
+    this.isSelected = isSelected;
   }
 
   rotateNode() {
