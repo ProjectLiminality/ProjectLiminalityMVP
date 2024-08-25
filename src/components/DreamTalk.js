@@ -5,7 +5,14 @@ const DreamTalk = ({ repoName, mediaContent, style }) => {
     <div className="dream-talk" style={{
       ...style,
       alignItems: 'center',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      padding: '10px',
+      boxSizing: 'border-box',
+      width: '100%',
+      height: '100%',
     }}>
       {mediaContent ? (
         mediaContent.type === 'video' ? (
@@ -14,7 +21,17 @@ const DreamTalk = ({ repoName, mediaContent, style }) => {
           <img src={mediaContent.url} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         )
       ) : (
-        <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>{repoName}</h2>
+        <h2 style={{ 
+          fontSize: '18px', 
+          margin: 0, 
+          padding: '5px', 
+          textAlign: 'center',
+          wordWrap: 'break-word',
+          overflowWrap: 'break-word',
+          maxWidth: '100%',
+        }}>
+          {repoName}
+        </h2>
       )}
     </div>
   );
