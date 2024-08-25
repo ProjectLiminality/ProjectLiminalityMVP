@@ -4,8 +4,6 @@ export function create3DObject(geometry, material) {
   return new THREE.Mesh(geometry, material);
 }
 
-import * as THREE from 'three';
-
 export function updatePosition(object, newPosition, duration) {
   const startPosition = object.position.clone();
   const startTime = Date.now();

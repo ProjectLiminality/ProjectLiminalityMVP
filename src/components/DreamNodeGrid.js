@@ -106,7 +106,6 @@ class DreamNodeGrid {
     const newCameraPosition = centerPosition.clone().add(cameraOffset);
     updatePosition(this.camera, newCameraPosition, 1000);
   }
-  }
 
   async createDreamNodes(repos) {
     this.dreamNodes = await Promise.all(repos.map(async (repoName, index) => {
