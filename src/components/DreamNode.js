@@ -314,11 +314,11 @@ class DreamNode {
     const mediaFormats = ['png', 'jpg', 'jpeg', 'gif', 'mp4'];
     for (const format of mediaFormats) {
       try {
-        const response = await fetch(`/${this.repoName}/media.${format}`);
+        const response = await fetch(`/${this.repoName}/${this.repoName}.${format}`);
         if (response.ok) {
           this.mediaContent = {
             type: format === 'mp4' ? 'video' : 'image',
-            url: `/${this.repoName}/media.${format}`
+            url: `/${this.repoName}/${this.repoName}.${format}`
           };
           console.log(`Media found for ${this.repoName}: ${this.mediaContent.url}`);
           return; // Exit the function once media is found
