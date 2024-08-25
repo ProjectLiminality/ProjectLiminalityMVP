@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const DreamTalk = ({ repoName, mediaContent, style }) => {
   const [mediaData, setMediaData] = useState(null);
