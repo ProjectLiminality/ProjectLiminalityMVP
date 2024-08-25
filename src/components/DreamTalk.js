@@ -1,6 +1,21 @@
 import React from 'react';
 
 const DreamTalk = ({ repoName, mediaContent, style }) => {
+  const renderMedia = () => {
+    if (!mediaContent) {
+      return null;
+    }
+
+    switch (mediaContent.type) {
+      case 'image':
+        return <img src={mediaContent.path} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+      case 'audio':
+        return <audio controls src={mediaContent.path} style={{ width: '100%' }} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="dream-talk" style={{
       ...style,
@@ -14,13 +29,7 @@ const DreamTalk = ({ repoName, mediaContent, style }) => {
       width: '100%',
       height: '100%',
     }}>
-      {mediaContent ? (
-        mediaContent.type === 'video' ? (
-          <video src={mediaContent.url} autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        ) : (
-          <img src={mediaContent.url} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        )
-      ) : (
+      {renderMedia() || (
         <h2 style={{ 
           fontSize: '18px', 
           margin: 0, 

@@ -266,11 +266,11 @@ class DreamNode {
 
         this.mediaContent = {
           type: mediaType,
-          path: mediaFilePath,
+          path: `file://${mediaFilePath}`,
           size: fileStats.size,
           lastModified: fileStats.mtime
         };
-        console.log(`Media found for ${this.repoName}: ${this.mediaContent.type}`);
+        console.log(`Media found for ${this.repoName}:`, this.mediaContent);
       } else {
         console.log(`No media found for ${this.repoName}`);
       }

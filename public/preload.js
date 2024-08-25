@@ -8,6 +8,7 @@ const electronAPI = {
     getMediaFilePath: (repoName) => ipcRenderer.invoke('get-media-file-path', repoName),
     getFileStats: (filePath) => ipcRenderer.invoke('get-file-stats', filePath),
     readMetadata: (repoName) => ipcRenderer.invoke('read-metadata', repoName),
+    readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
   },
   getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
   setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),

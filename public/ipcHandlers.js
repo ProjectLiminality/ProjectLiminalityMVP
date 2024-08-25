@@ -2,6 +2,17 @@ const fs = require('fs').promises;
 const path = require('path');
 
 function setupHandlers(ipcMain, store) {
+  // ... existing handlers ...
+
+  ipcMain.handle('read-file', async (event, filePath) => {
+    try {
+      const data = await fs.readFile(filePath);
+      return data.toString('base64');
+    } catch (error) {
+      console.error('Error reading file:', error);
+      throw error;
+    }
+  });
   ipcMain.handle('open-directory-dialog', async () => {
     const result = await dialog.showOpenDialog({
       properties: ['openDirectory']

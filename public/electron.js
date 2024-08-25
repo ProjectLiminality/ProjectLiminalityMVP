@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 const Store = require('electron-store');
 const { setupHandlers } = require('./ipcHandlers');
+const fs = require('fs').promises;
 
 const store = new Store();
 
