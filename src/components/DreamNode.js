@@ -15,6 +15,8 @@ class DreamNode {
     this.position = position;
     this.metadata = {};
     this.object = new THREE.Object3D();
+    this.nodeContainer = new THREE.Object3D(); // Initialize nodeContainer here
+    this.object.add(this.nodeContainer);
     this.isRotating = false;
     this.targetRotation = 0;
     this.isMoving = false;
@@ -94,7 +96,10 @@ class DreamNode {
     console.log(`🔨 Creating node for ${this.repoName}`);
     const segments = 64;
 
-    this.nodeContainer = new THREE.Object3D();
+    // Clear existing children of nodeContainer
+    while(this.nodeContainer.children.length > 0) { 
+      this.nodeContainer.remove(this.nodeContainer.children[0]); 
+    }
 
     const geometry = new THREE.CircleGeometry(1, segments);
     const color = this.getNodeColor();
@@ -116,7 +121,6 @@ class DreamNode {
     this.nodeContainer.add(backSide);
 
     this.object.position.copy(this.position);
-    this.object.add(this.nodeContainer);
 
     console.log(`✅ Node created for ${this.repoName} with color: ${color.toString(16)}`);
   }
