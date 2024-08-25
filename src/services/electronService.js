@@ -14,6 +14,14 @@ export async function scanDreamVault() {
   return window.electron.scanDreamVault();
 }
 
+export async function getDreamVaultPath() {
+  return window.electron.getDreamVaultPath();
+}
+
+export async function setDreamVaultPath(path) {
+  return window.electron.setDreamVaultPath(path);
+}
+
 export function isElectronAvailable() {
   return !!window.electron;
 }
