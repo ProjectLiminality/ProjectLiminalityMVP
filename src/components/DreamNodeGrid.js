@@ -78,7 +78,34 @@ class DreamNodeGrid {
       const repos = await window.electron.scanDreamVault();
       console.log("Found repositories:", repos);
       await this.createDreamNodes(repos);
+      this.addClickListeners();
     }
+  }
+
+  addClickListeners() {
+    this.dreamNodes.forEach(node => {
+      node.object.userData.onClick = () => this.centerNode(node);
+    });
+  }
+
+  centerNode(centerNode) {
+    const centerPosition = centerNode.object.position.clone();
+    
+    this.dreamNodes.forEach(node => {
+      if (node !== centerNode) {
+        const relativePosition = node.object.position.clone().sub(centerPosition);
+        const newPosition = relativePosition.multiplyScalar(-1);
+        node.updatePosition(newPosition, 1000);
+      } else {
+        node.updatePosition(new THREE.Vector3(0, 0, 0), 1000);
+      }
+    });
+
+    // Update camera position
+    const cameraOffset = new THREE.Vector3(0, 0, 10); // Adjust as needed
+    const newCameraPosition = centerPosition.clone().add(cameraOffset);
+    updatePosition(this.camera, newCameraPosition, 1000);
+  }
   }
 
   async createDreamNodes(repos) {

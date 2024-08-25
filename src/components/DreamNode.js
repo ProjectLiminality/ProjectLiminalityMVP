@@ -33,6 +33,10 @@ class DreamNode {
     this.init();
   }
 
+  updateRotation(newRotation, duration = 1000) {
+    updateRotation(this.nodeContainer, newRotation, duration);
+  }
+
   async init() {
     console.log("Initializing DreamNode");
     await this.readMetadata();
@@ -208,22 +212,18 @@ class DreamNode {
     }
   }
 
-  setScale(scale) {
+  setScale(scale, duration = 1000) {
+    const newScale = new THREE.Vector3(scale, scale, scale);
+    updateSize(this.nodeContainer, newScale, duration);
     this.currentScale = scale;
-    this.nodeContainer.scale.set(scale, scale, scale);
   }
 
   getObject() {
     return this.object;
   }
 
-  updatePosition(newPosition) {
-    if (!this.isMoving) {
-      this.startPosition.copy(this.object.position);
-      this.targetPosition.copy(newPosition);
-      this.movementStartTime = Date.now();
-      this.isMoving = true;
-    }
+  updatePosition(newPosition, duration = 1000) {
+    updatePosition(this.object, newPosition, duration);
   }
 
   update() {
