@@ -1,15 +1,8 @@
 import React from 'react';
 
-const DreamTalk = ({ repoName, mediaContent }) => {
+const DreamTalk = ({ repoName, mediaContent, style }) => {
   return (
-    <div className="dream-talk" style={{
-      width: '100%',
-      height: '100%',
-      background: 'rgb(0, 30, 60)',
-      color: 'white',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
+    <div className="dream-talk" style={style}>
       alignItems: 'center',
       overflow: 'hidden',
       borderRadius: '50%',

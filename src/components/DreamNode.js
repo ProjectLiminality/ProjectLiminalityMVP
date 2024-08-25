@@ -125,7 +125,7 @@ class DreamNode {
 
   createNode() {
     console.log(`🔨 Creating node for ${this.repoName}`);
-    const radius = 1; // Further reduced radius for smaller nodes
+    const radius = 1.1; // Increased radius to create a border effect
     const segments = 64;
 
     this.nodeContainer = new THREE.Object3D();
@@ -151,8 +151,6 @@ class DreamNode {
     const backSide = this.createSide(DreamSong, -0.001);
     backSide.rotation.y = Math.PI;
 
-    // The scale is now handled in createSide method
-    
     frontSide.position.set(0, 0, 0.001);
     backSide.position.set(0, 0, -0.001);
 
@@ -169,18 +167,36 @@ class DreamNode {
 
   createSide(Component, zOffset, props = {}) {
     const div = document.createElement('div');
-    div.style.width = `${this.disc.geometry.parameters.radius * 200}px`;
-    div.style.height = `${this.disc.geometry.parameters.radius * 200}px`;
+    const contentRadius = this.disc.geometry.parameters.radius * 0.9; // Slightly smaller than the disc
+    div.style.width = `${contentRadius * 200}px`;
+    div.style.height = `${contentRadius * 200}px`;
     div.style.borderRadius = '50%';
     div.style.overflow = 'hidden';
+    div.style.backgroundColor = '#000000'; // Set background to black
 
     const root = createRoot(div);
-    root.render(React.createElement(Component, { ...props, mediaContent: this.mediaContent }));
+    root.render(React.createElement(Component, { 
+      ...props, 
+      mediaContent: this.mediaContent,
+      style: { 
+        width: '100%', 
+        height: '100%', 
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: 'white', // Ensure text is visible on black background
+        fontSize: '14px', // Adjust this value to fit the text
+        padding: '10px',
+        boxSizing: 'border-box',
+        textAlign: 'center'
+      }
+    }));
 
     const object = new CSS3DObject(div);
     object.position.set(0, 0, zOffset);
     
-    // Scale to match the disc size
+    // Scale to match the content size
     const scale = 0.01;
     object.scale.set(scale, scale, scale);
 

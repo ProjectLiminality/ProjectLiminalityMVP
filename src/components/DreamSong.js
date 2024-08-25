@@ -1,15 +1,8 @@
 import React from 'react';
 
-const DreamSong = () => {
+const DreamSong = ({ style }) => {
   return (
-    <div className="dream-song" style={{
-      width: '100%',
-      height: '100%',
-      background: 'rgb(200, 100, 0)',
-      color: 'white',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
+    <div className="dream-song" style={style}>
       alignItems: 'center',
       textAlign: 'center',
       borderRadius: '50%',
