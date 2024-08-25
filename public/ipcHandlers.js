@@ -6,7 +6,7 @@ function setupHandlers(ipcMain, store) {
 
   ipcMain.handle('read-file', async (event, filePath) => {
     try {
-      const data = await fs.readFile(filePath);
+      const data = await fs.promises.readFile(filePath);
       return data.toString('base64');
     } catch (error) {
       console.error('Error reading file:', error);
