@@ -194,12 +194,8 @@ class DreamNode {
   onHover(isHovered) {
     const newScale = isHovered ? 1.1 : 1.0;
     const duration = 300; // 300ms duration for faster effect
-    this.updateScale(new THREE.Vector3(newScale, newScale, newScale), duration);
+    updateScale(this.nodeContainer, new THREE.Vector3(newScale, newScale, newScale), duration);
     this.isHovered = isHovered;
-  }
-
-  updateScale(newScale, duration = 1000) {
-    updateScale(this.nodeContainer, newScale, duration);
   }
 
   rotateNode() {
