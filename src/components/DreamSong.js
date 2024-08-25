@@ -2,7 +2,8 @@ import React from 'react';
 
 const DreamSong = ({ style }) => {
   return (
-    <div className="dream-song" style={style}>
+    <div className="dream-song" style={{
+      ...style,
       alignItems: 'center',
       textAlign: 'center',
       borderRadius: '50%',

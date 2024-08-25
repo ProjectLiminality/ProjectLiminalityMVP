@@ -2,7 +2,8 @@ import React from 'react';
 
 const DreamTalk = ({ repoName, mediaContent, style }) => {
   return (
-    <div className="dream-talk" style={style}>
+    <div className="dream-talk" style={{
+      ...style,
       alignItems: 'center',
       overflow: 'hidden',
       borderRadius: '50%',
