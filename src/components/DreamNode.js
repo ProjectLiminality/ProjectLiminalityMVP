@@ -289,11 +289,25 @@ class DreamNode {
   }
   async loadMediaContent() {
     try {
-      const mediaContent = await window.electron.getMediaFile(this.repoName);
-      if (mediaContent) {
+      const mediaFilePath = await window.electron.getMediaFilePath(this.repoName);
+      if (mediaFilePath) {
+        const fileStats = await window.electron.getFileStats(mediaFilePath);
+        const fileExtension = path.extname(mediaFilePath).toLowerCase();
+        
+        let mediaType;
+        if (['.jpg', '.jpeg', '.png', '.gif'].includes(fileExtension)) {
+          mediaType = 'image';
+        } else if (['.mp3', '.wav', '.ogg'].includes(fileExtension)) {
+          mediaType = 'audio';
+        } else {
+          throw new Error('Unsupported file type');
+        }
+
         this.mediaContent = {
-          type: mediaContent.type,
-          url: `data:image/${mediaContent.format};base64,${mediaContent.data}`
+          type: mediaType,
+          path: mediaFilePath,
+          size: fileStats.size,
+          lastModified: fileStats.mtime
         };
         console.log(`Media found for ${this.repoName}: ${this.mediaContent.type}`);
       } else {

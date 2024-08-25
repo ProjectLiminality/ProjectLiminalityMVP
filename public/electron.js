@@ -148,3 +148,37 @@ app.on('activate', () => {
     createWindow();
   }
 });
+const fs = require('fs').promises;
+const path = require('path');
+
+ipcMain.handle('get-media-file-path', async (event, repoName) => {
+  const dreamVaultPath = store.get('dreamVaultPath');
+  const repoPath = path.join(dreamVaultPath, repoName);
+  const mediaDir = path.join(repoPath, 'media');
+  
+  try {
+    const files = await fs.readdir(mediaDir);
+    const mediaFile = files.find(file => {
+      const ext = path.extname(file).toLowerCase();
+      return ['.jpg', '.jpeg', '.png', '.gif', '.mp3', '.wav', '.ogg'].includes(ext);
+    });
+    
+    return mediaFile ? path.join(mediaDir, mediaFile) : null;
+  } catch (error) {
+    console.error(`Error reading media directory for ${repoName}:`, error);
+    return null;
+  }
+});
+
+ipcMain.handle('get-file-stats', async (event, filePath) => {
+  try {
+    const stats = await fs.stat(filePath);
+    return {
+      size: stats.size,
+      mtime: stats.mtime
+    };
+  } catch (error) {
+    console.error(`Error getting file stats for ${filePath}:`, error);
+    return null;
+  }
+});
