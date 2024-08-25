@@ -10,6 +10,10 @@ export async function getFileStats(filePath) {
   return window.electron.fileSystem.getFileStats(filePath);
 }
 
+export async function scanDreamVault() {
+  return window.electron.scanDreamVault();
+}
+
 export function isElectronAvailable() {
   return !!window.electron;
 }

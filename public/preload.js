@@ -7,11 +7,11 @@ const electronAPI = {
     openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
     getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
     setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),
-    scanDreamVault: () => ipcRenderer.invoke('scan-dream-vault'),
     getMediaFilePath: (repoName) => ipcRenderer.invoke('get-media-file-path', repoName),
     getFileStats: (filePath) => ipcRenderer.invoke('get-file-stats', filePath),
     readMetadata: (repoName) => ipcRenderer.invoke('read-metadata', repoName),
   },
+  scanDreamVault: () => ipcRenderer.invoke('scan-dream-vault'),
   isElectron: true
 };
 
