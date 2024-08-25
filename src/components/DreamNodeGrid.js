@@ -58,6 +58,10 @@ class DreamNodeGrid {
 
   onMouseMove(event) {
     this.updateMousePosition(event);
+    this.checkHoverStates();
+  }
+
+  checkHoverStates() {
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
     
@@ -157,6 +161,7 @@ class DreamNodeGrid {
   }
 
   update() {
+    this.checkHoverStates();
     this.dreamNodes.forEach(node => node.update());
   }
 
