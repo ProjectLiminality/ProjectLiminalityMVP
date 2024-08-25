@@ -295,12 +295,13 @@ class DreamNode {
         const fileExtension = mediaFilePath.split('.').pop().toLowerCase();
         
         let mediaType;
-        if (['.jpg', '.jpeg', '.png', '.gif'].includes(fileExtension)) {
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
           mediaType = 'image';
-        } else if (['.mp3', '.wav', '.ogg'].includes(fileExtension)) {
+        } else if (['mp3', 'wav', 'ogg'].includes(fileExtension)) {
           mediaType = 'audio';
         } else {
-          throw new Error('Unsupported file type');
+          console.warn(`Unsupported file type for ${this.repoName}: ${fileExtension}`);
+          return;
         }
 
         this.mediaContent = {
@@ -311,11 +312,13 @@ class DreamNode {
         };
         console.log(`Media found for ${this.repoName}: ${this.mediaContent.type}`);
       } else {
-        this.mediaContent = null;
         console.log(`No media found for ${this.repoName}`);
       }
     } catch (error) {
       console.error(`Error loading media for ${this.repoName}:`, error);
+    }
+    
+    if (!this.mediaContent) {
       this.mediaContent = null;
     }
   }
