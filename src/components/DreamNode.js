@@ -4,6 +4,9 @@ import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
+import { create3DObject, updatePosition, updateRotation } from '../utils/3DUtils';
+import { easeInOutCubic } from '../utils/animationUtils';
+import { readMetadata, getMediaFilePath, getFileStats } from '../services/electronService';
 
 class DreamNode {
   constructor({ scene, position = new THREE.Vector3(0, 0, 0), repoName }) {
@@ -40,7 +43,7 @@ class DreamNode {
   async readMetadata() {
     console.log(`🔍 Reading metadata for ${this.repoName}`);
     try {
-      this.metadata = await window.electron.readMetadata(this.repoName);
+      this.metadata = await readMetadata(this.repoName);
       console.log(`✅ Successfully read metadata for ${this.repoName}:`, this.metadata);
 
       if (Object.keys(this.metadata).length === 0) {
@@ -87,19 +90,6 @@ class DreamNode {
     return color;
   }
 
-  easeInOutCubic(t) {
-    return t < 0.5
-      ? 4 * t * t * t
-      : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  }
-
-  init() {
-    console.log("Initializing DreamNode");
-    this.createNode();
-    this.addClickListener();
-    console.log("DreamNode initialized");
-  }
-
   createNode() {
     console.log(`🔨 Creating node for ${this.repoName}`);
     const segments = 64;
@@ -112,7 +102,7 @@ class DreamNode {
       color: color,
       side: THREE.DoubleSide 
     });
-    this.disc = new THREE.Mesh(geometry, material);
+    this.disc = create3DObject(geometry, material);
 
     const frontSide = this.createSide(DreamTalk, 0.001, { repoName: this.repoName });
     const backSide = this.createSide(DreamSong, -0.001);
@@ -198,7 +188,6 @@ class DreamNode {
     this.targetRotation = Math.round(this.startRotation / Math.PI) % 2 === 0 ? Math.PI : 0;
   }
 
-
   updateScaleAnimation() {
     const currentTime = Date.now();
     const elapsedTime = currentTime - this.scaleStartTime;
@@ -206,7 +195,7 @@ class DreamNode {
     const progress = Math.min(elapsedTime / duration, 1);
 
     if (progress < 1) {
-      const easedProgress = this.easeInOutCubic(progress);
+      const easedProgress = easeInOutCubic(progress);
       const newScale = this.currentScale + (this.targetScale - this.currentScale) * easedProgress;
       this.setScale(newScale);
     } else {
@@ -235,34 +224,15 @@ class DreamNode {
 
   update() {
     if (this.isRotating) {
-      this.updateRotation();
+      updateRotation(this.nodeContainer, this.targetRotation, this.movementDuration);
     }
 
     if (this.isMoving) {
-      this.updatePositionAnimation();
+      updatePosition(this.object, this.targetPosition, this.movementDuration);
     }
 
     if (this.isScaling) {
       this.updateScaleAnimation();
-    }
-  }
-
-  updatePositionAnimation() {
-    const currentTime = Date.now();
-    const elapsedTime = currentTime - this.movementStartTime;
-    const progress = Math.min(elapsedTime / this.movementDuration, 1);
-
-    if (progress < 1) {
-      const easedProgress = this.easeInOutCubic(progress);
-      const newPosition = new THREE.Vector3().lerpVectors(
-        this.startPosition,
-        this.targetPosition,
-        easedProgress
-      );
-      this.setPosition(newPosition);
-    } else {
-      this.setPosition(this.targetPosition);
-      this.isMoving = false;
     }
   }
 
@@ -273,25 +243,11 @@ class DreamNode {
     this.nodeContainer.position.set(0, 0, 0);
   }
 
-  updateRotation() {
-    const currentTime = Date.now();
-    const elapsedTime = currentTime - this.rotationStartTime;
-    const progress = Math.min(elapsedTime / this.movementDuration, 1);
-
-    if (progress < 1) {
-      const easedProgress = this.easeInOutCubic(progress);
-      const newRotation = this.startRotation + (this.targetRotation - this.startRotation) * easedProgress;
-      this.nodeContainer.rotation.y = newRotation;
-    } else {
-      this.nodeContainer.rotation.y = this.targetRotation;
-      this.isRotating = false;
-    }
-  }
   async loadMediaContent() {
     try {
-      const mediaFilePath = await window.electron.getMediaFilePath(this.repoName);
+      const mediaFilePath = await getMediaFilePath(this.repoName);
       if (mediaFilePath) {
-        const fileStats = await window.electron.getFileStats(mediaFilePath);
+        const fileStats = await getFileStats(mediaFilePath);
         const fileExtension = mediaFilePath.split('.').pop().toLowerCase();
         
         let mediaType;
