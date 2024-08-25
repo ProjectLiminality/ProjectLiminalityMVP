@@ -221,19 +221,6 @@ class DreamNode {
     this.targetRotation = Math.round(this.startRotation / Math.PI) % 2 === 0 ? Math.PI : 0;
   }
 
-  update() {
-    if (this.isRotating) {
-      this.updateRotation();
-    }
-
-    if (this.isMoving) {
-      this.updatePositionAnimation();
-    }
-
-    if (this.isScaling) {
-      this.updateScaleAnimation();
-    }
-  }
 
   updateScaleAnimation() {
     const currentTime = Date.now();
