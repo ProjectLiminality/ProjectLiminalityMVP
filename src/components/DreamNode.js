@@ -14,7 +14,6 @@ class DreamNode {
     this.object = new THREE.Object3D();
     this.isRotating = false;
     this.targetRotation = 0;
-    this.yOffset = 0.06;
     this.isMoving = false;
     this.mediaContent = null;
     this.targetPosition = new THREE.Vector3();
@@ -148,16 +147,14 @@ class DreamNode {
     });
     this.hoverRing = new THREE.Mesh(hoverGeometry, hoverMaterial);
 
-    const frontSide = this.createSide(DreamTalk, 0.01, { repoName: this.repoName });
-    const backSide = this.createSide(DreamSong, -0.01);
+    const frontSide = this.createSide(DreamTalk, 0.001, { repoName: this.repoName });
+    const backSide = this.createSide(DreamSong, -0.001);
     backSide.rotation.y = Math.PI;
 
-    const scale = (radius * 2) / 400;
-    frontSide.scale.set(scale, scale, scale);
-    backSide.scale.set(scale, scale, scale);
+    // The scale is now handled in createSide method
     
-    frontSide.position.set(0, 0, 0.01);
-    backSide.position.set(0, 0, -0.01);
+    frontSide.position.set(0, 0, 0.001);
+    backSide.position.set(0, 0, -0.001);
 
     this.nodeContainer.add(this.disc);
     this.nodeContainer.add(this.hoverRing);
@@ -172,8 +169,8 @@ class DreamNode {
 
   createSide(Component, zOffset, props = {}) {
     const div = document.createElement('div');
-    div.style.width = '400px';
-    div.style.height = '400px';
+    div.style.width = `${this.disc.geometry.parameters.radius * 200}px`;
+    div.style.height = `${this.disc.geometry.parameters.radius * 200}px`;
     div.style.borderRadius = '50%';
     div.style.overflow = 'hidden';
 
@@ -181,9 +178,11 @@ class DreamNode {
     root.render(React.createElement(Component, { ...props, mediaContent: this.mediaContent }));
 
     const object = new CSS3DObject(div);
-    // Use the new yOffset variable for vertical positioning
-    object.position.set(this.position.x, this.position.y - this.yOffset, this.position.z + zOffset);
-    object.scale.set(0.01, 0.01, 0.01);
+    object.position.set(0, 0, zOffset);
+    
+    // Scale to match the disc size
+    const scale = 0.01;
+    object.scale.set(scale, scale, scale);
 
     return object;
   }
