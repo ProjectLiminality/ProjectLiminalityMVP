@@ -124,7 +124,7 @@ class DreamNodeGrid {
   }
 
   calculateGridPosition(index, total) {
-    const hexRadius = 2.2; // Increased spacing between nodes
+    const hexRadius = 1.1; // Reduced spacing between nodes (half of the previous value)
     const columns = Math.ceil(Math.sqrt(total));
     const rows = Math.ceil(total / columns);
 
