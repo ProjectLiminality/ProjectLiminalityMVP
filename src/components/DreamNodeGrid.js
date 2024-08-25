@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
+import { updatePosition } from '../utils/3DUtils';
 
 class DreamNodeGrid {
   constructor({ scene, camera }) {
