@@ -266,7 +266,7 @@ class DreamNode {
 
         this.mediaContent = {
           type: mediaType,
-          path: `file://${mediaFilePath}`,
+          path: mediaFilePath,
           size: fileStats.size,
           lastModified: fileStats.mtime
         };

@@ -1,16 +1,33 @@
 import React from 'react';
 
 const DreamTalk = ({ repoName, mediaContent, style }) => {
+  const [mediaData, setMediaData] = useState(null);
+
+  useEffect(() => {
+    const loadMedia = async () => {
+      if (mediaContent && mediaContent.path) {
+        try {
+          const data = await window.electron.fileSystem.readFile(mediaContent.path);
+          setMediaData(data);
+        } catch (error) {
+          console.error('Error loading media:', error);
+        }
+      }
+    };
+
+    loadMedia();
+  }, [mediaContent]);
+
   const renderMedia = () => {
-    if (!mediaContent) {
+    if (!mediaContent || !mediaData) {
       return null;
     }
 
     switch (mediaContent.type) {
       case 'image':
-        return <img src={mediaContent.path} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+        return <img src={`data:image/png;base64,${mediaData}`} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
       case 'audio':
-        return <audio controls src={mediaContent.path} style={{ width: '100%' }} />;
+        return <audio controls src={`data:audio/mpeg;base64,${mediaData}`} style={{ width: '100%' }} />;
       default:
         return null;
     }
