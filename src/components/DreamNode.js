@@ -205,11 +205,13 @@ class DreamNode {
   onHover(isHovered) {
     if (isHovered && !this.isHovered) {
       this.isHovered = true;
-      this.updateScale(1.1); // Scale up by 10%
+      this.targetScale = 1.1; // Scale up by 10%
     } else if (!isHovered && this.isHovered) {
       this.isHovered = false;
-      this.updateScale(1.0); // Return to original scale
+      this.targetScale = 1.0; // Return to original scale
     }
+    this.scaleStartTime = Date.now();
+    this.isScaling = true;
   }
 
   rotateNode() {
@@ -225,26 +227,19 @@ class DreamNode {
     }
 
     if (this.isMoving) {
-      this.updatePosition();
+      this.updatePositionAnimation();
     }
 
     if (this.isScaling) {
-      this.updateScale();
-    }
-  }
-
-  updateScale(newScale) {
-    if (!this.isScaling) {
-      this.targetScale = newScale;
-      this.scaleStartTime = Date.now();
-      this.isScaling = true;
+      this.updateScaleAnimation();
     }
   }
 
   updateScaleAnimation() {
     const currentTime = Date.now();
     const elapsedTime = currentTime - this.scaleStartTime;
-    const progress = Math.min(elapsedTime / 300, 1); // 300ms duration for faster effect
+    const duration = 300; // 300ms duration for faster effect
+    const progress = Math.min(elapsedTime / duration, 1);
 
     if (progress < 1) {
       const easedProgress = this.easeInOutCubic(progress);
