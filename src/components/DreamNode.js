@@ -40,35 +40,12 @@ class DreamNode {
   async readMetadata() {
     console.log(`🔍 Reading metadata for ${this.repoName}`);
     try {
-      const response = await fetch(`/${this.repoName}/.pl`);
-      if (!response.ok) {
-        console.warn(`⚠️ HTTP error for ${this.repoName}! Status: ${response.status}`);
-        this.metadata = this.getDefaultMetadata();
-        return;
-      }
-
-      const text = await response.text();
-      if (!text) {
-        console.warn(`⚠️ Empty .pl file for ${this.repoName}`);
-        this.metadata = this.getDefaultMetadata();
-        return;
-      }
-
-      console.log(`📄 Raw .pl content for ${this.repoName}:\n${text}`);
-
-      try {
-        this.metadata = JSON.parse(text);
-        console.log(`✅ Successfully parsed metadata for ${this.repoName}:`, this.metadata);
-      } catch (parseError) {
-        console.error(`❌ Failed to parse .pl file as JSON for ${this.repoName}:`, parseError);
-        this.metadata = { rawContent: text };
-      }
+      this.metadata = await window.electron.readMetadata(this.repoName);
+      console.log(`✅ Successfully read metadata for ${this.repoName}:`, this.metadata);
 
       if (Object.keys(this.metadata).length === 0) {
         console.warn(`⚠️ No content in metadata for ${this.repoName}`);
         this.metadata = this.getDefaultMetadata();
-      } else {
-        console.log(`🏁 Metadata content for ${this.repoName}:`, JSON.stringify(this.metadata, null, 2));
       }
 
       if (!this.metadata.type) {
@@ -311,25 +288,22 @@ class DreamNode {
     }
   }
   async loadMediaContent() {
-    const mediaFormats = ['png', 'jpg', 'jpeg', 'gif', 'mp4'];
-    for (const format of mediaFormats) {
-      try {
-        const response = await fetch(`/${this.repoName}/${this.repoName}.${format}`);
-        if (response.ok) {
-          this.mediaContent = {
-            type: format === 'mp4' ? 'video' : 'image',
-            url: `/${this.repoName}/${this.repoName}.${format}`
-          };
-          console.log(`Media found for ${this.repoName}: ${this.mediaContent.url}`);
-          return; // Exit the function once media is found
-        }
-      } catch (error) {
-        console.error(`Error loading media for ${this.repoName}:`, error);
+    try {
+      const mediaContent = await window.electron.getMediaFile(this.repoName);
+      if (mediaContent) {
+        this.mediaContent = {
+          type: mediaContent.type,
+          url: `data:image/${mediaContent.format};base64,${mediaContent.data}`
+        };
+        console.log(`Media found for ${this.repoName}: ${this.mediaContent.type}`);
+      } else {
+        this.mediaContent = null;
+        console.log(`No media found for ${this.repoName}`);
       }
+    } catch (error) {
+      console.error(`Error loading media for ${this.repoName}:`, error);
+      this.mediaContent = null;
     }
-    // If no media is found, set a default
-    this.mediaContent = null;
-    console.log(`No media found for ${this.repoName}`);
   }
 }
 

@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs').promises;
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const isDev = require('electron-is-dev');
 const Store = require('electron-store');
@@ -63,9 +64,6 @@ function createWindow() {
       return [];
     }
 
-    const fs = require('fs').promises;
-    const path = require('path');
-
     try {
       const entries = await fs.readdir(dreamVaultPath, { withFileTypes: true });
       const gitRepos = [];
@@ -88,6 +86,49 @@ function createWindow() {
       console.error('Error scanning DreamVault:', error);
       return [];
     }
+  });
+
+  ipcMain.handle('read-metadata', async (event, repoName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const metadataPath = path.join(dreamVaultPath, repoName, '.pl');
+    try {
+      const data = await fs.readFile(metadataPath, 'utf8');
+      return JSON.parse(data);
+    } catch (error) {
+      console.error(`Error reading metadata for ${repoName}:`, error);
+      throw error;
+    }
+  });
+
+  ipcMain.handle('get-media-file', async (event, repoName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const repoPath = path.join(dreamVaultPath, repoName);
+    const mediaFormats = ['png', 'jpg', 'jpeg', 'gif', 'mp4'];
+
+    for (const format of mediaFormats) {
+      const mediaPath = path.join(repoPath, `${repoName}.${format}`);
+      try {
+        await fs.access(mediaPath);
+        const data = await fs.readFile(mediaPath);
+        return {
+          type: format === 'mp4' ? 'video' : 'image',
+          data: data.toString('base64'),
+          format
+        };
+      } catch (error) {
+        // File doesn't exist or can't be accessed, continue to next format
+      }
+    }
+
+    return null; // No media file found
   });
 }
 
