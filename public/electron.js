@@ -17,6 +17,7 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       enableRemoteModule: false,
+      worldSafeExecuteJavaScript: true,
     },
   });
 

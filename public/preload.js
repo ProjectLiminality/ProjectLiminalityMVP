@@ -15,11 +15,11 @@ const electronAPI = {
   isElectron: true
 };
 
-contextBridge.exposeInMainWorld('electronAPI', electronAPI);
+contextBridge.exposeInMainWorld('electron', electronAPI);
 
 console.log('Electron API exposed to renderer:', electronAPI);
 
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded event fired');
-  console.log('window.electronAPI:', window.electronAPI);
+  console.log('window.electron:', window.electron);
 });
