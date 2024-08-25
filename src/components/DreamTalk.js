@@ -6,8 +6,7 @@ const DreamTalk = ({ repoName, mediaContent, style }) => {
       ...style,
       alignItems: 'center',
       overflow: 'hidden',
-      borderRadius: '50%',
-      border: '2px solid rgb(0, 100, 200)'
+      borderRadius: '50%'
     }}>
       {mediaContent ? (
         mediaContent.type === 'video' ? (

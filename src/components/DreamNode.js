@@ -125,7 +125,7 @@ class DreamNode {
 
   createNode() {
     console.log(`🔨 Creating node for ${this.repoName}`);
-    const radius = 1.1; // Increased radius to create a border effect
+    const radius = 1.05; // Slightly increased radius to create a subtle border effect
     const segments = 64;
 
     this.nodeContainer = new THREE.Object3D();
