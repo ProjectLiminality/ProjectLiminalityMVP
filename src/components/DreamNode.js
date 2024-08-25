@@ -29,12 +29,26 @@ class DreamNode {
     this.movementStartTime = 0;
     this.movementDuration = 1500;
     this.isHovered = false;
+    this.isFrontSide = true;
 
     this.init();
   }
 
   updateRotation(newRotation, duration = 1000) {
     updateRotation(this.nodeContainer, newRotation, duration);
+  }
+
+  isInCenter() {
+    const centerThreshold = 0.1; // Adjust this value as needed
+    return this.object.position.length() < centerThreshold;
+  }
+
+  flip() {
+    this.isRotating = true;
+    this.rotationStartTime = Date.now();
+    this.startRotation = this.nodeContainer.rotation.y;
+    this.targetRotation = this.isFrontSide ? Math.PI : 0;
+    this.isFrontSide = !this.isFrontSide;
   }
 
   async init() {
@@ -228,7 +242,17 @@ class DreamNode {
 
   update() {
     if (this.isRotating) {
-      updateRotation(this.nodeContainer, this.targetRotation, this.movementDuration);
+      const currentTime = Date.now();
+      const elapsedTime = currentTime - this.rotationStartTime;
+      const progress = Math.min(elapsedTime / this.movementDuration, 1);
+      const easedProgress = easeInOutCubic(progress);
+      
+      const newRotation = THREE.MathUtils.lerp(this.startRotation, this.targetRotation, easedProgress);
+      this.nodeContainer.rotation.y = newRotation;
+
+      if (progress >= 1) {
+        this.isRotating = false;
+      }
     }
 
     if (this.isMoving) {

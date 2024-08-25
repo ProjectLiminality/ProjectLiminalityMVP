@@ -35,7 +35,12 @@ class DreamNodeGrid {
         object = object.parent;
       }
       if (object.userData.dreamNode) {
-        this.centerOnNode(object.userData.dreamNode);
+        const clickedNode = object.userData.dreamNode;
+        if (clickedNode.isInCenter()) {
+          clickedNode.flip();
+        } else {
+          this.centerOnNode(clickedNode);
+        }
         break;
       }
     }
