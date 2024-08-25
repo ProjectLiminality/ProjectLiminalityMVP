@@ -279,7 +279,7 @@ class DreamNode {
     }
 
     if (this.isScaling) {
-      this.updateScale();
+      this.updateScaleAnimation();
     }
   }
 
