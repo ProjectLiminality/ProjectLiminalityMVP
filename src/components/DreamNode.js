@@ -125,12 +125,11 @@ class DreamNode {
 
   createNode() {
     console.log(`🔨 Creating node for ${this.repoName}`);
-    const radius = 1.00; // Slightly increased radius to create a subtle border effect
     const segments = 64;
 
     this.nodeContainer = new THREE.Object3D();
 
-    const geometry = new THREE.CircleGeometry(radius, segments);
+    const geometry = new THREE.CircleGeometry(1, segments);
     const color = this.getNodeColor();
     const material = new THREE.MeshBasicMaterial({ 
       color: color,
@@ -167,9 +166,8 @@ class DreamNode {
 
   createSide(Component, zOffset, props = {}) {
     const div = document.createElement('div');
-    const contentRadius = this.disc.geometry.parameters.radius * 0.9; // Slightly smaller than the disc
-    div.style.width = `${contentRadius * 200}px`;
-    div.style.height = `${contentRadius * 200}px`;
+    div.style.width = `190px`; // 95% of 200px
+    div.style.height = `190px`; // 95% of 200px
     div.style.borderRadius = '50%';
     div.style.overflow = 'hidden';
     div.style.backgroundColor = '#000000'; // Set background to black
