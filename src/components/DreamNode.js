@@ -292,7 +292,7 @@ class DreamNode {
       const mediaFilePath = await window.electron.getMediaFilePath(this.repoName);
       if (mediaFilePath) {
         const fileStats = await window.electron.getFileStats(mediaFilePath);
-        const fileExtension = path.extname(mediaFilePath).toLowerCase();
+        const fileExtension = mediaFilePath.split('.').pop().toLowerCase();
         
         let mediaType;
         if (['.jpg', '.jpeg', '.png', '.gif'].includes(fileExtension)) {
