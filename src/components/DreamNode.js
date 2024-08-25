@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
-import { create3DObject, updatePosition, updateRotation } from '../utils/3DUtils';
+import { create3DObject, updatePosition, updateRotation, updateSize } from '../utils/3DUtils';
 import { easeInOutCubic } from '../utils/animationUtils';
 import { readMetadata, getMediaFilePath, getFileStats } from '../services/electronService';
 
