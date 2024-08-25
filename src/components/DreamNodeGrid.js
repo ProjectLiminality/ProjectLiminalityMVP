@@ -17,6 +17,7 @@ class DreamNodeGrid {
     this.mouse = new THREE.Vector2();
     this.init();
     this.addEventListeners();
+    this.startAnimationLoop();
   }
 
   addEventListeners() {
@@ -58,7 +59,6 @@ class DreamNodeGrid {
 
   onMouseMove(event) {
     this.updateMousePosition(event);
-    this.checkHoverStates();
   }
 
   checkHoverStates() {
@@ -163,6 +163,11 @@ class DreamNodeGrid {
   update() {
     this.checkHoverStates();
     this.dreamNodes.forEach(node => node.update());
+    requestAnimationFrame(this.update.bind(this));
+  }
+
+  startAnimationLoop() {
+    this.update();
   }
 
   changeLayout(newLayout) {
