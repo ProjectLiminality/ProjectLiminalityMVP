@@ -5,8 +5,7 @@ const DreamTalk = ({ repoName, mediaContent, style }) => {
     <div className="dream-talk" style={{
       ...style,
       alignItems: 'center',
-      overflow: 'hidden',
-      borderRadius: '50%'
+      overflow: 'hidden'
     }}>
       {mediaContent ? (
         mediaContent.type === 'video' ? (

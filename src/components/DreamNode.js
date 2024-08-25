@@ -137,6 +137,7 @@ class DreamNode {
     });
     this.disc = new THREE.Mesh(geometry, material);
 
+    const radius = 1; // Same as the disc radius
     const hoverGeometry = new THREE.RingGeometry(radius, radius + 0.2, segments);
     const hoverMaterial = new THREE.MeshBasicMaterial({ 
       color: 0xffffff, 
