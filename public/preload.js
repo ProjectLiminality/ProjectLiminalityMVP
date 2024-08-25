@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 console.log('Preload script is running');
 
-contextBridge.exposeInMainWorld('electronAPI', {
+const electronAPI = {
   fileSystem: {
     openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
     getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
@@ -10,11 +10,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
     scanDreamVault: () => ipcRenderer.invoke('scan-dream-vault'),
     getMediaFilePath: (repoName) => ipcRenderer.invoke('get-media-file-path', repoName),
     getFileStats: (filePath) => ipcRenderer.invoke('get-file-stats', filePath),
+    readMetadata: (repoName) => ipcRenderer.invoke('read-metadata', repoName),
   },
   isElectron: true
-});
+};
 
-console.log('Electron API exposed to renderer');
+contextBridge.exposeInMainWorld('electronAPI', electronAPI);
+
+console.log('Electron API exposed to renderer:', electronAPI);
 
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded event fired');
