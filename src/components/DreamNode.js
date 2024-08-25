@@ -137,16 +137,6 @@ class DreamNode {
     });
     this.disc = new THREE.Mesh(geometry, material);
 
-    const radius = 1; // Same as the disc radius
-    const hoverGeometry = new THREE.RingGeometry(radius, radius + 0.2, segments);
-    const hoverMaterial = new THREE.MeshBasicMaterial({ 
-      color: 0xffffff, 
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0
-    });
-    this.hoverRing = new THREE.Mesh(hoverGeometry, hoverMaterial);
-
     const frontSide = this.createSide(DreamTalk, 0.001, { repoName: this.repoName });
     const backSide = this.createSide(DreamSong, -0.001);
     backSide.rotation.y = Math.PI;
@@ -155,7 +145,6 @@ class DreamNode {
     backSide.position.set(0, 0, -0.001);
 
     this.nodeContainer.add(this.disc);
-    this.nodeContainer.add(this.hoverRing);
     this.nodeContainer.add(frontSide);
     this.nodeContainer.add(backSide);
 
@@ -216,10 +205,10 @@ class DreamNode {
   onHover(isHovered) {
     if (isHovered && !this.isHovered) {
       this.isHovered = true;
-      this.hoverRing.material.opacity = 0.5;
+      this.updateScale(1.1); // Scale up by 10%
     } else if (!isHovered && this.isHovered) {
       this.isHovered = false;
-      this.hoverRing.material.opacity = 0;
+      this.updateScale(1.0); // Return to original scale
     }
   }
 
@@ -255,7 +244,7 @@ class DreamNode {
   updateScaleAnimation() {
     const currentTime = Date.now();
     const elapsedTime = currentTime - this.scaleStartTime;
-    const progress = Math.min(elapsedTime / this.movementDuration, 1);
+    const progress = Math.min(elapsedTime / 300, 1); // 300ms duration for faster effect
 
     if (progress < 1) {
       const easedProgress = this.easeInOutCubic(progress);
@@ -270,13 +259,6 @@ class DreamNode {
   setScale(scale) {
     this.currentScale = scale;
     this.nodeContainer.scale.set(scale, scale, scale);
-    
-    // Adjust CSS3DObject scales
-    this.nodeContainer.children.forEach(child => {
-      if (child instanceof CSS3DObject) {
-        child.scale.set(0.01 / scale, 0.01 / scale, 0.01 / scale);
-      }
-    });
   }
 
   getObject() {
