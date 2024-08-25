@@ -44,7 +44,7 @@ export function updateRotation(object, newRotation, duration) {
   animate();
 }
 
-export function updateSize(object, newScale, duration) {
+export function updateScale(object, newScale, duration) {
   const startScale = object.scale.clone();
   const startTime = Date.now();
 
@@ -61,6 +61,11 @@ export function updateSize(object, newScale, duration) {
   }
 
   animate();
+}
+
+// Keep the existing updateSize function for backwards compatibility
+export function updateSize(object, newScale, duration) {
+  updateScale(object, newScale, duration);
 }
 
 function easeInOutCubic(t) {

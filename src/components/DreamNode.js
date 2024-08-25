@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
-import { create3DObject, updatePosition, updateRotation, updateSize } from '../utils/3DUtils';
+import { create3DObject, updatePosition, updateRotation, updateScale } from '../utils/3DUtils';
 import { easeInOutCubic } from '../utils/animationUtils';
 import { readMetadata, getMediaFilePath, getFileStats } from '../services/electronService';
 
@@ -192,15 +192,14 @@ class DreamNode {
   }
 
   onHover(isHovered) {
-    if (isHovered && !this.isHovered) {
-      this.isHovered = true;
-      this.targetScale = 1.1; // Scale up by 10%
-    } else if (!isHovered && this.isHovered) {
-      this.isHovered = false;
-      this.targetScale = 1.0; // Return to original scale
-    }
-    this.scaleStartTime = Date.now();
-    this.isScaling = true;
+    const newScale = isHovered ? 1.1 : 1.0;
+    const duration = 300; // 300ms duration for faster effect
+    this.updateScale(new THREE.Vector3(newScale, newScale, newScale), duration);
+    this.isHovered = isHovered;
+  }
+
+  updateScale(newScale, duration = 1000) {
+    updateScale(this.nodeContainer, newScale, duration);
   }
 
   rotateNode() {
@@ -210,27 +209,6 @@ class DreamNode {
     this.targetRotation = Math.round(this.startRotation / Math.PI) % 2 === 0 ? Math.PI : 0;
   }
 
-  updateScaleAnimation() {
-    const currentTime = Date.now();
-    const elapsedTime = currentTime - this.scaleStartTime;
-    const duration = 300; // 300ms duration for faster effect
-    const progress = Math.min(elapsedTime / duration, 1);
-
-    if (progress < 1) {
-      const easedProgress = easeInOutCubic(progress);
-      const newScale = this.currentScale + (this.targetScale - this.currentScale) * easedProgress;
-      this.setScale(newScale);
-    } else {
-      this.setScale(this.targetScale);
-      this.isScaling = false;
-    }
-  }
-
-  setScale(scale, duration = 1000) {
-    const newScale = new THREE.Vector3(scale, scale, scale);
-    updateSize(this.nodeContainer, newScale, duration);
-    this.currentScale = scale;
-  }
 
   getObject() {
     return this.object;
@@ -257,10 +235,6 @@ class DreamNode {
 
     if (this.isMoving) {
       updatePosition(this.object, this.targetPosition, this.movementDuration);
-    }
-
-    if (this.isScaling) {
-      this.updateScaleAnimation();
     }
   }
 
