@@ -66,18 +66,23 @@ function setupHandlers(ipcMain, store) {
   ipcMain.handle('get-media-file-path', async (event, repoName) => {
     const dreamVaultPath = store.get('dreamVaultPath');
     const repoPath = path.join(dreamVaultPath, repoName);
-    const mediaDir = path.join(repoPath, 'media');
+    const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp3', '.wav', '.ogg'];
     
     try {
-      const files = await fs.readdir(mediaDir);
-      const mediaFile = files.find(file => {
-        const ext = path.extname(file).toLowerCase();
-        return ['.jpg', '.jpeg', '.png', '.gif', '.mp3', '.wav', '.ogg'].includes(ext);
-      });
+      for (const ext of supportedExtensions) {
+        const filePath = path.join(repoPath, `${repoName}${ext}`);
+        try {
+          await fs.access(filePath);
+          return filePath;
+        } catch (error) {
+          // File doesn't exist, continue to next extension
+        }
+      }
       
-      return mediaFile ? path.join(mediaDir, mediaFile) : null;
+      console.log(`No matching media file found for ${repoName}`);
+      return null;
     } catch (error) {
-      console.error(`Error reading media directory for ${repoName}:`, error);
+      console.error(`Error searching for media file for ${repoName}:`, error);
       return null;
     }
   });
