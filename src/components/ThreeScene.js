@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import DreamNodeGrid from '../3d-classes/DreamNodeGrid';
+import DreamNodeGrid from './DreamNodeGrid';
 import { scanDreamVault } from '../services/electronService';
 
 function Three() {
@@ -139,41 +139,21 @@ function Three() {
     };
   }, [sceneState]);
 
-  const [dreamNodeGrid, setDreamNodeGrid] = useState(null);
-
-  useEffect(() => {
-    if (!sceneState || dreamNodes.length === 0) return;
-
-    const { scene, camera } = sceneState;
-    setDreamNodeGrid(
-      <DreamNodeGrid
-        scene={scene}
-        camera={camera}
-        dreamNodes={dreamNodes}
-        onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
-      />
-    );
-  }, [sceneState, dreamNodes]);
-
-  useEffect(() => {
-    if (!sceneState || !dreamNodeGrid) return;
-
-    const { scene, camera, renderer, cssRenderer, controls } = sceneState;
-    let animationFrameId;
-
-    const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
+  const animate = useCallback(() => {
+    if (sceneState) {
+      const { scene, camera, renderer, cssRenderer, controls } = sceneState;
       controls.update();
       renderer.render(scene, camera);
       cssRenderer.render(scene, camera);
-    };
+    }
+    requestAnimationFrame(animate);
+  }, [sceneState]);
 
-    animate();
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [sceneState, dreamNodeGrid]);
+  useEffect(() => {
+    if (sceneState) {
+      animate();
+    }
+  }, [sceneState, animate]);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -181,7 +161,16 @@ function Three() {
 
   return (
     <div ref={refContainer}>
-      {!sceneState || dreamNodes.length === 0 ? 'Loading...' : dreamNodeGrid}
+      {!sceneState || dreamNodes.length === 0 ? (
+        'Loading...'
+      ) : (
+        <DreamNodeGrid
+          scene={sceneState.scene}
+          camera={sceneState.camera}
+          dreamNodes={dreamNodes}
+          onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
+        />
+      )}
     </div>
   );
 }
