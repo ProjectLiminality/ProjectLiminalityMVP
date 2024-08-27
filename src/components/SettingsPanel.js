@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { isElectronAvailable, openDirectoryDialog, getDreamVaultPath, setDreamVaultPath } from '../services/electronService';
 
 const SettingsPanel = ({ isOpen, onClose }) => {
   const [dreamVaultPath, setDreamVaultPath] = useState('');
@@ -6,30 +7,24 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   const [isManualInput, setIsManualInput] = useState(false);
 
   useEffect(() => {
-    const checkElectron = () => {
-      console.log('Window object:', window);
-      console.log('Electron object:', window.electron);
-      const electronAvailable = !!(window.electron && window.electron.isElectron);
-      setIsElectronAvailable(electronAvailable);
-      console.log('Is Electron available:', electronAvailable);
-    };
-
-    checkElectron();
+    const electronAvailable = isElectronAvailable();
+    setIsElectronAvailable(electronAvailable);
+    console.log('Is Electron available:', electronAvailable);
 
     // Load saved DreamVault path
-    if (isElectronAvailable) {
-      window.electron.getDreamVaultPath().then(path => {
+    if (electronAvailable) {
+      getDreamVaultPath().then(path => {
         setDreamVaultPath(path);
       });
     }
-  }, [isElectronAvailable]);
+  }, []);
 
   const handleSelectDirectory = async () => {
     console.log('handleSelectDirectory called');
-    if (isElectronAvailable) {
+    if (isElectronAvailable()) {
       try {
         console.log('Attempting to open directory dialog');
-        const path = await window.electron.openDirectoryDialog();
+        const path = await openDirectoryDialog();
         console.log('Directory dialog result:', path);
         if (path) {
           setDreamVaultPath(path);
@@ -51,8 +46,8 @@ const SettingsPanel = ({ isOpen, onClose }) => {
 
   const handleSave = () => {
     console.log('Saving DreamVault path:', dreamVaultPath);
-    if (isElectronAvailable) {
-      window.electron.setDreamVaultPath(dreamVaultPath);
+    if (isElectronAvailable()) {
+      setDreamVaultPath(dreamVaultPath);
     }
     setIsManualInput(false);
     onClose();

@@ -25,3 +25,10 @@ export async function setDreamVaultPath(path) {
 export function isElectronAvailable() {
   return !!window.electron;
 }
+
+export async function openDirectoryDialog() {
+  if (isElectronAvailable()) {
+    return window.electron.openDirectoryDialog();
+  }
+  throw new Error('Electron is not available');
+}
