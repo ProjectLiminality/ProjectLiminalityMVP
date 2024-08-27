@@ -11,6 +11,7 @@ function Three() {
   const [dreamNodes, setDreamNodes] = useState([]);
   const [sceneState, setSceneState] = useState(null);
   const [error, setError] = useState(null);
+  const [isContainerReady, setIsContainerReady] = useState(false);
 
   console.log('Three component rendering');
 
@@ -82,6 +83,14 @@ function Three() {
   }, []);
 
   useEffect(() => {
+    if (refContainer.current) {
+      setIsContainerReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isContainerReady) return;
+
     console.log('Setting up scene');
     const newSceneState = initScene();
     if (newSceneState) {
@@ -107,9 +116,8 @@ function Three() {
         newSceneState.cleanup();
       }
     };
-  }, [initScene]);
+  }, [initScene, isContainerReady]);
 
-  // Add a new effect for handling window resize
   useEffect(() => {
     const handleResize = () => {
       if (sceneState) {
