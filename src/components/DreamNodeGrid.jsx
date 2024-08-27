@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { updatePosition } from '../utils/3DUtils';
 
-const DreamNodeGrid = ({ scene, camera, dreamNodes }) => {
+const DreamNodeGrid = ({ scene, camera, dreamNodes, onNodeClick }) => {
   const [layout, setLayout] = useState('grid');
   const gridRef = useRef(null);
   const [centeredNode, setCenteredNode] = useState(null);
@@ -67,7 +67,7 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes }) => {
   }, [dreamNodes.length]);
 
   useEffect(() => {
-    if (!gridRef.current || !sceneState || !sceneState.scene) return;
+    if (!gridRef.current || !scene) return;
 
     const positions = calculatePositions();
     dreamNodes.forEach((node, index) => {
@@ -77,7 +77,7 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes }) => {
       }
       updatePosition(gridRef.current.children[index], newPosition, 1000);
     });
-  }, [dreamNodes, layout, centeredNode, calculatePositions, sceneState]);
+  }, [dreamNodes, layout, centeredNode, calculatePositions, scene]);
 
   const toggleLayout = () => {
     setLayout(prevLayout => prevLayout === 'grid' ? 'circle' : 'grid');
@@ -98,8 +98,9 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes }) => {
             return (
               <DreamNode
                 key={node.repoName}
-                sceneState={sceneState}
-                initialPosition={calculatePositions()[index]}
+                scene={scene}
+                camera={camera}
+                position={calculatePositions()[index]}
                 repoName={node.repoName}
                 onNodeClick={handleNodeClick}
                 parentRef={gridRef}

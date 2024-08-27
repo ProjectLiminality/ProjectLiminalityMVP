@@ -59,10 +59,10 @@ const DreamNode = ({ scene, camera, position, repoName, onNodeClick }) => {
   }, [scene, position]);
 
   useEffect(() => {
-    if (objectRef.current) {
-      updatePosition(objectRef.current, initialPosition, 1000);
+    if (objectRef.current && position) {
+      updatePosition(objectRef.current, position, 1000);
     }
-  }, [initialPosition]);
+  }, [position]);
 
   const handleClick = useCallback(() => {
     setIsFlipped((prev) => !prev);
