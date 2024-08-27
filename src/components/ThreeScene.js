@@ -6,7 +6,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import DreamNodeGrid from './DreamNodeGrid';
 import { scanDreamVault } from '../services/electronService';
 
-function Three() {
+function ThreeScene() {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
   const [sceneState, setSceneState] = useState(null);
@@ -181,4 +181,6 @@ function Three() {
   );
 }
 
-export default Three;
+ThreeScene.displayName = 'ThreeScene';
+
+export default ThreeScene;
