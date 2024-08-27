@@ -7,19 +7,18 @@ const DreamNodeGrid = ({ sceneState, dreamNodes, onNodeClick }) => {
   const [layout, setLayout] = useState('grid');
   const gridRef = useRef(null);
   const [centeredNode, setCenteredNode] = useState(null);
-  const { scene } = sceneState;
 
   useEffect(() => {
-    if (scene && !gridRef.current) {
+    if (sceneState && sceneState.scene && !gridRef.current) {
       const gridObject = new THREE.Object3D();
-      scene.add(gridObject);
+      sceneState.scene.add(gridObject);
       gridRef.current = gridObject;
 
       return () => {
-        scene.remove(gridObject);
+        sceneState.scene.remove(gridObject);
       };
     }
-  }, [scene]);
+  }, [sceneState]);
 
   const calculatePositions = useCallback(() => {
     if (layout === 'grid') {
@@ -55,7 +54,7 @@ const DreamNodeGrid = ({ sceneState, dreamNodes, onNodeClick }) => {
   }, [dreamNodes.length]);
 
   useEffect(() => {
-    if (!gridRef.current) return;
+    if (!gridRef.current || !sceneState || !sceneState.scene) return;
 
     const positions = calculatePositions();
     dreamNodes.forEach((node, index) => {
@@ -65,7 +64,7 @@ const DreamNodeGrid = ({ sceneState, dreamNodes, onNodeClick }) => {
       }
       updatePosition(gridRef.current.children[index], newPosition, 1000);
     });
-  }, [dreamNodes, layout, centeredNode, calculatePositions]);
+  }, [dreamNodes, layout, centeredNode, calculatePositions, sceneState]);
 
   const toggleLayout = () => {
     setLayout(prevLayout => prevLayout === 'grid' ? 'circle' : 'grid');
@@ -79,7 +78,7 @@ const DreamNodeGrid = ({ sceneState, dreamNodes, onNodeClick }) => {
 
   return (
     <>
-      {dreamNodes.map((node, index) => (
+      {sceneState && sceneState.scene && dreamNodes.map((node, index) => (
         <DreamNode
           key={node.repoName}
           sceneState={sceneState}
