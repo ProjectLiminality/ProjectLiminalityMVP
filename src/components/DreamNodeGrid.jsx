@@ -33,6 +33,11 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
     };
   }, [scene, initialDreamNodes]);
 
+  useEffect(() => {
+    console.log('DreamNodeGrid: Scene ready:', isSceneReady);
+    console.log('DreamNodeGrid: Number of dream nodes:', dreamNodes.length);
+  }, [isSceneReady, dreamNodes]);
+
   const calculatePositions = useCallback(() => {
     if (layout === 'grid') {
       return calculateGridPositions();

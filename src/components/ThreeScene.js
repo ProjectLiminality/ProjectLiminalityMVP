@@ -161,15 +161,18 @@ function Three() {
 
   return (
     <div ref={refContainer}>
-      {!sceneState || dreamNodes.length === 0 ? (
-        'Loading...'
-      ) : (
+      {sceneState && dreamNodes.length > 0 && (
         <DreamNodeGrid
           scene={sceneState.scene}
           camera={sceneState.camera}
           dreamNodes={dreamNodes}
           onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
         />
+      )}
+      {(!sceneState || dreamNodes.length === 0) && (
+        <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          Loading...
+        </div>
       )}
     </div>
   );
