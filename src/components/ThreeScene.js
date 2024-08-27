@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
@@ -6,7 +6,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import DreamNodeGrid from './DreamNodeGrid';
 import { scanDreamVault } from '../services/electronService';
 
-function ThreeScene() {
+const ThreeScene = () => {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
   const [sceneState, setSceneState] = useState(null);
@@ -193,6 +193,4 @@ function ThreeScene() {
   );
 }
 
-ThreeScene.displayName = 'ThreeScene';
-
-export default ThreeScene;
+export default React.memo(ThreeScene);
