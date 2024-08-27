@@ -93,21 +93,18 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes: initialDreamNodes, onNodeCli
     <>
       {isSceneReady ? (
         <>
-          {dreamNodes.map((node, index) => {
-            console.log(`Rendering DreamNode: ${node.repoName}`);
-            return (
-              <DreamNode
-                key={node.repoName}
-                scene={scene}
-                camera={camera}
-                position={calculatePositions()[index]}
-                repoName={node.repoName}
-                onNodeClick={handleNodeClick}
-                parentRef={gridRef}
-                object={node.object}
-              />
-            );
-          })}
+          {dreamNodes.map((node, index) => (
+            <DreamNode
+              key={node.repoName}
+              scene={scene}
+              camera={camera}
+              position={calculatePositions()[index]}
+              repoName={node.repoName}
+              onNodeClick={handleNodeClick}
+              parentRef={gridRef}
+              object={node.object}
+            />
+          ))}
           <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
             <button onClick={toggleLayout}>Toggle Layout</button>
           </div>
