@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { updatePosition } from '../utils/3DUtils';
@@ -35,7 +35,7 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
     });
   }, [dreamNodes.length]);
 
-  const calculatePositions = useMemo(() => {
+  const calculatePositions = useCallback(() => {
     if (layout === 'grid') {
       return calculateGridPositions();
     } else if (layout === 'circle') {
