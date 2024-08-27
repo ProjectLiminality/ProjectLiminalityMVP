@@ -109,6 +109,25 @@ function Three() {
     };
   }, [initScene]);
 
+  // Add a new effect for handling window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (sceneState) {
+        const { camera, renderer, cssRenderer } = sceneState;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        cssRenderer.setSize(window.innerWidth, window.innerHeight);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [sceneState]);
+
   useEffect(() => {
     if (!sceneState) return;
 
