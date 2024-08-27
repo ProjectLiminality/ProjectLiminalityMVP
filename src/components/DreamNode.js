@@ -227,6 +227,11 @@ class DreamNode {
     updatePosition(this.object, newPosition, duration);
   }
 
+  setHovered(hovered) {
+    this.isHovered = hovered;
+    this.targetScale = hovered ? 1.1 : 1;
+  }
+
   update() {
     if (this.isRotating) {
       const currentTime = Date.now();
@@ -245,6 +250,10 @@ class DreamNode {
     if (this.isMoving) {
       updatePosition(this.object, this.targetPosition, this.movementDuration);
     }
+
+    // Smooth scale transition
+    this.currentScale = THREE.MathUtils.lerp(this.currentScale, this.targetScale, 0.1);
+    this.nodeContainer.scale.setScalar(this.currentScale);
   }
 
   setPosition(newPosition) {
