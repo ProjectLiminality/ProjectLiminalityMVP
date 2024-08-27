@@ -7,7 +7,7 @@ const DreamNodeGrid = ({ sceneState, dreamNodes, onNodeClick }) => {
   const [layout, setLayout] = useState('grid');
   const gridRef = useRef(null);
   const [centeredNode, setCenteredNode] = useState(null);
-  const { scene, camera, renderer, cssRenderer } = sceneState;
+  const { scene } = sceneState;
 
   useEffect(() => {
     if (scene && !gridRef.current) {
@@ -20,23 +20,6 @@ const DreamNodeGrid = ({ sceneState, dreamNodes, onNodeClick }) => {
       };
     }
   }, [scene]);
-
-  const updateLayout = useCallback(() => {
-    if (!gridRef.current) return;
-
-    const positions = calculatePositions();
-    dreamNodes.forEach((node, index) => {
-      const newPosition = positions[index];
-      if (centeredNode && node.repoName === centeredNode) {
-        newPosition.set(0, 0, 500); // Move centered node to front
-      }
-      updatePosition(gridRef.current.children[index], newPosition, 1000);
-    });
-  }, [dreamNodes, layout, centeredNode, calculatePositions]);
-
-  useEffect(() => {
-    updateLayout();
-  }, [updateLayout]);
 
   const calculatePositions = useCallback(() => {
     if (layout === 'grid') {
@@ -70,6 +53,19 @@ const DreamNodeGrid = ({ sceneState, dreamNodes, onNodeClick }) => {
       return new THREE.Vector3(x, y, z);
     });
   }, [dreamNodes.length]);
+
+  useEffect(() => {
+    if (!gridRef.current) return;
+
+    const positions = calculatePositions();
+    dreamNodes.forEach((node, index) => {
+      const newPosition = positions[index];
+      if (centeredNode && node.repoName === centeredNode) {
+        newPosition.set(0, 0, 500); // Move centered node to front
+      }
+      updatePosition(gridRef.current.children[index], newPosition, 1000);
+    });
+  }, [dreamNodes, layout, centeredNode, calculatePositions]);
 
   const toggleLayout = () => {
     setLayout(prevLayout => prevLayout === 'grid' ? 'circle' : 'grid');

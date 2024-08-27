@@ -6,7 +6,7 @@ import DreamSong from './DreamSong';
 import { updatePosition, updateRotation, updateScale } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath } from '../services/electronService';
 
-const DreamNode = ({ sceneState, initialPosition, repoName, onNodeClick }) => {
+const DreamNode = ({ sceneState, initialPosition, repoName, onNodeClick, parentRef }) => {
   const nodeRef = useRef(null);
   const objectRef = useRef(null);
   const [metadata, setMetadata] = useState({});
@@ -33,13 +33,13 @@ const DreamNode = ({ sceneState, initialPosition, repoName, onNodeClick }) => {
   }, [repoName]);
 
   useEffect(() => {
-    if (scene && nodeRef.current) {
+    if (scene && nodeRef.current && parentRef.current) {
       const object = new THREE.Object3D();
       const nodeContainer = new THREE.Object3D();
       object.add(nodeContainer);
       object.position.copy(initialPosition);
 
-      scene.add(object);
+      parentRef.current.add(object);
 
       const dreamTalkObject = new CSS3DObject(nodeRef.current.querySelector('.dream-talk'));
       const dreamSongObject = new CSS3DObject(nodeRef.current.querySelector('.dream-song'));
@@ -54,10 +54,10 @@ const DreamNode = ({ sceneState, initialPosition, repoName, onNodeClick }) => {
       objectRef.current = object;
 
       return () => {
-        scene.remove(object);
+        parentRef.current.remove(object);
       };
     }
-  }, [scene, initialPosition]);
+  }, [scene, initialPosition, parentRef]);
 
   useEffect(() => {
     if (objectRef.current) {

@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import DreamNodeGrid from './DreamNodeGrid.jsx';
+import DreamNodeGrid from './DreamNodeGrid';
 import { scanDreamVault } from '../services/electronService';
 
 function Three() {
@@ -87,8 +87,10 @@ function Three() {
   useEffect(() => {
     const { scene, camera, renderer, cssRenderer, controls } = sceneState;
     if (scene && camera && renderer && cssRenderer && controls) {
+      let animationFrameId;
+
       const animate = function () {
-        requestAnimationFrame(animate);
+        animationFrameId = requestAnimationFrame(animate);
         controls.update();
         renderer.render(scene, camera);
         cssRenderer.render(scene, camera);
@@ -96,6 +98,11 @@ function Three() {
 
       animate();
       console.log("Animation loop started");
+
+      return () => {
+        cancelAnimationFrame(animationFrameId);
+        console.log("Animation loop stopped");
+      };
     }
   }, [sceneState]);
 
