@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { updatePosition } from '../utils/3DUtils';
 
-const DreamNodeGrid = ({ scene, camera, dreamNodes: initialDreamNodes, onNodeClick }) => {
+const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes, onNodeClick }) => {
   const [layout, setLayout] = useState('grid');
   const gridRef = useRef(null);
   const [centeredNode, setCenteredNode] = useState(null);
@@ -118,4 +118,4 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes: initialDreamNodes, onNodeCli
   );
 };
 
-export default DreamNodeGrid;
+export default React.memo(DreamNodeGrid);
