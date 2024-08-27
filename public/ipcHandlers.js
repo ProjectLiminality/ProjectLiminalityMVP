@@ -1,3 +1,4 @@
+const { dialog } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
 const { dialog } = require('electron');
