@@ -14,12 +14,11 @@ contextBridge.exposeInMainWorld('electron', {
   getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
   setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),
   scanDreamVault: () => ipcRenderer.invoke('scan-dream-vault'),
-});
   openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
   isElectron: true
-};
+});
 
-contextBridge.exposeInMainWorld('electron', electronAPI);
+console.log('Electron API exposed to renderer:', electron);
 
 console.log('Electron API exposed to renderer:', electronAPI);
 
