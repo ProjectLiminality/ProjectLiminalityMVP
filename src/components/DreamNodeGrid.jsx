@@ -13,24 +13,26 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
 
   const calculateGridPositions = useCallback(() => {
     const gridSize = Math.ceil(Math.sqrt(dreamNodes.length));
-    const spacing = 250;
+    const spacing = 500; // Increased spacing
     return dreamNodes.map((_, index) => {
       const row = Math.floor(index / gridSize);
       const col = index % gridSize;
       const x = (col - gridSize / 2 + 0.5) * spacing;
       const y = (gridSize / 2 - row - 0.5) * spacing;
       const z = 0;
+      console.log(`DreamNode ${index} position: (${x}, ${y}, ${z})`);
       return new THREE.Vector3(x, y, z);
     });
   }, [dreamNodes.length]);
 
   const calculateCirclePositions = useCallback(() => {
-    const radius = dreamNodes.length * 40;
+    const radius = dreamNodes.length * 80; // Increased radius
     return dreamNodes.map((_, index) => {
       const angle = (index / dreamNodes.length) * Math.PI * 2;
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
       const z = 0;
+      console.log(`DreamNode ${index} position: (${x}, ${y}, ${z})`);
       return new THREE.Vector3(x, y, z);
     });
   }, [dreamNodes.length]);
@@ -78,18 +80,25 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
   useEffect(() => {
     if (!gridRef.current || !scene) return;
 
+    console.log('Updating DreamNode positions');
+    console.log('Number of DreamNodes:', dreamNodes.length);
+    console.log('Current layout:', layout);
+
     const positions = calculatePositions();
     dreamNodes.forEach((node, index) => {
       const newPosition = positions[index].clone();
       if (centeredNode && node.repoName === centeredNode) {
         newPosition.set(0, 0, 500); // Move centered node to front
       }
+      console.log(`Updating position for DreamNode ${index} (${node.repoName}):`, newPosition);
       updatePosition(node.object, newPosition, 1000);
     });
 
     // Ensure that the scene is rendered after updating positions
     renderer.render(scene, camera);
     cssRenderer.render(scene, camera);
+
+    console.log('Scene rendered');
   }, [dreamNodes, layout, centeredNode, calculatePositions, scene, camera, renderer, cssRenderer]);
 
   useEffect(() => {

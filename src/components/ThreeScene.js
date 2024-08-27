@@ -35,8 +35,18 @@ const ThreeScene = () => {
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0x000000);
 
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-      camera.position.z = 1500; // Increased camera distance
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+      camera.position.z = 2000; // Further increased camera distance
+
+      // Add a visible object at the origin for reference
+      const geometry = new THREE.SphereGeometry(50, 32, 32);
+      const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      const originSphere = new THREE.Mesh(geometry, material);
+      scene.add(originSphere);
+
+      // Add grid helper
+      const gridHelper = new THREE.GridHelper(2000, 20);
+      scene.add(gridHelper);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
