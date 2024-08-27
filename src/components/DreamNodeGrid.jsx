@@ -9,6 +9,7 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
   const [centeredNode, setCenteredNode] = useState(null);
   const [isSceneReady, setIsSceneReady] = useState(false);
   const [dreamNodes, setDreamNodes] = useState([]);
+  const dreamNodeRefs = useRef({});
 
   useEffect(() => {
     if (scene) {
@@ -36,6 +37,8 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
   useEffect(() => {
     console.log('DreamNodeGrid: Scene ready:', isSceneReady);
     console.log('DreamNodeGrid: Number of dream nodes:', dreamNodes.length);
+    console.log('DreamNodeGrid: Grid object:', gridRef.current);
+    console.log('DreamNodeGrid: DreamNode refs:', dreamNodeRefs.current);
   }, [isSceneReady, dreamNodes]);
 
   const calculatePositions = useCallback(() => {

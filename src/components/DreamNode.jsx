@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
@@ -6,11 +6,16 @@ import DreamSong from './DreamSong';
 import { updatePosition, updateRotation, updateScale } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath } from '../services/electronService';
 
-const DreamNode = ({ scene, camera, position, repoName, onNodeClick, parentRef, object }) => {
+const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, parentRef, object }, ref) => {
   const nodeRef = useRef(null);
   const [metadata, setMetadata] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
   const [mediaContent, setMediaContent] = useState(null);
+
+  useImperativeHandle(ref, () => ({
+    getObject: () => object,
+    getNodeRef: () => nodeRef.current,
+  }));
 
   const fetchMetadata = useCallback(async () => {
     try {
@@ -32,6 +37,7 @@ const DreamNode = ({ scene, camera, position, repoName, onNodeClick, parentRef, 
 
   useEffect(() => {
     if (scene && nodeRef.current && parentRef.current) {
+      console.log(`DreamNode ${repoName}: Creating 3D objects`);
       const nodeContainer = new THREE.Object3D();
       object.add(nodeContainer);
       object.position.copy(position);
@@ -48,11 +54,14 @@ const DreamNode = ({ scene, camera, position, repoName, onNodeClick, parentRef, 
       dreamSongObject.position.set(0, 0, -1);
       dreamSongObject.rotation.y = Math.PI;
 
+      console.log(`DreamNode ${repoName}: 3D objects created and added to scene`);
+
       return () => {
+        console.log(`DreamNode ${repoName}: Removing 3D objects from scene`);
         parentRef.current.remove(object);
       };
     }
-  }, [scene, position, parentRef, object]);
+  }, [scene, position, parentRef, object, repoName]);
 
   useEffect(() => {
     if (object && position) {
