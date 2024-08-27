@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import DreamNodeGrid from './DreamNodeGrid';
+import DreamNodeGrid from '../3d-classes/DreamNodeGrid';
 import { scanDreamVault } from '../services/electronService';
 
 function Three() {
@@ -100,7 +100,7 @@ function Three() {
         try {
           const repos = await scanDreamVault();
           console.log('Scanned dream vault:', repos);
-          setDreamNodes(repos.map(repo => ({ repoName: repo })));
+          setDreamNodes(repos.map(repo => ({ repoName: repo, position: new THREE.Vector3() })));
         } catch (error) {
           console.error('Error scanning dream vault:', error);
           setError('Error scanning dream vault: ' + error.message);
@@ -136,8 +136,23 @@ function Three() {
     };
   }, [sceneState]);
 
+  const [dreamNodeGrid, setDreamNodeGrid] = useState(null);
+
   useEffect(() => {
-    if (!sceneState) return;
+    if (!sceneState || dreamNodes.length === 0) return;
+
+    const { scene, camera } = sceneState;
+    const newDreamNodeGrid = new DreamNodeGrid({ scene, camera });
+    newDreamNodeGrid.createNodes(dreamNodes);
+    setDreamNodeGrid(newDreamNodeGrid);
+
+    return () => {
+      newDreamNodeGrid.dispose();
+    };
+  }, [sceneState, dreamNodes]);
+
+  useEffect(() => {
+    if (!sceneState || !dreamNodeGrid) return;
 
     const { scene, camera, renderer, cssRenderer, controls } = sceneState;
     let animationFrameId;
@@ -145,6 +160,7 @@ function Three() {
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       controls.update();
+      dreamNodeGrid.update();
       renderer.render(scene, camera);
       cssRenderer.render(scene, camera);
     };
@@ -154,27 +170,13 @@ function Three() {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [sceneState]);
+  }, [sceneState, dreamNodeGrid]);
 
   if (error) {
     return <div>Error: {error}</div>;
   }
 
-  if (!sceneState || dreamNodes.length === 0) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div ref={refContainer}>
-      {sceneState && (
-        <DreamNodeGrid
-          scene={sceneState.scene}
-          camera={sceneState.camera}
-          dreamNodes={dreamNodes}
-        />
-      )}
-    </div>
-  );
+  return <div ref={refContainer}>{!sceneState || dreamNodes.length === 0 ? 'Loading...' : null}</div>;
 }
 
 export default Three;
