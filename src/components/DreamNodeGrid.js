@@ -15,6 +15,7 @@ class DreamNodeGrid {
     this.currentLayout = 'grid';
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
+    this.frameCount = 0;
     this.init();
     this.addEventListeners();
     this.startAnimationLoop();
@@ -161,13 +162,19 @@ class DreamNodeGrid {
   }
 
   update() {
-    this.checkHoverStates();
-    this.dreamNodes.forEach(node => node.update());
-    requestAnimationFrame(this.update.bind(this));
+    this.frameCount++;
+    if (this.frameCount % 5 === 0) {
+      this.checkHoverStates();
+      this.dreamNodes.forEach(node => node.update());
+    }
   }
 
   startAnimationLoop() {
-    this.update();
+    const animate = () => {
+      this.update();
+      requestAnimationFrame(animate);
+    };
+    animate();
   }
 
   changeLayout(newLayout) {
