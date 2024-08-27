@@ -12,70 +12,62 @@ function Three() {
 
   console.log('Three component rendering');
 
-  const initScene = useMemo(() => () => {
+  const initScene = useCallback(() => {
     if (!refContainer.current) return null;
 
-    try {
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
 
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 1000;
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 1000;
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    refContainer.current.appendChild(renderer.domElement);
+
+    const cssRenderer = new CSS3DRenderer();
+    cssRenderer.setSize(window.innerWidth, window.innerHeight);
+    cssRenderer.domElement.style.position = 'absolute';
+    cssRenderer.domElement.style.top = '0';
+    refContainer.current.appendChild(cssRenderer.domElement);
+
+    const controls = new OrbitControls(camera, cssRenderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+    controls.enableZoom = true;
+
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      refContainer.current.appendChild(renderer.domElement);
-
-      const cssRenderer = new CSS3DRenderer();
       cssRenderer.setSize(window.innerWidth, window.innerHeight);
-      cssRenderer.domElement.style.position = 'absolute';
-      cssRenderer.domElement.style.top = '0';
-      refContainer.current.appendChild(cssRenderer.domElement);
+    };
 
-      const controls = new OrbitControls(camera, cssRenderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.25;
-      controls.enableZoom = true;
+    window.addEventListener('resize', handleResize);
 
-      const handleResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        cssRenderer.setSize(window.innerWidth, window.innerHeight);
-      };
-
-      window.addEventListener('resize', handleResize);
-
-      return {
-        scene,
-        camera,
-        renderer,
-        cssRenderer,
-        controls,
-        cleanup: () => {
-          window.removeEventListener('resize', handleResize);
-          renderer.dispose();
-          cssRenderer.dispose();
-          controls.dispose();
-        }
-      };
-    } catch (error) {
-      console.error("Error in initScene:", error);
-      return null;
-    }
+    return {
+      scene,
+      camera,
+      renderer,
+      cssRenderer,
+      controls,
+      cleanup: () => {
+        window.removeEventListener('resize', handleResize);
+        renderer.dispose();
+        cssRenderer.dispose();
+        controls.dispose();
+      }
+    };
   }, []);
 
   useEffect(() => {
-    let cleanupFunction;
+    console.log('Setting up scene');
+    const newSceneState = initScene();
+    if (newSceneState) {
+      console.log('Scene initialized successfully');
+      setSceneState(newSceneState);
 
-    const setup = async () => {
-      console.log('Setting up scene');
-      const newSceneState = initScene();
-      if (newSceneState) {
-        console.log('Scene initialized successfully');
-        setSceneState(newSceneState);
-        cleanupFunction = newSceneState.cleanup;
-
+      const fetchDreamNodes = async () => {
         try {
           const repos = await scanDreamVault();
           console.log('Scanned dream vault:', repos);
@@ -83,28 +75,17 @@ function Three() {
         } catch (error) {
           console.error('Error scanning dream vault:', error);
         }
-      } else {
-        console.error('Failed to initialize scene');
-      }
-    };
+      };
 
-    setup();
+      fetchDreamNodes();
+    } else {
+      console.error('Failed to initialize scene');
+    }
 
     return () => {
-      if (cleanupFunction) {
+      if (newSceneState) {
         console.log('Cleaning up scene');
-        cleanupFunction();
-      }
-    };
-  }, [initScene]);
-
-  useEffect(() => {
-    const state = initScene();
-    if (state) setSceneState(state);
-
-    return () => {
-      if (state && state.renderer) {
-        state.renderer.dispose();
+        newSceneState.cleanup();
       }
     };
   }, [initScene]);

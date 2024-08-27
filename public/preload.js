@@ -1,9 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-console.log('Preload script is running');
-
-const { contextBridge, ipcRenderer } = require('electron');
-
 contextBridge.exposeInMainWorld('electron', {
   fileSystem: {
     getMediaFilePath: (repoName) => ipcRenderer.invoke('get-media-file-path', repoName),
@@ -18,11 +14,3 @@ contextBridge.exposeInMainWorld('electron', {
   isElectron: true
 });
 
-console.log('Electron API exposed to renderer:', electron);
-
-console.log('Electron API exposed to renderer:', electronAPI);
-
-window.addEventListener('DOMContentLoaded', () => {
-  console.log('DOMContentLoaded event fired');
-  console.log('window.electron:', window.electron);
-});
