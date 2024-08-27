@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
+const { dialog } = require('electron');
 
 function setupHandlers(ipcMain, store) {
   // ... existing handlers ...
