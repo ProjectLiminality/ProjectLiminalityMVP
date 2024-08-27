@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { updatePosition } from '../utils/3DUtils';
@@ -10,40 +10,28 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes: initialDreamNodes, onNodeCli
   const [isSceneReady, setIsSceneReady] = useState(false);
   const [dreamNodes, setDreamNodes] = useState([]);
 
-  console.log('DreamNodeGrid rendering', { scene, camera, dreamNodes });
-
   useEffect(() => {
-    console.log('DreamNodeGrid: scene', scene);
-    console.log('DreamNodeGrid: initialDreamNodes', initialDreamNodes);
-
     if (scene) {
       if (!gridRef.current) {
-        console.log('Creating gridObject');
         const gridObject = new THREE.Object3D();
         scene.add(gridObject);
         gridRef.current = gridObject;
       }
       setIsSceneReady(true);
-      createNodes(initialDreamNodes);
+      setDreamNodes(initialDreamNodes.map(node => ({
+        ...node,
+        object: new THREE.Object3D(),
+      })));
     } else {
       setIsSceneReady(false);
     }
 
     return () => {
       if (gridRef.current && scene) {
-        console.log('Removing gridObject');
         scene.remove(gridRef.current);
       }
     };
   }, [scene, initialDreamNodes]);
-
-  const createNodes = useCallback((nodesToCreate) => {
-    console.log('Creating nodes', nodesToCreate);
-    setDreamNodes(nodesToCreate.map(node => ({
-      ...node,
-      object: new THREE.Object3D(),
-    })));
-  }, []);
 
   const calculatePositions = useCallback(() => {
     if (layout === 'grid') {

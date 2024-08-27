@@ -145,13 +145,14 @@ function Three() {
     if (!sceneState || dreamNodes.length === 0) return;
 
     const { scene, camera } = sceneState;
-    const newDreamNodeGrid = new DreamNodeGrid({ scene, camera });
-    newDreamNodeGrid.createNodes(dreamNodes);
-    setDreamNodeGrid(newDreamNodeGrid);
-
-    return () => {
-      newDreamNodeGrid.dispose();
-    };
+    setDreamNodeGrid(
+      <DreamNodeGrid
+        scene={scene}
+        camera={camera}
+        dreamNodes={dreamNodes}
+        onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
+      />
+    );
   }, [sceneState, dreamNodes]);
 
   useEffect(() => {
@@ -163,7 +164,6 @@ function Three() {
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       controls.update();
-      dreamNodeGrid.update();
       renderer.render(scene, camera);
       cssRenderer.render(scene, camera);
     };
@@ -179,7 +179,11 @@ function Three() {
     return <div>Error: {error}</div>;
   }
 
-  return <div ref={refContainer}>{!sceneState || dreamNodes.length === 0 ? 'Loading...' : null}</div>;
+  return (
+    <div ref={refContainer}>
+      {!sceneState || dreamNodes.length === 0 ? 'Loading...' : dreamNodeGrid}
+    </div>
+  );
 }
 
 export default Three;
