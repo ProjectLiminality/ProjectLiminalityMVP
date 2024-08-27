@@ -109,4 +109,6 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
   );
 });
 
+DreamNode.displayName = 'DreamNode';
+
 export default React.memo(DreamNode);
