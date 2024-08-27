@@ -11,6 +11,39 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
   const [dreamNodes, setDreamNodes] = useState([]);
   const dreamNodeRefs = useRef({});
 
+  const calculateGridPositions = useCallback(() => {
+    const gridSize = Math.ceil(Math.sqrt(dreamNodes.length));
+    const spacing = 250;
+    return dreamNodes.map((_, index) => {
+      const row = Math.floor(index / gridSize);
+      const col = index % gridSize;
+      const x = (col - gridSize / 2 + 0.5) * spacing;
+      const y = (gridSize / 2 - row - 0.5) * spacing;
+      const z = 0;
+      return new THREE.Vector3(x, y, z);
+    });
+  }, [dreamNodes.length]);
+
+  const calculateCirclePositions = useCallback(() => {
+    const radius = dreamNodes.length * 40;
+    return dreamNodes.map((_, index) => {
+      const angle = (index / dreamNodes.length) * Math.PI * 2;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      const z = 0;
+      return new THREE.Vector3(x, y, z);
+    });
+  }, [dreamNodes.length]);
+
+  const calculatePositions = useMemo(() => {
+    if (layout === 'grid') {
+      return calculateGridPositions();
+    } else if (layout === 'circle') {
+      return calculateCirclePositions();
+    }
+    return [];
+  }, [layout, calculateGridPositions, calculateCirclePositions]);
+
   useEffect(() => {
     if (scene) {
       if (!gridRef.current) {
@@ -41,39 +74,6 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
       console.log('DreamNodeGrid: Grid object:', gridRef.current);
     }
   }, [isSceneReady, dreamNodes]);
-
-  const calculatePositions = useMemo(() => {
-    if (layout === 'grid') {
-      return calculateGridPositions();
-    } else if (layout === 'circle') {
-      return calculateCirclePositions();
-    }
-    return [];
-  }, [layout, dreamNodes.length, calculateGridPositions, calculateCirclePositions]);
-
-  const calculateGridPositions = useCallback(() => {
-    const gridSize = Math.ceil(Math.sqrt(dreamNodes.length));
-    const spacing = 250;
-    return dreamNodes.map((_, index) => {
-      const row = Math.floor(index / gridSize);
-      const col = index % gridSize;
-      const x = (col - gridSize / 2 + 0.5) * spacing;
-      const y = (gridSize / 2 - row - 0.5) * spacing;
-      const z = 0;
-      return new THREE.Vector3(x, y, z);
-    });
-  }, [dreamNodes.length]);
-
-  const calculateCirclePositions = useCallback(() => {
-    const radius = dreamNodes.length * 40;
-    return dreamNodes.map((_, index) => {
-      const angle = (index / dreamNodes.length) * Math.PI * 2;
-      const x = Math.cos(angle) * radius;
-      const y = Math.sin(angle) * radius;
-      const z = 0;
-      return new THREE.Vector3(x, y, z);
-    });
-  }, [dreamNodes.length]);
 
   useEffect(() => {
     if (!gridRef.current || !scene) return;
