@@ -116,6 +116,6 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
       )}
     </>
   );
-};
+});
 
-export default React.memo(DreamNodeGrid);
+export default DreamNodeGrid;
