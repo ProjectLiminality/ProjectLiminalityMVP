@@ -4,6 +4,7 @@ import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import DreamNodeGrid from './DreamNodeGrid';
 import { scanDreamVault } from '../services/electronService';
+import { Canvas } from '@react-three/fiber';
 
 function Three() {
   const refContainer = useRef(null);
@@ -83,18 +84,18 @@ function Three() {
   }, []);
 
   useEffect(() => {
-    if (scene && camera && renderer && cssRenderer && controls) {
+    if (threeObjects.scene && threeObjects.camera && threeObjects.renderer && threeObjects.cssRenderer && threeObjects.controls) {
       const animate = function () {
         requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
-        cssRenderer.render(scene, camera);
+        threeObjects.controls.update();
+        threeObjects.renderer.render(threeObjects.scene, threeObjects.camera);
+        threeObjects.cssRenderer.render(threeObjects.scene, threeObjects.camera);
       };
 
       animate();
       console.log("Animation loop started");
     }
-  }, [scene, camera, renderer, cssRenderer, controls]);
+  }, [threeObjects]);
 
   const handleNodeClick = (repoName) => {
     console.log(`Node clicked: ${repoName}`);
@@ -103,14 +104,16 @@ function Three() {
 
   return (
     <div ref={refContainer}>
-      {scene && camera && (
-        <DreamNodeGrid
-          scene={scene}
-          camera={camera}
-          dreamNodes={dreamNodes}
-          onNodeClick={handleNodeClick}
-        />
-      )}
+      <Canvas>
+        {threeObjects.scene && threeObjects.camera && (
+          <DreamNodeGrid
+            scene={threeObjects.scene}
+            camera={threeObjects.camera}
+            dreamNodes={dreamNodes}
+            onNodeClick={handleNodeClick}
+          />
+        )}
+      </Canvas>
     </div>
   );
 }
