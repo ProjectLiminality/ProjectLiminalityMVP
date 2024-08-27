@@ -83,7 +83,6 @@ const DreamNode = ({ scene, initialPosition, repoName, onNodeClick }) => {
         onClick={handleClick} 
         onMouseEnter={() => handleHover(true)}
         onMouseLeave={() => handleHover(false)}
-        style={{ display: isFlipped ? 'none' : 'block' }}
       >
         <DreamTalk repoName={repoName} mediaContent={mediaContent} />
       </div>
@@ -92,9 +91,8 @@ const DreamNode = ({ scene, initialPosition, repoName, onNodeClick }) => {
         onClick={handleClick}
         onMouseEnter={() => handleHover(true)}
         onMouseLeave={() => handleHover(false)}
-        style={{ display: isFlipped ? 'block' : 'none' }}
       >
-        <DreamSong />
+        <DreamSong repoName={repoName} mediaContent={mediaContent} />
       </div>
     </div>
   );
