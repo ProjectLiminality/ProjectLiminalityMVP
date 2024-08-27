@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { updatePosition } from '../utils/3DUtils';
@@ -35,20 +35,21 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
   }, [scene, initialDreamNodes]);
 
   useEffect(() => {
-    console.log('DreamNodeGrid: Scene ready:', isSceneReady);
-    console.log('DreamNodeGrid: Number of dream nodes:', dreamNodes.length);
-    console.log('DreamNodeGrid: Grid object:', gridRef.current);
-    console.log('DreamNodeGrid: DreamNode refs:', dreamNodeRefs.current);
+    if (isSceneReady) {
+      console.log('DreamNodeGrid: Scene ready');
+      console.log('DreamNodeGrid: Number of dream nodes:', dreamNodes.length);
+      console.log('DreamNodeGrid: Grid object:', gridRef.current);
+    }
   }, [isSceneReady, dreamNodes]);
 
-  const calculatePositions = useCallback(() => {
+  const calculatePositions = useMemo(() => {
     if (layout === 'grid') {
       return calculateGridPositions();
     } else if (layout === 'circle') {
       return calculateCirclePositions();
     }
     return [];
-  }, [layout, dreamNodes.length]);
+  }, [layout, dreamNodes.length, calculateGridPositions, calculateCirclePositions]);
 
   const calculateGridPositions = useCallback(() => {
     const gridSize = Math.ceil(Math.sqrt(dreamNodes.length));

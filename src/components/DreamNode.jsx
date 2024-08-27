@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle, useMemo } from 'react';
 import * as THREE from 'three';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
@@ -35,7 +35,7 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
     fetchMetadata();
   }, [fetchMetadata]);
 
-  useEffect(() => {
+  const createNodeObjects = useCallback(() => {
     if (scene && nodeRef.current && parentRef.current) {
       console.log(`DreamNode ${repoName}: Creating 3D objects`);
       const nodeContainer = new THREE.Object3D();
@@ -62,6 +62,11 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
       };
     }
   }, [scene, position, parentRef, object, repoName]);
+
+  useEffect(() => {
+    const cleanup = createNodeObjects();
+    return cleanup;
+  }, [createNodeObjects]);
 
   useEffect(() => {
     if (object && position) {

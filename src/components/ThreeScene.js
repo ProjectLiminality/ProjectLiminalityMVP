@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
@@ -16,6 +16,7 @@ function ThreeScene() {
   console.log('Three component rendering');
 
   const initScene = useCallback(() => {
+    console.log('Initializing scene');
     console.log('Initializing scene');
     if (!refContainer.current) {
       console.error('Container ref is not available');
@@ -52,8 +53,8 @@ function ThreeScene() {
       controls.dampingFactor = 0.25;
       controls.enableZoom = true;
 
-      const axesHelper = new THREE.AxesHelper(500);
-      scene.add(axesHelper);
+      // const axesHelper = new THREE.AxesHelper(500);
+      // scene.add(axesHelper);
 
       const handleResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -149,13 +150,24 @@ function ThreeScene() {
       renderer.render(scene, camera);
       cssRenderer.render(scene, camera);
     }
-    requestAnimationFrame(animate);
   }, [sceneState]);
 
   useEffect(() => {
-    if (sceneState) {
+    let animationFrameId;
+    const animationLoop = () => {
       animate();
+      animationFrameId = requestAnimationFrame(animationLoop);
+    };
+
+    if (sceneState) {
+      animationLoop();
     }
+
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
   }, [sceneState, animate]);
 
   if (error) {
