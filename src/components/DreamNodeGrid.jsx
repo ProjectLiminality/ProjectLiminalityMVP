@@ -9,16 +9,21 @@ const DreamNodeGrid = ({ sceneState, dreamNodes, onNodeClick }) => {
   const [centeredNode, setCenteredNode] = useState(null);
 
   useEffect(() => {
+    console.log('DreamNodeGrid: sceneState', sceneState);
+    console.log('DreamNodeGrid: dreamNodes', dreamNodes);
+
     if (sceneState && sceneState.scene && !gridRef.current) {
+      console.log('Creating gridObject');
       const gridObject = new THREE.Object3D();
       sceneState.scene.add(gridObject);
       gridRef.current = gridObject;
 
       return () => {
+        console.log('Removing gridObject');
         sceneState.scene.remove(gridObject);
       };
     }
-  }, [sceneState]);
+  }, [sceneState, dreamNodes]);
 
   const calculatePositions = useCallback(() => {
     if (layout === 'grid') {
@@ -78,16 +83,25 @@ const DreamNodeGrid = ({ sceneState, dreamNodes, onNodeClick }) => {
 
   return (
     <>
-      {sceneState && sceneState.scene && dreamNodes.map((node, index) => (
-        <DreamNode
-          key={node.repoName}
-          sceneState={sceneState}
-          initialPosition={calculatePositions()[index]}
-          repoName={node.repoName}
-          onNodeClick={handleNodeClick}
-          parentRef={gridRef}
-        />
-      ))}
+      {sceneState && sceneState.scene ? (
+        dreamNodes.map((node, index) => {
+          console.log(`Rendering DreamNode: ${node.repoName}`);
+          return (
+            <DreamNode
+              key={node.repoName}
+              sceneState={sceneState}
+              initialPosition={calculatePositions()[index]}
+              repoName={node.repoName}
+              onNodeClick={handleNodeClick}
+              parentRef={gridRef}
+            />
+          );
+        })
+      ) : (
+        <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          Loading scene...
+        </div>
+      )}
       <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
         <button onClick={toggleLayout}>Toggle Layout</button>
       </div>
