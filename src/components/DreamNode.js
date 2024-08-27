@@ -15,9 +15,12 @@ class DreamNode {
     this.position = position;
     this.metadata = {};
     this.object = new THREE.Object3D();
-    this.nodeContainer = new THREE.Object3D(); // Initialize nodeContainer here
+    this.nodeContainer = new THREE.Object3D();
     this.object.add(this.nodeContainer);
     this.isRotating = false;
+    this.isHovered = false;
+    this.currentScale = 1;
+    this.targetScale = 1;
     this.targetRotation = 0;
     this.isMoving = false;
     this.mediaContent = null;

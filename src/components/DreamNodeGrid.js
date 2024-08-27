@@ -66,15 +66,20 @@ class DreamNodeGrid {
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const intersects = this.raycaster.intersectObjects(this.scene.children, true);
     
+    let hoveredNode = null;
+    for (let intersect of intersects) {
+      let object = intersect.object;
+      while (object.parent && !object.userData.dreamNode) {
+        object = object.parent;
+      }
+      if (object.userData.dreamNode) {
+        hoveredNode = object.userData.dreamNode;
+        break;
+      }
+    }
+
     this.dreamNodes.forEach(node => {
-      const isHovered = intersects.some(intersect => {
-        let object = intersect.object;
-        while (object.parent && !object.userData.dreamNode) {
-          object = object.parent;
-        }
-        return object.userData.dreamNode === node;
-      });
-      node.onHover(isHovered);
+      node.setHovered(node === hoveredNode);
     });
   }
 
