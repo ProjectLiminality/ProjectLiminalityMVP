@@ -5,16 +5,29 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import DreamNodeGrid from './DreamNodeGrid.jsx';
 import { scanDreamVault } from '../services/electronService';
 
+import React, { useRef, useState, useEffect, useMemo } from 'react';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import DreamNodeGrid from './DreamNodeGrid';
+
 function Three() {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
   const [sceneState, setSceneState] = useState(null);
 
-  const initScene = useMemo(() => async () => {
+  const initScene = useMemo(() => () => {
     if (!refContainer.current) return null;
 
-    try {
-      const newScene = new THREE.Scene();
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    refContainer.current.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    camera.position.z = 5;
+
+    return { scene, camera, renderer, controls };
       newScene.background = new THREE.Color(0x000000);
 
       const newCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -85,16 +98,26 @@ function Three() {
   }, [initScene]);
 
   useEffect(() => {
+    const state = initScene();
+    if (state) setSceneState(state);
+
+    return () => {
+      if (state && state.renderer) {
+        state.renderer.dispose();
+      }
+    };
+  }, [initScene]);
+
+  useEffect(() => {
     if (!sceneState) return;
 
-    const { scene, camera, renderer, cssRenderer, controls } = sceneState;
+    const { scene, camera, renderer, controls } = sceneState;
     let animationFrameId;
 
-    const animate = function () {
+    const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       controls.update();
       renderer.render(scene, camera);
-      cssRenderer.render(scene, camera);
     };
 
     animate();
