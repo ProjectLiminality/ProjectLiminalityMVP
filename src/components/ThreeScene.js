@@ -114,15 +114,26 @@ function Three() {
   console.log("Rendering Three component", { sceneState, dreamNodes });
   return (
     <div ref={refContainer}>
-      {sceneState.scene && sceneState.camera && dreamNodes.length > 0 ? (
+      {sceneState.scene && sceneState.camera && sceneState.renderer && sceneState.cssRenderer && sceneState.controls && dreamNodes.length > 0 ? (
         <DreamNodeGrid
           scene={sceneState.scene}
           camera={sceneState.camera}
+          renderer={sceneState.renderer}
+          cssRenderer={sceneState.cssRenderer}
+          controls={sceneState.controls}
           dreamNodes={dreamNodes}
           onNodeClick={handleNodeClick}
         />
       ) : (
-        <div>Loading... Scene: {sceneState.scene ? 'Ready' : 'Not Ready'}, Camera: {sceneState.camera ? 'Ready' : 'Not Ready'}, DreamNodes: {dreamNodes.length}</div>
+        <div>
+          Loading... 
+          Scene: {sceneState.scene ? 'Ready' : 'Not Ready'}, 
+          Camera: {sceneState.camera ? 'Ready' : 'Not Ready'}, 
+          Renderer: {sceneState.renderer ? 'Ready' : 'Not Ready'}, 
+          CSS Renderer: {sceneState.cssRenderer ? 'Ready' : 'Not Ready'}, 
+          Controls: {sceneState.controls ? 'Ready' : 'Not Ready'}, 
+          DreamNodes: {dreamNodes.length}
+        </div>
       )}
     </div>
   );
