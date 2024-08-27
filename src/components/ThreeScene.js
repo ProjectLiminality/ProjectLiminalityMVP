@@ -71,7 +71,10 @@ function Three() {
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           renderer.dispose();
-          cssRenderer.dispose();
+          // CSS3DRenderer doesn't have a dispose method, so we'll just remove its DOM element
+          if (cssRenderer.domElement && cssRenderer.domElement.parentNode) {
+            cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
+          }
           controls.dispose();
         }
       };
