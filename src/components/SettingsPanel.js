@@ -1,33 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { isElectronAvailable, openDirectoryDialog, getDreamVaultPath, setDreamVaultPath } from '../services/electronService';
+import { isElectronAvailable, openDirectoryDialog, getDreamVaultPath, setDreamVaultPath as setDreamVaultPathService } from '../services/electronService';
 
 const SettingsPanel = ({ isOpen, onClose }) => {
-  const [dreamVaultPath, setDreamVaultPath] = useState('');
-  const [isElectronAvailable, setIsElectronAvailable] = useState(false);
+  const [dreamVaultPath, setDreamVaultPathState] = useState('');
+  const [isElectronAvailableState, setIsElectronAvailableState] = useState(false);
   const [isManualInput, setIsManualInput] = useState(false);
 
   useEffect(() => {
-    const electronAvailable = isElectronAvailable();
-    setIsElectronAvailable(electronAvailable);
-    console.log('Is Electron available:', electronAvailable);
+    const checkElectronAvailability = async () => {
+      const electronAvailable = isElectronAvailable();
+      setIsElectronAvailableState(electronAvailable);
+      console.log('Is Electron available:', electronAvailable);
 
-    // Load saved DreamVault path
-    if (electronAvailable) {
-      getDreamVaultPath().then(path => {
-        setDreamVaultPath(path);
-      });
-    }
+      // Load saved DreamVault path
+      if (electronAvailable) {
+        const path = await getDreamVaultPath();
+        setDreamVaultPathState(path);
+      }
+    };
+
+    checkElectronAvailability();
   }, []);
 
   const handleSelectDirectory = async () => {
     console.log('handleSelectDirectory called');
-    if (isElectronAvailable()) {
+    if (isElectronAvailableState) {
       try {
         console.log('Attempting to open directory dialog');
         const path = await openDirectoryDialog();
         console.log('Directory dialog result:', path);
         if (path) {
-          setDreamVaultPath(path);
+          setDreamVaultPathState(path);
           setIsManualInput(false);
         }
       } catch (error) {
@@ -41,13 +44,13 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   };
 
   const handleManualInput = (e) => {
-    setDreamVaultPath(e.target.value);
+    setDreamVaultPathState(e.target.value);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log('Saving DreamVault path:', dreamVaultPath);
-    if (isElectronAvailable()) {
-      setDreamVaultPath(dreamVaultPath);
+    if (isElectronAvailableState) {
+      await setDreamVaultPathService(dreamVaultPath);
     }
     setIsManualInput(false);
     onClose();

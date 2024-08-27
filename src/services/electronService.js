@@ -22,9 +22,9 @@ export async function setDreamVaultPath(path) {
   return window.electron.setDreamVaultPath(path);
 }
 
-export function isElectronAvailable() {
+export const isElectronAvailable = () => {
   return !!window.electron;
-}
+};
 
 export async function openDirectoryDialog() {
   if (isElectronAvailable()) {
