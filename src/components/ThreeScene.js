@@ -4,18 +4,15 @@ import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import DreamNodeGrid from './DreamNodeGrid';
 import { scanDreamVault } from '../services/electronService';
-import { Canvas } from '@react-three/fiber';
 
 function Three() {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
-  const [threeObjects, setThreeObjects] = useState({
-    scene: null,
-    camera: null,
-    renderer: null,
-    cssRenderer: null,
-    controls: null,
-  });
+  const [scene, setScene] = useState(null);
+  const [camera, setCamera] = useState(null);
+  const [renderer, setRenderer] = useState(null);
+  const [cssRenderer, setCssRenderer] = useState(null);
+  const [controls, setControls] = useState(null);
 
   useEffect(() => {
     console.log("Three.js component mounted");
@@ -104,16 +101,14 @@ function Three() {
 
   return (
     <div ref={refContainer}>
-      <Canvas>
-        {threeObjects.scene && threeObjects.camera && (
-          <DreamNodeGrid
-            scene={threeObjects.scene}
-            camera={threeObjects.camera}
-            dreamNodes={dreamNodes}
-            onNodeClick={handleNodeClick}
-          />
-        )}
-      </Canvas>
+      {scene && camera && (
+        <DreamNodeGrid
+          scene={scene}
+          camera={camera}
+          dreamNodes={dreamNodes}
+          onNodeClick={handleNodeClick}
+        />
+      )}
     </div>
   );
 }
