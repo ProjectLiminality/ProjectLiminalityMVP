@@ -1,22 +1,26 @@
+import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
-import { useEffect, useRef, useState } from "react";
-import DreamNode from './DreamNode';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import DreamNodeGrid from './DreamNodeGrid';
+import { scanDreamVault } from '../services/electronService';
 
 function Three() {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
+  const [scene, setScene] = useState(null);
+
   useEffect(() => {
     console.log("Three.js component mounted");
     if (refContainer.current) {
       const initScene = async () => {
         try {
-          const scene = new THREE.Scene();
-          scene.background = new THREE.Color(0x000000);  // Black background
+          const newScene = new THREE.Scene();
+          newScene.background = new THREE.Color(0x000000);  // Black background
           console.log("Scene created with black background");
 
           const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+          camera.position.z = 1000;
           console.log("Camera created");
 
           const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -29,74 +33,48 @@ function Three() {
           cssRenderer.domElement.style.position = 'absolute';
           cssRenderer.domElement.style.top = '0';
           refContainer.current.appendChild(cssRenderer.domElement);
-          console.log("CSS renderer created and added to DOM");
-        
-          // Add lighting
-          const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-          scene.add(ambientLight);
-          const pointLight = new THREE.PointLight(0xffffff, 1);
-          pointLight.position.set(5, 5, 5);
-          scene.add(pointLight);
-        
-          // Create DreamNodeGrid
-          const dreamNodeGrid = new DreamNodeGrid({ scene, camera });
-          setDreamNodes(dreamNodeGrid.getDreamNodes());
-          console.log(`Created DreamNodeGrid with ${dreamNodeGrid.getDreamNodes().length} DreamNodes`);
-      
-          camera.position.z = 10;
-          console.log("Camera position:", camera.position);
-      
+          console.log("CSS3D renderer created and added to DOM");
+
+          const controls = new OrbitControls(camera, cssRenderer.domElement);
+          controls.enableDamping = true;
+          controls.dampingFactor = 0.25;
+          controls.enableZoom = true;
+          console.log("Orbit controls created");
+
+          const repos = await scanDreamVault();
+          console.log("Scanned DreamVault:", repos);
+
+          setDreamNodes(repos.map(repo => ({ repoName: repo })));
+          console.log("DreamNodes created:", repos.length);
+
+          setScene(newScene);
+
           const animate = function () {
             requestAnimationFrame(animate);
-            dreamNodeGrid.update();
-            renderer.render(scene, camera);
-            cssRenderer.render(scene, camera);
+            controls.update();
+            renderer.render(newScene, camera);
+            cssRenderer.render(newScene, camera);
           };
-      
+
           animate();
-
           console.log("Animation loop started");
-          console.log("Scene children:", scene.children);
 
-          // Click handling is now done in DreamNodeGrid
-
-          // Add spacebar event listener for scaling
-          let isLarge = false;
-          const onKeyDown = (event) => {
-            if (event.code === 'Space') {
-              event.preventDefault();
-              dreamNodes.forEach(dreamNode => {
-                if (isLarge) {
-                  dreamNode.updateScale(1);
-                } else {
-                  dreamNode.updateScale(2);
-                }
-              });
-              isLarge = !isLarge;
-            }
-          };
-
-          window.addEventListener('keydown', onKeyDown);
-      
           const handleResize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
             cssRenderer.setSize(window.innerWidth, window.innerHeight);
           };
-      
+
           window.addEventListener('resize', handleResize);
-      
+          console.log("Resize event listener added");
+
           return () => {
             window.removeEventListener('resize', handleResize);
-            window.removeEventListener('keydown', onKeyDown);
-            if (refContainer.current) {
-              refContainer.current.removeChild(renderer.domElement);
-              refContainer.current.removeChild(cssRenderer.domElement);
-            }
+            console.log("Resize event listener removed");
           };
         } catch (error) {
-          console.error("Error in Three.js setup:", error);
+          console.error("Error in initScene:", error);
         }
       };
 
@@ -104,18 +82,21 @@ function Three() {
     }
   }, []);
 
+  const handleNodeClick = (repoName) => {
+    console.log(`Node clicked: ${repoName}`);
+    // Implement any additional logic for node click
+  };
+
   return (
-    <>
-      <div ref={refContainer} style={{ 
-        width: '100vw', 
-        height: '100vh', 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        overflow: 'hidden'
-      }} />
-      {!refContainer.current && <div style={{ display: 'none' }}>Loading 3D scene...</div>}
-    </>
+    <div ref={refContainer}>
+      {scene && (
+        <DreamNodeGrid
+          scene={scene}
+          dreamNodes={dreamNodes}
+          onNodeClick={handleNodeClick}
+        />
+      )}
+    </div>
   );
 }
 
