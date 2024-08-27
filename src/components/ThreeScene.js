@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
+import WebGL from 'three/addons/capabilities/WebGL.js';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import DreamNodeGrid from './DreamNodeGrid';
@@ -21,8 +22,8 @@ function Three() {
       return null;
     }
 
-    if (!THREE.WEBGL.isWebGLAvailable()) {
-      const warning = THREE.WEBGL.getWebGLErrorMessage();
+    if (!WebGL.isWebGLAvailable()) {
+      const warning = WebGL.getWebGLErrorMessage();
       console.error('WebGL is not available:', warning);
       setError('WebGL is not available: ' + warning);
       return null;
