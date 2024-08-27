@@ -10,6 +10,8 @@ function Three() {
   const [dreamNodes, setDreamNodes] = useState([]);
   const [sceneState, setSceneState] = useState(null);
 
+  console.log('Three component rendering');
+
   const initScene = useMemo(() => () => {
     if (!refContainer.current) return null;
 
@@ -67,20 +69,32 @@ function Three() {
     let cleanupFunction;
 
     const setup = async () => {
-      const newSceneState = await initScene();
+      console.log('Setting up scene');
+      const newSceneState = initScene();
       if (newSceneState) {
+        console.log('Scene initialized successfully');
         setSceneState(newSceneState);
         cleanupFunction = newSceneState.cleanup;
 
-        const repos = await scanDreamVault();
-        setDreamNodes(repos.map(repo => ({ repoName: repo })));
+        try {
+          const repos = await scanDreamVault();
+          console.log('Scanned dream vault:', repos);
+          setDreamNodes(repos.map(repo => ({ repoName: repo })));
+        } catch (error) {
+          console.error('Error scanning dream vault:', error);
+        }
+      } else {
+        console.error('Failed to initialize scene');
       }
     };
 
     setup();
 
     return () => {
-      if (cleanupFunction) cleanupFunction();
+      if (cleanupFunction) {
+        console.log('Cleaning up scene');
+        cleanupFunction();
+      }
     };
   }, [initScene]);
 

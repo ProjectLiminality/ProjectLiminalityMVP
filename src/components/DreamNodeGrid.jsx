@@ -9,6 +9,8 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes, onNodeClick }) => {
   const [centeredNode, setCenteredNode] = useState(null);
   const [isSceneReady, setIsSceneReady] = useState(false);
 
+  console.log('DreamNodeGrid rendering', { scene, camera, dreamNodes });
+
   useEffect(() => {
     console.log('DreamNodeGrid: scene', scene);
     console.log('DreamNodeGrid: dreamNodes', dreamNodes);
