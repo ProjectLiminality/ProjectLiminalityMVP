@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { updatePosition } from '../utils/3DUtils';
 
-const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes, onNodeClick }) => {
+const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes, onNodeClick, renderer, cssRenderer }) => {
   const [layout, setLayout] = useState('grid');
   const gridRef = useRef(null);
   const [centeredNode, setCenteredNode] = useState(null);
@@ -86,7 +86,21 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
       }
       updatePosition(node.object, newPosition, 1000);
     });
-  }, [dreamNodes, layout, centeredNode, calculatePositions, scene]);
+
+    // Ensure that the scene is rendered after updating positions
+    renderer.render(scene, camera);
+    cssRenderer.render(scene, camera);
+  }, [dreamNodes, layout, centeredNode, calculatePositions, scene, camera, renderer, cssRenderer]);
+
+  useEffect(() => {
+    // Set up an animation loop to continuously render the scene
+    const animate = () => {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+      cssRenderer.render(scene, camera);
+    };
+    animate();
+  }, [scene, camera, renderer, cssRenderer]);
 
   const toggleLayout = () => {
     setLayout(prevLayout => prevLayout === 'grid' ? 'circle' : 'grid');

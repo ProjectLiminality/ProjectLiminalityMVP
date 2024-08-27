@@ -182,6 +182,8 @@ const ThreeScene = () => {
           camera={sceneState.camera}
           dreamNodes={dreamNodes}
           onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
+          renderer={sceneState.renderer}
+          cssRenderer={sceneState.cssRenderer}
         />
       )}
       {(!sceneState || dreamNodes.length === 0) && (

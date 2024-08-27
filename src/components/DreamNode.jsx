@@ -44,17 +44,27 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
 
       parentRef.current.add(object);
 
-      const dreamTalkObject = new CSS3DObject(nodeRef.current.querySelector('.dream-talk'));
-      const dreamSongObject = new CSS3DObject(nodeRef.current.querySelector('.dream-song'));
+      // Wait for the next frame to ensure the DOM elements are rendered
+      requestAnimationFrame(() => {
+        const dreamTalkElement = nodeRef.current.querySelector('.dream-talk');
+        const dreamSongElement = nodeRef.current.querySelector('.dream-song');
 
-      nodeContainer.add(dreamTalkObject);
-      nodeContainer.add(dreamSongObject);
+        if (dreamTalkElement && dreamSongElement) {
+          const dreamTalkObject = new CSS3DObject(dreamTalkElement);
+          const dreamSongObject = new CSS3DObject(dreamSongElement);
 
-      dreamTalkObject.position.set(0, 0, 1);
-      dreamSongObject.position.set(0, 0, -1);
-      dreamSongObject.rotation.y = Math.PI;
+          nodeContainer.add(dreamTalkObject);
+          nodeContainer.add(dreamSongObject);
 
-      console.log(`DreamNode ${repoName}: 3D objects created and added to scene`);
+          dreamTalkObject.position.set(0, 0, 1);
+          dreamSongObject.position.set(0, 0, -1);
+          dreamSongObject.rotation.y = Math.PI;
+
+          console.log(`DreamNode ${repoName}: 3D objects created and added to scene`);
+        } else {
+          console.error(`DreamNode ${repoName}: DOM elements not found`);
+        }
+      });
 
       return () => {
         console.log(`DreamNode ${repoName}: Removing 3D objects from scene`);
