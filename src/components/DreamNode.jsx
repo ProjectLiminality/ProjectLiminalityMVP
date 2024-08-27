@@ -6,9 +6,8 @@ import DreamSong from './DreamSong';
 import { updatePosition, updateRotation, updateScale } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath } from '../services/electronService';
 
-const DreamNode = ({ scene, camera, position, repoName, onNodeClick }) => {
+const DreamNode = ({ scene, camera, position, repoName, onNodeClick, parentRef, object }) => {
   const nodeRef = useRef(null);
-  const objectRef = useRef(null);
   const [metadata, setMetadata] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
   const [mediaContent, setMediaContent] = useState(null);
@@ -32,13 +31,12 @@ const DreamNode = ({ scene, camera, position, repoName, onNodeClick }) => {
   }, [fetchMetadata]);
 
   useEffect(() => {
-    if (scene && nodeRef.current) {
-      const object = new THREE.Object3D();
+    if (scene && nodeRef.current && parentRef.current) {
       const nodeContainer = new THREE.Object3D();
       object.add(nodeContainer);
       object.position.copy(position);
 
-      scene.add(object);
+      parentRef.current.add(object);
 
       const dreamTalkObject = new CSS3DObject(nodeRef.current.querySelector('.dream-talk'));
       const dreamSongObject = new CSS3DObject(nodeRef.current.querySelector('.dream-song'));
@@ -50,37 +48,35 @@ const DreamNode = ({ scene, camera, position, repoName, onNodeClick }) => {
       dreamSongObject.position.set(0, 0, -1);
       dreamSongObject.rotation.y = Math.PI;
 
-      objectRef.current = object;
-
       return () => {
-        scene.remove(object);
+        parentRef.current.remove(object);
       };
     }
-  }, [scene, position]);
+  }, [scene, position, parentRef, object]);
 
   useEffect(() => {
-    if (objectRef.current && position) {
-      updatePosition(objectRef.current, position, 1000);
+    if (object && position) {
+      updatePosition(object, position, 1000);
     }
-  }, [position]);
+  }, [position, object]);
 
   const handleClick = useCallback(() => {
     setIsFlipped((prev) => !prev);
-    if (objectRef.current) {
+    if (object) {
       const duration = 1000; // 1 second
       const newRotation = new THREE.Euler(0, isFlipped ? 0 : Math.PI, 0);
-      updateRotation(objectRef.current, newRotation, duration);
+      updateRotation(object, newRotation, duration);
     }
     onNodeClick(repoName);
-  }, [isFlipped, onNodeClick, repoName]);
+  }, [isFlipped, onNodeClick, repoName, object]);
 
   const handleHover = useCallback((isHovering) => {
-    if (objectRef.current) {
+    if (object) {
       const duration = 300; // 0.3 seconds
       const newScale = new THREE.Vector3(isHovering ? 1.1 : 1, isHovering ? 1.1 : 1, isHovering ? 1.1 : 1);
-      updateScale(objectRef.current, newScale, duration);
+      updateScale(object, newScale, duration);
     }
-  }, []);
+  }, [object]);
 
   return (
     <div ref={nodeRef}>

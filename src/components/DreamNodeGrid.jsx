@@ -76,7 +76,7 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
 
     const positions = calculatePositions();
     dreamNodes.forEach((node, index) => {
-      const newPosition = positions[index];
+      const newPosition = positions[index].clone();
       if (centeredNode && node.repoName === centeredNode) {
         newPosition.set(0, 0, 500); // Move centered node to front
       }
