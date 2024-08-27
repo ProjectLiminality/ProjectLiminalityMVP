@@ -81,18 +81,18 @@ function Three() {
   }, []);
 
   useEffect(() => {
-    if (threeObjects.scene && threeObjects.camera && threeObjects.renderer && threeObjects.cssRenderer && threeObjects.controls) {
+    if (scene && camera && renderer && cssRenderer && controls) {
       const animate = function () {
         requestAnimationFrame(animate);
-        threeObjects.controls.update();
-        threeObjects.renderer.render(threeObjects.scene, threeObjects.camera);
-        threeObjects.cssRenderer.render(threeObjects.scene, threeObjects.camera);
+        controls.update();
+        renderer.render(scene, camera);
+        cssRenderer.render(scene, camera);
       };
 
       animate();
       console.log("Animation loop started");
     }
-  }, [threeObjects]);
+  }, [scene, camera, renderer, cssRenderer, controls]);
 
   const handleNodeClick = (repoName) => {
     console.log(`Node clicked: ${repoName}`);
