@@ -34,8 +34,8 @@ function Three() {
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0x000000);
 
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 1000;
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+      camera.position.z = 1500; // Increased camera distance
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -51,6 +51,9 @@ function Three() {
       controls.enableDamping = true;
       controls.dampingFactor = 0.25;
       controls.enableZoom = true;
+
+      const axesHelper = new THREE.AxesHelper(500);
+      scene.add(axesHelper);
 
       const handleResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;
