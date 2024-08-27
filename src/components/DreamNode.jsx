@@ -107,6 +107,6 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
       </div>
     </div>
   );
-};
+});
 
 export default React.memo(DreamNode);
