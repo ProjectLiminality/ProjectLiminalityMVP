@@ -8,11 +8,13 @@ import { scanDreamVault } from '../services/electronService';
 function Three() {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
-  const [scene, setScene] = useState(null);
-  const [camera, setCamera] = useState(null);
-  const [renderer, setRenderer] = useState(null);
-  const [cssRenderer, setCssRenderer] = useState(null);
-  const [controls, setControls] = useState(null);
+  const [sceneState, setSceneState] = useState({
+    scene: null,
+    camera: null,
+    renderer: null,
+    cssRenderer: null,
+    controls: null,
+  });
 
   useEffect(() => {
     console.log("Three.js component mounted");
@@ -25,13 +27,11 @@ function Three() {
 
           const newCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
           newCamera.position.z = 1000;
-          setCamera(newCamera);
           console.log("Camera created");
 
           const newRenderer = new THREE.WebGLRenderer({ antialias: true });
           newRenderer.setSize(window.innerWidth, window.innerHeight);
           refContainer.current.appendChild(newRenderer.domElement);
-          setRenderer(newRenderer);
           console.log("WebGL renderer created and added to DOM");
 
           const newCssRenderer = new CSS3DRenderer();
@@ -39,23 +39,27 @@ function Three() {
           newCssRenderer.domElement.style.position = 'absolute';
           newCssRenderer.domElement.style.top = '0';
           refContainer.current.appendChild(newCssRenderer.domElement);
-          setCssRenderer(newCssRenderer);
           console.log("CSS3D renderer created and added to DOM");
 
           const newControls = new OrbitControls(newCamera, newCssRenderer.domElement);
           newControls.enableDamping = true;
           newControls.dampingFactor = 0.25;
           newControls.enableZoom = true;
-          setControls(newControls);
           console.log("Orbit controls created");
+
+          setSceneState({
+            scene: newScene,
+            camera: newCamera,
+            renderer: newRenderer,
+            cssRenderer: newCssRenderer,
+            controls: newControls,
+          });
 
           const repos = await scanDreamVault();
           console.log("Scanned DreamVault:", repos);
 
           setDreamNodes(repos.map(repo => ({ repoName: repo })));
           console.log("DreamNodes created:", repos.length);
-
-          setScene(newScene);
 
           const handleResize = () => {
             newCamera.aspect = window.innerWidth / window.innerHeight;
@@ -81,6 +85,7 @@ function Three() {
   }, []);
 
   useEffect(() => {
+    const { scene, camera, renderer, cssRenderer, controls } = sceneState;
     if (scene && camera && renderer && cssRenderer && controls) {
       const animate = function () {
         requestAnimationFrame(animate);
@@ -92,7 +97,7 @@ function Three() {
       animate();
       console.log("Animation loop started");
     }
-  }, [scene, camera, renderer, cssRenderer, controls]);
+  }, [sceneState]);
 
   const handleNodeClick = (repoName) => {
     console.log(`Node clicked: ${repoName}`);
@@ -101,10 +106,9 @@ function Three() {
 
   return (
     <div ref={refContainer}>
-      {scene && camera && dreamNodes.length > 0 && (
+      {sceneState.scene && sceneState.camera && dreamNodes.length > 0 && (
         <DreamNodeGrid
-          scene={scene}
-          camera={camera}
+          sceneState={sceneState}
           dreamNodes={dreamNodes}
           onNodeClick={handleNodeClick}
         />

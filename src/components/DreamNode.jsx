@@ -6,12 +6,13 @@ import DreamSong from './DreamSong';
 import { updatePosition, updateRotation, updateScale } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath } from '../services/electronService';
 
-const DreamNode = ({ scene, initialPosition, repoName, onNodeClick }) => {
+const DreamNode = ({ sceneState, initialPosition, repoName, onNodeClick }) => {
   const nodeRef = useRef(null);
   const objectRef = useRef(null);
   const [metadata, setMetadata] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
   const [mediaContent, setMediaContent] = useState(null);
+  const { scene } = sceneState;
 
   useEffect(() => {
     const fetchMetadata = async () => {
@@ -57,6 +58,12 @@ const DreamNode = ({ scene, initialPosition, repoName, onNodeClick }) => {
       };
     }
   }, [scene, initialPosition]);
+
+  useEffect(() => {
+    if (objectRef.current) {
+      updatePosition(objectRef.current, initialPosition, 1000);
+    }
+  }, [initialPosition]);
 
   const handleClick = () => {
     setIsFlipped(!isFlipped);

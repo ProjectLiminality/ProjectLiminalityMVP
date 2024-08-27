@@ -3,10 +3,11 @@ import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { updatePosition } from '../utils/3DUtils';
 
-const DreamNodeGrid = ({ scene, dreamNodes, onNodeClick }) => {
+const DreamNodeGrid = ({ sceneState, dreamNodes, onNodeClick }) => {
   const [layout, setLayout] = useState('grid');
   const gridRef = useRef(null);
   const [centeredNode, setCenteredNode] = useState(null);
+  const { scene } = sceneState;
 
   useEffect(() => {
     if (scene) {
@@ -33,7 +34,9 @@ const DreamNodeGrid = ({ scene, dreamNodes, onNodeClick }) => {
       if (centeredNode && node.repoName === centeredNode) {
         newPosition.set(0, 0, 500); // Move centered node to front
       }
-      updatePosition(node.object, newPosition, 1000);
+      if (node.object) {
+        updatePosition(node.object, newPosition, 1000);
+      }
     });
   };
 
@@ -85,7 +88,7 @@ const DreamNodeGrid = ({ scene, dreamNodes, onNodeClick }) => {
       {dreamNodes.map((node, index) => (
         <DreamNode
           key={node.repoName}
-          scene={scene}
+          sceneState={sceneState}
           initialPosition={calculatePositions()[index]}
           repoName={node.repoName}
           onNodeClick={handleNodeClick}
