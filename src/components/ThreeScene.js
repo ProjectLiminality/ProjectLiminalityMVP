@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import DreamNodeGrid from './DreamNodeGrid';
+import DreamNodeGrid from './DreamNodeGrid.jsx';
 import { scanDreamVault } from '../services/electronService';
 
 function Three() {
@@ -104,14 +104,17 @@ function Three() {
     // Implement any additional logic for node click
   };
 
+  console.log("Rendering Three component", { sceneState, dreamNodes });
   return (
     <div ref={refContainer}>
-      {sceneState.scene && sceneState.camera && dreamNodes.length > 0 && (
+      {sceneState.scene && sceneState.camera && dreamNodes.length > 0 ? (
         <DreamNodeGrid
           sceneState={sceneState}
           dreamNodes={dreamNodes}
           onNodeClick={handleNodeClick}
         />
+      ) : (
+        <div>Loading... Scene: {sceneState.scene ? 'Ready' : 'Not Ready'}, Camera: {sceneState.camera ? 'Ready' : 'Not Ready'}, DreamNodes: {dreamNodes.length}</div>
       )}
     </div>
   );
