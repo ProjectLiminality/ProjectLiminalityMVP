@@ -8,11 +8,13 @@ import { scanDreamVault } from '../services/electronService';
 function Three() {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
-  const [scene, setScene] = useState(null);
-  const [camera, setCamera] = useState(null);
-  const [renderer, setRenderer] = useState(null);
-  const [cssRenderer, setCssRenderer] = useState(null);
-  const [controls, setControls] = useState(null);
+  const [threeObjects, setThreeObjects] = useState({
+    scene: null,
+    camera: null,
+    renderer: null,
+    cssRenderer: null,
+    controls: null,
+  });
 
   useEffect(() => {
     console.log("Three.js component mounted");
