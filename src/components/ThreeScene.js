@@ -117,7 +117,9 @@ const ThreeScene = () => {
         try {
           const repos = await scanDreamVault();
           console.log('Scanned dream vault:', repos);
-          setDreamNodes(repos.map(repo => ({ repoName: repo, position: new THREE.Vector3() })));
+          const newDreamNodes = repos.map(repo => ({ repoName: repo, position: new THREE.Vector3() }));
+          console.log('Created dream nodes:', newDreamNodes);
+          setDreamNodes(newDreamNodes);
         } catch (error) {
           console.error('Error scanning dream vault:', error);
           setError('Error scanning dream vault: ' + error.message);
@@ -125,6 +127,7 @@ const ThreeScene = () => {
       };
 
       fetchDreamNodes();
+      console.log('Fetching dream nodes...');
     }
 
     return () => {

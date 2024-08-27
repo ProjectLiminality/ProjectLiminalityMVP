@@ -47,24 +47,31 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
   }, [layout, calculateGridPositions, calculateCirclePositions]);
 
   useEffect(() => {
+    console.log('DreamNodeGrid effect triggered. Scene:', !!scene, 'Initial dream nodes:', initialDreamNodes);
     if (scene) {
       if (!gridRef.current) {
         const gridObject = new THREE.Object3D();
         scene.add(gridObject);
         gridRef.current = gridObject;
+        console.log('Created and added grid object to scene');
       }
       setIsSceneReady(true);
-      setDreamNodes(initialDreamNodes.map(node => ({
-        ...node,
-        object: new THREE.Object3D(),
-      })));
+      const newDreamNodes = initialDreamNodes.map(node => {
+        const object = new THREE.Object3D();
+        console.log(`Created 3D object for node: ${node.repoName}`);
+        return { ...node, object };
+      });
+      console.log('Setting dream nodes:', newDreamNodes);
+      setDreamNodes(newDreamNodes);
     } else {
       setIsSceneReady(false);
+      console.log('Scene not ready');
     }
 
     return () => {
       if (gridRef.current && scene) {
         scene.remove(gridRef.current);
+        console.log('Removed grid object from scene');
       }
     };
   }, [scene, initialDreamNodes]);

@@ -43,11 +43,15 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
       object.position.copy(position);
 
       parentRef.current.add(object);
+      console.log(`DreamNode ${repoName}: Added to parent object`);
 
       // Wait for the next frame to ensure the DOM elements are rendered
       requestAnimationFrame(() => {
         const dreamTalkElement = nodeRef.current.querySelector('.dream-talk');
         const dreamSongElement = nodeRef.current.querySelector('.dream-song');
+
+        console.log(`DreamNode ${repoName}: DOM elements:`, 
+                    { dreamTalk: !!dreamTalkElement, dreamSong: !!dreamSongElement });
 
         if (dreamTalkElement && dreamSongElement) {
           const dreamTalkObject = new CSS3DObject(dreamTalkElement);
@@ -70,6 +74,9 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
         console.log(`DreamNode ${repoName}: Removing 3D objects from scene`);
         parentRef.current.remove(object);
       };
+    } else {
+      console.log(`DreamNode ${repoName}: Not creating 3D objects. Scene: ${!!scene}, 
+                   nodeRef: ${!!nodeRef.current}, parentRef: ${!!parentRef.current}`);
     }
   }, [scene, position, parentRef, object, repoName]);
 
