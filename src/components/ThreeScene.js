@@ -138,11 +138,13 @@ function Three() {
 
   return (
     <div ref={refContainer}>
-      <DreamNodeGrid
-        sceneState={sceneState}
-        dreamNodes={dreamNodes}
-        onNodeClick={handleNodeClick}
-      />
+      {sceneState && (
+        <DreamNodeGrid
+          scene={sceneState.scene}
+          camera={sceneState.camera}
+          dreamNodes={dreamNodes}
+        />
+      )}
     </div>
   );
 }
