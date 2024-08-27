@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { updatePosition } from '../utils/3DUtils';
 
-const DreamNodeGrid = ({ scene, camera, dreamNodes, onNodeClick }) => {
+const DreamNodeGrid = ({ scene, camera, dreamNodes: initialDreamNodes, onNodeClick }) => {
   const [layout, setLayout] = useState('grid');
   const gridRef = useRef(null);
   const [centeredNode, setCenteredNode] = useState(null);
   const [isSceneReady, setIsSceneReady] = useState(false);
+  const [dreamNodes, setDreamNodes] = useState([]);
 
   console.log('DreamNodeGrid rendering', { scene, camera, dreamNodes });
 
   useEffect(() => {
     console.log('DreamNodeGrid: scene', scene);
-    console.log('DreamNodeGrid: dreamNodes', dreamNodes);
+    console.log('DreamNodeGrid: initialDreamNodes', initialDreamNodes);
 
     if (scene) {
       if (!gridRef.current) {
@@ -23,6 +24,7 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes, onNodeClick }) => {
         gridRef.current = gridObject;
       }
       setIsSceneReady(true);
+      createNodes(initialDreamNodes);
     } else {
       setIsSceneReady(false);
     }
@@ -33,7 +35,15 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes, onNodeClick }) => {
         scene.remove(gridRef.current);
       }
     };
-  }, [scene, dreamNodes]);
+  }, [scene, initialDreamNodes]);
+
+  const createNodes = useCallback((nodesToCreate) => {
+    console.log('Creating nodes', nodesToCreate);
+    setDreamNodes(nodesToCreate.map(node => ({
+      ...node,
+      object: new THREE.Object3D(),
+    })));
+  }, []);
 
   const calculatePositions = useCallback(() => {
     if (layout === 'grid') {
@@ -77,7 +87,7 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes, onNodeClick }) => {
       if (centeredNode && node.repoName === centeredNode) {
         newPosition.set(0, 0, 500); // Move centered node to front
       }
-      updatePosition(gridRef.current.children[index], newPosition, 1000);
+      updatePosition(node.object, newPosition, 1000);
     });
   }, [dreamNodes, layout, centeredNode, calculatePositions, scene]);
 
@@ -106,6 +116,7 @@ const DreamNodeGrid = ({ scene, camera, dreamNodes, onNodeClick }) => {
                 repoName={node.repoName}
                 onNodeClick={handleNodeClick}
                 parentRef={gridRef}
+                object={node.object}
               />
             );
           })}
