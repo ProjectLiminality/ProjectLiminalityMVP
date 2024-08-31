@@ -22,6 +22,7 @@ const DreamSong = ({ repoName, metadata, style, onClick, onMouseEnter, onMouseLe
       borderRadius: '50%',
       border: '5px solid blue',
       color: 'white',
+      backfaceVisibility: 'hidden',
     }}>
       <div style={{
         width: '100%',

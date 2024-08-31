@@ -39,6 +39,7 @@ const DreamTalk = ({ repoName, mediaContent, metadata, style, onClick, onMouseEn
       borderRadius: '50%',
       border: '5px solid blue',
       color: 'white',
+      backfaceVisibility: 'hidden',
     }}>
       <div style={{
         width: '100%',

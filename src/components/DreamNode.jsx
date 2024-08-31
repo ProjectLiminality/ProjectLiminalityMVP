@@ -72,6 +72,10 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
       // Rotate the back object 180 degrees around the Y-axis
       backCSS3DObject.rotation.y = Math.PI;
 
+      // Ensure both sides are fully opaque
+      frontCSS3DObject.element.style.backfaceVisibility = 'hidden';
+      backCSS3DObject.element.style.backfaceVisibility = 'hidden';
+
       frontObjectRef.current = frontCSS3DObject;
       backObjectRef.current = backCSS3DObject;
       
