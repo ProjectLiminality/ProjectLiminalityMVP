@@ -68,6 +68,11 @@ const DreamNode = forwardRef(({ position, repoName, onNodeClick, cssScene }, ref
     if (css3DObject) {
       const newRotation = new THREE.Euler(0, isFlipped ? 0 : Math.PI, 0);
       updateRotation(css3DObject, newRotation, 1000);
+
+      // Move the node to the right
+      const currentPosition = css3DObject.position.clone();
+      const newPosition = currentPosition.add(new THREE.Vector3(600, 0, 0)); // Move 600 units to the right (2 times its width)
+      updatePosition(css3DObject, newPosition, 1000);
     }
     onNodeClick(repoName);
   }, [isFlipped, onNodeClick, repoName, css3DObject]);

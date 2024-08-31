@@ -80,6 +80,11 @@ const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick })
           repoName={node.repoName}
           onNodeClick={handleNodeClick}
           cssScene={cssScene}
+          updatePosition={(newPosition, duration) => {
+            if (nodeRefs.current[node.repoName]) {
+              nodeRefs.current[node.repoName].updatePosition(newPosition, duration);
+            }
+          }}
         />
       ))}
       <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1000 }}>
