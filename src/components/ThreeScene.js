@@ -1,7 +1,8 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import * as THREE from 'three';
+import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import WebGL from 'three/addons/capabilities/WebGL.js';
-import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
+import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import DreamNodeGrid from './DreamNodeGrid';
 import { scanDreamVault } from '../services/electronService';
@@ -10,6 +11,7 @@ const ThreeScene = () => {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
   const [sceneState, setSceneState] = useState(null);
+  const [cssScene] = useState(() => new THREE.Scene());
   const [error, setError] = useState(null);
   const [isContainerReady, setIsContainerReady] = useState(false);
 
@@ -31,8 +33,7 @@ const ThreeScene = () => {
     }
 
     try {
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);
+      cssScene.background = new THREE.Color(0x000000);
 
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
       camera.position.z = 2000;
@@ -63,7 +64,7 @@ const ThreeScene = () => {
 
       console.log('Scene initialized successfully');
       return {
-        scene,
+        scene: cssScene,
         camera,
         renderer,
         cssRenderer,
@@ -164,6 +165,7 @@ const ThreeScene = () => {
       {sceneState && dreamNodes.length > 0 && (
         <DreamNodeGrid
           scene={sceneState.scene}
+          cssScene={cssScene}
           camera={sceneState.camera}
           dreamNodes={dreamNodes}
           onNodeClick={handleNodeClick}
