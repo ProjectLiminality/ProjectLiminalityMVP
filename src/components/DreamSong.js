@@ -1,4 +1,5 @@
 import React from 'react';
+import { BLUE, BLACK, WHITE } from '../constants/colors';
 
 const DreamSong = ({ repoName, metadata, style, onClick, onMouseEnter, onMouseLeave }) => {
   return (
@@ -18,10 +19,10 @@ const DreamSong = ({ repoName, metadata, style, onClick, onMouseEnter, onMouseLe
       boxSizing: 'border-box',
       width: '300px',
       height: '300px',
-      backgroundColor: 'black',
+      backgroundColor: BLACK,
       borderRadius: '50%',
-      border: '5px solid blue',
-      color: 'white',
+      border: `5px solid ${BLUE}`,
+      color: WHITE,
       backfaceVisibility: 'hidden',
     }}>
       <div style={{
