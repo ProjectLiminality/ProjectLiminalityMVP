@@ -43,7 +43,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   const readMetadata = useCallback(async () => {
     try {
       console.log(`Reading metadata for ${repoName}`);
-      const data = await readMetadata(repoName);
+      const data = await electronService.readMetadata(repoName);
       console.log(`Metadata for ${repoName}:`, data);
       setMetadata(data);
     } catch (error) {
