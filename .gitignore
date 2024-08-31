@@ -25,3 +25,4 @@ yarn-error.log*
 /ProjectLiminalityReactThreeJS.sublime-project
 /ProjectLiminalityReactThreeJS.sublime-workspace
 /.env
+package-lock.json
