@@ -6,9 +6,8 @@ import DreamSong from './DreamSong';
 import { updateRotation, updateScale, updatePosition } from '../utils/3DUtils';
 import { getRepoData } from '../utils/fileUtils';
 
-const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene }, ref) => {
+const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene, isHovered }, ref) => {
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
-  const [isHovered, setIsHovered] = useState(false);
   const nodeRef = useRef(null);
   const objectRef = useRef(null);
 
@@ -53,18 +52,16 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
     }
   }, [initialPosition, cssScene, repoName]);
 
+  useEffect(() => {
+    if (objectRef.current) {
+      const newScale = new THREE.Vector3(isHovered ? 1.1 : 1, isHovered ? 1.1 : 1, isHovered ? 1.1 : 1);
+      updateScale(objectRef.current, newScale, 300);
+    }
+  }, [isHovered]);
+
   const handleClick = useCallback(() => {
     onNodeClick(repoName);
   }, [onNodeClick, repoName]);
-
-  const handleHover = useCallback((hovering) => {
-    console.log(`DreamNode ${repoName} hover state: ${hovering}`);
-    setIsHovered(hovering);
-    if (objectRef.current) {
-      const newScale = new THREE.Vector3(hovering ? 1.1 : 1, hovering ? 1.1 : 1, hovering ? 1.1 : 1);
-      updateScale(objectRef.current, newScale, 300);
-    }
-  }, [repoName]);
 
   return (
     <div ref={nodeRef} style={{ width: '300px', height: '300px', position: 'relative', transformStyle: 'preserve-3d' }}>
@@ -85,11 +82,6 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
           isHovered={isHovered}
         />
       </div>
-      <div 
-        style={{ position: 'absolute', width: '100%', height: '100%', pointerEvents: 'auto' }}
-        onMouseEnter={() => handleHover(true)}
-        onMouseLeave={() => handleHover(false)}
-      />
     </div>
   );
 });

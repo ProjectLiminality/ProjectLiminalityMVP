@@ -6,6 +6,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode from './DreamNode';
 import { createRoot } from 'react-dom/client';
+import { Raycaster, Vector2 } from 'three';
 
 const DreamSpace = () => {
   const refContainer = useRef(null);
@@ -99,7 +100,10 @@ const DreamSpace = () => {
           console.log('Repos found:', repos);
           if (repos.length > 0) {
             console.log('Setting DreamNode:', repos[0]);
-            setDreamNodes([{ repoName: repos[0] }]);
+            const newNode = { repoName: repos[0] };
+            const plane = sceneState.createInteractionPlane(new THREE.Vector3(0, 0, 0));
+            interactionPlanes.current.push({ node: newNode, plane });
+            setDreamNodes([newNode]);
           } else {
             console.error('No repositories found in the DreamVault');
             setError('No repositories found in the DreamVault');
@@ -180,13 +184,48 @@ const DreamSpace = () => {
       };
 
       animate();
+
+      const onMouseMove = (event) => {
+        mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        checkIntersection();
+      };
+
+      const onClick = () => {
+        checkIntersection(true);
+      };
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('click', onClick);
+
+      return () => {
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('click', onClick);
+      };
     }
   }, [sceneState]);
 
-  const handleNodeClick = useCallback((repoName) => {
-    console.log('Node clicked:', repoName);
-    // Add any additional logic for node click here
-  }, []);
+  const checkIntersection = useCallback((isClick = false) => {
+    if (!sceneState) return;
+
+    raycaster.current.setFromCamera(mouse.current, sceneState.camera);
+    const intersects = raycaster.current.intersectObjects(interactionPlanes.current.map(ip => ip.plane));
+
+    if (intersects.length > 0) {
+      const intersectedPlane = intersects[0].object;
+      const intersectedNode = interactionPlanes.current.find(ip => ip.plane === intersectedPlane)?.node;
+
+      if (intersectedNode) {
+        if (isClick) {
+          // Handle click event
+          console.log('Clicked on node:', intersectedNode.repoName);
+        } else {
+          // Handle hover event
+          console.log('Hovering over node:', intersectedNode.repoName);
+        }
+      }
+    }
+  }, [sceneState]);
 
   if (error) {
     return <div>Error: {error}</div>;
