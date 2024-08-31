@@ -5,6 +5,7 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { updateRotation, updateScale, updatePosition } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath, readFile, listFiles } from '../services/electronService';
+import * as electronService from '../services/electronService';
 
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene }, ref) => {
   const [metadata, setMetadata] = useState({});
