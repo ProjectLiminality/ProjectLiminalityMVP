@@ -33,16 +33,20 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
   };
 
   const handleMouseEnter = (e) => {
-    console.log('Mouse enter');
+    console.log('Mouse enter', { repoName, isHovered: true });
     setIsHovered(true);
     if (onMouseEnter) onMouseEnter(e);
   };
 
   const handleMouseLeave = (e) => {
-    console.log('Mouse leave');
+    console.log('Mouse leave', { repoName, isHovered: false });
     setIsHovered(false);
     if (onMouseLeave) onMouseLeave(e);
   };
+
+  useEffect(() => {
+    console.log(`DreamTalk isHovered state changed for ${repoName}:`, isHovered);
+  }, [isHovered, repoName]);
 
   return (
     <div 
