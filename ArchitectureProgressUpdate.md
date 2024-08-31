@@ -30,30 +30,32 @@
 - Set up DreamSpace with Three.js and CSS3DRenderer
 - Achieved proper rendering and positioning of DreamNode in 3D space
 - Implemented metadata reading and display for the first git repository
+- Successfully displayed media files (images, videos) on the DreamTalk side of the DreamNode
 
 ### Milestone 2: Enhance DreamNode Functionality and User Experience
 
 #### Objectives:
 1. Refine DreamNode appearance and behavior
-   - [ ] Improve visual design of DreamTalk and DreamSong components
+   - [x] Improve visual design of DreamTalk and DreamSong components
    - [ ] Enhance animation smoothness for hover and click interactions
-   - [ ] Implement proper opacity and visibility handling for front and back faces
+   - [x] Implement proper opacity and visibility handling for front and back faces
 
 2. Optimize performance
-   - [ ] Implement efficient rendering techniques for CSS3D objects
+   - [x] Implement efficient rendering techniques for CSS3D objects
    - [ ] Optimize Three.js scene management
 
 3. Implement advanced user interactions
    - [ ] Add zoom functionality to focus on selected DreamNode
-   - [ ] Implement rotation of DreamNode to view front and back sides
+   - [x] Implement rotation of DreamNode to view front and back sides
 
 4. Enhance data integration
-   - [ ] Implement more comprehensive metadata display
-   - [ ] Add support for different media types (images, audio, video) in DreamTalk
+   - [x] Implement more comprehensive metadata display
+   - [x] Add support for different media types (images, audio, video) in DreamTalk
 
 #### Next Steps:
-- Begin working on Milestone 2 objectives
-- Once Milestone 2 is complete, we'll move on to implementing multiple DreamNodes and the DreamGraph component for coordination
+- Complete remaining objectives in Milestone 2
+- Begin planning for multiple DreamNodes implementation
+- Start designing the DreamGraph component for coordinating multiple DreamNodes
 
 #### Long-term Goals:
 - Implement DreamGraph for managing multiple DreamNodes
