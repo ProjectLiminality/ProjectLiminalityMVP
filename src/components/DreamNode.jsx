@@ -8,39 +8,36 @@ import { readMetadata, getMediaFilePath } from '../services/electronService';
 
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene }, ref) => {
   const [metadata, setMetadata] = useState({});
-  const [isFlipped, setIsFlipped] = useState(false);
   const [mediaContent, setMediaContent] = useState(null);
-  const css3DObjectRef = useRef(null);
-  const nodeRef = useRef(null);
+  const frontObjectRef = useRef(null);
+  const backObjectRef = useRef(null);
+  const frontNodeRef = useRef(null);
+  const backNodeRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     updatePosition: (newPosition, duration = 1000) => {
       console.log(`Updating position for ${repoName}:`, newPosition);
-      if (css3DObjectRef.current) {
-        updatePosition(css3DObjectRef.current, newPosition, duration);
+      if (frontObjectRef.current && backObjectRef.current) {
+        updatePosition(frontObjectRef.current, newPosition, duration);
+        updatePosition(backObjectRef.current, newPosition, duration);
       }
     },
     updateRotation: (newRotation, duration = 1000) => {
       console.log(`Updating rotation for ${repoName}:`, newRotation);
-      if (css3DObjectRef.current) {
-        updateRotation(css3DObjectRef.current, newRotation, duration);
+      if (frontObjectRef.current && backObjectRef.current) {
+        updateRotation(frontObjectRef.current, newRotation, duration);
+        updateRotation(backObjectRef.current, newRotation, duration);
       }
     },
     updateScale: (newScale, duration = 300) => {
       console.log(`Updating scale for ${repoName}:`, newScale);
-      if (css3DObjectRef.current) {
-        updateScale(css3DObjectRef.current, newScale, duration);
+      if (frontObjectRef.current && backObjectRef.current) {
+        updateScale(frontObjectRef.current, newScale, duration);
+        updateScale(backObjectRef.current, newScale, duration);
       }
     },
-    flip: () => {
-      console.log(`Flipping ${repoName}`);
-      setIsFlipped(prev => !prev);
-      if (css3DObjectRef.current) {
-        const newRotation = new THREE.Euler(0, isFlipped ? 0 : Math.PI, 0);
-        updateRotation(css3DObjectRef.current, newRotation, 1000);
-      }
-    },
-    css3DObject: css3DObjectRef.current
+    frontObject: frontObjectRef.current,
+    backObject: backObjectRef.current
   }));
 
   const fetchMetadata = useCallback(async () => {
@@ -63,19 +60,32 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }, [fetchMetadata]);
 
   useEffect(() => {
-    console.log(`DreamNode effect for ${repoName}. nodeRef.current:`, !!nodeRef.current, 'cssScene:', !!cssScene, 'css3DObjectRef.current:', !!css3DObjectRef.current);
-    if (nodeRef.current && cssScene && !css3DObjectRef.current) {
-      console.log(`Creating CSS3DObject for ${repoName}`);
-      const newCSS3DObject = new CSS3DObject(nodeRef.current);
-      newCSS3DObject.position.copy(initialPosition);
-      css3DObjectRef.current = newCSS3DObject;
-      cssScene.add(newCSS3DObject);
-      console.log(`Added CSS3DObject for ${repoName} to scene. Scene children count:`, cssScene.children.length);
+    console.log(`DreamNode effect for ${repoName}. frontNodeRef.current:`, !!frontNodeRef.current, 'backNodeRef.current:', !!backNodeRef.current, 'cssScene:', !!cssScene);
+    if (frontNodeRef.current && backNodeRef.current && cssScene && !frontObjectRef.current && !backObjectRef.current) {
+      console.log(`Creating CSS3DObjects for ${repoName}`);
+      const frontCSS3DObject = new CSS3DObject(frontNodeRef.current);
+      const backCSS3DObject = new CSS3DObject(backNodeRef.current);
+      
+      frontCSS3DObject.position.copy(initialPosition);
+      backCSS3DObject.position.copy(initialPosition);
+      
+      // Rotate the back object 180 degrees around the Y-axis
+      backCSS3DObject.rotation.y = Math.PI;
+
+      frontObjectRef.current = frontCSS3DObject;
+      backObjectRef.current = backCSS3DObject;
+      
+      cssScene.add(frontCSS3DObject);
+      cssScene.add(backCSS3DObject);
+      
+      console.log(`Added CSS3DObjects for ${repoName} to scene. Scene children count:`, cssScene.children.length);
 
       return () => {
-        console.log(`Removing CSS3DObject for ${repoName}`);
-        cssScene.remove(newCSS3DObject);
-        css3DObjectRef.current = null;
+        console.log(`Removing CSS3DObjects for ${repoName}`);
+        cssScene.remove(frontCSS3DObject);
+        cssScene.remove(backCSS3DObject);
+        frontObjectRef.current = null;
+        backObjectRef.current = null;
       };
     }
   }, [initialPosition, cssScene, repoName]);
@@ -87,53 +97,52 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
 
   const handleHover = useCallback((isHovering) => {
     console.log(`${repoName} hover state:`, isHovering);
-    if (css3DObjectRef.current) {
+    if (frontObjectRef.current && backObjectRef.current) {
       const newScale = new THREE.Vector3(isHovering ? 1.1 : 1, isHovering ? 1.1 : 1, isHovering ? 1.1 : 1);
-      updateScale(css3DObjectRef.current, newScale, 300);
+      updateScale(frontObjectRef.current, newScale, 300);
+      updateScale(backObjectRef.current, newScale, 300);
     }
   }, [repoName]);
 
   const borderColor = metadata.color || '#000000';
 
   return (
-    <div ref={nodeRef} style={{ width: '300px', height: '300px', position: 'relative' }}>
-      <div 
-        className="dream-talk" 
-        onClick={handleClick} 
-        onMouseEnter={() => handleHover(true)}
-        onMouseLeave={() => handleHover(false)}
-        style={{ 
-          position: 'absolute', 
-          width: '100%', 
-          height: '100%', 
-          backfaceVisibility: 'hidden',
-          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          transition: 'transform 0.6s',
-          border: `5px solid ${borderColor}`,
-          borderRadius: '10px',
-        }}
-      >
-        <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
+    <>
+      <div ref={frontNodeRef} style={{ width: '300px', height: '300px', position: 'relative' }}>
+        <div 
+          className="dream-talk" 
+          onClick={handleClick} 
+          onMouseEnter={() => handleHover(true)}
+          onMouseLeave={() => handleHover(false)}
+          style={{ 
+            position: 'absolute', 
+            width: '100%', 
+            height: '100%', 
+            border: `5px solid ${borderColor}`,
+            borderRadius: '10px',
+          }}
+        >
+          <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
+        </div>
       </div>
-      <div 
-        className="dream-song" 
-        onClick={handleClick}
-        onMouseEnter={() => handleHover(true)}
-        onMouseLeave={() => handleHover(false)}
-        style={{ 
-          position: 'absolute', 
-          width: '100%', 
-          height: '100%', 
-          backfaceVisibility: 'hidden', 
-          transform: isFlipped ? 'rotateY(0deg)' : 'rotateY(-180deg)',
-          transition: 'transform 0.6s',
-          border: `5px solid ${borderColor}`,
-          borderRadius: '10px',
-        }}
-      >
-        <DreamSong repoName={repoName} metadata={metadata} />
+      <div ref={backNodeRef} style={{ width: '300px', height: '300px', position: 'relative' }}>
+        <div 
+          className="dream-song" 
+          onClick={handleClick}
+          onMouseEnter={() => handleHover(true)}
+          onMouseLeave={() => handleHover(false)}
+          style={{ 
+            position: 'absolute', 
+            width: '100%', 
+            height: '100%', 
+            border: `5px solid ${borderColor}`,
+            borderRadius: '10px',
+          }}
+        >
+          <DreamSong repoName={repoName} metadata={metadata} />
+        </div>
       </div>
-    </div>
+    </>
   );
 });
 
