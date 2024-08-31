@@ -12,6 +12,9 @@ const DreamSpace = () => {
   const [dreamNodes, setDreamNodes] = useState([]);
   const [error, setError] = useState(null);
   const [sceneState, setSceneState] = useState(null);
+  const raycaster = useRef(new Raycaster());
+  const mouse = useRef(new Vector2());
+  const interactionPlanes = useRef([]);
 
   useEffect(() => {
     console.log('Initializing sceneState');
@@ -54,11 +57,21 @@ const DreamSpace = () => {
       window.addEventListener('resize', handleResize);
 
       console.log('sceneState initialized successfully');
+      const createInteractionPlane = (position) => {
+        const planeGeometry = new THREE.PlaneGeometry(200, 200);
+        const planeMaterial = new THREE.MeshBasicMaterial({ visible: false });
+        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.position.copy(position);
+        scene.add(plane);
+        return plane;
+      };
+
       setSceneState({
         scene,
         camera,
         cssRenderer,
         controls,
+        createInteractionPlane,
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
