@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
 
+const ANIMATION_DURATION = 2000; // 2 seconds
+
 const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick }) => {
   const [layout, setLayout] = useState('grid');
   const [centeredNode, setCenteredNode] = useState(null);
@@ -49,7 +51,7 @@ const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick })
         if (centeredNode && node.repoName === centeredNode) {
           newPosition.set(0, 0, 500);
         }
-        dreamNodeRef.updatePosition(newPosition);
+        dreamNodeRef.updatePosition(newPosition, ANIMATION_DURATION);
       }
     });
   }, [dreamNodes, layout, centeredNode, calculatePositions]);

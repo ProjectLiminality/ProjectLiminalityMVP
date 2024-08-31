@@ -15,19 +15,19 @@ const DreamNode = forwardRef(({ position, repoName, onNodeClick, cssScene }, ref
 
   useImperativeHandle(ref, () => ({
     css3DObject,
-    updatePosition: (newPosition) => {
+    updatePosition: (newPosition, duration = 1000) => {
       if (css3DObject) {
-        updatePosition(css3DObject, newPosition, 1000);
+        updatePosition(css3DObject, newPosition, duration);
       }
     },
-    updateRotation: (newRotation) => {
+    updateRotation: (newRotation, duration = 1000) => {
       if (css3DObject) {
-        updateRotation(css3DObject, newRotation, 1000);
+        updateRotation(css3DObject, newRotation, duration);
       }
     },
-    updateScale: (newScale) => {
+    updateScale: (newScale, duration = 300) => {
       if (css3DObject) {
-        updateScale(css3DObject, newScale, 300);
+        updateScale(css3DObject, newScale, duration);
       }
     }
   }));
