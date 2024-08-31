@@ -56,15 +56,15 @@ const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick })
     });
   }, [dreamNodes, layout, centeredNode, calculatePositions]);
 
-  const toggleLayout = () => {
+  const toggleLayout = useCallback(() => {
     setLayout(prevLayout => prevLayout === 'grid' ? 'circle' : 'grid');
     setCenteredNode(null);
-  };
+  }, []);
 
-  const handleNodeClick = (repoName) => {
+  const handleNodeClick = useCallback((repoName) => {
     setCenteredNode(repoName === centeredNode ? null : repoName);
     onNodeClick(repoName);
-  };
+  }, [centeredNode, onNodeClick]);
 
   return (
     <>
