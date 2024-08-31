@@ -8,11 +8,11 @@ const DreamTalk = ({ repoName, mediaContent, metadata, style }) => {
 
     switch (mediaContent.type) {
       case 'image':
-        return <img src={mediaContent.path} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+        return <img src={mediaContent.path} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />;
       case 'audio':
-        return <audio controls src={mediaContent.path} style={{ width: '100%' }} />;
+        return <audio controls src={mediaContent.path} style={{ width: '90%', maxWidth: '250px' }} />;
       case 'video':
-        return <video controls src={mediaContent.path} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+        return <video controls src={mediaContent.path} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />;
       default:
         return null;
     }
@@ -26,7 +26,7 @@ const DreamTalk = ({ repoName, mediaContent, metadata, style }) => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      padding: '10px',
+      padding: '0',
       boxSizing: 'border-box',
       width: '300px',
       height: '300px',
@@ -35,33 +35,46 @@ const DreamTalk = ({ repoName, mediaContent, metadata, style }) => {
       border: '5px solid blue',
       color: 'white',
     }}>
-      {renderMedia()}
-      <h2 style={{ 
-        fontSize: '18px', 
-        margin: '10px 0', 
-        padding: '5px', 
-        textAlign: 'center',
-        wordWrap: 'break-word',
-        overflowWrap: 'break-word',
-        maxWidth: '100%',
+      <div style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '20px',
+        boxSizing: 'border-box',
+        borderRadius: '50%',
+        overflow: 'hidden',
       }}>
-        {repoName}
-      </h2>
-      {metadata && metadata.description && (
-        <p style={{
-          fontSize: '14px',
-          margin: '5px 0',
+        {renderMedia()}
+        <h2 style={{ 
+          fontSize: '18px', 
+          margin: '10px 0', 
+          padding: '5px', 
           textAlign: 'center',
+          wordWrap: 'break-word',
+          overflowWrap: 'break-word',
           maxWidth: '100%',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          display: '-webkit-box',
-          WebkitLineClamp: 3,
-          WebkitBoxOrient: 'vertical',
         }}>
-          {metadata.description}
-        </p>
-      )}
+          {repoName}
+        </h2>
+        {metadata && metadata.description && (
+          <p style={{
+            fontSize: '14px',
+            margin: '5px 0',
+            textAlign: 'center',
+            maxWidth: '100%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+          }}>
+            {metadata.description}
+          </p>
+        )}
+      </div>
     </div>
   );
 };
