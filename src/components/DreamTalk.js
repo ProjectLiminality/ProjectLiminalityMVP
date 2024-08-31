@@ -33,16 +33,20 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
   };
 
   const handleMouseEnter = (e) => {
-    console.log('Mouse enter', { repoName, isHovered: true });
+    console.log('Mouse enter', { repoName, isHovered: true, event: e.type });
     setIsHovered(true);
     if (onMouseEnter) onMouseEnter(e);
   };
 
   const handleMouseLeave = (e) => {
-    console.log('Mouse leave', { repoName, isHovered: false });
+    console.log('Mouse leave', { repoName, isHovered: false, event: e.type });
     setIsHovered(false);
     if (onMouseLeave) onMouseLeave(e);
   };
+
+  useEffect(() => {
+    console.log(`DreamTalk isHovered state changed for ${repoName}:`, isHovered);
+  }, [isHovered, repoName]);
 
   useEffect(() => {
     console.log(`DreamTalk isHovered state changed for ${repoName}:`, isHovered);
@@ -54,6 +58,8 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onMouseOver={() => console.log('Mouse over')}
+      onMouseOut={() => console.log('Mouse out')}
       style={{
         position: 'relative',
         overflow: 'hidden',
