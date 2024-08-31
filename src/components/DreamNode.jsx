@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
-import { updateRotation, updateScale } from '../utils/3DUtils';
+import { updateRotation, updateScale, updatePosition } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath } from '../services/electronService';
 
 const DreamNode = forwardRef(({ position, repoName, onNodeClick, cssScene }, ref) => {
@@ -14,7 +14,22 @@ const DreamNode = forwardRef(({ position, repoName, onNodeClick, cssScene }, ref
   const nodeRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
-    css3DObject
+    css3DObject,
+    updatePosition: (newPosition) => {
+      if (css3DObject) {
+        updatePosition(css3DObject, newPosition, 1000);
+      }
+    },
+    updateRotation: (newRotation) => {
+      if (css3DObject) {
+        updateRotation(css3DObject, newRotation, 1000);
+      }
+    },
+    updateScale: (newScale) => {
+      if (css3DObject) {
+        updateScale(css3DObject, newScale, 300);
+      }
+    }
   }));
 
   const fetchMetadata = useCallback(async () => {

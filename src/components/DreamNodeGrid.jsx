@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
-import { updatePosition } from '../utils/3DUtils';
 
 const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick }) => {
   const [layout, setLayout] = useState('grid');
@@ -23,7 +22,7 @@ const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick })
   }, [dreamNodes]);
 
   const calculateCirclePositions = useCallback(() => {
-    const radius = dreamNodes.length * 60; // Reduced radius
+    const radius = dreamNodes.length * 30; // Halved radius
     return dreamNodes.map((_, index) => {
       const angle = (index / dreamNodes.length) * Math.PI * 2;
       const x = Math.cos(angle) * radius;
@@ -44,13 +43,13 @@ const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick })
   useEffect(() => {
     const positions = calculatePositions();
     dreamNodes.forEach((node, index) => {
-      const css3DObject = nodeRefs.current[node.repoName]?.css3DObject;
-      if (css3DObject) {
+      const dreamNodeRef = nodeRefs.current[node.repoName];
+      if (dreamNodeRef) {
         const newPosition = positions[index].clone();
         if (centeredNode && node.repoName === centeredNode) {
           newPosition.set(0, 0, 500);
         }
-        updatePosition(css3DObject, newPosition, 1000);
+        dreamNodeRef.updatePosition(newPosition);
       }
     });
   }, [dreamNodes, layout, centeredNode, calculatePositions]);
