@@ -151,6 +151,7 @@ const DreamSpace = () => {
           initialPosition={new THREE.Vector3(0, 0, 0)}
           cssScene={scene}
           onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
+          isHovered={hoveredNode === dreamNode.repoName}
         />
       );
 
@@ -205,6 +206,8 @@ const DreamSpace = () => {
     }
   }, [sceneState]);
 
+  const [hoveredNode, setHoveredNode] = useState(null);
+
   const checkIntersection = useCallback((isClick = false) => {
     if (!sceneState) return;
 
@@ -221,9 +224,11 @@ const DreamSpace = () => {
           console.log('Clicked on node:', intersectedNode.repoName);
         } else {
           // Handle hover event
-          console.log('Hovering over node:', intersectedNode.repoName);
+          setHoveredNode(intersectedNode.repoName);
         }
       }
+    } else {
+      setHoveredNode(null);
     }
   }, [sceneState]);
 

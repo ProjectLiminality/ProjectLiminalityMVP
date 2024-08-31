@@ -7,6 +7,7 @@ import { updateRotation, updateScale, updatePosition } from '../utils/3DUtils';
 import { getRepoData } from '../utils/fileUtils';
 
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene, isHovered }, ref) => {
+  const [showOverlay, setShowOverlay] = useState(false);
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
   const nodeRef = useRef(null);
   const objectRef = useRef(null);
@@ -57,6 +58,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
       const newScale = new THREE.Vector3(isHovered ? 1.1 : 1, isHovered ? 1.1 : 1, isHovered ? 1.1 : 1);
       updateScale(objectRef.current, newScale, 300);
     }
+    setShowOverlay(isHovered);
   }, [isHovered]);
 
   const handleClick = useCallback(() => {
@@ -73,6 +75,26 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
           onClick={handleClick}
           isHovered={isHovered}
         />
+        {showOverlay && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: 'white',
+            fontSize: '16px',
+            textAlign: 'center',
+            padding: '10px',
+            boxSizing: 'border-box',
+          }}>
+            <p>{repoData.metadata.description || 'No description available'}</p>
+          </div>
+        )}
       </div>
       <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
         <DreamSong 
