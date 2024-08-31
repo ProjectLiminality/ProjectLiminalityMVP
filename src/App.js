@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ThreeScene from './components/ThreeScene';
+import DreamSpace from './components/DreamSpace';
 import SettingsPanel from './components/SettingsPanel';
 
 function App() {
@@ -21,7 +21,7 @@ function App() {
 
   return (
     <div className="App">
-      <ThreeScene />
+      <DreamSpace />
       <SettingsPanel 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
