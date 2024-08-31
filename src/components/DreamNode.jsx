@@ -1,17 +1,16 @@
-import React, { useEffect, useRef, useState, useCallback, forwardRef } from 'react';
-import * as THREE from 'three';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { updatePosition, updateRotation, updateScale } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath } from '../services/electronService';
 
-const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, parentRef, object }, ref) => {
-  const nodeRef = useRef(null);
+const DreamNode = ({ position, repoName, onNodeClick }) => {
   const [metadata, setMetadata] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
   const [mediaContent, setMediaContent] = useState(null);
   const [css3DObject, setCSS3DObject] = useState(null);
+  const nodeRef = useRef(null);
 
   const fetchMetadata = useCallback(async () => {
     try {
@@ -32,35 +31,12 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
   }, [fetchMetadata]);
 
   useEffect(() => {
-    if (scene && nodeRef.current && parentRef.current) {
-      const nodeContainer = new THREE.Object3D();
-      object.add(nodeContainer);
-      object.position.copy(position);
-
-      const currentParentRef = parentRef.current;
-      currentParentRef.add(object);
-
-      const createCSS3DObject = (element) => {
-        const obj = new CSS3DObject(element);
-        return obj;
-      };
-
-      const newCSS3DObject = createCSS3DObject(nodeRef.current);
+    if (nodeRef.current) {
+      const newCSS3DObject = new CSS3DObject(nodeRef.current);
+      newCSS3DObject.position.copy(position);
       setCSS3DObject(newCSS3DObject);
-      nodeContainer.add(newCSS3DObject);
-
-      return () => {
-        currentParentRef.remove(object);
-        nodeContainer.remove(newCSS3DObject);
-      };
     }
-  }, [scene, position, parentRef, object, repoName]);
-
-  useEffect(() => {
-    if (object && position) {
-      updatePosition(object, position, 1000);
-    }
-  }, [position, object]);
+  }, [position]);
 
   const handleClick = useCallback(() => {
     setIsFlipped((prev) => !prev);
@@ -78,6 +54,8 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
     }
   }, [css3DObject]);
 
+  const borderColor = metadata.color || '#000000';
+
   return (
     <div ref={nodeRef} style={{ width: '300px', height: '300px', position: 'relative' }}>
       <div 
@@ -92,6 +70,8 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
           backfaceVisibility: 'hidden',
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
           transition: 'transform 0.6s',
+          border: `5px solid ${borderColor}`,
+          borderRadius: '10px',
         }}
       >
         <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
@@ -108,14 +88,14 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
           backfaceVisibility: 'hidden', 
           transform: isFlipped ? 'rotateY(0deg)' : 'rotateY(-180deg)',
           transition: 'transform 0.6s',
+          border: `5px solid ${borderColor}`,
+          borderRadius: '10px',
         }}
       >
         <DreamSong repoName={repoName} metadata={metadata} />
       </div>
     </div>
   );
-});
-
-DreamNode.displayName = 'DreamNode';
+};
 
 export default React.memo(DreamNode);

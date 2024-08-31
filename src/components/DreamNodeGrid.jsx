@@ -1,12 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as THREE from 'three';
-import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamNode from './DreamNode';
-import { updatePosition } from '../utils/3DUtils';
 
-const DreamNodeGrid = React.memo(({ scene, cssScene, camera, dreamNodes: initialDreamNodes, onNodeClick, renderer, cssRenderer }) => {
+const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick }) => {
   const [layout, setLayout] = useState('grid');
-  const gridRef = useRef(null);
   const [centeredNode, setCenteredNode] = useState(null);
   const [dreamNodes, setDreamNodes] = useState([]);
 
@@ -39,58 +36,21 @@ const DreamNodeGrid = React.memo(({ scene, cssScene, camera, dreamNodes: initial
   }, [layout, calculateGridPositions, calculateCirclePositions]);
 
   useEffect(() => {
-    if (scene && cssScene) {
-      if (!gridRef.current) {
-        const gridObject = new THREE.Object3D();
-        scene.add(gridObject);
-        gridRef.current = gridObject;
-      }
-      const newDreamNodes = initialDreamNodes.map(node => ({
-        ...node,
-        object: new THREE.Object3D(),
-        cssObject: new CSS3DObject(document.createElement('div'))
-      }));
-      setDreamNodes(newDreamNodes);
-
-      newDreamNodes.forEach(node => {
-        gridRef.current.add(node.object);
-        cssScene.add(node.cssObject);
-      });
-
-      return () => {
-        newDreamNodes.forEach(node => {
-          gridRef.current.remove(node.object);
-          cssScene.remove(node.cssObject);
-        });
-        scene.remove(gridRef.current);
-      };
-    }
-  }, [scene, cssScene, initialDreamNodes]);
+    setDreamNodes(initialDreamNodes);
+  }, [initialDreamNodes]);
 
   useEffect(() => {
-    if (!gridRef.current || !scene || !cssScene) return;
-
     const positions = calculatePositions();
     dreamNodes.forEach((node, index) => {
       const newPosition = positions[index].clone();
       if (centeredNode && node.repoName === centeredNode) {
         newPosition.set(0, 0, 500);
       }
-      updatePosition(node.object, newPosition, 1000);
-      updatePosition(node.cssObject, newPosition, 1000);
+      if (node.css3DObject) {
+        node.css3DObject.position.copy(newPosition);
+      }
     });
-
-    const animate = () => {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-      cssRenderer.render(cssScene, camera);
-    };
-    animate();
-
-    return () => {
-      renderer.setAnimationLoop(null);
-    };
-  }, [dreamNodes, layout, centeredNode, calculatePositions, scene, cssScene, camera, renderer, cssRenderer]);
+  }, [dreamNodes, layout, centeredNode, calculatePositions]);
 
   const toggleLayout = () => {
     setLayout(prevLayout => prevLayout === 'grid' ? 'circle' : 'grid');
@@ -107,13 +67,9 @@ const DreamNodeGrid = React.memo(({ scene, cssScene, camera, dreamNodes: initial
       {dreamNodes.map((node, index) => (
         <DreamNode
           key={node.repoName}
-          scene={scene}
-          camera={camera}
           position={calculatePositions()[index]}
           repoName={node.repoName}
           onNodeClick={handleNodeClick}
-          parentRef={gridRef}
-          object={node.object}
         />
       ))}
       <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1000 }}>
@@ -121,6 +77,6 @@ const DreamNodeGrid = React.memo(({ scene, cssScene, camera, dreamNodes: initial
       </div>
     </>
   );
-});
+};
 
-export default DreamNodeGrid;
+export default React.memo(DreamNodeGrid);
