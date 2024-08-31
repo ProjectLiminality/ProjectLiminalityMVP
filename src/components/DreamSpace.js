@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
@@ -11,10 +11,9 @@ import ReactDOM from 'react-dom';
 const DreamSpace = () => {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
-  const [sceneState, setSceneState] = useState(null);
   const [error, setError] = useState(null);
 
-  const initScene = useCallback(() => {
+  const sceneState = useMemo(() => {
     if (!refContainer.current) {
       setError('Container ref is not available');
       return null;
@@ -69,10 +68,7 @@ const DreamSpace = () => {
   }, []);
 
   useEffect(() => {
-    const newSceneState = initScene();
-    if (newSceneState) {
-      setSceneState(newSceneState);
-
+    if (sceneState) {
       const fetchFirstDreamNode = async () => {
         try {
           const repos = await scanDreamVault();
@@ -87,14 +83,12 @@ const DreamSpace = () => {
       };
 
       fetchFirstDreamNode();
-    }
 
-    return () => {
-      if (newSceneState) {
-        newSceneState.cleanup();
-      }
-    };
-  }, [initScene]);
+      return () => {
+        sceneState.cleanup();
+      };
+    }
+  }, [sceneState]);
 
   useEffect(() => {
     if (sceneState && dreamNodes.length > 0) {
@@ -153,4 +147,4 @@ const DreamSpace = () => {
   );
 };
 
-export default React.memo(DreamSpace);
+export default DreamSpace;
