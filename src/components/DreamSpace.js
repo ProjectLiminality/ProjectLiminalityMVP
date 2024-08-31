@@ -94,9 +94,11 @@ const DreamSpace = () => {
 
   useEffect(() => {
     if (sceneState && dreamNodes.length > 0) {
+      console.log('Rendering DreamNode in DreamSpace');
       const { scene } = sceneState;
       // Clear existing nodes
       scene.children = scene.children.filter(child => !(child instanceof CSS3DObject));
+      console.log('Cleared existing nodes. Scene children count:', scene.children.length);
       
       // Add the single DreamNode
       const dreamNode = dreamNodes[0];
@@ -112,13 +114,20 @@ const DreamSpace = () => {
           cssScene={scene}
           onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
         />, 
-        nodeElement
+        nodeElement,
+        () => {
+          console.log('DreamNode rendered to nodeElement');
+          // Ensure the DreamNode is added to the scene
+          if (dreamNodeRef.current && dreamNodeRef.current.css3DObject) {
+            scene.add(dreamNodeRef.current.css3DObject);
+            console.log('Added DreamNode to scene. Scene children count:', scene.children.length);
+          } else {
+            console.log('Failed to add DreamNode to scene. dreamNodeRef.current:', dreamNodeRef.current);
+          }
+        }
       );
-
-      // Ensure the DreamNode is added to the scene
-      if (dreamNodeRef.current && dreamNodeRef.current.css3DObject) {
-        scene.add(dreamNodeRef.current.css3DObject);
-      }
+    } else {
+      console.log('Not rendering DreamNode. sceneState:', !!sceneState, 'dreamNodes length:', dreamNodes.length);
     }
   }, [sceneState, dreamNodes]);
 

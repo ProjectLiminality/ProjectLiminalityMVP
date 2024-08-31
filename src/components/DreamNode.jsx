@@ -63,12 +63,14 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }, [fetchMetadata]);
 
   useEffect(() => {
+    console.log(`DreamNode effect for ${repoName}. nodeRef.current:`, !!nodeRef.current, 'cssScene:', !!cssScene, 'css3DObjectRef.current:', !!css3DObjectRef.current);
     if (nodeRef.current && cssScene && !css3DObjectRef.current) {
       console.log(`Creating CSS3DObject for ${repoName}`);
       const newCSS3DObject = new CSS3DObject(nodeRef.current);
       newCSS3DObject.position.copy(initialPosition);
       css3DObjectRef.current = newCSS3DObject;
       cssScene.add(newCSS3DObject);
+      console.log(`Added CSS3DObject for ${repoName} to scene. Scene children count:`, cssScene.children.length);
 
       return () => {
         console.log(`Removing CSS3DObject for ${repoName}`);
