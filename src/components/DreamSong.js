@@ -5,17 +5,30 @@ const DreamSong = ({ repoName, metadata, style }) => {
     <div className="dream-song" style={{
       ...style,
       alignItems: 'center',
-      textAlign: 'center',
-      borderRadius: '10px',
-      padding: '20px',
-      backgroundColor: 'rgba(200, 230, 255, 0.8)',
+      overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      height: '100%',
+      padding: '10px',
       boxSizing: 'border-box',
+      width: '300px',
+      height: '300px',
+      backgroundColor: 'black',
+      borderRadius: '50%',
+      border: '5px solid blue',
+      color: 'white',
     }}>
-      <h2 style={{ fontSize: '20px', marginBottom: '10px' }}>{repoName}</h2>
+      <h2 style={{ 
+        fontSize: '18px', 
+        margin: '10px 0', 
+        padding: '5px', 
+        textAlign: 'center',
+        wordWrap: 'break-word',
+        overflowWrap: 'break-word',
+        maxWidth: '100%',
+      }}>
+        {repoName}
+      </h2>
       {metadata && (
         <>
           {metadata.dateCreated && (
@@ -27,12 +40,13 @@ const DreamSong = ({ repoName, metadata, style }) => {
           {metadata.aiPrompt && (
             <p style={{ 
               fontSize: '14px', 
-              margin: '10px 0',
-              maxHeight: '100px',
-              overflow: 'auto',
-              padding: '5px',
-              backgroundColor: 'rgba(255, 255, 255, 0.5)',
-              borderRadius: '5px'
+              margin: '5px 0',
+              maxHeight: '80px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
             }}>
               AI Prompt: {metadata.aiPrompt}
             </p>
