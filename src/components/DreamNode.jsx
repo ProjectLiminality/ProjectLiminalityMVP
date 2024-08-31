@@ -76,7 +76,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
 
         const mediaPath = await getMediaFilePath(repoName, selectedFile);
         const mediaData = await readFile(mediaPath);
-        const fileExtension = mediaPath.split('.').pop().toLowerCase();
+        const fileExtension = selectedFile.split('.').pop().toLowerCase();
         const mimeTypes = {
           'mp4': 'video/mp4',
           'gif': 'image/gif',
