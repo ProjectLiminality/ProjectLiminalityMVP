@@ -6,6 +6,7 @@ import DreamSong from './DreamSong';
 import { updateRotation, updateScale, updatePosition } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath } from '../services/electronService';
 
+// No changes needed in the DreamNode component itself
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene }, ref) => {
   const [metadata, setMetadata] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);

@@ -4,7 +4,7 @@ import DreamNode from './DreamNode';
 
 const ANIMATION_DURATION = 2000; // 2 seconds
 
-const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick }) => {
+const DreamGraph = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick }) => {
   const [layout, setLayout] = useState('grid');
   const [centeredNode, setCenteredNode] = useState(null);
   const [dreamNodes, setDreamNodes] = useState([]);
@@ -106,4 +106,4 @@ const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick })
   );
 };
 
-export default React.memo(DreamNodeGrid);
+export default React.memo(DreamGraph);
