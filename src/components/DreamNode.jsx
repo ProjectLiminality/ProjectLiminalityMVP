@@ -75,8 +75,14 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
         console.log(`Selected media file: ${selectedFile}`);
 
         const mediaPath = await getMediaFilePath(repoName, selectedFile);
+        console.log(`Media path for ${selectedFile}:`, mediaPath);
+
         const mediaData = await readFile(mediaPath);
+        console.log(`Media data read for ${selectedFile}`);
+
         const fileExtension = selectedFile.split('.').pop().toLowerCase();
+        console.log(`File extension for ${selectedFile}:`, fileExtension);
+
         const mimeTypes = {
           'mp4': 'video/mp4',
           'gif': 'image/gif',
@@ -84,10 +90,14 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
           'jpg': 'image/jpeg',
           'jpeg': 'image/jpeg'
         };
+
+        const mimeType = mimeTypes[fileExtension] || 'application/octet-stream';
+        console.log(`MIME type for ${selectedFile}:`, mimeType);
+
         const mediaContent = {
-          type: mimeTypes[fileExtension] || 'application/octet-stream',
+          type: mimeType,
           path: mediaPath,
-          data: `data:${mimeTypes[fileExtension] || 'application/octet-stream'};base64,${mediaData}`
+          data: `data:${mimeType};base64,${mediaData}`
         };
         console.log(`Setting media content for ${repoName}:`, mediaContent);
         setMediaContent(mediaContent);
