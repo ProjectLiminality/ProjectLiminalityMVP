@@ -33,11 +33,13 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
   };
 
   const handleMouseEnter = (e) => {
+    console.log('Mouse enter');
     setIsHovered(true);
     if (onMouseEnter) onMouseEnter(e);
   };
 
   const handleMouseLeave = (e) => {
+    console.log('Mouse leave');
     setIsHovered(false);
     if (onMouseLeave) onMouseLeave(e);
   };
@@ -58,6 +60,8 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
         border: `5px solid ${BLUE}`,
         color: WHITE,
         backfaceVisibility: 'hidden',
+        transition: 'transform 0.3s ease',
+        transform: isHovered ? 'scale(1.1)' : 'scale(1)',
       }}
     >
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
