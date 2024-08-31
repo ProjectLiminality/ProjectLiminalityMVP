@@ -99,25 +99,32 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
         onClick={handleClick} 
         onMouseEnter={() => handleHover(true)}
         onMouseLeave={() => handleHover(false)}
-        style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden' }}
+        style={{ 
+          position: 'absolute', 
+          width: '100%', 
+          height: '100%', 
+          backfaceVisibility: 'hidden',
+          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+          transition: 'transform 0.6s',
+        }}
       >
-        {mediaContent ? (
-          <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            {renderMediaContent()}
-            <p style={{ marginTop: '10px' }}>{repoName}</p>
-          </div>
-        ) : (
-          <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
-        )}
+        <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
       </div>
       <div 
         className="dream-song" 
         onClick={handleClick}
         onMouseEnter={() => handleHover(true)}
         onMouseLeave={() => handleHover(false)}
-        style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+        style={{ 
+          position: 'absolute', 
+          width: '100%', 
+          height: '100%', 
+          backfaceVisibility: 'hidden', 
+          transform: isFlipped ? 'rotateY(0deg)' : 'rotateY(-180deg)',
+          transition: 'transform 0.6s',
+        }}
       >
-        <DreamSong repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
+        <DreamSong repoName={repoName} metadata={metadata} />
       </div>
     </div>
   );
