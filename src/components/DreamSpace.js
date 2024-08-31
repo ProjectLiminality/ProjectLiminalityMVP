@@ -14,13 +14,17 @@ const DreamSpace = () => {
   const [error, setError] = useState(null);
 
   const sceneState = useMemo(() => {
+    console.log('Initializing sceneState');
     if (!refContainer.current) {
+      console.error('Container ref is not available');
       setError('Container ref is not available');
       return null;
     }
 
     if (!WebGL.isWebGLAvailable()) {
-      setError('WebGL is not available: ' + WebGL.getWebGLErrorMessage());
+      const errorMessage = 'WebGL is not available: ' + WebGL.getWebGLErrorMessage();
+      console.error(errorMessage);
+      setError(errorMessage);
       return null;
     }
 
@@ -50,6 +54,7 @@ const DreamSpace = () => {
 
       window.addEventListener('resize', handleResize);
 
+      console.log('sceneState initialized successfully');
       return {
         scene,
         camera,
@@ -62,22 +67,34 @@ const DreamSpace = () => {
         }
       };
     } catch (error) {
-      setError('Error initializing scene: ' + error.message);
+      const errorMessage = 'Error initializing scene: ' + error.message;
+      console.error(errorMessage);
+      setError(errorMessage);
       return null;
     }
   }, []);
 
   useEffect(() => {
+    console.log('sceneState effect triggered. sceneState:', !!sceneState);
+  }, [sceneState]);
+
+  useEffect(() => {
+    console.log('Fetch DreamNode effect triggered. sceneState:', !!sceneState);
     if (sceneState) {
       const fetchFirstDreamNode = async () => {
         try {
+          console.log('Scanning DreamVault...');
           const repos = await scanDreamVault();
+          console.log('Repos found:', repos);
           if (repos.length > 0) {
+            console.log('Setting DreamNode:', repos[0]);
             setDreamNodes([{ repoName: repos[0] }]);
           } else {
+            console.error('No repositories found in the DreamVault');
             setError('No repositories found in the DreamVault');
           }
         } catch (error) {
+          console.error('Error scanning dream vault:', error);
           setError('Error scanning dream vault: ' + error.message);
         }
       };
@@ -85,6 +102,7 @@ const DreamSpace = () => {
       fetchFirstDreamNode();
 
       return () => {
+        console.log('Cleaning up sceneState');
         sceneState.cleanup();
       };
     }
