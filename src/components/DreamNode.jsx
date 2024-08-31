@@ -44,20 +44,28 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
     try {
       console.log(`Reading metadata for ${repoName}`);
       const data = await readMetadata(repoName);
+      console.log(`Metadata for ${repoName}:`, data);
       setMetadata(data);
       if (data.mediaContent) {
         console.log(`Reading media content for ${repoName}`);
         const mediaPath = await getMediaFilePath(repoName);
+        console.log(`Media path for ${repoName}:`, mediaPath);
         const mediaData = await readFile(mediaPath);
-        setMediaContent({ 
+        console.log(`Media data received for ${repoName}. Length:`, mediaData.length);
+        const mediaContent = { 
           ...data.mediaContent, 
           path: mediaPath,
           data: `data:${data.mediaContent.type};base64,${mediaData}`
-        });
+        };
+        console.log(`Setting media content for ${repoName}:`, mediaContent);
+        setMediaContent(mediaContent);
+      } else {
+        console.log(`No media content found for ${repoName}`);
       }
     } catch (error) {
       console.error(`Error reading metadata or media for ${repoName}:`, error);
       setMetadata({});
+      setMediaContent(null);
     }
   }, [repoName]);
 

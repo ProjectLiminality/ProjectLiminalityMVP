@@ -1,23 +1,29 @@
 import React from 'react';
 
 const DreamTalk = ({ repoName, mediaContent, metadata, style, onClick, onMouseEnter, onMouseLeave }) => {
+  console.log(`DreamTalk rendering for ${repoName}. Media content:`, mediaContent);
+
   const renderMedia = () => {
     if (!mediaContent || !mediaContent.data) {
+      console.log(`No media content to render for ${repoName}`);
       return null;
     }
+
+    console.log(`Rendering media for ${repoName}. Type:`, mediaContent.type);
 
     switch (mediaContent.type) {
       case 'image/jpeg':
       case 'image/png':
       case 'image/gif':
-        return <img src={mediaContent.data} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />;
+        return <img src={mediaContent.data} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} onError={(e) => console.error(`Error loading image for ${repoName}:`, e)} />;
       case 'audio/mpeg':
       case 'audio/wav':
-        return <audio controls src={mediaContent.data} style={{ width: '90%', maxWidth: '250px' }} />;
+        return <audio controls src={mediaContent.data} style={{ width: '90%', maxWidth: '250px' }} onError={(e) => console.error(`Error loading audio for ${repoName}:`, e)} />;
       case 'video/mp4':
       case 'video/webm':
-        return <video controls src={mediaContent.data} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />;
+        return <video controls src={mediaContent.data} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} onError={(e) => console.error(`Error loading video for ${repoName}:`, e)} />;
       default:
+        console.log(`Unsupported media type for ${repoName}:`, mediaContent.type);
         return null;
     }
   };
