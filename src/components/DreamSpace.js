@@ -12,20 +12,20 @@ const DreamSpace = () => {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
   const [error, setError] = useState(null);
+  const [sceneState, setSceneState] = useState(null);
 
-  const sceneState = useMemo(() => {
+  useEffect(() => {
     console.log('Initializing sceneState');
     if (!refContainer.current) {
-      console.error('Container ref is not available');
-      setError('Container ref is not available');
-      return null;
+      console.log('Container ref is not available yet');
+      return;
     }
 
     if (!WebGL.isWebGLAvailable()) {
       const errorMessage = 'WebGL is not available: ' + WebGL.getWebGLErrorMessage();
       console.error(errorMessage);
       setError(errorMessage);
-      return null;
+      return;
     }
 
     try {
@@ -55,7 +55,7 @@ const DreamSpace = () => {
       window.addEventListener('resize', handleResize);
 
       console.log('sceneState initialized successfully');
-      return {
+      setSceneState({
         scene,
         camera,
         cssRenderer,
@@ -65,12 +65,11 @@ const DreamSpace = () => {
           cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
           controls.dispose();
         }
-      };
+      });
     } catch (error) {
       const errorMessage = 'Error initializing scene: ' + error.message;
       console.error(errorMessage);
       setError(errorMessage);
-      return null;
     }
   }, []);
 
@@ -100,12 +99,16 @@ const DreamSpace = () => {
       };
 
       fetchFirstDreamNode();
+    }
+  }, [sceneState]);
 
-      return () => {
+  useEffect(() => {
+    return () => {
+      if (sceneState) {
         console.log('Cleaning up sceneState');
         sceneState.cleanup();
-      };
-    }
+      }
+    };
   }, [sceneState]);
 
   const dreamNodeRef = useRef(null);
