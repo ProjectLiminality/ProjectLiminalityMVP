@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, onMouseLeave }) => {
+  useEffect(() => {
+    console.log(`DreamTalk rendering for ${repoName}:`, { mediaContent, metadata });
+  }, [repoName, mediaContent, metadata]);
+
   const renderMedia = () => {
     if (!mediaContent || !mediaContent.data) {
+      console.log(`No media content for ${repoName}`);
       return (
         <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#333', borderRadius: '50%' }}>
           <p style={{ color: 'white', textAlign: 'center' }}>No media content available</p>
@@ -10,6 +15,7 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
       );
     }
 
+    console.log(`Rendering media for ${repoName}:`, mediaContent.type);
     switch (mediaContent.type) {
       case 'image/jpeg':
       case 'image/png':
@@ -22,6 +28,7 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
       case 'video/webm':
         return <video controls src={mediaContent.data} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />;
       default:
+        console.log(`Unsupported media type for ${repoName}:`, mediaContent.type);
         return (
           <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#333', borderRadius: '50%' }}>
             <p style={{ color: 'white', textAlign: 'center' }}>Unsupported media type</p>
