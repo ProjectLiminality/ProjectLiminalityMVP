@@ -57,18 +57,20 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
     try {
       console.log(`Getting media file for ${repoName}`);
       const files = await listFiles(repoName);
-      const mediaExtensions = ['.mp4', '.gif', '.png', '.jpg', '.jpeg'];
+      const mediaExtensions = ['.gif', '.mp4', '.png', '.jpg', '.jpeg'];
       const mediaFiles = files.filter(file => 
         file.startsWith(repoName) && mediaExtensions.some(ext => file.toLowerCase().endsWith(ext))
       );
         
       if (mediaFiles.length > 0) {
-        const preferredExtensions = ['.mp4', '.gif', '.png', '.jpg', '.jpeg'];
+        const preferredExtensions = ['.gif', '.mp4', '.png', '.jpg', '.jpeg'];
         const selectedFile = mediaFiles.sort((a, b) => {
           const extA = preferredExtensions.findIndex(ext => a.toLowerCase().endsWith(ext));
           const extB = preferredExtensions.findIndex(ext => b.toLowerCase().endsWith(ext));
           return extA - extB;
         })[0];
+
+        console.log(`Selected media file: ${selectedFile}`);
 
         const mediaPath = await getMediaFilePath(repoName, selectedFile);
         const mediaData = await readFile(mediaPath);
