@@ -88,28 +88,6 @@ const DreamSpace = () => {
 
       fetchFirstDreamNode();
     }
-  }, []);
-
-  useEffect(() => {
-    const newSceneState = initScene();
-    if (newSceneState) {
-      setSceneState(newSceneState);
-
-      const fetchFirstDreamNode = async () => {
-        try {
-          const repos = await scanDreamVault();
-          if (repos.length > 0) {
-            setDreamNodes([{ repoName: repos[0] }]);
-          } else {
-            setError('No repositories found in the DreamVault');
-          }
-        } catch (error) {
-          setError('Error scanning dream vault: ' + error.message);
-        }
-      };
-
-      fetchFirstDreamNode();
-    }
 
     return () => {
       if (newSceneState) {
@@ -129,10 +107,15 @@ const DreamSpace = () => {
       const nodeElement = document.createElement('div');
       nodeElement.style.width = '300px';
       nodeElement.style.height = '300px';
-      ReactDOM.render(<DreamNode repoName={dreamNode.repoName} />, nodeElement);
-      const object = new CSS3DObject(nodeElement);
-      object.position.set(0, 0, -1000);
-      scene.add(object);
+      ReactDOM.render(
+        <DreamNode 
+          repoName={dreamNode.repoName} 
+          initialPosition={new THREE.Vector3(0, 0, -1000)}
+          cssScene={scene}
+          onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
+        />, 
+        nodeElement
+      );
     }
   }, [sceneState, dreamNodes]);
 
@@ -161,13 +144,6 @@ const DreamSpace = () => {
 
   return (
     <div ref={refContainer}>
-      {sceneState && dreamNodes.length > 0 && (
-        <DreamGraph
-          cssScene={sceneState.scene}
-          dreamNodes={dreamNodes}
-          onNodeClick={handleNodeClick}
-        />
-      )}
       {(!sceneState || dreamNodes.length === 0) && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
           Loading...
