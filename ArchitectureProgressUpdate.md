@@ -61,3 +61,21 @@
 - Implement DreamGraph for managing multiple DreamNodes
 - Develop advanced navigation and interaction within the DreamSpace
 - Integrate with the broader DreamCatcher ecosystem
+
+### Known Issues and Future Improvements:
+
+1. **Media File Prioritization**: 
+   - **Description**: The current implementation of file format prioritization in the `getPreferredMediaFile` function is not working correctly. The function should prioritize certain file formats over others (e.g., .gif over .mp4 over .png), but this is not being applied properly.
+   - **Impact**: This may result in suboptimal media file selection for DreamNodes, potentially affecting the user experience.
+   - **Priority**: Medium
+   - **Planned Solution**: Refactor the `getPreferredMediaFile` function to correctly apply the prioritization logic. This will involve revisiting the sorting algorithm used for file selection.
+   - **Target Timeline**: To be addressed in the next refactoring phase, after core functionality is stable.
+
+2. **Performance Optimization for Multiple DreamNodes**:
+   - **Description**: The current implementation works well for a single DreamNode, but may face performance issues with multiple nodes.
+   - **Impact**: Potential slowdowns or rendering issues in the DreamSpace when many DreamNodes are present.
+   - **Priority**: High
+   - **Planned Solution**: Implement efficient rendering techniques, possibly including level-of-detail (LOD) systems or object pooling for DreamNodes.
+   - **Target Timeline**: To be addressed as part of the multiple DreamNodes implementation phase.
+
+These issues are acknowledged and will be addressed in future development iterations. The team will prioritize them based on their impact on core functionality and user experience.
