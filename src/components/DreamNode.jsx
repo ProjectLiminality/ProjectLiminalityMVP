@@ -1,17 +1,21 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
-import { updatePosition, updateRotation, updateScale } from '../utils/3DUtils';
+import { updateRotation, updateScale } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath } from '../services/electronService';
 
-const DreamNode = ({ position, repoName, onNodeClick }) => {
+const DreamNode = forwardRef(({ position, repoName, onNodeClick, cssScene }, ref) => {
   const [metadata, setMetadata] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
   const [mediaContent, setMediaContent] = useState(null);
   const [css3DObject, setCSS3DObject] = useState(null);
   const nodeRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    css3DObject
+  }));
 
   const fetchMetadata = useCallback(async () => {
     try {
@@ -32,12 +36,17 @@ const DreamNode = ({ position, repoName, onNodeClick }) => {
   }, [fetchMetadata]);
 
   useEffect(() => {
-    if (nodeRef.current) {
+    if (nodeRef.current && cssScene) {
       const newCSS3DObject = new CSS3DObject(nodeRef.current);
       newCSS3DObject.position.copy(position);
       setCSS3DObject(newCSS3DObject);
+      cssScene.add(newCSS3DObject);
+
+      return () => {
+        cssScene.remove(newCSS3DObject);
+      };
     }
-  }, [position]);
+  }, [position, cssScene]);
 
   const handleClick = useCallback(() => {
     setIsFlipped((prev) => !prev);
@@ -97,6 +106,6 @@ const DreamNode = ({ position, repoName, onNodeClick }) => {
       </div>
     </div>
   );
-};
+});
 
 export default React.memo(DreamNode);
