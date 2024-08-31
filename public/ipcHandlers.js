@@ -7,7 +7,7 @@ function setupHandlers(ipcMain, store) {
 
   ipcMain.handle('read-file', async (event, filePath) => {
     try {
-      const data = await fs.promises.readFile(filePath);
+      const data = await fs.readFile(filePath);
       return data.toString('base64');
     } catch (error) {
       console.error('Error reading file:', error);
@@ -109,6 +109,22 @@ function setupHandlers(ipcMain, store) {
     } catch (error) {
       console.error(`Error getting file stats for ${filePath}:`, error);
       return null;
+    }
+  });
+
+  ipcMain.handle('list-files', async (event, repoName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const repoPath = path.join(dreamVaultPath, repoName);
+    try {
+      const files = await fs.readdir(repoPath);
+      return files;
+    } catch (error) {
+      console.error(`Error listing files for ${repoName}:`, error);
+      throw error;
     }
   });
 }
