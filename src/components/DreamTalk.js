@@ -18,13 +18,13 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
       case 'image/jpeg':
       case 'image/png':
       case 'image/gif':
-        return <img src={mediaContent.data} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />;
+        return <img src={mediaContent.data} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%' }} />;
       case 'audio/mpeg':
       case 'audio/wav':
         return <audio controls src={mediaContent.data} style={{ width: '90%', maxWidth: '250px' }} />;
       case 'video/mp4':
       case 'video/webm':
-        return <video controls src={mediaContent.data} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />;
+        return <video controls src={mediaContent.data} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%' }} />;
       default:
         console.log(`Unsupported media type for ${repoName}:`, mediaContent.type);
         return null;
