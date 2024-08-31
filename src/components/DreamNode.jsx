@@ -6,7 +6,6 @@ import DreamSong from './DreamSong';
 import { updateRotation, updateScale, updatePosition } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath, readFile, listFiles } from '../services/electronService';
 import * as electronService from '../services/electronService';
-import path from 'path';
 
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene }, ref) => {
   const [metadata, setMetadata] = useState({});
@@ -73,7 +72,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
 
         const mediaPath = await getMediaFilePath(repoName, selectedFile);
         const mediaData = await readFile(mediaPath);
-        const fileExtension = path.extname(mediaPath).toLowerCase().slice(1);
+        const fileExtension = mediaPath.split('.').pop().toLowerCase();
         const mimeTypes = {
           'mp4': 'video/mp4',
           'gif': 'image/gif',
