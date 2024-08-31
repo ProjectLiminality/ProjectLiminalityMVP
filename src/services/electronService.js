@@ -9,6 +9,8 @@ export async function getMediaFilePath(repoName) {
 export async function readFile(filePath) {
   return window.electron.fileSystem.readFile(filePath);
 }
+
+export async function readMetadata(repoName) {
   return window.electron.fileSystem.readMetadata(repoName);
 }
 
