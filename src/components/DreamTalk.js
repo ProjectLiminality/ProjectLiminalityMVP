@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, onMouseLeave }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   useEffect(() => {
     console.log(`DreamTalk rendering for ${repoName}:`, { mediaContent, metadata });
   }, [repoName, mediaContent, metadata]);
@@ -8,11 +10,7 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
   const renderMedia = () => {
     if (!mediaContent || !mediaContent.data) {
       console.log(`No media content for ${repoName}`);
-      return (
-        <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#333', borderRadius: '50%' }}>
-          <p style={{ color: 'white', textAlign: 'center' }}>No media content available</p>
-        </div>
-      );
+      return null;
     }
 
     console.log(`Rendering media for ${repoName}:`, mediaContent.type);
@@ -20,37 +18,38 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
       case 'image/jpeg':
       case 'image/png':
       case 'image/gif':
-        return <img src={mediaContent.data} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />;
+        return <img src={mediaContent.data} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
       case 'audio/mpeg':
       case 'audio/wav':
         return <audio controls src={mediaContent.data} style={{ width: '90%', maxWidth: '250px' }} />;
       case 'video/mp4':
       case 'video/webm':
-        return <video controls src={mediaContent.data} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />;
+        return <video controls src={mediaContent.data} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
       default:
         console.log(`Unsupported media type for ${repoName}:`, mediaContent.type);
-        return (
-          <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#333', borderRadius: '50%' }}>
-            <p style={{ color: 'white', textAlign: 'center' }}>Unsupported media type</p>
-          </div>
-        );
+        return null;
     }
+  };
+
+  const handleMouseEnter = (e) => {
+    setIsHovered(true);
+    if (onMouseEnter) onMouseEnter(e);
+  };
+
+  const handleMouseLeave = (e) => {
+    setIsHovered(false);
+    if (onMouseLeave) onMouseLeave(e);
   };
 
   return (
     <div 
       className="dream-talk" 
       onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       style={{
-        alignItems: 'center',
+        position: 'relative',
         overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '0',
-        boxSizing: 'border-box',
         width: '300px',
         height: '300px',
         backgroundColor: 'black',
@@ -60,7 +59,11 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
         backfaceVisibility: 'hidden',
       }}
     >
+      {renderMedia()}
       <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -69,10 +72,10 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
         alignItems: 'center',
         padding: '20px',
         boxSizing: 'border-box',
-        borderRadius: '50%',
-        overflow: 'hidden',
+        background: isHovered || !mediaContent ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
+        opacity: isHovered || !mediaContent ? 1 : 0,
+        transition: 'opacity 0.3s ease, background 0.3s ease',
       }}>
-        {renderMedia()}
         <h2 style={{ 
           fontSize: '18px', 
           margin: '10px 0', 
