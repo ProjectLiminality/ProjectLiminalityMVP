@@ -40,12 +40,13 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
     backObject: backObjectRef.current
   }));
 
-  const fetchMetadata = useCallback(async () => {
+  const readMetadataAndMedia = useCallback(async () => {
     try {
-      console.log(`Fetching metadata for ${repoName}`);
+      console.log(`Reading metadata for ${repoName}`);
       const data = await readMetadata(repoName);
       setMetadata(data);
       if (data.mediaContent) {
+        console.log(`Reading media content for ${repoName}`);
         const mediaPath = await getMediaFilePath(repoName);
         const mediaData = await readFile(mediaPath);
         setMediaContent({ 
@@ -55,14 +56,14 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
         });
       }
     } catch (error) {
-      console.error(`Error reading metadata for ${repoName}:`, error);
+      console.error(`Error reading metadata or media for ${repoName}:`, error);
       setMetadata({});
     }
   }, [repoName]);
 
   useEffect(() => {
-    fetchMetadata();
-  }, [fetchMetadata]);
+    readMetadataAndMedia();
+  }, [readMetadataAndMedia]);
 
   useEffect(() => {
     console.log(`DreamNode effect for ${repoName}. frontNodeRef.current:`, !!frontNodeRef.current, 'backNodeRef.current:', !!backNodeRef.current, 'cssScene:', !!cssScene);
