@@ -70,8 +70,9 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }, [repoName]);
 
   useEffect(() => {
+    console.log(`Calling readMetadataAndMedia for ${repoName}`);
     readMetadataAndMedia();
-  }, [readMetadataAndMedia]);
+  }, [readMetadataAndMedia, repoName]);
 
   useEffect(() => {
     console.log(`DreamNode effect for ${repoName}. frontNodeRef.current:`, !!frontNodeRef.current, 'backNodeRef.current:', !!backNodeRef.current, 'cssScene:', !!cssScene);
@@ -97,6 +98,8 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
       cssScene.add(backCSS3DObject);
       
       console.log(`Added CSS3DObjects for ${repoName} to scene. Scene children count:`, cssScene.children.length);
+      console.log(`Front object for ${repoName}:`, frontCSS3DObject);
+      console.log(`Back object for ${repoName}:`, backCSS3DObject);
 
       return () => {
         console.log(`Removing CSS3DObjects for ${repoName}`);
@@ -105,6 +108,14 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
         frontObjectRef.current = null;
         backObjectRef.current = null;
       };
+    } else {
+      console.log(`Conditions not met for creating CSS3DObjects for ${repoName}:`, {
+        frontNodeRef: !!frontNodeRef.current,
+        backNodeRef: !!backNodeRef.current,
+        cssScene: !!cssScene,
+        frontObjectRef: !!frontObjectRef.current,
+        backObjectRef: !!backObjectRef.current
+      });
     }
   }, [initialPosition, cssScene, repoName]);
 

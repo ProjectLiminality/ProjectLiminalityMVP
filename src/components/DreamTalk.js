@@ -6,7 +6,11 @@ const DreamTalk = ({ repoName, mediaContent, metadata, style, onClick, onMouseEn
   const renderMedia = () => {
     if (!mediaContent || !mediaContent.data) {
       console.log(`No media content to render for ${repoName}`);
-      return null;
+      return (
+        <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#333', borderRadius: '50%' }}>
+          <p style={{ color: 'white', textAlign: 'center' }}>No media content available</p>
+        </div>
+      );
     }
 
     console.log(`Rendering media for ${repoName}. Type:`, mediaContent.type);
@@ -24,7 +28,11 @@ const DreamTalk = ({ repoName, mediaContent, metadata, style, onClick, onMouseEn
         return <video controls src={mediaContent.data} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} onError={(e) => console.error(`Error loading video for ${repoName}:`, e)} />;
       default:
         console.log(`Unsupported media type for ${repoName}:`, mediaContent.type);
-        return null;
+        return (
+          <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#333', borderRadius: '50%' }}>
+            <p style={{ color: 'white', textAlign: 'center' }}>Unsupported media type</p>
+          </div>
+        );
     }
   };
 
