@@ -63,6 +63,10 @@ const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick })
 
   const handleNodeClick = useCallback((repoName) => {
     setCenteredNode(repoName === centeredNode ? null : repoName);
+    const dreamNodeRef = nodeRefs.current[repoName];
+    if (dreamNodeRef) {
+      dreamNodeRef.flip();
+    }
     onNodeClick(repoName);
   }, [centeredNode, onNodeClick]);
 
@@ -76,15 +80,10 @@ const DreamNodeGrid = ({ cssScene, dreamNodes: initialDreamNodes, onNodeClick })
               nodeRefs.current[node.repoName] = el;
             }
           }}
-          position={calculatePositions()[index]}
+          initialPosition={calculatePositions()[index]}
           repoName={node.repoName}
           onNodeClick={handleNodeClick}
           cssScene={cssScene}
-          updatePosition={(newPosition, duration) => {
-            if (nodeRefs.current[node.repoName]) {
-              nodeRefs.current[node.repoName].updatePosition(newPosition, duration);
-            }
-          }}
         />
       ))}
       <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1000 }}>

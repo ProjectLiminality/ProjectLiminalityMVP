@@ -6,7 +6,7 @@ import DreamSong from './DreamSong';
 import { updateRotation, updateScale, updatePosition } from '../utils/3DUtils';
 import { readMetadata, getMediaFilePath } from '../services/electronService';
 
-const DreamNode = forwardRef(({ position, repoName, onNodeClick, cssScene }, ref) => {
+const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene }, ref) => {
   const [metadata, setMetadata] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
   const [mediaContent, setMediaContent] = useState(null);
@@ -14,7 +14,6 @@ const DreamNode = forwardRef(({ position, repoName, onNodeClick, cssScene }, ref
   const nodeRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
-    css3DObject,
     updatePosition: (newPosition, duration = 1000) => {
       if (css3DObject) {
         updatePosition(css3DObject, newPosition, duration);
@@ -28,6 +27,13 @@ const DreamNode = forwardRef(({ position, repoName, onNodeClick, cssScene }, ref
     updateScale: (newScale, duration = 300) => {
       if (css3DObject) {
         updateScale(css3DObject, newScale, duration);
+      }
+    },
+    flip: () => {
+      setIsFlipped(prev => !prev);
+      if (css3DObject) {
+        const newRotation = new THREE.Euler(0, isFlipped ? 0 : Math.PI, 0);
+        updateRotation(css3DObject, newRotation, 1000);
       }
     }
   }));
@@ -53,7 +59,7 @@ const DreamNode = forwardRef(({ position, repoName, onNodeClick, cssScene }, ref
   useEffect(() => {
     if (nodeRef.current && cssScene) {
       const newCSS3DObject = new CSS3DObject(nodeRef.current);
-      newCSS3DObject.position.copy(position);
+      newCSS3DObject.position.copy(initialPosition);
       setCSS3DObject(newCSS3DObject);
       cssScene.add(newCSS3DObject);
 
@@ -61,21 +67,11 @@ const DreamNode = forwardRef(({ position, repoName, onNodeClick, cssScene }, ref
         cssScene.remove(newCSS3DObject);
       };
     }
-  }, [position, cssScene]);
+  }, [initialPosition, cssScene]);
 
   const handleClick = useCallback(() => {
-    setIsFlipped((prev) => !prev);
-    if (css3DObject) {
-      const newRotation = new THREE.Euler(0, isFlipped ? 0 : Math.PI, 0);
-      updateRotation(css3DObject, newRotation, 1000);
-
-      // Move the node to the right
-      const currentPosition = css3DObject.position.clone();
-      const newPosition = currentPosition.add(new THREE.Vector3(600, 0, 0)); // Move 600 units to the right (2 times its width)
-      updatePosition(css3DObject, newPosition, 1000);
-    }
     onNodeClick(repoName);
-  }, [isFlipped, onNodeClick, repoName, css3DObject]);
+  }, [onNodeClick, repoName]);
 
   const handleHover = useCallback((isHovering) => {
     if (css3DObject) {
