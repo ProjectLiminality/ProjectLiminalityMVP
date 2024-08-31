@@ -4,7 +4,7 @@ import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { updateRotation, updateScale, updatePosition } from '../utils/3DUtils';
-import { readMetadata, getMediaFilePath } from '../services/electronService';
+import { readMetadata, getMediaFilePath, readFile } from '../services/electronService';
 
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene }, ref) => {
   const [metadata, setMetadata] = useState({});
@@ -47,7 +47,12 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
       setMetadata(data);
       if (data.mediaContent) {
         const mediaPath = await getMediaFilePath(repoName);
-        setMediaContent({ ...data.mediaContent, path: mediaPath });
+        const mediaData = await readFile(mediaPath);
+        setMediaContent({ 
+          ...data.mediaContent, 
+          path: mediaPath,
+          data: `data:${data.mediaContent.type};base64,${mediaData}`
+        });
       }
     } catch (error) {
       console.error(`Error reading metadata for ${repoName}:`, error);
