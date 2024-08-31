@@ -3,10 +3,10 @@ import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import DreamNodeGrid from './DreamNodeGrid';
+import DreamGraph from './DreamGraph';
 import { scanDreamVault } from '../services/electronService';
 
-const ThreeScene = () => {
+const DreamSpace = () => {
   const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
   const [sceneState, setSceneState] = useState(null);
@@ -117,7 +117,7 @@ const ThreeScene = () => {
   return (
     <div ref={refContainer}>
       {sceneState && dreamNodes.length > 0 && (
-        <DreamNodeGrid
+        <DreamGraph
           cssScene={sceneState.scene}
           dreamNodes={dreamNodes}
           onNodeClick={handleNodeClick}
@@ -132,4 +132,4 @@ const ThreeScene = () => {
   );
 }
 
-export default React.memo(ThreeScene);
+export default React.memo(DreamSpace);
