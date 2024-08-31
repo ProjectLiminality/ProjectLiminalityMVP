@@ -4,7 +4,7 @@ import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { updateRotation, updateScale, updatePosition } from '../utils/3DUtils';
-import { readMetadata, getMediaFilePath, readFile } from '../services/electronService';
+import { readMetadata, getMediaFilePath, readFile, listFiles } from '../services/electronService';
 
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene }, ref) => {
   const [metadata, setMetadata] = useState({});
@@ -40,39 +40,66 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
     backObject: backObjectRef.current
   }));
 
-  const readMetadataAndMedia = useCallback(async () => {
+  const readMetadata = useCallback(async () => {
     try {
       console.log(`Reading metadata for ${repoName}`);
       const data = await readMetadata(repoName);
       console.log(`Metadata for ${repoName}:`, data);
       setMetadata(data);
-      if (data.mediaContent) {
-        console.log(`Reading media content for ${repoName}`);
-        const mediaPath = await getMediaFilePath(repoName);
-        console.log(`Media path for ${repoName}:`, mediaPath);
+    } catch (error) {
+      console.error(`Error reading metadata for ${repoName}:`, error);
+      setMetadata({});
+    }
+  }, [repoName]);
+
+  const getMediaFile = useCallback(async () => {
+    try {
+      console.log(`Getting media file for ${repoName}`);
+      const files = await listFiles(repoName);
+      const mediaExtensions = ['.mp4', '.gif', '.png', '.jpg'];
+      const mediaFiles = files.filter(file => 
+        file.startsWith(repoName) && mediaExtensions.some(ext => file.endsWith(ext))
+      );
+      
+      if (mediaFiles.length > 0) {
+        const preferredExtensions = ['.mp4', '.gif', '.png', '.jpg'];
+        const selectedFile = mediaFiles.sort((a, b) => {
+          const extA = preferredExtensions.findIndex(ext => a.endsWith(ext));
+          const extB = preferredExtensions.findIndex(ext => b.endsWith(ext));
+          return extA - extB;
+        })[0];
+
+        const mediaPath = await getMediaFilePath(repoName, selectedFile);
         const mediaData = await readFile(mediaPath);
-        console.log(`Media data received for ${repoName}. Length:`, mediaData.length);
-        const mediaContent = { 
-          ...data.mediaContent, 
+        const fileExtension = selectedFile.split('.').pop().toLowerCase();
+        const mimeTypes = {
+          'mp4': 'video/mp4',
+          'gif': 'image/gif',
+          'png': 'image/png',
+          'jpg': 'image/jpeg'
+        };
+        const mediaContent = {
+          type: mimeTypes[fileExtension],
           path: mediaPath,
-          data: `data:${data.mediaContent.type};base64,${mediaData}`
+          data: `data:${mimeTypes[fileExtension]};base64,${mediaData}`
         };
         console.log(`Setting media content for ${repoName}:`, mediaContent);
         setMediaContent(mediaContent);
       } else {
         console.log(`No media content found for ${repoName}`);
+        setMediaContent(null);
       }
     } catch (error) {
-      console.error(`Error reading metadata or media for ${repoName}:`, error);
-      setMetadata({});
+      console.error(`Error getting media file for ${repoName}:`, error);
       setMediaContent(null);
     }
   }, [repoName]);
 
   useEffect(() => {
-    console.log(`Calling readMetadataAndMedia for ${repoName}`);
-    readMetadataAndMedia();
-  }, [readMetadataAndMedia, repoName]);
+    console.log(`Calling readMetadata and getMediaFile for ${repoName}`);
+    readMetadata();
+    getMediaFile();
+  }, [readMetadata, getMediaFile, repoName]);
 
   useEffect(() => {
     console.log(`DreamNode effect for ${repoName}. frontNodeRef.current:`, !!frontNodeRef.current, 'backNodeRef.current:', !!backNodeRef.current, 'cssScene:', !!cssScene);
