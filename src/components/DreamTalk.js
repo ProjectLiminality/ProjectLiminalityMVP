@@ -59,16 +59,18 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
         backfaceVisibility: 'hidden',
       }}
     >
-      {renderMedia()}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        background: 'radial-gradient(circle, transparent 0%, transparent 85%, black 100%)',
-        pointerEvents: 'none',
-      }} />
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        {renderMedia()}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'radial-gradient(circle, transparent 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.7) 100%)',
+          pointerEvents: 'none',
+        }} />
+      </div>
       <div style={{
         position: 'absolute',
         top: 0,
