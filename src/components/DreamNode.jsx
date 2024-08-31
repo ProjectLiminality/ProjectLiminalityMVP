@@ -56,16 +56,16 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
     try {
       console.log(`Getting media file for ${repoName}`);
       const files = await listFiles(repoName);
-      const mediaExtensions = ['.mp4', '.gif', '.png', '.jpg'];
+      const mediaExtensions = ['.mp4', '.gif', '.png', '.jpg', '.jpeg'];
       const mediaFiles = files.filter(file => 
-        file.startsWith(repoName) && mediaExtensions.some(ext => file.endsWith(ext))
+        file.startsWith(repoName) && mediaExtensions.some(ext => file.toLowerCase().endsWith(ext))
       );
       
       if (mediaFiles.length > 0) {
-        const preferredExtensions = ['.mp4', '.gif', '.png', '.jpg'];
+        const preferredExtensions = ['.mp4', '.gif', '.png', '.jpg', '.jpeg'];
         const selectedFile = mediaFiles.sort((a, b) => {
-          const extA = preferredExtensions.findIndex(ext => a.endsWith(ext));
-          const extB = preferredExtensions.findIndex(ext => b.endsWith(ext));
+          const extA = preferredExtensions.findIndex(ext => a.toLowerCase().endsWith(ext));
+          const extB = preferredExtensions.findIndex(ext => b.toLowerCase().endsWith(ext));
           return extA - extB;
         })[0];
 
@@ -76,12 +76,13 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
           'mp4': 'video/mp4',
           'gif': 'image/gif',
           'png': 'image/png',
-          'jpg': 'image/jpeg'
+          'jpg': 'image/jpeg',
+          'jpeg': 'image/jpeg'
         };
         const mediaContent = {
-          type: mimeTypes[fileExtension],
+          type: mimeTypes[fileExtension] || 'application/octet-stream',
           path: mediaPath,
-          data: `data:${mimeTypes[fileExtension]};base64,${mediaData}`
+          data: `data:${mimeTypes[fileExtension] || 'application/octet-stream'};base64,${mediaData}`
         };
         console.log(`Setting media content for ${repoName}:`, mediaContent);
         setMediaContent(mediaContent);

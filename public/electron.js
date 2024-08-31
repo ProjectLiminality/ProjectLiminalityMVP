@@ -27,7 +27,7 @@ function createWindow() {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy': ['default-src \'self\'; script-src \'self\'']
+        'Content-Security-Policy': ["default-src 'self'; img-src 'self' data:; media-src 'self' data:;"]
       }
     })
   });
