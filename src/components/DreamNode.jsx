@@ -39,7 +39,8 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
         const newRotation = new THREE.Euler(0, isFlipped ? 0 : Math.PI, 0);
         updateRotation(css3DObjectRef.current, newRotation, 1000);
       }
-    }
+    },
+    css3DObject: css3DObjectRef.current
   }));
 
   const fetchMetadata = useCallback(async () => {

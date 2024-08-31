@@ -90,6 +90,8 @@ const DreamSpace = () => {
     }
   }, [sceneState]);
 
+  const dreamNodeRef = useRef(null);
+
   useEffect(() => {
     if (sceneState && dreamNodes.length > 0) {
       const { scene } = sceneState;
@@ -101,8 +103,10 @@ const DreamSpace = () => {
       const nodeElement = document.createElement('div');
       nodeElement.style.width = '300px';
       nodeElement.style.height = '300px';
+      
       ReactDOM.render(
         <DreamNode 
+          ref={dreamNodeRef}
           repoName={dreamNode.repoName} 
           initialPosition={new THREE.Vector3(0, 0, -1000)}
           cssScene={scene}
@@ -110,6 +114,11 @@ const DreamSpace = () => {
         />, 
         nodeElement
       );
+
+      // Ensure the DreamNode is added to the scene
+      if (dreamNodeRef.current && dreamNodeRef.current.css3DObject) {
+        scene.add(dreamNodeRef.current.css3DObject);
+      }
     }
   }, [sceneState, dreamNodes]);
 
