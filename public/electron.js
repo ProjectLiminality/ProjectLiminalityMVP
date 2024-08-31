@@ -27,7 +27,7 @@ function createWindow() {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy': ["default-src 'self'; img-src 'self' data:; media-src 'self' data:; style-src 'self' 'unsafe-inline';"]
+        'Content-Security-Policy': ["default-src 'self'; img-src 'self' data:; media-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval';"]
       }
     })
   });
