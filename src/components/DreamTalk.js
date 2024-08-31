@@ -66,6 +66,15 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
         left: 0,
         width: '100%',
         height: '100%',
+        background: 'radial-gradient(circle, transparent 0%, transparent 85%, black 100%)',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
