@@ -101,7 +101,14 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
         onMouseLeave={() => handleHover(false)}
         style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden' }}
       >
-        {mediaContent ? renderMediaContent() : <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />}
+        {mediaContent ? (
+          <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            {renderMediaContent()}
+            <p style={{ marginTop: '10px' }}>{repoName}</p>
+          </div>
+        ) : (
+          <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
+        )}
       </div>
       <div 
         className="dream-song" 
