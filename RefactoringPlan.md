@@ -1,12 +1,10 @@
-# DreamCatcher Refactoring Battle Plan - Updated Status
+# ProjectLiminality Refactoring Battle Plan - Updated Status
 
 ## Objective
 Refactor the DreamNode and DreamNodeGrid components from Three.js-centric classes to React components, maintaining all existing functionality while improving code structure and React integration.
 
 ## Progress Summary
-
 As of the latest update, we have made significant progress on Phases 1 through 5 of the refactoring plan:
-
 1. Preparation: Completed
 2. File Restructuring: Completed
 3. DreamNode Refactoring: Mostly completed
@@ -53,7 +51,34 @@ The application is in a partially working state as we complete the transition fr
 
 ## Remaining Phases
 
-[The rest of the phases (6-9) remain unchanged from the original plan]
+### Phase 6: Component Integration
+1. Update other components that interact with DreamNode or DreamNodeGrid
+2. Ensure proper data flow and event handling between components
+3. Verify that all functionalities are maintained after integration
+
+### Phase 7: Performance Optimization
+1. Conduct performance profiling to identify bottlenecks
+2. Optimize render cycles and minimize unnecessary re-renders
+3. Implement performance improvements for 3D object management
+4. Compare performance metrics with the original implementation
+
+### Phase 8: Testing and Refinement
+1. Develop comprehensive test suite for new React components
+2. Conduct thorough testing of all functionalities
+3. Address any bugs or issues discovered during testing
+4. Refine and optimize code based on testing results
+
+### Phase 9: Final Review and Merge
+1. Conduct a final code review
+2. Update project documentation
+3. Prepare for final merge into the main branch
+4. Tag a new version release
 
 ## Notes
-[Notes section remains unchanged from the original plan]
+- Prioritize maintaining existing functionality while refactoring
+- Keep performance in mind throughout the refactoring process
+- Regular communication with the team is crucial for a smooth transition
+- Document any major changes or decisions made during the refactoring
+- Consider creating a detailed migration guide for future reference
+- Be prepared to rollback changes if unforeseen issues arise
+- Continuously update this battle plan as progress is made and new challenges are encountered
