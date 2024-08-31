@@ -131,7 +131,7 @@ const DreamSpace = () => {
         <DreamNode 
           ref={dreamNodeRef}
           repoName={dreamNode.repoName} 
-          initialPosition={new THREE.Vector3(0, 0, -1000)}
+          initialPosition={new THREE.Vector3(0, 0, 0)}
           cssScene={scene}
           onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
         />, 
