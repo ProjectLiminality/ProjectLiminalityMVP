@@ -28,10 +28,12 @@ const DreamTalk = ({ repoName, mediaContent, metadata, style }) => {
       justifyContent: 'center',
       padding: '10px',
       boxSizing: 'border-box',
-      width: '100%',
-      height: '100%',
-      backgroundColor: 'rgba(255, 255, 255, 0.8)',
-      borderRadius: '10px',
+      width: '300px',
+      height: '300px',
+      backgroundColor: 'black',
+      borderRadius: '50%',
+      border: '5px solid blue',
+      color: 'white',
     }}>
       {renderMedia()}
       <h2 style={{ 
