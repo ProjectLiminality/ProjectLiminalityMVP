@@ -1,10 +1,12 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
-import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
+import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import DreamGraph from './DreamGraph';
 import { scanDreamVault } from '../services/electronService';
+import DreamNode from './DreamNode';
+import ReactDOM from 'react-dom';
 
 const DreamSpace = () => {
   const refContainer = useRef(null);
