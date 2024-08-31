@@ -17,8 +17,9 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
     switch (mediaContent.type) {
       case 'image/jpeg':
       case 'image/png':
-      case 'image/gif':
         return <img src={mediaContent.data} alt={repoName} style={{ width: '75%', height: '75%', objectFit: 'contain', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />;
+      case 'image/gif':
+        return <img src={mediaContent.data} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />;
       case 'audio/mpeg':
       case 'audio/wav':
         return <audio controls src={mediaContent.data} style={{ width: '90%', maxWidth: '250px' }} />;
