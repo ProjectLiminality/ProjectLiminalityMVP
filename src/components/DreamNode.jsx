@@ -108,39 +108,24 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
 
   return (
     <>
-      <div ref={frontNodeRef} style={{ width: '300px', height: '300px', position: 'relative' }}>
-        <div 
-          className="dream-talk" 
-          onClick={handleClick} 
-          onMouseEnter={() => handleHover(true)}
-          onMouseLeave={() => handleHover(false)}
-          style={{ 
-            position: 'absolute', 
-            width: '100%', 
-            height: '100%', 
-            border: `5px solid ${borderColor}`,
-            borderRadius: '10px',
-          }}
-        >
-          <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
-        </div>
-      </div>
-      <div ref={backNodeRef} style={{ width: '300px', height: '300px', position: 'relative' }}>
-        <div 
-          className="dream-song" 
+      <div ref={frontNodeRef} style={{ width: '300px', height: '300px' }}>
+        <DreamTalk 
+          repoName={repoName} 
+          mediaContent={mediaContent} 
+          metadata={metadata} 
           onClick={handleClick}
           onMouseEnter={() => handleHover(true)}
           onMouseLeave={() => handleHover(false)}
-          style={{ 
-            position: 'absolute', 
-            width: '100%', 
-            height: '100%', 
-            border: `5px solid ${borderColor}`,
-            borderRadius: '10px',
-          }}
-        >
-          <DreamSong repoName={repoName} metadata={metadata} />
-        </div>
+        />
+      </div>
+      <div ref={backNodeRef} style={{ width: '300px', height: '300px' }}>
+        <DreamSong 
+          repoName={repoName} 
+          metadata={metadata}
+          onClick={handleClick}
+          onMouseEnter={() => handleHover(true)}
+          onMouseLeave={() => handleHover(false)}
+        />
       </div>
     </>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DreamTalk = ({ repoName, mediaContent, metadata, style }) => {
+const DreamTalk = ({ repoName, mediaContent, metadata, style, onClick, onMouseEnter, onMouseLeave }) => {
   const renderMedia = () => {
     if (!mediaContent || !mediaContent.path) {
       return null;
@@ -19,7 +19,12 @@ const DreamTalk = ({ repoName, mediaContent, metadata, style }) => {
   };
 
   return (
-    <div className="dream-talk" style={{
+    <div 
+      className="dream-talk" 
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      style={{
       ...style,
       alignItems: 'center',
       overflow: 'hidden',

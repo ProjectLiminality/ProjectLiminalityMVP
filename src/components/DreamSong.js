@@ -1,8 +1,13 @@
 import React from 'react';
 
-const DreamSong = ({ repoName, metadata, style }) => {
+const DreamSong = ({ repoName, metadata, style, onClick, onMouseEnter, onMouseLeave }) => {
   return (
-    <div className="dream-song" style={{
+    <div 
+      className="dream-song" 
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      style={{
       ...style,
       alignItems: 'center',
       overflow: 'hidden',
