@@ -59,7 +59,13 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
       updateScale(objectRef.current, newScale, 300);
     }
     setShowOverlay(isHovered);
-  }, [isHovered]);
+    
+    if (isHovered) {
+      console.log('DreamNode is now hovered:', repoName);
+    } else {
+      console.log('DreamNode is no longer hovered:', repoName);
+    }
+  }, [isHovered, repoName]);
 
   const handleClick = useCallback(() => {
     onNodeClick(repoName);

@@ -224,13 +224,19 @@ const DreamSpace = () => {
           console.log('Clicked on node:', intersectedNode.repoName);
         } else {
           // Handle hover event
-          setHoveredNode(intersectedNode.repoName);
+          if (hoveredNode !== intersectedNode.repoName) {
+            console.log('Mouse entered node:', intersectedNode.repoName);
+            setHoveredNode(intersectedNode.repoName);
+          }
         }
       }
     } else {
-      setHoveredNode(null);
+      if (hoveredNode !== null) {
+        console.log('Mouse left node:', hoveredNode);
+        setHoveredNode(null);
+      }
     }
-  }, [sceneState]);
+  }, [sceneState, hoveredNode]);
 
   if (error) {
     return <div>Error: {error}</div>;
