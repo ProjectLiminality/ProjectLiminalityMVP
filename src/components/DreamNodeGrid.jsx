@@ -21,7 +21,7 @@ const DreamNodeGrid = React.memo(({ scene, cssScene, camera, dreamNodes: initial
       const z = 0;
       return new THREE.Vector3(x, y, z);
     });
-  }, [dreamNodes.length]);
+  }, [dreamNodes]);
 
   const calculateCirclePositions = useCallback(() => {
     const radius = dreamNodes.length * 80;
@@ -32,7 +32,7 @@ const DreamNodeGrid = React.memo(({ scene, cssScene, camera, dreamNodes: initial
       const z = 0;
       return new THREE.Vector3(x, y, z);
     });
-  }, [dreamNodes.length]);
+  }, [dreamNodes]);
 
   const calculatePositions = useCallback(() => {
     return layout === 'grid' ? calculateGridPositions() : calculateCirclePositions();
@@ -56,17 +56,15 @@ const DreamNodeGrid = React.memo(({ scene, cssScene, camera, dreamNodes: initial
         gridRef.current.add(node.object);
         cssScene.add(node.cssObject);
       });
-    }
 
-    return () => {
-      if (gridRef.current && scene && cssScene) {
-        dreamNodes.forEach(node => {
+      return () => {
+        newDreamNodes.forEach(node => {
           gridRef.current.remove(node.object);
           cssScene.remove(node.cssObject);
         });
         scene.remove(gridRef.current);
-      }
-    };
+      };
+    }
   }, [scene, cssScene, initialDreamNodes]);
 
   useEffect(() => {
@@ -82,8 +80,16 @@ const DreamNodeGrid = React.memo(({ scene, cssScene, camera, dreamNodes: initial
       updatePosition(node.cssObject, newPosition, 1000);
     });
 
-    renderer.render(scene, camera);
-    cssRenderer.render(cssScene, camera);
+    const animate = () => {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+      cssRenderer.render(cssScene, camera);
+    };
+    animate();
+
+    return () => {
+      renderer.setAnimationLoop(null);
+    };
   }, [dreamNodes, layout, centeredNode, calculatePositions, scene, cssScene, camera, renderer, cssRenderer]);
 
   const toggleLayout = () => {
@@ -102,14 +108,12 @@ const DreamNodeGrid = React.memo(({ scene, cssScene, camera, dreamNodes: initial
         <DreamNode
           key={node.repoName}
           scene={scene}
-          cssScene={cssScene}
           camera={camera}
           position={calculatePositions()[index]}
           repoName={node.repoName}
           onNodeClick={handleNodeClick}
           parentRef={gridRef}
           object={node.object}
-          cssObject={node.cssObject}
         />
       ))}
       <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1000 }}>

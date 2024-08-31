@@ -37,7 +37,8 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
       object.add(nodeContainer);
       object.position.copy(position);
 
-      parentRef.current.add(object);
+      const currentParentRef = parentRef.current;
+      currentParentRef.add(object);
 
       const createCSS3DObject = (element) => {
         const obj = new CSS3DObject(element);
@@ -49,7 +50,7 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
       nodeContainer.add(newCSS3DObject);
 
       return () => {
-        parentRef.current.remove(object);
+        currentParentRef.remove(object);
         nodeContainer.remove(newCSS3DObject);
       };
     }
@@ -76,21 +77,6 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
       updateScale(css3DObject, newScale, 300);
     }
   }, [css3DObject]);
-
-  const renderMediaContent = () => {
-    if (!mediaContent) return null;
-
-    switch (mediaContent.type) {
-      case 'image':
-        return <img src={mediaContent.path} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
-      case 'audio':
-        return <audio controls src={mediaContent.path} style={{ width: '100%' }} />;
-      case 'video':
-        return <video controls src={mediaContent.path} style={{ width: '100%', height: '100%' }} />;
-      default:
-        return <p>Unsupported media type</p>;
-    }
-  };
 
   return (
     <div ref={nodeRef} style={{ width: '300px', height: '300px', position: 'relative' }}>
