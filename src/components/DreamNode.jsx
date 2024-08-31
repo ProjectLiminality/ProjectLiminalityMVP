@@ -11,6 +11,7 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
   const [metadata, setMetadata] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
   const [mediaContent, setMediaContent] = useState(null);
+  const [css3DObject, setCSS3DObject] = useState(null);
 
   const fetchMetadata = useCallback(async () => {
     try {
@@ -38,21 +39,18 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
 
       parentRef.current.add(object);
 
-      const createCSS3DObject = (element, posZ) => {
+      const createCSS3DObject = (element) => {
         const obj = new CSS3DObject(element);
-        obj.position.set(0, 0, posZ);
         return obj;
       };
 
-      const dreamTalkObject = createCSS3DObject(nodeRef.current.querySelector('.dream-talk'), 1);
-      const dreamSongObject = createCSS3DObject(nodeRef.current.querySelector('.dream-song'), -1);
-      dreamSongObject.rotation.y = Math.PI;
-
-      nodeContainer.add(dreamTalkObject, dreamSongObject);
+      const newCSS3DObject = createCSS3DObject(nodeRef.current);
+      setCSS3DObject(newCSS3DObject);
+      nodeContainer.add(newCSS3DObject);
 
       return () => {
         parentRef.current.remove(object);
-        nodeContainer.remove(dreamTalkObject, dreamSongObject);
+        nodeContainer.remove(newCSS3DObject);
       };
     }
   }, [scene, position, parentRef, object, repoName]);
@@ -65,37 +63,39 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
 
   const handleClick = useCallback(() => {
     setIsFlipped((prev) => !prev);
-    if (object) {
+    if (css3DObject) {
       const newRotation = new THREE.Euler(0, isFlipped ? 0 : Math.PI, 0);
-      updateRotation(object, newRotation, 1000);
+      updateRotation(css3DObject, newRotation, 1000);
     }
     onNodeClick(repoName);
-  }, [isFlipped, onNodeClick, repoName, object]);
+  }, [isFlipped, onNodeClick, repoName, css3DObject]);
 
   const handleHover = useCallback((isHovering) => {
-    if (object) {
+    if (css3DObject) {
       const newScale = new THREE.Vector3(isHovering ? 1.1 : 1, isHovering ? 1.1 : 1, isHovering ? 1.1 : 1);
-      updateScale(object, newScale, 300);
+      updateScale(css3DObject, newScale, 300);
     }
-  }, [object]);
+  }, [css3DObject]);
 
   return (
-    <div ref={nodeRef}>
+    <div ref={nodeRef} style={{ width: '300px', height: '300px', position: 'relative' }}>
       <div 
         className="dream-talk" 
         onClick={handleClick} 
         onMouseEnter={() => handleHover(true)}
         onMouseLeave={() => handleHover(false)}
+        style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden' }}
       >
-        <DreamTalk repoName={repoName} mediaContent={mediaContent} />
+        <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
       </div>
       <div 
         className="dream-song" 
         onClick={handleClick}
         onMouseEnter={() => handleHover(true)}
         onMouseLeave={() => handleHover(false)}
+        style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
       >
-        <DreamSong repoName={repoName} mediaContent={mediaContent} />
+        <DreamSong repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
       </div>
     </div>
   );

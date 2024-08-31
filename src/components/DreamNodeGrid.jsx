@@ -8,7 +8,6 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
   const gridRef = useRef(null);
   const [centeredNode, setCenteredNode] = useState(null);
   const [dreamNodes, setDreamNodes] = useState([]);
-  const dreamNodeRefs = useRef({});
 
   const calculateGridPositions = useCallback(() => {
     const gridSize = Math.ceil(Math.sqrt(dreamNodes.length));
@@ -99,7 +98,7 @@ const DreamNodeGrid = React.memo(({ scene, camera, dreamNodes: initialDreamNodes
           object={node.object}
         />
       ))}
-      <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+      <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1000 }}>
         <button onClick={toggleLayout}>Toggle Layout</button>
       </div>
     </>
