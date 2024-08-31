@@ -5,6 +5,7 @@ export function create3DObject(geometry, material) {
 }
 
 export function updatePosition(object, newPosition, duration) {
+  console.log('Updating position:', object, newPosition, duration);
   const startPosition = object.position.clone();
   const startTime = Date.now();
 
@@ -17,6 +18,8 @@ export function updatePosition(object, newPosition, duration) {
 
     if (progress < 1) {
       requestAnimationFrame(animate);
+    } else {
+      console.log('Position update complete:', object.position);
     }
   }
 

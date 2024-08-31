@@ -15,21 +15,25 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
 
   useImperativeHandle(ref, () => ({
     updatePosition: (newPosition, duration = 1000) => {
+      console.log(`Updating position for ${repoName}:`, newPosition);
       if (css3DObject) {
         updatePosition(css3DObject, newPosition, duration);
       }
     },
     updateRotation: (newRotation, duration = 1000) => {
+      console.log(`Updating rotation for ${repoName}:`, newRotation);
       if (css3DObject) {
         updateRotation(css3DObject, newRotation, duration);
       }
     },
     updateScale: (newScale, duration = 300) => {
+      console.log(`Updating scale for ${repoName}:`, newScale);
       if (css3DObject) {
         updateScale(css3DObject, newScale, duration);
       }
     },
     flip: () => {
+      console.log(`Flipping ${repoName}`);
       setIsFlipped(prev => !prev);
       if (css3DObject) {
         const newRotation = new THREE.Euler(0, isFlipped ? 0 : Math.PI, 0);
@@ -40,6 +44,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
 
   const fetchMetadata = useCallback(async () => {
     try {
+      console.log(`Fetching metadata for ${repoName}`);
       const data = await readMetadata(repoName);
       setMetadata(data);
       if (data.mediaContent) {
@@ -47,7 +52,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
         setMediaContent({ ...data.mediaContent, path: mediaPath });
       }
     } catch (error) {
-      console.error('Error reading metadata:', error);
+      console.error(`Error reading metadata for ${repoName}:`, error);
       setMetadata({});
     }
   }, [repoName]);
@@ -58,27 +63,31 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
 
   useEffect(() => {
     if (nodeRef.current && cssScene) {
+      console.log(`Creating CSS3DObject for ${repoName}`);
       const newCSS3DObject = new CSS3DObject(nodeRef.current);
       newCSS3DObject.position.copy(initialPosition);
       setCSS3DObject(newCSS3DObject);
       cssScene.add(newCSS3DObject);
 
       return () => {
+        console.log(`Removing CSS3DObject for ${repoName}`);
         cssScene.remove(newCSS3DObject);
       };
     }
-  }, [initialPosition, cssScene]);
+  }, [initialPosition, cssScene, repoName]);
 
   const handleClick = useCallback(() => {
+    console.log(`${repoName} clicked`);
     onNodeClick(repoName);
   }, [onNodeClick, repoName]);
 
   const handleHover = useCallback((isHovering) => {
+    console.log(`${repoName} hover state:`, isHovering);
     if (css3DObject) {
       const newScale = new THREE.Vector3(isHovering ? 1.1 : 1, isHovering ? 1.1 : 1, isHovering ? 1.1 : 1);
       updateScale(css3DObject, newScale, 300);
     }
-  }, [css3DObject]);
+  }, [css3DObject, repoName]);
 
   const borderColor = metadata.color || '#000000';
 
