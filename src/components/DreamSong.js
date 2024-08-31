@@ -1,30 +1,27 @@
 import React from 'react';
 import { BLUE, BLACK, WHITE } from '../constants/colors';
 
-const DreamSong = ({ repoName, metadata, style, onClick, onMouseEnter, onMouseLeave }) => {
+const DreamSong = ({ repoName, metadata, onClick, isHovered }) => {
   return (
     <div 
       className="dream-song" 
       onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
       style={{
-      ...style,
-      alignItems: 'center',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      padding: '0',
-      boxSizing: 'border-box',
-      width: '300px',
-      height: '300px',
-      backgroundColor: BLACK,
-      borderRadius: '50%',
-      border: `5px solid ${BLUE}`,
-      color: WHITE,
-      backfaceVisibility: 'hidden',
-    }}>
+        alignItems: 'center',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '0',
+        boxSizing: 'border-box',
+        width: '100%',
+        height: '100%',
+        backgroundColor: BLACK,
+        borderRadius: '50%',
+        border: `5px solid ${BLUE}`,
+        color: WHITE,
+      }}
+    >
       <div style={{
         width: '100%',
         height: '100%',
@@ -36,6 +33,8 @@ const DreamSong = ({ repoName, metadata, style, onClick, onMouseEnter, onMouseLe
         boxSizing: 'border-box',
         borderRadius: '50%',
         overflow: 'hidden',
+        background: isHovered ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
+        transition: 'background 0.3s ease',
       }}>
         <h2 style={{ 
           fontSize: '18px', 
@@ -78,4 +77,4 @@ const DreamSong = ({ repoName, metadata, style, onClick, onMouseEnter, onMouseLe
   );
 };
 
-export default DreamSong;
+export default React.memo(DreamSong);

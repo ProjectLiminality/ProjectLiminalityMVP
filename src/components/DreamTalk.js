@@ -1,13 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BLUE, BLACK, WHITE } from '../constants/colors';
 
-const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, onMouseLeave }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  useEffect(() => {
-    console.log(`DreamTalk rendering for ${repoName}:`, { mediaContent, metadata });
-  }, [repoName, mediaContent, metadata]);
-
+const DreamTalk = ({ repoName, mediaContent, metadata, onClick, isHovered }) => {
   const renderMedia = () => {
     if (!mediaContent || !mediaContent.data) {
       console.log(`No media content for ${repoName}`);
@@ -32,46 +26,20 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
     }
   };
 
-  const handleMouseEnter = (e) => {
-    console.log('Mouse enter', { repoName, isHovered: true, event: e.type });
-    setIsHovered(true);
-    if (onMouseEnter) onMouseEnter(e);
-  };
-
-  const handleMouseLeave = (e) => {
-    console.log('Mouse leave', { repoName, isHovered: false, event: e.type });
-    setIsHovered(false);
-    if (onMouseLeave) onMouseLeave(e);
-  };
-
-  useEffect(() => {
-    console.log(`DreamTalk isHovered state changed for ${repoName}:`, isHovered);
-  }, [isHovered, repoName]);
-
-  useEffect(() => {
-    console.log(`DreamTalk isHovered state changed for ${repoName}:`, isHovered);
-  }, [isHovered, repoName]);
-
   return (
     <div 
       className="dream-talk" 
       onClick={onClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onMouseOver={() => console.log('Mouse over')}
-      onMouseOut={() => console.log('Mouse out')}
       style={{
         position: 'relative',
         overflow: 'hidden',
-        width: '300px',
-        height: '300px',
+        width: '100%',
+        height: '100%',
         backgroundColor: BLACK,
         borderRadius: '50%',
         border: `5px solid ${BLUE}`,
         color: WHITE,
-        backfaceVisibility: 'hidden',
-        transition: 'transform 0.3s ease',
-        transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+        boxSizing: 'border-box',
       }}
     >
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -133,4 +101,4 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onMouseEnter, on
   );
 };
 
-export default DreamTalk;
+export default React.memo(DreamTalk);

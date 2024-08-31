@@ -8,32 +8,27 @@ import { getRepoData } from '../utils/fileUtils';
 
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene }, ref) => {
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
-  const frontObjectRef = useRef(null);
-  const backObjectRef = useRef(null);
-  const frontNodeRef = useRef(null);
-  const backNodeRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const nodeRef = useRef(null);
+  const objectRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     updatePosition: (newPosition, duration = 1000) => {
-      if (frontObjectRef.current && backObjectRef.current) {
-        updatePosition(frontObjectRef.current, newPosition, duration);
-        updatePosition(backObjectRef.current, newPosition, duration);
+      if (objectRef.current) {
+        updatePosition(objectRef.current, newPosition, duration);
       }
     },
     updateRotation: (newRotation, duration = 1000) => {
-      if (frontObjectRef.current && backObjectRef.current) {
-        updateRotation(frontObjectRef.current, newRotation, duration);
-        updateRotation(backObjectRef.current, newRotation, duration);
+      if (objectRef.current) {
+        updateRotation(objectRef.current, newRotation, duration);
       }
     },
     updateScale: (newScale, duration = 300) => {
-      if (frontObjectRef.current && backObjectRef.current) {
-        updateScale(frontObjectRef.current, newScale, duration);
-        updateScale(backObjectRef.current, newScale, duration);
+      if (objectRef.current) {
+        updateScale(objectRef.current, newScale, duration);
       }
     },
-    frontObject: frontObjectRef.current,
-    backObject: backObjectRef.current
+    object: objectRef.current
   }));
 
   useEffect(() => {
@@ -45,29 +40,15 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }, [repoName]);
 
   useEffect(() => {
-    if (frontNodeRef.current && backNodeRef.current && cssScene && !frontObjectRef.current && !backObjectRef.current) {
-      const frontCSS3DObject = new CSS3DObject(frontNodeRef.current);
-      const backCSS3DObject = new CSS3DObject(backNodeRef.current);
-      
-      frontCSS3DObject.position.copy(initialPosition);
-      backCSS3DObject.position.copy(initialPosition);
-      
-      backCSS3DObject.rotation.y = Math.PI;
-
-      frontCSS3DObject.element.style.backfaceVisibility = 'hidden';
-      backCSS3DObject.element.style.backfaceVisibility = 'hidden';
-
-      frontObjectRef.current = frontCSS3DObject;
-      backObjectRef.current = backCSS3DObject;
-      
-      cssScene.add(frontCSS3DObject);
-      cssScene.add(backCSS3DObject);
+    if (nodeRef.current && cssScene && !objectRef.current) {
+      const css3DObject = new CSS3DObject(nodeRef.current);
+      css3DObject.position.copy(initialPosition);
+      objectRef.current = css3DObject;
+      cssScene.add(css3DObject);
 
       return () => {
-        cssScene.remove(frontCSS3DObject);
-        cssScene.remove(backCSS3DObject);
-        frontObjectRef.current = null;
-        backObjectRef.current = null;
+        cssScene.remove(css3DObject);
+        objectRef.current = null;
       };
     }
   }, [initialPosition, cssScene, repoName]);
@@ -76,36 +57,40 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
     onNodeClick(repoName);
   }, [onNodeClick, repoName]);
 
-  const handleHover = useCallback((isHovering) => {
-    if (frontObjectRef.current && backObjectRef.current) {
-      const newScale = new THREE.Vector3(isHovering ? 1.1 : 1, isHovering ? 1.1 : 1, isHovering ? 1.1 : 1);
-      updateScale(frontObjectRef.current, newScale, 300);
-      updateScale(backObjectRef.current, newScale, 300);
+  const handleHover = useCallback((hovering) => {
+    console.log(`DreamNode ${repoName} hover state: ${hovering}`);
+    setIsHovered(hovering);
+    if (objectRef.current) {
+      const newScale = new THREE.Vector3(hovering ? 1.1 : 1, hovering ? 1.1 : 1, hovering ? 1.1 : 1);
+      updateScale(objectRef.current, newScale, 300);
     }
-  }, []);
+  }, [repoName]);
 
   return (
-    <>
-      <div ref={frontNodeRef} style={{ width: '300px', height: '300px' }}>
+    <div ref={nodeRef} style={{ width: '300px', height: '300px', position: 'relative', transformStyle: 'preserve-3d' }}>
+      <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden' }}>
         <DreamTalk 
           repoName={repoName} 
           mediaContent={repoData.mediaContent} 
           metadata={repoData.metadata} 
           onClick={handleClick}
-          onMouseEnter={() => handleHover(true)}
-          onMouseLeave={() => handleHover(false)}
+          isHovered={isHovered}
         />
       </div>
-      <div ref={backNodeRef} style={{ width: '300px', height: '300px' }}>
+      <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
         <DreamSong 
           repoName={repoName} 
           metadata={repoData.metadata}
           onClick={handleClick}
-          onMouseEnter={() => handleHover(true)}
-          onMouseLeave={() => handleHover(false)}
+          isHovered={isHovered}
         />
       </div>
-    </>
+      <div 
+        style={{ position: 'absolute', width: '100%', height: '100%', pointerEvents: 'auto' }}
+        onMouseEnter={() => handleHover(true)}
+        onMouseLeave={() => handleHover(false)}
+      />
+    </div>
   );
 });
 
