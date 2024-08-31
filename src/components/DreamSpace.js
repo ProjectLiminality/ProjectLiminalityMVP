@@ -1,12 +1,11 @@
-import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import WebGL from 'three/addons/capabilities/WebGL.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import DreamGraph from './DreamGraph';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode from './DreamNode';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 const DreamSpace = () => {
   const refContainer = useRef(null);
@@ -127,26 +126,31 @@ const DreamSpace = () => {
       nodeElement.style.width = '300px';
       nodeElement.style.height = '300px';
       
-      ReactDOM.render(
+      const root = createRoot(nodeElement);
+      root.render(
         <DreamNode 
           ref={dreamNodeRef}
           repoName={dreamNode.repoName} 
           initialPosition={new THREE.Vector3(0, 0, 0)}
           cssScene={scene}
           onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
-        />, 
-        nodeElement,
-        () => {
-          console.log('DreamNode rendered to nodeElement');
-          // Ensure the DreamNode is added to the scene
-          if (dreamNodeRef.current && dreamNodeRef.current.css3DObject) {
-            scene.add(dreamNodeRef.current.css3DObject);
-            console.log('Added DreamNode to scene. Scene children count:', scene.children.length);
-          } else {
-            console.log('Failed to add DreamNode to scene. dreamNodeRef.current:', dreamNodeRef.current);
-          }
-        }
+        />
       );
+
+      // Use a MutationObserver to detect when the DreamNode has been added to the DOM
+      const observer = new MutationObserver(() => {
+        console.log('DreamNode rendered to nodeElement');
+        if (dreamNodeRef.current && dreamNodeRef.current.frontObject && dreamNodeRef.current.backObject) {
+          scene.add(dreamNodeRef.current.frontObject);
+          scene.add(dreamNodeRef.current.backObject);
+          console.log('Added DreamNode to scene. Scene children count:', scene.children.length);
+        } else {
+          console.log('Failed to add DreamNode to scene. dreamNodeRef.current:', dreamNodeRef.current);
+        }
+        observer.disconnect();
+      });
+
+      observer.observe(nodeElement, { childList: true, subtree: true });
     } else {
       console.log('Not rendering DreamNode. sceneState:', !!sceneState, 'dreamNodes length:', dreamNodes.length);
     }
