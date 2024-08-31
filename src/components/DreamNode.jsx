@@ -102,6 +102,10 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }, [readMetadata, getMediaFile, repoName]);
 
   useEffect(() => {
+    console.log(`Metadata for ${repoName}:`, metadata);
+  }, [metadata, repoName]);
+
+  useEffect(() => {
     console.log(`DreamNode effect for ${repoName}. frontNodeRef.current:`, !!frontNodeRef.current, 'backNodeRef.current:', !!backNodeRef.current, 'cssScene:', !!cssScene);
     if (frontNodeRef.current && backNodeRef.current && cssScene && !frontObjectRef.current && !backObjectRef.current) {
       console.log(`Creating CSS3DObjects for ${repoName}`);
@@ -160,7 +164,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
     }
   }, [repoName]);
 
-  const borderColor = metadata.color || '#000000';
+  const borderColor = metadata && metadata.color ? metadata.color : '#000000';
 
   return (
     <>
