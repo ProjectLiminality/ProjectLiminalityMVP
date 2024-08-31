@@ -136,3 +136,37 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
 });
 
 export default React.memo(DreamNode);
+import React, { useState, useEffect } from 'react';
+import { readMetadata } from '../services/electronService';
+
+const DreamNode = ({ repoName }) => {
+  const [metadata, setMetadata] = useState(null);
+
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      try {
+        const data = await readMetadata(repoName);
+        setMetadata(data);
+      } catch (error) {
+        console.error('Error fetching metadata:', error);
+      }
+    };
+
+    fetchMetadata();
+  }, [repoName]);
+
+  if (!metadata) {
+    return <div className="dream-node">Loading...</div>;
+  }
+
+  return (
+    <div className="dream-node">
+      <h3>{repoName}</h3>
+      <p>Last commit: {metadata.lastCommit}</p>
+      <p>Author: {metadata.author}</p>
+      <p>Files: {metadata.fileCount}</p>
+    </div>
+  );
+};
+
+export default DreamNode;

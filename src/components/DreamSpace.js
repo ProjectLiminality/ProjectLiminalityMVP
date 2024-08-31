@@ -71,14 +71,38 @@ const DreamSpace = () => {
     if (newSceneState) {
       setSceneState(newSceneState);
 
-      const fetchDreamNodes = async () => {
+      const fetchFirstDreamNode = async () => {
         try {
           const repos = await scanDreamVault();
-          const newDreamNodes = repos.map(repo => ({ repoName: repo }));
-          setDreamNodes(newDreamNodes);
+          if (repos.length > 0) {
+            setDreamNodes([{ repoName: repos[0] }]);
+          } else {
+            setError('No repositories found in the DreamVault');
+          }
         } catch (error) {
           setError('Error scanning dream vault: ' + error.message);
         }
+      };
+
+      fetchFirstDreamNode();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (sceneState && dreamNodes.length > 0) {
+      const { scene } = sceneState;
+      // Clear existing nodes
+      scene.children = scene.children.filter(child => !(child instanceof CSS3DObject));
+      
+      // Add the single DreamNode
+      const dreamNode = dreamNodes[0];
+      const nodeElement = document.createElement('div');
+      nodeElement.style.width = '300px';
+      nodeElement.style.height = '300px';
+      ReactDOM.render(<DreamNode repoName={dreamNode.repoName} />, nodeElement);
+      const object = new CSS3DObject(nodeElement);
+      object.position.set(0, 0, -1000);
+      scene.add(object);
       };
 
       fetchDreamNodes();

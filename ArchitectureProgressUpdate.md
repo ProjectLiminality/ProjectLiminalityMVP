@@ -20,12 +20,17 @@
    - [ ] Ensure proper 3D positioning and interaction
 
 4. Basic data integration
-   - [ ] Implement simple metadata reading from a git repository
+   - [ ] Implement simple metadata reading from the first git repository in DreamVault
    - [ ] Display basic repository information in DreamNode
 
+#### Simplified Approach:
+- Focus on rendering only one DreamNode for the first Git repository in the DreamVault
+- Temporarily ignore other repositories to streamline development and testing
+
 #### Next Steps:
-- Once Milestone 1 is complete, we'll move on to implementing DreamTalk and DreamSong components within the DreamNode.
-- After that, we'll focus on expanding to multiple DreamNodes and implementing the DreamGraph component for coordination.
+- Once Milestone 1 is complete with a single DreamNode, we'll implement DreamTalk and DreamSong components within it.
+- After that, we'll expand to multiple DreamNodes and implement the DreamGraph component for coordination.
 
 #### Progress Notes:
-(Add progress updates, challenges, and decisions made during implementation here)
+- Decided to simplify initial implementation by focusing on a single DreamNode
+- This approach will allow for faster iteration and easier debugging of core functionality
