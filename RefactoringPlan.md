@@ -46,9 +46,6 @@ Once these steps are completed, we will proceed with:
 - Updating documentation and cleaning up any remaining references to the old implementation.
 - Final review and testing of the entire application.
 
-Note for the next AI:
-The application is in a partially working state as we complete the transition from Three.js-centric classes to React components. The main tasks are to finalize the integration of the React components with the Three.js scene in ThreeScene.js, ensure all 3D functionality is properly implemented within the React component lifecycle, and optimize performance and user experience.
-
 ## Remaining Phases
 
 ### Phase 6: Component Integration
@@ -82,3 +79,22 @@ The application is in a partially working state as we complete the transition fr
 - Consider creating a detailed migration guide for future reference
 - Be prepared to rollback changes if unforeseen issues arise
 - Continuously update this battle plan as progress is made and new challenges are encountered
+
+## Long-Term Memory and Continuous Updates
+
+This RefactoringPlan.md serves as a long-term memory for the AI pair programmer and the development team. It should be updated after each programming session or whenever significant progress is made. The updates should include:
+
+1. Current status of each phase
+2. New achievements or milestones reached
+3. Challenges encountered and their resolutions
+4. Changes in priorities or focus areas
+5. Any new tasks or sub-tasks that have been identified
+
+The AI pair programmer should:
+1. Review this document at the beginning of each session
+2. Update the document with progress made during the session
+3. Add any new insights, challenges, or changes to the plan
+4. Ensure that all previous information is retained, only adding or modifying as necessary
+5. Use this document as a guide to pick up where the last session left off
+
+By maintaining this document, we ensure continuity across multiple programming sessions and provide a clear overview of the project's progress and current state. This approach allows for efficient collaboration between human developers and AI assistants, even when starting new chat sessions or working with different AI instances.
