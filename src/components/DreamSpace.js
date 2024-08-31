@@ -91,6 +91,34 @@ const DreamSpace = () => {
   }, []);
 
   useEffect(() => {
+    const newSceneState = initScene();
+    if (newSceneState) {
+      setSceneState(newSceneState);
+
+      const fetchFirstDreamNode = async () => {
+        try {
+          const repos = await scanDreamVault();
+          if (repos.length > 0) {
+            setDreamNodes([{ repoName: repos[0] }]);
+          } else {
+            setError('No repositories found in the DreamVault');
+          }
+        } catch (error) {
+          setError('Error scanning dream vault: ' + error.message);
+        }
+      };
+
+      fetchFirstDreamNode();
+    }
+
+    return () => {
+      if (newSceneState) {
+        newSceneState.cleanup();
+      }
+    };
+  }, [initScene]);
+
+  useEffect(() => {
     if (sceneState && dreamNodes.length > 0) {
       const { scene } = sceneState;
       // Clear existing nodes
@@ -105,17 +133,8 @@ const DreamSpace = () => {
       const object = new CSS3DObject(nodeElement);
       object.position.set(0, 0, -1000);
       scene.add(object);
-      };
-
-      fetchDreamNodes();
     }
-
-    return () => {
-      if (newSceneState) {
-        newSceneState.cleanup();
-      }
-    };
-  }, [initScene]);
+  }, [sceneState, dreamNodes]);
 
   useEffect(() => {
     if (sceneState) {
@@ -156,6 +175,6 @@ const DreamSpace = () => {
       )}
     </div>
   );
-}
+};
 
 export default React.memo(DreamSpace);
