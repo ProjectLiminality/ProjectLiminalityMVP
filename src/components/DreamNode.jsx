@@ -77,6 +77,21 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
     }
   }, [css3DObject]);
 
+  const renderMediaContent = () => {
+    if (!mediaContent) return null;
+
+    switch (mediaContent.type) {
+      case 'image':
+        return <img src={mediaContent.path} alt={repoName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
+      case 'audio':
+        return <audio controls src={mediaContent.path} style={{ width: '100%' }} />;
+      case 'video':
+        return <video controls src={mediaContent.path} style={{ width: '100%', height: '100%' }} />;
+      default:
+        return <p>Unsupported media type</p>;
+    }
+  };
+
   return (
     <div ref={nodeRef} style={{ width: '300px', height: '300px', position: 'relative' }}>
       <div 
@@ -86,7 +101,7 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
         onMouseLeave={() => handleHover(false)}
         style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden' }}
       >
-        <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />
+        {mediaContent ? renderMediaContent() : <DreamTalk repoName={repoName} mediaContent={mediaContent} metadata={metadata} />}
       </div>
       <div 
         className="dream-song" 
