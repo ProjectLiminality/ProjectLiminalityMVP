@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useCallback, forwardRef } from 'react';
 import * as THREE from 'three';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
@@ -11,11 +11,6 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
   const [metadata, setMetadata] = useState({});
   const [isFlipped, setIsFlipped] = useState(false);
   const [mediaContent, setMediaContent] = useState(null);
-
-  useImperativeHandle(ref, () => ({
-    getObject: () => object,
-    getNodeRef: () => nodeRef.current,
-  }));
 
   const fetchMetadata = useCallback(async () => {
     try {
@@ -35,55 +30,32 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
     fetchMetadata();
   }, [fetchMetadata]);
 
-  const createNodeObjects = useCallback(() => {
+  useEffect(() => {
     if (scene && nodeRef.current && parentRef.current) {
-      console.log(`DreamNode ${repoName}: Creating 3D objects`);
       const nodeContainer = new THREE.Object3D();
       object.add(nodeContainer);
       object.position.copy(position);
 
       parentRef.current.add(object);
-      console.log(`DreamNode ${repoName}: Added to parent object`);
 
-      // Wait for the next frame to ensure the DOM elements are rendered
-      requestAnimationFrame(() => {
-        const dreamTalkElement = nodeRef.current.querySelector('.dream-talk');
-        const dreamSongElement = nodeRef.current.querySelector('.dream-song');
+      const createCSS3DObject = (element, posZ) => {
+        const obj = new CSS3DObject(element);
+        obj.position.set(0, 0, posZ);
+        return obj;
+      };
 
-        console.log(`DreamNode ${repoName}: DOM elements:`, 
-                    { dreamTalk: !!dreamTalkElement, dreamSong: !!dreamSongElement });
+      const dreamTalkObject = createCSS3DObject(nodeRef.current.querySelector('.dream-talk'), 1);
+      const dreamSongObject = createCSS3DObject(nodeRef.current.querySelector('.dream-song'), -1);
+      dreamSongObject.rotation.y = Math.PI;
 
-        if (dreamTalkElement && dreamSongElement) {
-          const dreamTalkObject = new CSS3DObject(dreamTalkElement);
-          const dreamSongObject = new CSS3DObject(dreamSongElement);
-
-          nodeContainer.add(dreamTalkObject);
-          nodeContainer.add(dreamSongObject);
-
-          dreamTalkObject.position.set(0, 0, 1);
-          dreamSongObject.position.set(0, 0, -1);
-          dreamSongObject.rotation.y = Math.PI;
-
-          console.log(`DreamNode ${repoName}: 3D objects created and added to scene`);
-        } else {
-          console.error(`DreamNode ${repoName}: DOM elements not found`);
-        }
-      });
+      nodeContainer.add(dreamTalkObject, dreamSongObject);
 
       return () => {
-        console.log(`DreamNode ${repoName}: Removing 3D objects from scene`);
         parentRef.current.remove(object);
+        nodeContainer.remove(dreamTalkObject, dreamSongObject);
       };
-    } else {
-      console.log(`DreamNode ${repoName}: Not creating 3D objects. Scene: ${!!scene}, 
-                   nodeRef: ${!!nodeRef.current}, parentRef: ${!!parentRef.current}`);
     }
   }, [scene, position, parentRef, object, repoName]);
-
-  useEffect(() => {
-    const cleanup = createNodeObjects();
-    return cleanup;
-  }, [createNodeObjects]);
 
   useEffect(() => {
     if (object && position) {
@@ -94,18 +66,16 @@ const DreamNode = forwardRef(({ scene, camera, position, repoName, onNodeClick, 
   const handleClick = useCallback(() => {
     setIsFlipped((prev) => !prev);
     if (object) {
-      const duration = 1000; // 1 second
       const newRotation = new THREE.Euler(0, isFlipped ? 0 : Math.PI, 0);
-      updateRotation(object, newRotation, duration);
+      updateRotation(object, newRotation, 1000);
     }
     onNodeClick(repoName);
   }, [isFlipped, onNodeClick, repoName, object]);
 
   const handleHover = useCallback((isHovering) => {
     if (object) {
-      const duration = 300; // 0.3 seconds
       const newScale = new THREE.Vector3(isHovering ? 1.1 : 1, isHovering ? 1.1 : 1, isHovering ? 1.1 : 1);
-      updateScale(object, newScale, duration);
+      updateScale(object, newScale, 300);
     }
   }, [object]);
 

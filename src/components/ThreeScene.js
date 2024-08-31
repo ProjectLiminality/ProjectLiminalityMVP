@@ -17,7 +17,6 @@ const ThreeScene = () => {
 
   const initScene = useCallback(() => {
     console.log('Initializing scene');
-    console.log('Initializing scene');
     if (!refContainer.current) {
       console.error('Container ref is not available');
       setError('Container ref is not available');
@@ -36,17 +35,7 @@ const ThreeScene = () => {
       scene.background = new THREE.Color(0x000000);
 
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
-      camera.position.z = 2000; // Further increased camera distance
-
-      // Add a visible object at the origin for reference
-      const geometry = new THREE.SphereGeometry(50, 32, 32);
-      const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-      const originSphere = new THREE.Mesh(geometry, material);
-      scene.add(originSphere);
-
-      // Add grid helper
-      const gridHelper = new THREE.GridHelper(2000, 20);
-      scene.add(gridHelper);
+      camera.position.z = 2000;
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -62,9 +51,6 @@ const ThreeScene = () => {
       controls.enableDamping = true;
       controls.dampingFactor = 0.25;
       controls.enableZoom = true;
-
-      // const axesHelper = new THREE.AxesHelper(500);
-      // scene.add(axesHelper);
 
       const handleResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -85,7 +71,6 @@ const ThreeScene = () => {
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           renderer.dispose();
-          // CSS3DRenderer doesn't have a dispose method, so we'll just remove its DOM element
           if (cssRenderer.domElement && cssRenderer.domElement.parentNode) {
             cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
           }
@@ -138,24 +123,6 @@ const ThreeScene = () => {
     };
   }, [initScene, isContainerReady]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (sceneState) {
-        const { camera, renderer, cssRenderer } = sceneState;
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        cssRenderer.setSize(window.innerWidth, window.innerHeight);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [sceneState]);
-
   const animate = useCallback(() => {
     if (sceneState) {
       const { scene, camera, renderer, cssRenderer, controls } = sceneState;
@@ -183,6 +150,11 @@ const ThreeScene = () => {
     };
   }, [sceneState, animate]);
 
+  const handleNodeClick = useCallback((repoName) => {
+    console.log('Node clicked:', repoName);
+    // Add any additional logic for node click here
+  }, []);
+
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -194,7 +166,7 @@ const ThreeScene = () => {
           scene={sceneState.scene}
           camera={sceneState.camera}
           dreamNodes={dreamNodes}
-          onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
+          onNodeClick={handleNodeClick}
           renderer={sceneState.renderer}
           cssRenderer={sceneState.cssRenderer}
         />
