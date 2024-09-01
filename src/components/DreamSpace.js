@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { Raycaster, Vector2 } from 'three';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode from './DreamNode';
 import { createRoot } from 'react-dom/client';
