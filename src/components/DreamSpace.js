@@ -50,6 +50,7 @@ const DreamSpace = () => {
       window.addEventListener('resize', handleResize);
 
       console.log('sceneState initialized successfully');
+
       const createInteractionPlane = (position) => {
         const planeGeometry = new THREE.PlaneGeometry(200, 200);
         const planeMaterial = new THREE.MeshBasicMaterial({ visible: false });
@@ -64,6 +65,7 @@ const DreamSpace = () => {
         camera,
         cssRenderer,
         controls,
+        createInteractionPlane,
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
