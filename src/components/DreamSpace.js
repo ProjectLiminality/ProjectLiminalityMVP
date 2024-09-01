@@ -189,7 +189,7 @@ const DreamSpace = () => {
   const [hoveredNode, setHoveredNode] = useState(null);
 
   const checkIntersection = useCallback((isClick = false) => {
-    if (!sceneState || !dreamNodeRef.current) return;
+    if (!sceneState || !dreamNodeRef.current || dreamNodes.length === 0) return;
 
     raycaster.current.setFromCamera(mouse.current, sceneState.camera);
     const intersects = raycaster.current.intersectObjects([
@@ -200,15 +200,16 @@ const DreamSpace = () => {
     if (intersects.length > 0) {
       const intersectedPlane = intersects[0].object;
       const isFrontSide = intersectedPlane === dreamNodeRef.current.getFrontPlane();
+      const currentNode = dreamNodes[0];
 
       if (isClick) {
         // Handle click event
-        console.log('Clicked on node:', dreamNodes[0].repoName, 'Side:', isFrontSide ? 'front' : 'back');
+        console.log('Clicked on node:', currentNode.repoName, 'Side:', isFrontSide ? 'front' : 'back');
       } else {
         // Handle hover event
-        if (hoveredNode !== dreamNodes[0].repoName) {
-          console.log('Mouse entered node:', dreamNodes[0].repoName, 'Side:', isFrontSide ? 'front' : 'back');
-          setHoveredNode(dreamNodes[0].repoName);
+        if (hoveredNode !== currentNode.repoName) {
+          console.log('Mouse entered node:', currentNode.repoName, 'Side:', isFrontSide ? 'front' : 'back');
+          setHoveredNode(currentNode.repoName);
         }
       }
     } else {
