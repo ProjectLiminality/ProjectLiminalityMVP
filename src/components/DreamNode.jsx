@@ -1,35 +1,35 @@
 import React, { useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
-import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
-import { updateRotation, updateScale, updatePosition } from '../utils/3DUtils';
 import { getRepoData } from '../utils/fileUtils';
+import DreamNode3D from './DreamNode3D';
 
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene, isHovered }, ref) => {
   const [showOverlay, setShowOverlay] = useState(false);
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
   const nodeRef = useRef(null);
-  const objectRef = useRef(null);
-  const cubeRef = useRef(null);
+  const dreamNode3DRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     updatePosition: (newPosition, duration = 1000) => {
-      if (objectRef.current) {
-        updatePosition(objectRef.current, newPosition, duration);
+      if (dreamNode3DRef.current) {
+        dreamNode3DRef.current.updatePosition(newPosition, duration);
       }
     },
     updateRotation: (newRotation, duration = 1000) => {
-      if (objectRef.current) {
-        updateRotation(objectRef.current, newRotation, duration);
+      if (dreamNode3DRef.current) {
+        dreamNode3DRef.current.updateRotation(newRotation, duration);
       }
     },
     updateScale: (newScale, duration = 300) => {
-      if (objectRef.current) {
-        updateScale(objectRef.current, newScale, duration);
+      if (dreamNode3DRef.current) {
+        dreamNode3DRef.current.updateScale(newScale, duration);
       }
     },
-    object: objectRef.current
+    getFrontPlane: () => dreamNode3DRef.current?.getFrontPlane(),
+    getBackPlane: () => dreamNode3DRef.current?.getBackPlane(),
+    object: dreamNode3DRef.current
   }));
 
   useEffect(() => {
@@ -41,23 +41,22 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }, [repoName]);
 
   useEffect(() => {
-    if (nodeRef.current && cssScene && !objectRef.current) {
-      const css3DObject = new CSS3DObject(nodeRef.current);
-      css3DObject.position.copy(initialPosition);
-      objectRef.current = css3DObject;
-      cssScene.add(css3DObject);
+    if (nodeRef.current && cssScene && !dreamNode3DRef.current) {
+      const dreamNode3D = new DreamNode3D(nodeRef.current, initialPosition);
+      dreamNode3DRef.current = dreamNode3D;
+      cssScene.add(dreamNode3D);
 
       return () => {
-        cssScene.remove(css3DObject);
-        objectRef.current = null;
+        cssScene.remove(dreamNode3D);
+        dreamNode3DRef.current = null;
       };
     }
   }, [initialPosition, cssScene, repoName]);
 
   useEffect(() => {
-    if (objectRef.current) {
+    if (dreamNode3DRef.current) {
       const newScale = new THREE.Vector3(isHovered ? 1.1 : 1, isHovered ? 1.1 : 1, isHovered ? 1.1 : 1);
-      updateScale(objectRef.current, newScale, 300);
+      dreamNode3DRef.current.updateScale(newScale, 300);
     }
     setShowOverlay(isHovered);
     

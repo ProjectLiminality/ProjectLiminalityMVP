@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
-import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
+import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Raycaster, Vector2 } from 'three';
 import { scanDreamVault } from '../services/electronService';
@@ -14,7 +14,6 @@ const DreamSpace = () => {
   const [sceneState, setSceneState] = useState(null);
   const raycaster = useRef(new Raycaster());
   const mouse = useRef(new Vector2());
-  const interactionPlanes = useRef([]);
 
   useEffect(() => {
     console.log('Initializing sceneState');
@@ -51,28 +50,11 @@ const DreamSpace = () => {
 
       console.log('sceneState initialized successfully');
 
-      const createInteractionPlanes = (position) => {
-        const planeGeometry = new THREE.PlaneGeometry(300, 300);
-        const planeMaterial = new THREE.MeshBasicMaterial({ visible: false });
-        
-        const frontPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-        frontPlane.position.copy(position);
-        scene.add(frontPlane);
-
-        const backPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-        backPlane.position.copy(position);
-        backPlane.rotation.y = Math.PI;
-        scene.add(backPlane);
-
-        return [frontPlane, backPlane];
-      };
-
       setSceneState({
         scene,
         camera,
         cssRenderer,
         controls,
-        createInteractionPlanes,
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
@@ -101,8 +83,6 @@ const DreamSpace = () => {
           if (repos.length > 0) {
             console.log('Setting DreamNode:', repos[0]);
             const newNode = { repoName: repos[0] };
-            const planes = sceneState.createInteractionPlanes(new THREE.Vector3(0, 0, 0));
-            interactionPlanes.current = planes.map(plane => ({ node: newNode, plane }));
             setDreamNodes([newNode]);
           } else {
             console.error('No repositories found in the DreamVault');
@@ -134,7 +114,7 @@ const DreamSpace = () => {
       console.log('Rendering DreamNode in DreamSpace');
       const { scene } = sceneState;
       // Clear existing nodes
-      scene.children = scene.children.filter(child => !(child instanceof CSS3DObject));
+      scene.children = scene.children.filter(child => !(child instanceof DreamNode3D));
       console.log('Cleared existing nodes. Scene children count:', scene.children.length);
       
       // Add the single DreamNode
@@ -158,9 +138,8 @@ const DreamSpace = () => {
       // Use a MutationObserver to detect when the DreamNode has been added to the DOM
       const observer = new MutationObserver(() => {
         console.log('DreamNode rendered to nodeElement');
-        if (dreamNodeRef.current && dreamNodeRef.current.frontObject && dreamNodeRef.current.backObject) {
-          scene.add(dreamNodeRef.current.frontObject);
-          scene.add(dreamNodeRef.current.backObject);
+        if (dreamNodeRef.current && dreamNodeRef.current.object) {
+          scene.add(dreamNodeRef.current.object);
           console.log('Added DreamNode to scene. Scene children count:', scene.children.length);
         } else {
           console.log('Failed to add DreamNode to scene. dreamNodeRef.current:', dreamNodeRef.current);
@@ -209,28 +188,26 @@ const DreamSpace = () => {
   const [hoveredNode, setHoveredNode] = useState(null);
 
   const checkIntersection = useCallback((isClick = false) => {
-    if (!sceneState) return;
+    if (!sceneState || !dreamNodeRef.current) return;
 
     raycaster.current.setFromCamera(mouse.current, sceneState.camera);
-    const intersects = raycaster.current.intersectObjects(interactionPlanes.current.map(ip => ip.plane));
+    const intersects = raycaster.current.intersectObjects([
+      dreamNodeRef.current.getFrontPlane(),
+      dreamNodeRef.current.getBackPlane()
+    ]);
 
     if (intersects.length > 0) {
       const intersectedPlane = intersects[0].object;
-      const intersectedNodeInfo = interactionPlanes.current.find(ip => ip.plane === intersectedPlane);
+      const isFrontSide = intersectedPlane === dreamNodeRef.current.getFrontPlane();
 
-      if (intersectedNodeInfo) {
-        const { node } = intersectedNodeInfo;
-        const isFrontSide = intersectedPlane.rotation.y === 0;
-
-        if (isClick) {
-          // Handle click event
-          console.log('Clicked on node:', node.repoName, 'Side:', isFrontSide ? 'front' : 'back');
-        } else {
-          // Handle hover event
-          if (hoveredNode !== node.repoName) {
-            console.log('Mouse entered node:', node.repoName, 'Side:', isFrontSide ? 'front' : 'back');
-            setHoveredNode(node.repoName);
-          }
+      if (isClick) {
+        // Handle click event
+        console.log('Clicked on node:', dreamNodes[0].repoName, 'Side:', isFrontSide ? 'front' : 'back');
+      } else {
+        // Handle hover event
+        if (hoveredNode !== dreamNodes[0].repoName) {
+          console.log('Mouse entered node:', dreamNodes[0].repoName, 'Side:', isFrontSide ? 'front' : 'back');
+          setHoveredNode(dreamNodes[0].repoName);
         }
       }
     } else {
@@ -239,7 +216,7 @@ const DreamSpace = () => {
         setHoveredNode(null);
       }
     }
-  }, [sceneState, hoveredNode]);
+  }, [sceneState, hoveredNode, dreamNodes]);
 
   if (error) {
     return <div>Error: {error}</div>;
