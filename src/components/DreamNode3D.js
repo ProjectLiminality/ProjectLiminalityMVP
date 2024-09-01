@@ -85,7 +85,10 @@ class DreamNode3D extends THREE.Object3D {
   }
 
   updateScale(newScale, duration = 300) {
-    // Implementation of updateScale method
+    this.scale.copy(newScale);
+    this.frontPlane.scale.copy(newScale);
+    this.backPlane.scale.copy(newScale);
+    this.css3DObject.scale.copy(newScale);
   }
 
   getFrontPlane() {
