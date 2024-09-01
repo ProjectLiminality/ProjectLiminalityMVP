@@ -186,7 +186,7 @@ const DreamSpace = () => {
 
   useEffect(() => {
     if (sceneState) {
-      const { scene, camera, cssRenderer, controls } = sceneState;
+      const { scene, camera, renderer, cssRenderer, controls } = sceneState;
 
       const animate = () => {
         requestAnimationFrame(animate);
