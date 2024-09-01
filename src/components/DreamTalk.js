@@ -66,8 +66,8 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, isHovered }) => 
         alignItems: 'center',
         padding: '20px',
         boxSizing: 'border-box',
-        background: isHovered || !mediaContent ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
-        opacity: isHovered || !mediaContent ? 1 : 0,
+        background: !mediaContent ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
+        opacity: !mediaContent ? 1 : 0,
         transition: 'opacity 0.3s ease, background 0.3s ease',
       }}>
         <h2 style={{ 
