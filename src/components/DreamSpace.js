@@ -154,40 +154,6 @@ const DreamSpace = () => {
     }
   }, [sceneState, dreamNodes]);
 
-  useEffect(() => {
-    if (sceneState) {
-      const { scene, camera, cssRenderer, controls } = sceneState;
-
-      const animate = () => {
-        requestAnimationFrame(animate);
-        controls.update();
-        cssRenderer.render(scene, camera);
-      };
-
-      animate();
-
-      const onMouseMove = (event) => {
-        mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        checkIntersection();
-      };
-
-      const onClick = (event) => {
-        mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        checkIntersection(true);
-      };
-
-      cssRenderer.domElement.addEventListener('mousemove', onMouseMove);
-      cssRenderer.domElement.addEventListener('click', onClick);
-
-      return () => {
-        cssRenderer.domElement.removeEventListener('mousemove', onMouseMove);
-        cssRenderer.domElement.removeEventListener('click', onClick);
-      };
-    }
-  }, [sceneState, checkIntersection]);
-
   const [hoveredNode, setHoveredNode] = useState(null);
 
   const checkIntersection = useCallback((isClick = false) => {
@@ -225,6 +191,40 @@ const DreamSpace = () => {
       }
     }
   }, [sceneState, hoveredNode, dreamNodes]);
+
+  useEffect(() => {
+    if (sceneState) {
+      const { scene, camera, cssRenderer, controls } = sceneState;
+
+      const animate = () => {
+        requestAnimationFrame(animate);
+        controls.update();
+        cssRenderer.render(scene, camera);
+      };
+
+      animate();
+
+      const onMouseMove = (event) => {
+        mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        checkIntersection();
+      };
+
+      const onClick = (event) => {
+        mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        checkIntersection(true);
+      };
+
+      cssRenderer.domElement.addEventListener('mousemove', onMouseMove);
+      cssRenderer.domElement.addEventListener('click', onClick);
+
+      return () => {
+        cssRenderer.domElement.removeEventListener('mousemove', onMouseMove);
+        cssRenderer.domElement.removeEventListener('click', onClick);
+      };
+    }
+  }, [sceneState, checkIntersection]);
 
   if (error) {
     return <div>Error: {error}</div>;
