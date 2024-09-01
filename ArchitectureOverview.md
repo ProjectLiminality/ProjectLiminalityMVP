@@ -31,8 +31,9 @@
   - Creates and manages a DreamNode3D instance
   - Uses effects to read metadata from the git repository
   - Manages React state and props
-  - Handles user interactions (hover, click) at the React level
+  - Handles self-contained user interactions (e.g., hover effects) at the React level
   - Updates DreamNode3D based on state changes
+  - Communicates significant events (e.g., clicks) to DreamGraph
 
 ### 4. DreamSpace
 - Main 3D space component
@@ -41,6 +42,16 @@
 - Uses CSS3DRenderer from Three.js to integrate CSS3DObjects
 - Handles raycasting for mouse interactions
 - Renders DreamNode components
+
+### 5. DreamGraph
+- Central conductor component for the entire 3D space
+- Manages the overall structure and major transformations of DreamNodes
+- Responsibilities:
+  - Maintains the state for all DreamNodes in the scene
+  - Decides on and initiates major transformations (e.g., repositioning, major scale changes)
+  - Handles complex interactions that affect multiple DreamNodes
+  - Provides a centralized event system for communication between DreamNodes and the overall graph
+  - Manages the high-level user interactions with the entire graph
 
 ## Integration of React and Three.js
 

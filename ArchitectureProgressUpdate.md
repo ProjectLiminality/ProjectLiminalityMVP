@@ -75,6 +75,8 @@
 - Improved 3D transformations (position, rotation, scale) for DreamNodes
 
 ### Next Steps:
+- Implement DreamGraph component as the central conductor for the 3D space
+- Refactor DreamNode to handle self-contained interactions and communicate with DreamGraph
 - Implement support for multiple DreamNodes in DreamSpace
 - Optimize rendering and interaction detection for multiple nodes
 - Implement advanced 3D space management (e.g., node positioning algorithms)
@@ -84,38 +86,32 @@
 ### Known Issues and Future Improvements:
 
 1. **Scalability for Multiple DreamNodes**: 
-   - **Description**: Current implementation needs to be tested and optimized for multiple DreamNodes.
-   - **Impact**: Essential for creating a full 3D space with multiple repositories.
-   - **Priority**: High
-   - **Planned Solution**: Implement efficient rendering and interaction detection for multiple nodes.
-   - **Target Timeline**: Immediate focus for the next development phase.
+   [No changes]
 
 2. **Performance Optimization for Large Numbers of Nodes**:
-   - **Description**: Current implementation may not scale well for very large numbers of DreamNodes.
-   - **Impact**: Potential performance issues in scenarios with many repositories.
-   - **Priority**: Medium
-   - **Planned Solution**: Implement advanced optimization techniques like frustum culling or octree structures.
-   - **Target Timeline**: To be addressed after basic multi-node functionality is implemented.
+   [No changes]
 
 3. **Advanced User Interactions in 3D Space**:
-   - **Description**: Current interactions are basic. More advanced 3D interactions could enhance user experience.
-   - **Impact**: Potential for more intuitive and engaging user experience in 3D space.
-   - **Priority**: Medium
-   - **Planned Solution**: Implement advanced camera controls, gesture recognition, and 3D UI elements.
-   - **Target Timeline**: To be considered after completing multi-node support.
+   [No changes]
 
 4. **Integration with Git Functionality**:
-   - **Description**: Current implementation focuses on display. Deeper integration with git operations is needed.
-   - **Impact**: Essential for full functionality as a git repository visualization tool.
-   - **Priority**: High
-   - **Planned Solution**: Implement git operations and real-time updates for DreamNodes.
-   - **Target Timeline**: To be addressed in parallel with multi-node implementation.
+   [No changes]
 
 5. **3D Space Management**:
-   - **Description**: Need to implement intelligent positioning and organization of multiple DreamNodes in 3D space.
-   - **Impact**: Crucial for creating an intuitive and navigable 3D representation of multiple repositories.
+   [No changes]
+
+6. **DreamGraph Implementation**:
+   - **Description**: Need to implement DreamGraph as the central conductor for the 3D space.
+   - **Impact**: Critical for managing complex interactions and maintaining overall graph structure.
    - **Priority**: High
-   - **Planned Solution**: Develop algorithms for automatic node positioning and clustering.
-   - **Target Timeline**: To be addressed as part of the multi-node implementation phase.
+   - **Planned Solution**: Develop DreamGraph component with state management for all nodes and implement communication system between DreamGraph and DreamNodes.
+   - **Target Timeline**: Immediate focus for the next development phase.
+
+7. **Refactoring DreamNode Responsibilities**:
+   - **Description**: Need to update DreamNode to handle self-contained interactions and communicate with DreamGraph.
+   - **Impact**: Important for maintaining a clear separation of concerns and efficient interaction handling.
+   - **Priority**: High
+   - **Planned Solution**: Refactor DreamNode to manage hover effects internally and implement a system to communicate significant events to DreamGraph.
+   - **Target Timeline**: To be addressed alongside DreamGraph implementation.
 
 These improvements and next steps are crucial for evolving the project into a fully-functional, scalable 3D visualization tool for git repositories. The focus is on creating a robust architecture that combines the strengths of React and Three.js while maintaining performance and user experience.
