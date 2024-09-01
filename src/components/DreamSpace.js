@@ -172,19 +172,21 @@ const DreamSpace = () => {
         checkIntersection();
       };
 
-      const onClick = () => {
+      const onClick = (event) => {
+        mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
         checkIntersection(true);
       };
 
-      window.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('click', onClick);
+      cssRenderer.domElement.addEventListener('mousemove', onMouseMove);
+      cssRenderer.domElement.addEventListener('click', onClick);
 
       return () => {
-        window.removeEventListener('mousemove', onMouseMove);
-        window.removeEventListener('click', onClick);
+        cssRenderer.domElement.removeEventListener('mousemove', onMouseMove);
+        cssRenderer.domElement.removeEventListener('click', onClick);
       };
     }
-  }, [sceneState]);
+  }, [sceneState, checkIntersection]);
 
   const [hoveredNode, setHoveredNode] = useState(null);
 
@@ -195,7 +197,7 @@ const DreamSpace = () => {
     const intersects = raycaster.current.intersectObjects([
       dreamNodeRef.current.getFrontPlane(),
       dreamNodeRef.current.getBackPlane()
-    ]);
+    ], true);
 
     if (intersects.length > 0) {
       const intersectedPlane = intersects[0].object;
@@ -205,6 +207,10 @@ const DreamSpace = () => {
       if (isClick) {
         // Handle click event
         console.log('Clicked on node:', currentNode.repoName, 'Side:', isFrontSide ? 'front' : 'back');
+        dreamNodeRef.current.updateRotation(
+          new THREE.Euler(0, isFrontSide ? Math.PI : 0, 0),
+          1000
+        );
       } else {
         // Handle hover event
         if (hoveredNode !== currentNode.repoName) {
