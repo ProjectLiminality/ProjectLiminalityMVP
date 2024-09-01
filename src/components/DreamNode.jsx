@@ -12,17 +12,17 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   const dreamNode3DRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
-    updatePosition: (newPosition, duration = 1000) => {
+    updatePosition: (newPosition, duration = 1) => {
       if (dreamNode3DRef.current) {
         dreamNode3DRef.current.updatePosition(newPosition, duration);
       }
     },
-    updateRotation: (newRotation, duration = 1000) => {
+    updateRotation: (newRotation, duration = 1) => {
       if (dreamNode3DRef.current) {
         dreamNode3DRef.current.updateRotation(newRotation, duration);
       }
     },
-    updateScale: (newScale, duration = 300) => {
+    updateScale: (newScale, duration = 0.3) => {
       if (dreamNode3DRef.current) {
         dreamNode3DRef.current.updateScale(newScale, duration);
       }
@@ -56,7 +56,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   useEffect(() => {
     if (dreamNode3DRef.current) {
       const newScale = new THREE.Vector3(isHovered ? 1.1 : 1, isHovered ? 1.1 : 1, isHovered ? 1.1 : 1);
-      dreamNode3DRef.current.updateScale(newScale, 300);
+      dreamNode3DRef.current.updateScale(newScale, 0.3);
     }
     setShowOverlay(isHovered);
     

@@ -16,99 +16,7 @@ const DreamSpace = () => {
   const raycaster = useRef(new Raycaster());
   const mouse = useRef(new Vector2());
 
-  useEffect(() => {
-    console.log('Initializing sceneState');
-    if (!refContainer.current) {
-      console.log('Container ref is not available yet');
-      return;
-    }
-
-    try {
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);
-
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
-      camera.position.z = 1000;
-
-      const cssRenderer = new CSS3DRenderer();
-      cssRenderer.setSize(window.innerWidth, window.innerHeight);
-      cssRenderer.domElement.style.position = 'absolute';
-      cssRenderer.domElement.style.top = '0';
-      refContainer.current.appendChild(cssRenderer.domElement);
-
-      const controls = new OrbitControls(camera, cssRenderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.25;
-      controls.enableZoom = true;
-
-      const handleResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        cssRenderer.setSize(window.innerWidth, window.innerHeight);
-      };
-
-      window.addEventListener('resize', handleResize);
-
-      console.log('sceneState initialized successfully');
-
-      setSceneState({
-        scene,
-        camera,
-        cssRenderer,
-        controls,
-        cleanup: () => {
-          window.removeEventListener('resize', handleResize);
-          cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
-          controls.dispose();
-        }
-      });
-    } catch (error) {
-      const errorMessage = 'Error initializing scene: ' + error.message;
-      console.error(errorMessage);
-      setError(errorMessage);
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log('sceneState effect triggered. sceneState:', !!sceneState);
-  }, [sceneState]);
-
-  useEffect(() => {
-    console.log('Fetch DreamNode effect triggered. sceneState:', !!sceneState);
-    if (sceneState) {
-      const fetchFirstDreamNode = async () => {
-        try {
-          console.log('Scanning DreamVault...');
-          const repos = await scanDreamVault();
-          console.log('Repos found:', repos);
-          if (repos.length > 0) {
-            console.log('Setting DreamNode:', repos[0]);
-            const newNode = { repoName: repos[0] };
-            setDreamNodes([newNode]);
-          } else {
-            console.error('No repositories found in the DreamVault');
-            setError('No repositories found in the DreamVault');
-          }
-        } catch (error) {
-          console.error('Error scanning dream vault:', error);
-          setError('Error scanning dream vault: ' + error.message);
-        }
-      };
-
-      fetchFirstDreamNode();
-    }
-  }, [sceneState]);
-
-  useEffect(() => {
-    return () => {
-      if (sceneState) {
-        console.log('Cleaning up sceneState');
-        sceneState.cleanup();
-      }
-    };
-  }, [sceneState]);
-
-  const dreamNodeRef = useRef(null);
+  // ... (keep the existing code)
 
   useEffect(() => {
     if (sceneState && dreamNodes.length > 0) {
@@ -154,43 +62,7 @@ const DreamSpace = () => {
     }
   }, [sceneState, dreamNodes]);
 
-  const [hoveredNode, setHoveredNode] = useState(null);
-
-  const checkIntersection = useCallback((isClick = false) => {
-    if (!sceneState || !dreamNodeRef.current || dreamNodes.length === 0) return;
-
-    raycaster.current.setFromCamera(mouse.current, sceneState.camera);
-    const intersects = raycaster.current.intersectObjects([
-      dreamNodeRef.current.getFrontPlane(),
-      dreamNodeRef.current.getBackPlane()
-    ], true);
-
-    if (intersects.length > 0) {
-      const intersectedPlane = intersects[0].object;
-      const isFrontSide = intersectedPlane === dreamNodeRef.current.getFrontPlane();
-      const currentNode = dreamNodes[0];
-
-      if (isClick) {
-        // Handle click event
-        console.log('Clicked on node:', currentNode.repoName, 'Side:', isFrontSide ? 'front' : 'back');
-        dreamNodeRef.current.updateRotation(
-          new THREE.Euler(0, isFrontSide ? Math.PI : 0, 0),
-          1000
-        );
-      } else {
-        // Handle hover event
-        if (hoveredNode !== currentNode.repoName) {
-          console.log('Mouse entered node:', currentNode.repoName, 'Side:', isFrontSide ? 'front' : 'back');
-          setHoveredNode(currentNode.repoName);
-        }
-      }
-    } else {
-      if (hoveredNode !== null) {
-        console.log('Mouse left node:', hoveredNode);
-        setHoveredNode(null);
-      }
-    }
-  }, [sceneState, hoveredNode, dreamNodes]);
+  // ... (keep the existing code)
 
   useEffect(() => {
     if (sceneState) {
@@ -216,19 +88,53 @@ const DreamSpace = () => {
         checkIntersection(true);
       };
 
+      const onKeyDown = (event) => {
+        if (event.metaKey) {
+          switch (event.key) {
+            case '1':
+              if (dreamNodeRef.current) {
+                const currentPosition = dreamNodeRef.current.object.position;
+                dreamNodeRef.current.updatePosition(
+                  new THREE.Vector3(currentPosition.x + 50, currentPosition.y + 50, currentPosition.z + 50),
+                  1
+                );
+              }
+              break;
+            case '2':
+              if (dreamNodeRef.current) {
+                const currentScale = dreamNodeRef.current.object.scale;
+                dreamNodeRef.current.updateScale(
+                  new THREE.Vector3(currentScale.x * 2, currentScale.y * 2, currentScale.z * 2),
+                  0.3
+                );
+              }
+              break;
+            case '3':
+              if (dreamNodeRef.current) {
+                const currentRotation = dreamNodeRef.current.object.rotation;
+                dreamNodeRef.current.updateRotation(
+                  new THREE.Euler(currentRotation.x, currentRotation.y + Math.PI / 2, currentRotation.z),
+                  1
+                );
+              }
+              break;
+          }
+        }
+      };
+
       cssRenderer.domElement.addEventListener('mousemove', onMouseMove);
       cssRenderer.domElement.addEventListener('click', onClick);
+      window.addEventListener('keydown', onKeyDown);
 
       return () => {
         cssRenderer.domElement.removeEventListener('mousemove', onMouseMove);
         cssRenderer.domElement.removeEventListener('click', onClick);
+        window.removeEventListener('keydown', onKeyDown);
       };
     }
   }, [sceneState, checkIntersection]);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  // ... (keep the existing code)
 
   return (
     <div ref={refContainer}>
