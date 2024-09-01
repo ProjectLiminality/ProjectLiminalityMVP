@@ -85,20 +85,42 @@
 
 ### Known Issues and Future Improvements:
 
-1. **Scalability for Multiple DreamNodes**: 
-   [No changes]
-
-2. **Performance Optimization for Large Numbers of Nodes**:
-   [No changes]
-
-3. **Advanced User Interactions in 3D Space**:
-   [No changes]
-
-4. **Integration with Git Functionality**:
-   [No changes]
-
-5. **3D Space Management**:
-   [No changes]
+### Known Issues and Future Improvements:                                                                                                                                                                                  
+                                                                                                                                                                                                                            
+ 1. **Scalability for Multiple DreamNodes**:                                                                                                                                                                                
+    - **Description**: Current implementation needs to be tested and optimized for multiple DreamNodes.                                                                                                                     
+    - **Impact**: Essential for creating a full 3D space with multiple repositories.                                                                                                                                        
+    - **Priority**: High                                                                                                                                                                                                    
+    - **Planned Solution**: Implement efficient rendering and interaction detection for multiple nodes.                                                                                                                     
+    - **Target Timeline**: Immediate focus for the next development phase.                                                                                                                                                  
+                                                                                                                                                                                                                            
+ 2. **Performance Optimization for Large Numbers of Nodes**:                                                                                                                                                                
+    - **Description**: Current implementation may not scale well for very large numbers of DreamNodes.                                                                                                                      
+    - **Impact**: Potential performance issues in scenarios with many repositories.                                                                                                                                         
+    - **Priority**: Medium                                                                                                                                                                                                  
+    - **Planned Solution**: Implement advanced optimization techniques like frustum culling or octree structures.                                                                                                           
+    - **Target Timeline**: To be addressed after basic multi-node functionality is implemented.                                                                                                                             
+                                                                                                                                                                                                                            
+ 3. **Advanced User Interactions in 3D Space**:                                                                                                                                                                             
+    - **Description**: Current interactions are basic. More advanced 3D interactions could enhance user experience.                                                                                                         
+    - **Impact**: Potential for more intuitive and engaging user experience in 3D space.                                                                                                                                    
+    - **Priority**: Medium                                                                                                                                                                                                  
+    - **Planned Solution**: Implement advanced camera controls, gesture recognition, and 3D UI elements.                                                                                                                    
+    - **Target Timeline**: To be considered after completing multi-node support.                                                                                                                                            
+                                                                                                                                                                                                                            
+ 4. **Integration with Git Functionality**:                                                                                                                                                                                 
+    - **Description**: Current implementation focuses on display. Deeper integration with git operations is needed.                                                                                                         
+    - **Impact**: Essential for full functionality as a git repository visualization tool.                                                                                                                                  
+    - **Priority**: High                                                                                                                                                                                                    
+    - **Planned Solution**: Implement git operations and real-time updates for DreamNodes.                                                                                                                                  
+    - **Target Timeline**: To be addressed in parallel with multi-node implementation.                                                                                                                                      
+                                                                                                                                                                                                                            
+ 5. **3D Space Management**:                                                                                                                                                                                                
+    - **Description**: Need to implement intelligent positioning and organization of multiple DreamNodes in 3D space.                                                                                                       
+    - **Impact**: Crucial for creating an intuitive and navigable 3D representation of multiple repositories.                                                                                                               
+    - **Priority**: High                                                                                                                                                                                                    
+    - **Planned Solution**: Develop algorithms for automatic node positioning and clustering.                                                                                                                               
+    - **Target Timeline**: To be addressed as part of the multi-node implementation phase.   
 
 6. **DreamGraph Implementation**:
    - **Description**: Need to implement DreamGraph as the central conductor for the 3D space.
