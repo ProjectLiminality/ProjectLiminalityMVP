@@ -38,13 +38,20 @@ const DreamSpace = () => {
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
       camera.position.z = 1000;
 
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.domElement.style.position = 'absolute';
+      renderer.domElement.style.top = '0';
+      refContainer.current.appendChild(renderer.domElement);
+
       const cssRenderer = new CSS3DRenderer();
       cssRenderer.setSize(window.innerWidth, window.innerHeight);
       cssRenderer.domElement.style.position = 'absolute';
       cssRenderer.domElement.style.top = '0';
+      cssRenderer.domElement.style.pointerEvents = 'none';
       refContainer.current.appendChild(cssRenderer.domElement);
 
-      const controls = new OrbitControls(camera, cssRenderer.domElement);
+      const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.25;
       controls.enableZoom = true;
@@ -52,6 +59,7 @@ const DreamSpace = () => {
       const handleResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
         cssRenderer.setSize(window.innerWidth, window.innerHeight);
       };
 
@@ -70,11 +78,13 @@ const DreamSpace = () => {
       setSceneState({
         scene,
         camera,
+        renderer,
         cssRenderer,
         controls,
         createInteractionPlane,
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
+          renderer.domElement.parentNode.removeChild(renderer.domElement);
           cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
           controls.dispose();
         }
@@ -181,6 +191,7 @@ const DreamSpace = () => {
       const animate = () => {
         requestAnimationFrame(animate);
         controls.update();
+        renderer.render(scene, camera);
         cssRenderer.render(scene, camera);
       };
 

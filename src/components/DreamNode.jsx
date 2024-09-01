@@ -11,24 +11,35 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
   const nodeRef = useRef(null);
   const objectRef = useRef(null);
+  const cubeRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     updatePosition: (newPosition, duration = 1000) => {
       if (objectRef.current) {
         updatePosition(objectRef.current, newPosition, duration);
       }
+      if (cubeRef.current) {
+        updatePosition(cubeRef.current, newPosition, duration);
+      }
     },
     updateRotation: (newRotation, duration = 1000) => {
       if (objectRef.current) {
         updateRotation(objectRef.current, newRotation, duration);
+      }
+      if (cubeRef.current) {
+        updateRotation(cubeRef.current, newRotation, duration);
       }
     },
     updateScale: (newScale, duration = 300) => {
       if (objectRef.current) {
         updateScale(objectRef.current, newScale, duration);
       }
+      if (cubeRef.current) {
+        updateScale(cubeRef.current, newScale, duration);
+      }
     },
-    object: objectRef.current
+    object: objectRef.current,
+    cube: cubeRef.current
   }));
 
   useEffect(() => {
@@ -46,9 +57,19 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
       objectRef.current = css3DObject;
       cssScene.add(css3DObject);
 
+      // Create and add the cube
+      const geometry = new THREE.BoxGeometry(50, 50, 50);
+      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      const cube = new THREE.Mesh(geometry, material);
+      cube.position.set(initialPosition.x, initialPosition.y, initialPosition.z + 200); // Position the cube in front of the CSS3D object
+      cubeRef.current = cube;
+      cssScene.add(cube);
+
       return () => {
         cssScene.remove(css3DObject);
+        cssScene.remove(cube);
         objectRef.current = null;
+        cubeRef.current = null;
       };
     }
   }, [initialPosition, cssScene, repoName]);
