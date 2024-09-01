@@ -51,13 +51,20 @@ const DreamSpace = () => {
 
       console.log('sceneState initialized successfully');
 
-      const createInteractionPlane = (position) => {
-        const planeGeometry = new THREE.PlaneGeometry(200, 200);
+      const createInteractionPlanes = (position) => {
+        const planeGeometry = new THREE.PlaneGeometry(300, 300);
         const planeMaterial = new THREE.MeshBasicMaterial({ visible: false });
-        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        plane.position.copy(position);
-        scene.add(plane);
-        return plane;
+        
+        const frontPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+        frontPlane.position.copy(position);
+        scene.add(frontPlane);
+
+        const backPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+        backPlane.position.copy(position);
+        backPlane.rotation.y = Math.PI;
+        scene.add(backPlane);
+
+        return [frontPlane, backPlane];
       };
 
       setSceneState({
@@ -65,7 +72,7 @@ const DreamSpace = () => {
         camera,
         cssRenderer,
         controls,
-        createInteractionPlane,
+        createInteractionPlanes,
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
@@ -94,8 +101,8 @@ const DreamSpace = () => {
           if (repos.length > 0) {
             console.log('Setting DreamNode:', repos[0]);
             const newNode = { repoName: repos[0] };
-            const plane = sceneState.createInteractionPlane(new THREE.Vector3(0, 0, 0));
-            interactionPlanes.current.push({ node: newNode, plane });
+            const planes = sceneState.createInteractionPlanes(new THREE.Vector3(0, 0, 0));
+            interactionPlanes.current = planes.map(plane => ({ node: newNode, plane }));
             setDreamNodes([newNode]);
           } else {
             console.error('No repositories found in the DreamVault');
@@ -209,17 +216,20 @@ const DreamSpace = () => {
 
     if (intersects.length > 0) {
       const intersectedPlane = intersects[0].object;
-      const intersectedNode = interactionPlanes.current.find(ip => ip.plane === intersectedPlane)?.node;
+      const intersectedNodeInfo = interactionPlanes.current.find(ip => ip.plane === intersectedPlane);
 
-      if (intersectedNode) {
+      if (intersectedNodeInfo) {
+        const { node } = intersectedNodeInfo;
+        const isFrontSide = intersectedPlane.rotation.y === 0;
+
         if (isClick) {
           // Handle click event
-          console.log('Clicked on node:', intersectedNode.repoName);
+          console.log('Clicked on node:', node.repoName, 'Side:', isFrontSide ? 'front' : 'back');
         } else {
           // Handle hover event
-          if (hoveredNode !== intersectedNode.repoName) {
-            console.log('Mouse entered node:', intersectedNode.repoName);
-            setHoveredNode(intersectedNode.repoName);
+          if (hoveredNode !== node.repoName) {
+            console.log('Mouse entered node:', node.repoName, 'Side:', isFrontSide ? 'front' : 'back');
+            setHoveredNode(node.repoName);
           }
         }
       }
