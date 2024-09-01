@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Raycaster, Vector2 } from 'three';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode from './DreamNode';
+import DreamNode3D from './DreamNode3D';
 import { createRoot } from 'react-dom/client';
 
 const DreamSpace = () => {
