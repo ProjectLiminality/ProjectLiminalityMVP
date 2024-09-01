@@ -1,6 +1,6 @@
 # Architecture Implementation Progress
 
-## Current Focus: Single DreamNode in DreamSpace
+## Current Focus: Integrating React with Three.js for Scalable DreamNode Implementation
 
 ### Milestone 1: Implement Basic DreamNode and DreamSpace (Completed)
 
@@ -23,61 +23,90 @@
    - [x] Implemented metadata reading from the first git repository in DreamVault
    - [x] Displayed repository information in DreamNode
 
-### Milestone 2: Enhance DreamNode Functionality and User Experience (In Progress)
+### Milestone 2: Enhance DreamNode Functionality and User Experience (Completed)
 
-#### Objectives:
-1. Refine DreamNode appearance and behavior
+#### Achievements:
+1. Refined DreamNode appearance and behavior
    - [x] Improved visual design of DreamTalk and DreamSong components
    - [x] Implemented proper opacity and visibility handling for front and back faces
-   - [ ] Enhance animation smoothness for hover and click interactions
+   - [x] Enhanced animation smoothness for hover and click interactions
 
-2. Optimize performance
+2. Optimized performance
    - [x] Implemented efficient rendering techniques for CSS3DObject
-   - [ ] Further optimize Three.js scene management
+   - [x] Optimized Three.js scene management for single DreamNode
 
-3. Implement advanced user interactions
+3. Implemented advanced user interactions
    - [x] Implemented rotation of DreamNode to view front and back sides
-   - [ ] Add zoom functionality to focus on selected DreamNode
+   - [x] Added basic zoom functionality to focus on selected DreamNode
 
-4. Enhance data integration
+4. Enhanced data integration
    - [x] Implemented comprehensive metadata display
    - [x] Added support for different media types (images, videos) in DreamTalk
 
+### Milestone 3: Refactor for Scalable Architecture (In Progress)
+
+#### Objectives:
+1. Implement DreamNode3D class
+   - [ ] Create custom Three.js Object3D subclass for DreamNode
+   - [ ] Integrate CSS3DObject and interaction planes into DreamNode3D
+
+2. Refactor DreamNode React component
+   - [ ] Update to manage DreamNode3D instance
+   - [ ] Implement useRef and useEffect for Three.js object lifecycle management
+
+3. Update DreamSpace component
+   - [ ] Modify to work with new DreamNode and DreamNode3D structure
+   - [ ] Implement raycasting for multiple DreamNode3D objects
+
+4. Implement 3D transformations
+   - [ ] Add functions for positioning, rotating, and scaling DreamNodes in 3D space
+   - [ ] Ensure transformations apply to entire DreamNode3D object (including interaction planes)
+
+5. Optimize for multiple DreamNodes
+   - [ ] Implement efficient rendering and interaction detection for multiple nodes
+   - [ ] Consider implementing frustum culling or octree structures for large numbers of nodes
+
 ### Current Progress Notes:
-- Successfully implemented a single DreamNode with both DreamTalk and DreamSong components as front and back faces
-- Integrated CSS3DObject for efficient 3D representation
+- Successfully implemented single DreamNode with front (DreamTalk) and back (DreamSong) faces
+- Achieved integration of CSS3DObject for efficient 3D representation
 - Implemented user interactions (hover, click) using raycasting in DreamSpace
-- Set up DreamSpace with Three.js and CSS3DRenderer
-- Achieved proper rendering and positioning of DreamNode in 3D space
-- Implemented metadata reading and display for the first git repository
-- Successfully displayed media files (images, videos) on the DreamTalk side of the DreamNode
+- Developed a clear plan for refactoring towards a more scalable architecture
+- Identified key components for the new structure: DreamNode3D (Three.js object) and DreamNode (React component)
 
 ### Next Steps:
-- Complete remaining objectives in Milestone 2
-- Refine and optimize the single DreamNode experience
-- Explore potential for multiple DreamNodes implementation
+- Begin implementation of DreamNode3D class
+- Refactor DreamNode React component to work with DreamNode3D
+- Update DreamSpace to handle multiple DreamNode instances
+- Implement and test 3D transformations for DreamNodes
 
 ### Known Issues and Future Improvements:
 
-1. **Media File Prioritization**: 
-   - **Description**: The current implementation of file format prioritization in the `getPreferredMediaFile` function needs refinement.
-   - **Impact**: This may result in suboptimal media file selection for DreamNodes.
+1. **Scalability for Multiple DreamNodes**: 
+   - **Description**: Current implementation is optimized for a single DreamNode. Needs refactoring for efficient handling of multiple nodes.
+   - **Impact**: Essential for creating a full 3D space with multiple repositories.
+   - **Priority**: High
+   - **Planned Solution**: Implement DreamNode3D class and refactor components as outlined in Milestone 3.
+   - **Target Timeline**: To be addressed in the current development phase.
+
+2. **Performance Optimization for Large Numbers of Nodes**:
+   - **Description**: Current implementation may not scale well for very large numbers of DreamNodes.
+   - **Impact**: Potential performance issues in scenarios with many repositories.
    - **Priority**: Medium
-   - **Planned Solution**: Refactor the `getPreferredMediaFile` function to correctly apply the prioritization logic.
-   - **Target Timeline**: To be addressed in the next refactoring phase.
+   - **Planned Solution**: Implement advanced optimization techniques like frustum culling or octree structures.
+   - **Target Timeline**: To be addressed after basic multi-node functionality is implemented.
 
-2. **Performance Optimization**:
-   - **Description**: While the current implementation works well for a single DreamNode, further optimization may be needed.
-   - **Impact**: Potential for improved performance and smoother interactions.
+3. **Advanced User Interactions in 3D Space**:
+   - **Description**: Current interactions are basic. More advanced 3D interactions could enhance user experience.
+   - **Impact**: Potential for more intuitive and engaging user experience in 3D space.
    - **Priority**: Medium
-   - **Planned Solution**: Implement additional optimization techniques for Three.js scene management and CSS3DObject rendering.
-   - **Target Timeline**: Ongoing, with focus after completing Milestone 2 objectives.
+   - **Planned Solution**: Implement advanced camera controls, gesture recognition, and 3D UI elements.
+   - **Target Timeline**: To be considered after completing Milestone 3 objectives.
 
-3. **Enhanced User Interactions**:
-   - **Description**: Additional interactive features could improve user experience.
-   - **Impact**: Potential for more engaging and intuitive user interactions.
-   - **Priority**: Low
-   - **Planned Solution**: Explore and implement additional interactive features such as zooming, panning, or gesture controls.
-   - **Target Timeline**: To be considered after completing current Milestone 2 objectives.
+4. **Integration with Git Functionality**:
+   - **Description**: Current implementation focuses on display. Deeper integration with git operations is needed.
+   - **Impact**: Essential for full functionality as a git repository visualization tool.
+   - **Priority**: High
+   - **Planned Solution**: Implement git operations and real-time updates for DreamNodes.
+   - **Target Timeline**: To be addressed in parallel with Milestone 3 implementation.
 
-These improvements will be addressed in future development iterations, prioritized based on their impact on core functionality and user experience.
+These improvements and next steps are crucial for evolving the project into a fully-functional, scalable 3D visualization tool for git repositories. The focus is on creating a robust architecture that combines the strengths of React and Three.js while maintaining performance and user experience.
