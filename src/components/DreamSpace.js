@@ -99,15 +99,23 @@ const DreamSpace = () => {
   useEffect(() => {
     console.log('Fetch DreamNode effect triggered. sceneState:', !!sceneState);
     if (sceneState) {
-      const fetchFirstDreamNode = async () => {
+      const fetchDreamNodes = async (count = 5, random = false) => {
         try {
           console.log('Scanning DreamVault...');
           const repos = await scanDreamVault();
           console.log('Repos found:', repos);
           if (repos.length > 0) {
-            console.log('Setting DreamNode:', repos[0]);
-            const newNode = { repoName: repos[0] };
-            setDreamNodes([newNode]);
+            let selectedRepos;
+            if (random) {
+              selectedRepos = repos
+                .sort(() => 0.5 - Math.random())
+                .slice(0, count);
+            } else {
+              selectedRepos = repos.slice(0, count);
+            }
+            console.log('Setting DreamNodes:', selectedRepos);
+            const newNodes = selectedRepos.map(repo => ({ repoName: repo }));
+            setDreamNodes(newNodes);
           } else {
             console.error('No repositories found in the DreamVault');
             setError('No repositories found in the DreamVault');
@@ -118,7 +126,7 @@ const DreamSpace = () => {
         }
       };
 
-      fetchFirstDreamNode();
+      fetchDreamNodes(5, true); // Fetch 5 random nodes
     }
   }, [sceneState]);
 
@@ -136,43 +144,47 @@ const DreamSpace = () => {
 
   useEffect(() => {
     if (sceneState && dreamNodes.length > 0) {
-      console.log('Rendering DreamNode in DreamSpace');
+      console.log('Rendering DreamNodes in DreamSpace');
       const { scene } = sceneState;
       // Clear existing nodes
       scene.children = scene.children.filter(child => !(child instanceof DreamNode3D));
       console.log('Cleared existing nodes. Scene children count:', scene.children.length);
       
-      // Add the single DreamNode
-      const dreamNode = dreamNodes[0];
-      const nodeElement = document.createElement('div');
-      nodeElement.style.width = '300px';
-      nodeElement.style.height = '300px';
-      
-      const root = createRoot(nodeElement);
-      root.render(
-        <DreamNode 
-          ref={dreamNodeRef}
-          repoName={dreamNode.repoName} 
-          initialPosition={new THREE.Vector3(0, 0, 0)}
-          cssScene={scene}
-          onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
-          isHovered={hoveredNode === dreamNode.repoName}
-        />
-      );
+      // Add multiple DreamNodes
+      dreamNodes.forEach((dreamNode, index) => {
+        const nodeElement = document.createElement('div');
+        nodeElement.style.width = '300px';
+        nodeElement.style.height = '300px';
+        
+        const root = createRoot(nodeElement);
+        root.render(
+          <DreamNode 
+            key={dreamNode.repoName}
+            ref={el => {
+              if (index === 0) dreamNodeRef.current = el;
+            }}
+            repoName={dreamNode.repoName} 
+            initialPosition={new THREE.Vector3(index * 350, 0, 0)}
+            cssScene={scene}
+            onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
+            isHovered={hoveredNode === dreamNode.repoName}
+          />
+        );
 
-      // Use a MutationObserver to detect when the DreamNode has been added to the DOM
-      const observer = new MutationObserver(() => {
-        console.log('DreamNode rendered to nodeElement');
-        if (dreamNodeRef.current && dreamNodeRef.current.object) {
-          scene.add(dreamNodeRef.current.object);
-          console.log('Added DreamNode to scene. Scene children count:', scene.children.length);
-        } else {
-          console.log('Failed to add DreamNode to scene. dreamNodeRef.current:', dreamNodeRef.current);
-        }
-        observer.disconnect();
+        // Use a MutationObserver to detect when the DreamNode has been added to the DOM
+        const observer = new MutationObserver(() => {
+          console.log(`DreamNode ${dreamNode.repoName} rendered to nodeElement`);
+          if (dreamNodeRef.current && dreamNodeRef.current.object) {
+            scene.add(dreamNodeRef.current.object);
+            console.log(`Added DreamNode ${dreamNode.repoName} to scene. Scene children count:`, scene.children.length);
+          } else {
+            console.log(`Failed to add DreamNode ${dreamNode.repoName} to scene. dreamNodeRef.current:`, dreamNodeRef.current);
+          }
+          observer.disconnect();
+        });
+
+        observer.observe(nodeElement, { childList: true, subtree: true });
       });
-
-      observer.observe(nodeElement, { childList: true, subtree: true });
     } else {
       console.log('Not rendering DreamNode. sceneState:', !!sceneState, 'dreamNodes length:', dreamNodes.length);
     }
