@@ -104,7 +104,7 @@ class DreamNode3D extends THREE.Object3D {
    * @param {boolean} isHovered - Whether the node is being hovered over
    * @param {number} [duration=1] - The duration of the animation in seconds
    */
-  setHoverScale(isHovered, duration = 0.5) {
+  setHoverScale(isHovered, duration = 0.25) {
     const scale = isHovered ? 1.05 : 1;
     this.updateScale(new THREE.Vector3(scale, scale, scale), duration);
   }
