@@ -246,11 +246,26 @@ const DreamSpace = () => {
     } else {
       if (hoveredNode !== null) {
         console.log('Mouse left node:', hoveredNode);
-        setHoveredNode(null);
-        const previousNode = dreamNodeRefs.current.find(node => node && node.props.repoName === hoveredNode);
-        if (previousNode) {
-          previousNode.object.setHoverScale(false, 0.5);
+        console.log('Current dreamNodeRefs:', dreamNodeRefs.current);
+        
+        const previousNodeIndex = dreamNodeRefs.current.findIndex(node => node && node.props && node.props.repoName === hoveredNode);
+        console.log('Previous node index:', previousNodeIndex);
+        
+        if (previousNodeIndex !== -1) {
+          const previousNode = dreamNodeRefs.current[previousNodeIndex];
+          console.log('Previous node:', previousNode);
+          
+          if (previousNode && previousNode.object) {
+            console.log('Scaling down node:', hoveredNode);
+            previousNode.object.setHoverScale(false, 0.5);
+          } else {
+            console.log('Unable to scale down node:', hoveredNode, 'Node or node.object is undefined');
+          }
+        } else {
+          console.log('Could not find previous node in dreamNodeRefs');
         }
+        
+        setHoveredNode(null);
       }
     }
   }, [sceneState, hoveredNode, dreamNodes]);
