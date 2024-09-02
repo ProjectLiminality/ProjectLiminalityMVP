@@ -210,14 +210,14 @@ const DreamSpace = () => {
         if (hoveredNode !== currentNode.repoName) {
           console.log('Mouse entered node:', currentNode.repoName, 'Side:', isFrontSide ? 'front' : 'back');
           setHoveredNode(currentNode.repoName);
-          dreamNodeRef.current.object.setHoverScale(true, 1);
+          dreamNodeRef.current.object.setHoverScale(true, 0.5);
         }
       }
     } else {
       if (hoveredNode !== null) {
         console.log('Mouse left node:', hoveredNode);
         setHoveredNode(null);
-        dreamNodeRef.current.object.setHoverScale(false, 1);
+        dreamNodeRef.current.object.setHoverScale(false, 0.5);
       }
     }
   }, [sceneState, hoveredNode, dreamNodes]);
