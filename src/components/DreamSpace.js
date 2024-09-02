@@ -262,7 +262,9 @@ const DreamSpace = () => {
     }
   }, [sceneState, checkIntersection]);
 
-  // ... (keep the existing code)
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div ref={refContainer}>
