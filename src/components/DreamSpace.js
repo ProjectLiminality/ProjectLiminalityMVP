@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { Raycaster, Vector2 } from 'three';
+import { Raycaster, Vector2, Vector3 } from 'three';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode from './DreamNode';
 import DreamNode3D from './DreamNode3D';
@@ -59,10 +58,7 @@ const DreamSpace = () => {
       cssRenderer.domElement.style.top = '0';
       refContainer.current.appendChild(cssRenderer.domElement);
 
-      const controls = new OrbitControls(camera, cssRenderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.25;
-      controls.enableZoom = true;
+      // Remove OrbitControls
 
       const handleResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -78,7 +74,6 @@ const DreamSpace = () => {
         scene,
         camera,
         cssRenderer,
-        controls,
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
@@ -277,77 +272,109 @@ const DreamSpace = () => {
 
   useEffect(() => {
     if (sceneState) {
-      const { scene, camera, cssRenderer, controls } = sceneState;
+      const { scene, camera, cssRenderer } = sceneState;
+
+      const moveSpeed = 10;
+      const rotateSpeed = 0.002;
+      const moveState = {
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+        up: false,
+        down: false,
+      };
+
+      let isPointerLocked = false;
 
       const animate = () => {
         requestAnimationFrame(animate);
-        controls.update();
+
+        if (isPointerLocked) {
+          // Update camera position based on move state
+          const moveVector = new Vector3();
+          if (moveState.forward) moveVector.z -= moveSpeed;
+          if (moveState.backward) moveVector.z += moveSpeed;
+          if (moveState.left) moveVector.x -= moveSpeed;
+          if (moveState.right) moveVector.x += moveSpeed;
+          if (moveState.up) moveVector.y += moveSpeed;
+          if (moveState.down) moveVector.y -= moveSpeed;
+
+          camera.translateX(moveVector.x);
+          camera.translateY(moveVector.y);
+          camera.translateZ(moveVector.z);
+        }
+
         cssRenderer.render(scene, camera);
       };
 
       animate();
 
-      /**
-       * @param {MouseEvent} event
-       */
       const onMouseMove = (event) => {
+        if (isPointerLocked) {
+          const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+          const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+
+          camera.rotation.y -= movementX * rotateSpeed;
+          camera.rotation.x -= movementY * rotateSpeed;
+
+          // Clamp the vertical rotation to avoid flipping
+          camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
+        }
+
         mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
         checkIntersection();
       };
 
-      /**
-       * @param {MouseEvent} event
-       */
       const onClick = (event) => {
-        mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        checkIntersection(true);
+        if (!isPointerLocked) {
+          cssRenderer.domElement.requestPointerLock();
+        } else {
+          mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          checkIntersection(true);
+        }
       };
 
-      /**
-       * @param {KeyboardEvent} event
-       */
       const onKeyDown = (event) => {
-        if (event.metaKey) {
-          dreamNodeRefs.current.forEach(node => {
-            if (node) {
-              switch (event.key) {
-                case '1':
-                  const currentPosition = node.object.position;
-                  node.updatePosition(
-                    new THREE.Vector3(currentPosition.x + 50, currentPosition.y + 50, currentPosition.z + 50),
-                    1
-                  );
-                  break;
-                case '2':
-                  const currentScale = node.object.scale;
-                  node.updateScale(
-                    new THREE.Vector3(currentScale.x * 2, currentScale.y * 2, currentScale.z * 2),
-                    0.3
-                  );
-                  break;
-                case '3':
-                  const currentRotation = node.object.rotation;
-                  node.updateRotation(
-                    new THREE.Euler(currentRotation.x, currentRotation.y + Math.PI / 2, currentRotation.z),
-                    1
-                  );
-                  break;
-              }
-            }
-          });
+        switch (event.key.toLowerCase()) {
+          case 'w': moveState.forward = true; break;
+          case 's': moveState.backward = true; break;
+          case 'a': moveState.left = true; break;
+          case 'd': moveState.right = true; break;
+          case ' ': moveState.up = true; break;
+          case 'shift': moveState.down = true; break;
         }
+      };
+
+      const onKeyUp = (event) => {
+        switch (event.key.toLowerCase()) {
+          case 'w': moveState.forward = false; break;
+          case 's': moveState.backward = false; break;
+          case 'a': moveState.left = false; break;
+          case 'd': moveState.right = false; break;
+          case ' ': moveState.up = false; break;
+          case 'shift': moveState.down = false; break;
+        }
+      };
+
+      const onPointerLockChange = () => {
+        isPointerLocked = document.pointerLockElement === cssRenderer.domElement;
       };
 
       cssRenderer.domElement.addEventListener('mousemove', onMouseMove);
       cssRenderer.domElement.addEventListener('click', onClick);
       window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('keyup', onKeyUp);
+      document.addEventListener('pointerlockchange', onPointerLockChange);
 
       return () => {
         cssRenderer.domElement.removeEventListener('mousemove', onMouseMove);
         cssRenderer.domElement.removeEventListener('click', onClick);
         window.removeEventListener('keydown', onKeyDown);
+        window.removeEventListener('keyup', onKeyUp);
+        document.removeEventListener('pointerlockchange', onPointerLockChange);
       };
     }
   }, [sceneState, checkIntersection]);
