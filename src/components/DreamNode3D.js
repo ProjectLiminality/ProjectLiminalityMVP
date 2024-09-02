@@ -12,9 +12,12 @@ class DreamNode3D extends THREE.Object3D {
    * @constructor
    * @param {HTMLElement} domElement - The DOM element to be rendered as a 3D object.
    * @param {THREE.Vector3} [initialPosition] - The initial position of the object in 3D space.
+   * @param {string} repoName - The name of the repository this node represents.
    */
-  constructor(domElement, initialPosition) {
+  constructor(domElement, initialPosition, repoName) {
     super();
+    this.repoName = repoName;
+    console.log('DreamNode3D constructor', { repoName: this.repoName });
 
     // Create CSS3DObject
     this.css3DObject = new CSS3DObject(domElement);
@@ -36,6 +39,14 @@ class DreamNode3D extends THREE.Object3D {
     if (initialPosition) {
       this.position.copy(initialPosition);
     }
+  }
+
+  /**
+   * @method getRepoName
+   * @returns {string} The name of the repository this node represents.
+   */
+  getRepoName() {
+    return this.repoName;
   }
 
   /**
