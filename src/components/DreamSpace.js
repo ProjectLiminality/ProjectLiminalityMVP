@@ -339,7 +339,11 @@ const DreamSpace = () => {
 
         mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        checkIntersection();
+        
+        // Only check for intersections if we're not dragging
+        if (!isDragging) {
+          checkIntersection();
+        }
       };
 
       const onMouseDown = (event) => {
@@ -356,9 +360,11 @@ const DreamSpace = () => {
       };
 
       const onClick = (event) => {
-        mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        checkIntersection(true);
+        if (!isDragging) {
+          mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          checkIntersection(true);
+        }
       };
 
       const onKeyDown = (event) => {
