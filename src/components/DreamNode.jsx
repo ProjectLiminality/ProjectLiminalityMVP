@@ -82,7 +82,8 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
     log('DreamNode effect running', { repoName, hasNodeRef: !!nodeRef.current, hasCssScene: !!cssScene, hasDreamNode3DRef: !!dreamNode3DRef.current });
     if (nodeRef.current && cssScene && !dreamNode3DRef.current) {
       log('Creating new DreamNode3D', { repoName });
-      const dreamNode3D = new DreamNode3D(nodeRef.current, initialPosition);
+      const dreamNode3D = new DreamNode3D(nodeRef.current, initialPosition, repoName);
+      log('DreamNode3D created', { repoName, dreamNode3DRepoName: dreamNode3D.getRepoName() });
       dreamNode3DRef.current = dreamNode3D;
       cssScene.add(dreamNode3D);
 

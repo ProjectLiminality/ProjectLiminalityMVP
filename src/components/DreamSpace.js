@@ -213,6 +213,8 @@ const DreamSpace = () => {
     let intersectedNode = null;
     let intersectedPlane = null;
 
+    console.log('Checking intersections. DreamNodeRefs:', dreamNodeRefs.current.map(node => node?.object?.getRepoName()));
+
     for (let i = 0; i < dreamNodeRefs.current.length; i++) {
       const node = dreamNodeRefs.current[i];
       if (!node || !node.getFrontPlane || !node.getBackPlane) {
@@ -237,6 +239,12 @@ const DreamSpace = () => {
       const currentNodeIndex = dreamNodeRefs.current.indexOf(intersectedNode);
       const currentNode = dreamNodes[currentNodeIndex];
 
+      console.log('Intersection found:', {
+        repoName: intersectedNode.object.getRepoName(),
+        currentNode: currentNode?.repoName,
+        isFrontSide
+      });
+
       if (!currentNode) {
         console.error('Intersected node not found in dreamNodes array');
         return;
@@ -260,12 +268,12 @@ const DreamSpace = () => {
     } else if (hoveredNode !== null) {
       console.log('Mouse left node:', hoveredNode);
       
-      const previousNodeIndex = dreamNodeRefs.current.findIndex(node => node && node.props && node.props.repoName === hoveredNode);
+      const previousNodeIndex = dreamNodeRefs.current.findIndex(node => node && node.object && node.object.getRepoName() === hoveredNode);
       console.log('Previous node index:', previousNodeIndex);
       
       if (previousNodeIndex !== -1) {
         const previousNode = dreamNodeRefs.current[previousNodeIndex];
-        console.log('Previous node:', previousNode);
+        console.log('Previous node:', previousNode.object.getRepoName());
         
         if (previousNode && previousNode.object) {
           console.log('Scaling down node:', hoveredNode);
