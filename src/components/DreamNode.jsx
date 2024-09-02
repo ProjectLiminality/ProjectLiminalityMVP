@@ -71,17 +71,24 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }, [repoName]);
 
   useEffect(() => {
+    console.log('DreamNode effect running for:', repoName);
     if (nodeRef.current && cssScene && !dreamNode3DRef.current) {
+      console.log('Creating new DreamNode3D for:', repoName);
       const dreamNode3D = new DreamNode3D(nodeRef.current, initialPosition);
       dreamNode3DRef.current = dreamNode3D;
       cssScene.add(dreamNode3D);
 
       return () => {
+        console.log('Cleaning up DreamNode3D for:', repoName);
         cssScene.remove(dreamNode3D);
         dreamNode3DRef.current = null;
       };
     }
   }, [initialPosition, cssScene, repoName]);
+
+  useEffect(() => {
+    console.log('repoName changed to:', repoName);
+  }, [repoName]);
 
   useEffect(() => {
     setShowOverlay(isHovered);

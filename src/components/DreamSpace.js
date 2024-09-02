@@ -189,6 +189,8 @@ const DreamSpace = () => {
 
         observer.observe(nodeElement, { childList: true, subtree: true });
       });
+
+      console.log('dreamNodeRefs after rendering:', dreamNodeRefs.current);
     } else {
       console.log('Not rendering DreamNode. sceneState:', !!sceneState, 'dreamNodes length:', dreamNodes.length);
     }
