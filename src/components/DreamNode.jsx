@@ -5,6 +5,10 @@ import DreamSong from './DreamSong';
 import { getRepoData } from '../utils/fileUtils';
 import DreamNode3D from './DreamNode3D';
 
+const log = (message, ...args) => {
+  console.log(`[DreamNode] ${message}`, ...args);
+};
+
 /**
  * @typedef {Object} RepoData
  * @property {Object} metadata - Metadata of the repository
@@ -22,6 +26,8 @@ import DreamNode3D from './DreamNode3D';
  * }> & React.RefAttributes<unknown>>}
  */
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene, isHovered }, ref) => {
+  log('DreamNode rendered', { repoName, isHovered });
+
   const [showOverlay, setShowOverlay] = useState(false);
   /** @type {[RepoData, React.Dispatch<React.SetStateAction<RepoData>>]} */
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
@@ -63,23 +69,25 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }));
 
   useEffect(() => {
+    log('Fetching repo data for', repoName);
     const fetchRepoData = async () => {
       const data = await getRepoData(repoName);
+      log('Repo data fetched', { repoName, data });
       setRepoData(data);
     };
     fetchRepoData();
   }, [repoName]);
 
   useEffect(() => {
-    console.log('DreamNode effect running for:', repoName);
+    log('DreamNode effect running', { repoName, hasNodeRef: !!nodeRef.current, hasCssScene: !!cssScene, hasDreamNode3DRef: !!dreamNode3DRef.current });
     if (nodeRef.current && cssScene && !dreamNode3DRef.current) {
-      console.log('Creating new DreamNode3D for:', repoName);
+      log('Creating new DreamNode3D', { repoName });
       const dreamNode3D = new DreamNode3D(nodeRef.current, initialPosition);
       dreamNode3DRef.current = dreamNode3D;
       cssScene.add(dreamNode3D);
 
       return () => {
-        console.log('Cleaning up DreamNode3D for:', repoName);
+        log('Cleaning up DreamNode3D', { repoName });
         cssScene.remove(dreamNode3D);
         dreamNode3DRef.current = null;
       };
@@ -87,22 +95,21 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }, [initialPosition, cssScene, repoName]);
 
   useEffect(() => {
-    console.log('repoName changed to:', repoName);
+    log('repoName changed', { repoName });
   }, [repoName]);
 
   useEffect(() => {
+    log('isHovered changed', { repoName, isHovered });
     setShowOverlay(isHovered);
-    
-    if (isHovered) {
-      console.log('DreamNode is now hovered:', repoName);
-    } else {
-      console.log('DreamNode is no longer hovered:', repoName);
-    }
   }, [isHovered, repoName]);
 
   const handleClick = useCallback(() => {
     onNodeClick(repoName);
   }, [onNodeClick, repoName]);
+
+  useEffect(() => {
+    log('DreamNode rendered', { repoName, isHovered, showOverlay });
+  });
 
   return (
     <div ref={nodeRef} style={{ width: '300px', height: '300px', position: 'relative', transformStyle: 'preserve-3d' }}>
