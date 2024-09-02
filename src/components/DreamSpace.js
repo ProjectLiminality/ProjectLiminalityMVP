@@ -139,8 +139,8 @@ const DreamSpace = () => {
     };
   }, [sceneState]);
 
-  /** @type {React.MutableRefObject<DreamNode|null>} */
-  const dreamNodeRef = useRef(null);
+  /** @type {React.MutableRefObject<Array<DreamNode|null>>} */
+  const dreamNodeRefs = useRef([]);
 
   useEffect(() => {
     if (sceneState && dreamNodes.length > 0) {
@@ -149,6 +149,9 @@ const DreamSpace = () => {
       // Clear existing nodes
       scene.children = scene.children.filter(child => !(child instanceof DreamNode3D));
       console.log('Cleared existing nodes. Scene children count:', scene.children.length);
+      
+      // Reset dreamNodeRefs
+      dreamNodeRefs.current = new Array(dreamNodes.length).fill(null);
       
       // Add multiple DreamNodes
       dreamNodes.forEach((dreamNode, index) => {
@@ -161,7 +164,7 @@ const DreamSpace = () => {
           <DreamNode 
             key={dreamNode.repoName}
             ref={el => {
-              if (index === 0) dreamNodeRef.current = el;
+              dreamNodeRefs.current[index] = el;
             }}
             repoName={dreamNode.repoName} 
             initialPosition={new THREE.Vector3(index * 350, 0, 0)}
@@ -174,11 +177,12 @@ const DreamSpace = () => {
         // Use a MutationObserver to detect when the DreamNode has been added to the DOM
         const observer = new MutationObserver(() => {
           console.log(`DreamNode ${dreamNode.repoName} rendered to nodeElement`);
-          if (dreamNodeRef.current && dreamNodeRef.current.object) {
-            scene.add(dreamNodeRef.current.object);
+          const currentNode = dreamNodeRefs.current[index];
+          if (currentNode && currentNode.object) {
+            scene.add(currentNode.object);
             console.log(`Added DreamNode ${dreamNode.repoName} to scene. Scene children count:`, scene.children.length);
           } else {
-            console.log(`Failed to add DreamNode ${dreamNode.repoName} to scene. dreamNodeRef.current:`, dreamNodeRef.current);
+            console.log(`Failed to add DreamNode ${dreamNode.repoName} to scene. dreamNodeRefs.current[${index}]:`, currentNode);
           }
           observer.disconnect();
         });
@@ -197,23 +201,37 @@ const DreamSpace = () => {
    * @param {boolean} [isClick=false] - Whether this check is for a click event
    */
   const checkIntersection = useCallback((isClick = false) => {
-    if (!sceneState || !dreamNodeRef.current || dreamNodes.length === 0) return;
+    if (!sceneState || dreamNodeRefs.current.length === 0 || dreamNodes.length === 0) return;
 
     raycaster.current.setFromCamera(mouse.current, sceneState.camera);
-    const intersects = raycaster.current.intersectObjects([
-      dreamNodeRef.current.getFrontPlane(),
-      dreamNodeRef.current.getBackPlane()
-    ], true);
+    
+    let intersectedNode = null;
+    let intersectedPlane = null;
 
-    if (intersects.length > 0) {
-      const intersectedPlane = intersects[0].object;
-      const isFrontSide = intersectedPlane === dreamNodeRef.current.getFrontPlane();
-      const currentNode = dreamNodes[0];
+    for (let i = 0; i < dreamNodeRefs.current.length; i++) {
+      const node = dreamNodeRefs.current[i];
+      if (!node) continue;
+
+      const intersects = raycaster.current.intersectObjects([
+        node.getFrontPlane(),
+        node.getBackPlane()
+      ], true);
+
+      if (intersects.length > 0) {
+        intersectedNode = node;
+        intersectedPlane = intersects[0].object;
+        break;
+      }
+    }
+
+    if (intersectedNode) {
+      const isFrontSide = intersectedPlane === intersectedNode.getFrontPlane();
+      const currentNode = dreamNodes[dreamNodeRefs.current.indexOf(intersectedNode)];
 
       if (isClick) {
         // Handle click event
         console.log('Clicked on node:', currentNode.repoName, 'Side:', isFrontSide ? 'front' : 'back');
-        dreamNodeRef.current.updateRotation(
+        intersectedNode.updateRotation(
           new THREE.Euler(0, isFrontSide ? Math.PI : 0, 0),
           1000
         );
@@ -222,14 +240,17 @@ const DreamSpace = () => {
         if (hoveredNode !== currentNode.repoName) {
           console.log('Mouse entered node:', currentNode.repoName, 'Side:', isFrontSide ? 'front' : 'back');
           setHoveredNode(currentNode.repoName);
-          dreamNodeRef.current.object.setHoverScale(true, 0.5);
+          intersectedNode.object.setHoverScale(true, 0.5);
         }
       }
     } else {
       if (hoveredNode !== null) {
         console.log('Mouse left node:', hoveredNode);
         setHoveredNode(null);
-        dreamNodeRef.current.object.setHoverScale(false, 0.5);
+        const previousNode = dreamNodeRefs.current.find(node => node && node.props.repoName === hoveredNode);
+        if (previousNode) {
+          previousNode.object.setHoverScale(false, 0.5);
+        }
       }
     }
   }, [sceneState, hoveredNode, dreamNodes]);
