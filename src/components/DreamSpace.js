@@ -290,35 +290,33 @@ const DreamSpace = () => {
        */
       const onKeyDown = (event) => {
         if (event.metaKey) {
-          switch (event.key) {
-            case '1':
-              if (dreamNodeRef.current) {
-                const currentPosition = dreamNodeRef.current.object.position;
-                dreamNodeRef.current.updatePosition(
-                  new THREE.Vector3(currentPosition.x + 50, currentPosition.y + 50, currentPosition.z + 50),
-                  1
-                );
+          dreamNodeRefs.current.forEach(node => {
+            if (node) {
+              switch (event.key) {
+                case '1':
+                  const currentPosition = node.object.position;
+                  node.updatePosition(
+                    new THREE.Vector3(currentPosition.x + 50, currentPosition.y + 50, currentPosition.z + 50),
+                    1
+                  );
+                  break;
+                case '2':
+                  const currentScale = node.object.scale;
+                  node.updateScale(
+                    new THREE.Vector3(currentScale.x * 2, currentScale.y * 2, currentScale.z * 2),
+                    0.3
+                  );
+                  break;
+                case '3':
+                  const currentRotation = node.object.rotation;
+                  node.updateRotation(
+                    new THREE.Euler(currentRotation.x, currentRotation.y + Math.PI / 2, currentRotation.z),
+                    1
+                  );
+                  break;
               }
-              break;
-            case '2':
-              if (dreamNodeRef.current) {
-                const currentScale = dreamNodeRef.current.object.scale;
-                dreamNodeRef.current.updateScale(
-                  new THREE.Vector3(currentScale.x * 2, currentScale.y * 2, currentScale.z * 2),
-                  0.3
-                );
-              }
-              break;
-            case '3':
-              if (dreamNodeRef.current) {
-                const currentRotation = dreamNodeRef.current.object.rotation;
-                dreamNodeRef.current.updateRotation(
-                  new THREE.Euler(currentRotation.x, currentRotation.y + Math.PI / 2, currentRotation.z),
-                  1
-                );
-              }
-              break;
-          }
+            }
+          });
         }
       };
 
