@@ -2,7 +2,17 @@ import * as THREE from 'three';
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { gsap } from 'gsap';
 
+/**
+ * @class DreamNode3D
+ * @extends THREE.Object3D
+ * @description Represents a 3D object for a dream node in the scene.
+ */
 class DreamNode3D extends THREE.Object3D {
+  /**
+   * @constructor
+   * @param {HTMLElement} domElement - The DOM element to be rendered as a 3D object.
+   * @param {THREE.Vector3} [initialPosition] - The initial position of the object in 3D space.
+   */
   constructor(domElement, initialPosition) {
     super();
 
@@ -28,6 +38,11 @@ class DreamNode3D extends THREE.Object3D {
     }
   }
 
+  /**
+   * @method updatePosition
+   * @param {THREE.Vector3} newPosition - The new position to move the object to.
+   * @param {number} [duration=1] - The duration of the animation in seconds.
+   */
   updatePosition(newPosition, duration = 1) {
     gsap.to(this.position, {
       x: newPosition.x,
@@ -38,6 +53,11 @@ class DreamNode3D extends THREE.Object3D {
     });
   }
 
+  /**
+   * @method updateRotation
+   * @param {THREE.Euler} newRotation - The new rotation to apply to the object.
+   * @param {number} [duration=1] - The duration of the animation in seconds.
+   */
   updateRotation(newRotation, duration = 1) {
     gsap.to(this.rotation, {
       x: newRotation.x,
@@ -48,6 +68,11 @@ class DreamNode3D extends THREE.Object3D {
     });
   }
 
+  /**
+   * @method updateScale
+   * @param {THREE.Vector3} newScale - The new scale to apply to the object.
+   * @param {number} [duration=0.3] - The duration of the animation in seconds.
+   */
   updateScale(newScale, duration = 0.3) {
     gsap.to(this.scale, {
       x: newScale.x,
@@ -63,10 +88,18 @@ class DreamNode3D extends THREE.Object3D {
     });
   }
 
+  /**
+   * @method getFrontPlane
+   * @returns {THREE.Mesh} The front plane of the object.
+   */
   getFrontPlane() {
     return this.frontPlane;
   }
 
+  /**
+   * @method getBackPlane
+   * @returns {THREE.Mesh} The back plane of the object.
+   */
   getBackPlane() {
     return this.backPlane;
   }

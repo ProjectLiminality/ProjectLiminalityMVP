@@ -8,12 +8,34 @@ import DreamNode from './DreamNode';
 import DreamNode3D from './DreamNode3D';
 import { createRoot } from 'react-dom/client';
 
+/**
+ * @typedef {Object} SceneState
+ * @property {THREE.Scene} scene
+ * @property {THREE.PerspectiveCamera} camera
+ * @property {CSS3DRenderer} cssRenderer
+ * @property {OrbitControls} controls
+ * @property {() => void} cleanup
+ */
+
+/**
+ * @typedef {Object} DreamNodeData
+ * @property {string} repoName
+ */
+
+/**
+ * DreamSpace component
+ * @returns {JSX.Element}
+ */
 const DreamSpace = () => {
   const refContainer = useRef(null);
+  /** @type {[DreamNodeData[], React.Dispatch<React.SetStateAction<DreamNodeData[]>>]} */
   const [dreamNodes, setDreamNodes] = useState([]);
   const [error, setError] = useState(null);
+  /** @type {[SceneState|null, React.Dispatch<React.SetStateAction<SceneState|null>>]} */
   const [sceneState, setSceneState] = useState(null);
+  /** @type {React.MutableRefObject<Raycaster>} */
   const raycaster = useRef(new Raycaster());
+  /** @type {React.MutableRefObject<Vector2>} */
   const mouse = useRef(new Vector2());
 
   useEffect(() => {
@@ -32,7 +54,8 @@ const DreamSpace = () => {
 
       const cssRenderer = new CSS3DRenderer();
       cssRenderer.setSize(window.innerWidth, window.innerHeight);
-      cssRenderer.domElement.style.position = 'absolute';
+      cssRenderer.domElement.style.position =
+ 'absolute';
       cssRenderer.domElement.style.top = '0';
       refContainer.current.appendChild(cssRenderer.domElement);
 
@@ -108,6 +131,7 @@ const DreamSpace = () => {
     };
   }, [sceneState]);
 
+  /** @type {React.MutableRefObject<DreamNode|null>} */
   const dreamNodeRef = useRef(null);
 
   useEffect(() => {
@@ -156,6 +180,10 @@ const DreamSpace = () => {
 
   const [hoveredNode, setHoveredNode] = useState(null);
 
+  /**
+   * Check for intersections with DreamNodes
+   * @param {boolean} [isClick=false] - Whether this check is for a click event
+   */
   const checkIntersection = useCallback((isClick = false) => {
     if (!sceneState || !dreamNodeRef.current || dreamNodes.length === 0) return;
 
@@ -204,18 +232,27 @@ const DreamSpace = () => {
 
       animate();
 
+      /**
+       * @param {MouseEvent} event
+       */
       const onMouseMove = (event) => {
         mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
         checkIntersection();
       };
 
+      /**
+       * @param {MouseEvent} event
+       */
       const onClick = (event) => {
         mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
         checkIntersection(true);
       };
 
+      /**
+       * @param {KeyboardEvent} event
+       */
       const onKeyDown = (event) => {
         if (event.metaKey) {
           switch (event.key) {

@@ -5,23 +5,53 @@ import DreamSong from './DreamSong';
 import { getRepoData } from '../utils/fileUtils';
 import DreamNode3D from './DreamNode3D';
 
+/**
+ * @typedef {Object} RepoData
+ * @property {Object} metadata - Metadata of the repository
+ * @property {Object|null} mediaContent - Media content of the repository
+ */
+
+/**
+ * DreamNode component
+ * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<{
+ *   initialPosition: THREE.Vector3,
+ *   repoName: string,
+ *   onNodeClick: (repoName: string) => void,
+ *   cssScene: THREE.Scene,
+ *   isHovered: boolean
+ * }> & React.RefAttributes<unknown>>}
+ */
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene, isHovered }, ref) => {
   const [showOverlay, setShowOverlay] = useState(false);
+  /** @type {[RepoData, React.Dispatch<React.SetStateAction<RepoData>>]} */
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
   const nodeRef = useRef(null);
+  /** @type {React.MutableRefObject<DreamNode3D|null>} */
   const dreamNode3DRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
+    /**
+     * @param {THREE.Vector3} newPosition
+     * @param {number} [duration=1]
+     */
     updatePosition: (newPosition, duration = 1) => {
       if (dreamNode3DRef.current) {
         dreamNode3DRef.current.updatePosition(newPosition, duration);
       }
     },
+    /**
+     * @param {THREE.Euler} newRotation
+     * @param {number} [duration=1]
+     */
     updateRotation: (newRotation, duration = 1) => {
       if (dreamNode3DRef.current) {
         dreamNode3DRef.current.updateRotation(newRotation, duration);
       }
     },
+    /**
+     * @param {THREE.Vector3} newScale
+     * @param {number} [duration=0.3]
+     */
     updateScale: (newScale, duration = 0.3) => {
       if (dreamNode3DRef.current) {
         dreamNode3DRef.current.updateScale(newScale, duration);
