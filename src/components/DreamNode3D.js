@@ -89,6 +89,16 @@ class DreamNode3D extends THREE.Object3D {
   }
 
   /**
+   * @method setHoverScale
+   * @param {boolean} isHovered - Whether the node is being hovered over
+   * @param {number} [duration=1] - The duration of the animation in seconds
+   */
+  setHoverScale(isHovered, duration = 1) {
+    const scale = isHovered ? 1.1 : 1;
+    this.updateScale(new THREE.Vector3(scale, scale, scale), duration);
+  }
+
+  /**
    * @method getFrontPlane
    * @returns {THREE.Mesh} The front plane of the object.
    */
