@@ -1,7 +1,16 @@
 import * as electronService from '../services/electronService';
 
+/**
+ * Array of preferred file extensions for media files, in order of preference.
+ * @type {string[]}
+ */
 const preferredExtensions = ['.gif', '.mp4', '.png', '.jpg', '.jpeg'];
 
+/**
+ * Retrieves repository data including metadata and preferred media content.
+ * @param {string} repoName - The name of the repository.
+ * @returns {Promise<{metadata: Object, mediaContent: Object|null}>} The repository data.
+ */
 export async function getRepoData(repoName) {
   try {
     console.log(`Getting repo data for ${repoName}`);
@@ -15,6 +24,11 @@ export async function getRepoData(repoName) {
   }
 }
 
+/**
+ * Retrieves the preferred media file for a given repository.
+ * @param {string} repoName - The name of the repository.
+ * @returns {Promise<Object|null>} The media file data or null if no media file is found.
+ */
 async function getPreferredMediaFile(repoName) {
   try {
     console.log(`Getting preferred media file for ${repoName}`);
