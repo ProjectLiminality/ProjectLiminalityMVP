@@ -282,6 +282,8 @@ const DreamSpace = () => {
         right: false,
         up: false,
         down: false,
+        tiltLeft: false,
+        tiltRight: false,
       };
 
       let isDragging = false;
@@ -303,6 +305,15 @@ const DreamSpace = () => {
         camera.translateY(moveVector.y);
         camera.translateZ(moveVector.z);
 
+        // Handle tilt (roll) rotation
+        const tiltSpeed = 0.02;
+        if (moveState.tiltLeft) {
+          camera.rotateZ(tiltSpeed);
+        }
+        if (moveState.tiltRight) {
+          camera.rotateZ(-tiltSpeed);
+        }
+
         cssRenderer.render(scene, camera);
       };
 
@@ -313,11 +324,15 @@ const DreamSpace = () => {
           const movementX = event.clientX - previousMousePosition.x;
           const movementY = event.clientY - previousMousePosition.y;
 
-          camera.rotation.y -= movementX * rotateSpeed;
-          camera.rotation.x -= movementY * rotateSpeed;
-
-          // Clamp the vertical rotation to avoid flipping
-          camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
+          // Update the camera's quaternion for smooth rotation without roll
+          const rotationQuaternion = new THREE.Quaternion();
+          rotationQuaternion.setFromEuler(new THREE.Euler(
+            -movementY * rotateSpeed,
+            -movementX * rotateSpeed,
+            0,
+            'XYZ'
+          ));
+          camera.quaternion.multiplyQuaternions(rotationQuaternion, camera.quaternion);
 
           previousMousePosition = { x: event.clientX, y: event.clientY };
         }
@@ -354,6 +369,8 @@ const DreamSpace = () => {
           case 'd': moveState.right = true; break;
           case ' ': moveState.up = true; break;
           case 'shift': moveState.down = true; break;
+          case 'q': moveState.tiltLeft = true; break;
+          case 'e': moveState.tiltRight = true; break;
         }
       };
 
@@ -365,6 +382,8 @@ const DreamSpace = () => {
           case 'd': moveState.right = false; break;
           case ' ': moveState.up = false; break;
           case 'shift': moveState.down = false; break;
+          case 'q': moveState.tiltLeft = false; break;
+          case 'e': moveState.tiltRight = false; break;
         }
       };
 
