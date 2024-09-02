@@ -201,7 +201,10 @@ const DreamSpace = () => {
    * @param {boolean} [isClick=false] - Whether this check is for a click event
    */
   const checkIntersection = useCallback((isClick = false) => {
-    if (!sceneState || dreamNodeRefs.current.length === 0 || dreamNodes.length === 0) return;
+    if (!sceneState || dreamNodeRefs.current.length === 0 || dreamNodes.length === 0) {
+      console.log('Skipping intersection check due to missing data');
+      return;
+    }
 
     raycaster.current.setFromCamera(mouse.current, sceneState.camera);
     
@@ -210,7 +213,10 @@ const DreamSpace = () => {
 
     for (let i = 0; i < dreamNodeRefs.current.length; i++) {
       const node = dreamNodeRefs.current[i];
-      if (!node) continue;
+      if (!node || !node.getFrontPlane || !node.getBackPlane) {
+        console.log(`Skipping node at index ${i} due to missing properties`);
+        continue;
+      }
 
       const intersects = raycaster.current.intersectObjects([
         node.getFrontPlane(),
@@ -226,7 +232,13 @@ const DreamSpace = () => {
 
     if (intersectedNode) {
       const isFrontSide = intersectedPlane === intersectedNode.getFrontPlane();
-      const currentNode = dreamNodes[dreamNodeRefs.current.indexOf(intersectedNode)];
+      const currentNodeIndex = dreamNodeRefs.current.indexOf(intersectedNode);
+      const currentNode = dreamNodes[currentNodeIndex];
+
+      if (!currentNode) {
+        console.error('Intersected node not found in dreamNodes array');
+        return;
+      }
 
       if (isClick) {
         // Handle click event
@@ -243,30 +255,27 @@ const DreamSpace = () => {
           intersectedNode.object.setHoverScale(true, 0.5);
         }
       }
-    } else {
-      if (hoveredNode !== null) {
-        console.log('Mouse left node:', hoveredNode);
-        console.log('Current dreamNodeRefs:', dreamNodeRefs.current);
+    } else if (hoveredNode !== null) {
+      console.log('Mouse left node:', hoveredNode);
+      
+      const previousNodeIndex = dreamNodeRefs.current.findIndex(node => node && node.props && node.props.repoName === hoveredNode);
+      console.log('Previous node index:', previousNodeIndex);
+      
+      if (previousNodeIndex !== -1) {
+        const previousNode = dreamNodeRefs.current[previousNodeIndex];
+        console.log('Previous node:', previousNode);
         
-        const previousNodeIndex = dreamNodeRefs.current.findIndex(node => node && node.props && node.props.repoName === hoveredNode);
-        console.log('Previous node index:', previousNodeIndex);
-        
-        if (previousNodeIndex !== -1) {
-          const previousNode = dreamNodeRefs.current[previousNodeIndex];
-          console.log('Previous node:', previousNode);
-          
-          if (previousNode && previousNode.object) {
-            console.log('Scaling down node:', hoveredNode);
-            previousNode.object.setHoverScale(false, 0.5);
-          } else {
-            console.log('Unable to scale down node:', hoveredNode, 'Node or node.object is undefined');
-          }
+        if (previousNode && previousNode.object) {
+          console.log('Scaling down node:', hoveredNode);
+          previousNode.object.setHoverScale(false, 0.5);
         } else {
-          console.log('Could not find previous node in dreamNodeRefs');
+          console.log('Unable to scale down node:', hoveredNode, 'Node or node.object is undefined');
         }
-        
-        setHoveredNode(null);
+      } else {
+        console.log('Could not find previous node in dreamNodeRefs');
       }
+      
+      setHoveredNode(null);
     }
   }, [sceneState, hoveredNode, dreamNodes]);
 
