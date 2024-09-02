@@ -284,25 +284,24 @@ const DreamSpace = () => {
         down: false,
       };
 
-      let isPointerLocked = false;
+      let isDragging = false;
+      let previousMousePosition = { x: 0, y: 0 };
 
       const animate = () => {
         requestAnimationFrame(animate);
 
-        if (isPointerLocked) {
-          // Update camera position based on move state
-          const moveVector = new Vector3();
-          if (moveState.forward) moveVector.z -= moveSpeed;
-          if (moveState.backward) moveVector.z += moveSpeed;
-          if (moveState.left) moveVector.x -= moveSpeed;
-          if (moveState.right) moveVector.x += moveSpeed;
-          if (moveState.up) moveVector.y += moveSpeed;
-          if (moveState.down) moveVector.y -= moveSpeed;
+        // Update camera position based on move state
+        const moveVector = new Vector3();
+        if (moveState.forward) moveVector.z -= moveSpeed;
+        if (moveState.backward) moveVector.z += moveSpeed;
+        if (moveState.left) moveVector.x -= moveSpeed;
+        if (moveState.right) moveVector.x += moveSpeed;
+        if (moveState.up) moveVector.y += moveSpeed;
+        if (moveState.down) moveVector.y -= moveSpeed;
 
-          camera.translateX(moveVector.x);
-          camera.translateY(moveVector.y);
-          camera.translateZ(moveVector.z);
-        }
+        camera.translateX(moveVector.x);
+        camera.translateY(moveVector.y);
+        camera.translateZ(moveVector.z);
 
         cssRenderer.render(scene, camera);
       };
@@ -310,15 +309,17 @@ const DreamSpace = () => {
       animate();
 
       const onMouseMove = (event) => {
-        if (isPointerLocked) {
-          const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-          const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+        if (isDragging) {
+          const movementX = event.clientX - previousMousePosition.x;
+          const movementY = event.clientY - previousMousePosition.y;
 
           camera.rotation.y -= movementX * rotateSpeed;
           camera.rotation.x -= movementY * rotateSpeed;
 
           // Clamp the vertical rotation to avoid flipping
           camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
+
+          previousMousePosition = { x: event.clientX, y: event.clientY };
         }
 
         mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -326,14 +327,23 @@ const DreamSpace = () => {
         checkIntersection();
       };
 
-      const onClick = (event) => {
-        if (!isPointerLocked) {
-          cssRenderer.domElement.requestPointerLock();
-        } else {
-          mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-          mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-          checkIntersection(true);
+      const onMouseDown = (event) => {
+        if (event.button === 0) { // Left mouse button
+          isDragging = true;
+          previousMousePosition = { x: event.clientX, y: event.clientY };
         }
+      };
+
+      const onMouseUp = (event) => {
+        if (event.button === 0) { // Left mouse button
+          isDragging = false;
+        }
+      };
+
+      const onClick = (event) => {
+        mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        checkIntersection(true);
       };
 
       const onKeyDown = (event) => {
@@ -358,22 +368,20 @@ const DreamSpace = () => {
         }
       };
 
-      const onPointerLockChange = () => {
-        isPointerLocked = document.pointerLockElement === cssRenderer.domElement;
-      };
-
       cssRenderer.domElement.addEventListener('mousemove', onMouseMove);
+      cssRenderer.domElement.addEventListener('mousedown', onMouseDown);
+      cssRenderer.domElement.addEventListener('mouseup', onMouseUp);
       cssRenderer.domElement.addEventListener('click', onClick);
       window.addEventListener('keydown', onKeyDown);
       window.addEventListener('keyup', onKeyUp);
-      document.addEventListener('pointerlockchange', onPointerLockChange);
 
       return () => {
         cssRenderer.domElement.removeEventListener('mousemove', onMouseMove);
+        cssRenderer.domElement.removeEventListener('mousedown', onMouseDown);
+        cssRenderer.domElement.removeEventListener('mouseup', onMouseUp);
         cssRenderer.domElement.removeEventListener('click', onClick);
         window.removeEventListener('keydown', onKeyDown);
         window.removeEventListener('keyup', onKeyUp);
-        document.removeEventListener('pointerlockchange', onPointerLockChange);
       };
     }
   }, [sceneState, checkIntersection]);
