@@ -77,7 +77,6 @@ const DreamSpace = () => {
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
-          controls.dispose();
         }
       });
     } catch (error) {
