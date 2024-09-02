@@ -84,9 +84,6 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }, [initialPosition, cssScene, repoName]);
 
   useEffect(() => {
-    if (dreamNode3DRef.current) {
-      dreamNode3DRef.current.setHoverScale(isHovered, 1);
-    }
     setShowOverlay(isHovered);
     
     if (isHovered) {
