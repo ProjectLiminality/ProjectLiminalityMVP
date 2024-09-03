@@ -296,8 +296,6 @@ const DreamSpace = () => {
       const animate = () => {
         frameCountRef.current++;
 
-        console.log(`Frame ${frameCountRef.current} start - Camera position:`, camera.position.toArray());
-
         // Reset moveVector at the start of each frame
         const moveVector = new Vector3();
 
@@ -309,25 +307,20 @@ const DreamSpace = () => {
         if (moveState.current.up) moveVector.y += moveSpeed;
         if (moveState.current.down) moveVector.y -= moveSpeed;
 
-        console.log(`Frame ${frameCountRef.current} - moveVector:`, moveVector.toArray());
-
         // Apply the movement
         if (!moveVector.equals(new Vector3(0, 0, 0))) {
           camera.translateX(moveVector.x);
           camera.translateY(moveVector.y);
           camera.translateZ(moveVector.z);
-          console.log(`Frame ${frameCountRef.current} - Camera position updated:`, camera.position.toArray());
         }
 
         // Handle tilt (roll) rotation
         const tiltSpeed = 0.02;
         if (moveState.current.tiltLeft) {
           camera.rotateZ(tiltSpeed);
-          console.log(`Frame ${frameCountRef.current} - Camera rotated left`);
         }
         if (moveState.current.tiltRight) {
           camera.rotateZ(-tiltSpeed);
-          console.log(`Frame ${frameCountRef.current} - Camera rotated right`);
         }
 
         cssRenderer.render(scene, camera);
