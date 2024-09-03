@@ -280,6 +280,9 @@ const DreamSpace = () => {
     }
   }, [sceneState, hoveredNode, dreamNodes]);
 
+  const frameCountRef = useRef(0);
+  const animationFrameRef = useRef(null);
+
   useEffect(() => {
     if (sceneState) {
       const { scene, camera, cssRenderer } = sceneState;
@@ -290,14 +293,10 @@ const DreamSpace = () => {
       let isDragging = false;
       let previousMousePosition = { x: 0, y: 0 };
 
-      let frameCount = 0;
-      let positionUpdateCount = 0;
-
       const animate = () => {
-        requestAnimationFrame(animate);
-        frameCount++;
+        frameCountRef.current++;
 
-        console.log(`Frame ${frameCount} start - Camera position:`, camera.position.toArray());
+        console.log(`Frame ${frameCountRef.current} start - Camera position:`, camera.position.toArray());
 
         // Reset moveVector at the start of each frame
         const moveVector = new Vector3();
@@ -310,34 +309,34 @@ const DreamSpace = () => {
         if (moveState.current.up) moveVector.y += moveSpeed;
         if (moveState.current.down) moveVector.y -= moveSpeed;
 
-        console.log(`Frame ${frameCount} - moveVector:`, moveVector.toArray());
+        console.log(`Frame ${frameCountRef.current} - moveVector:`, moveVector.toArray());
 
         // Apply the movement
         if (!moveVector.equals(new Vector3(0, 0, 0))) {
-          positionUpdateCount++;
           camera.translateX(moveVector.x);
           camera.translateY(moveVector.y);
           camera.translateZ(moveVector.z);
-          console.log(`Frame ${frameCount} - Camera position updated (${positionUpdateCount}):`, camera.position.toArray());
+          console.log(`Frame ${frameCountRef.current} - Camera position updated:`, camera.position.toArray());
         }
 
         // Handle tilt (roll) rotation
         const tiltSpeed = 0.02;
         if (moveState.current.tiltLeft) {
           camera.rotateZ(tiltSpeed);
-          console.log(`Frame ${frameCount} - Camera rotated left`);
+          console.log(`Frame ${frameCountRef.current} - Camera rotated left`);
         }
         if (moveState.current.tiltRight) {
           camera.rotateZ(-tiltSpeed);
-          console.log(`Frame ${frameCount} - Camera rotated right`);
+          console.log(`Frame ${frameCountRef.current} - Camera rotated right`);
         }
 
         cssRenderer.render(scene, camera);
 
-        console.log(`Frame ${frameCount} end - Total position updates: ${positionUpdateCount}`);
-        positionUpdateCount = 0; // Reset for next frame
+        // Store the animation frame reference
+        animationFrameRef.current = requestAnimationFrame(animate);
       };
 
+      // Start the animation loop
       animate();
 
       const onMouseMove = (event) => {
@@ -421,6 +420,10 @@ const DreamSpace = () => {
       window.addEventListener('keyup', onKeyUp);
 
       return () => {
+        // Cancel the animation frame when the component unmounts or the effect re-runs
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
         cssRenderer.domElement.removeEventListener('mousemove', onMouseMove);
         cssRenderer.domElement.removeEventListener('mousedown', onMouseDown);
         cssRenderer.domElement.removeEventListener('mouseup', onMouseUp);
