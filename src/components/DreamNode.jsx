@@ -4,6 +4,7 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { getRepoData } from '../utils/fileUtils';
 import DreamNode3D from './DreamNode3D';
+import { BLUE, RED } from '../constants/colors';
 
 const log = (message, ...args) => {
   console.log(`[DreamNode] ${message}`, ...args);
@@ -121,6 +122,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
           metadata={repoData.metadata} 
           onClick={handleClick}
           isHovered={isHovered}
+          borderColor={repoData.metadata?.type === 'person' ? RED : BLUE}
         />
         {showOverlay && (
           <div style={{
@@ -149,6 +151,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
           metadata={repoData.metadata}
           onClick={handleClick}
           isHovered={isHovered}
+          borderColor={repoData.metadata?.type === 'person' ? RED : BLUE}
         />
       </div>
     </div>

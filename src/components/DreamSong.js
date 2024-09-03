@@ -1,7 +1,7 @@
 import React from 'react';
 import { BLUE, BLACK, WHITE } from '../constants/colors';
 
-const DreamSong = ({ repoName, metadata, onClick, isHovered }) => {
+const DreamSong = ({ repoName, metadata, onClick, isHovered, borderColor }) => {
   return (
     <div 
       className="dream-song" 
@@ -18,7 +18,7 @@ const DreamSong = ({ repoName, metadata, onClick, isHovered }) => {
         height: '100%',
         backgroundColor: BLACK,
         borderRadius: '50%',
-        border: `5px solid ${BLUE}`,
+        border: `5px solid ${borderColor}`,
         color: WHITE,
       }}
     >
