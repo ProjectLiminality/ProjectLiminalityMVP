@@ -37,6 +37,17 @@ const DreamSpace = () => {
   /** @type {React.MutableRefObject<Vector2>} */
   const mouse = useRef(new Vector2());
 
+  const moveState = useRef({
+    forward: false,
+    backward: false,
+    left: false,
+    right: false,
+    up: false,
+    down: false,
+    tiltLeft: false,
+    tiltRight: false,
+  });
+
   useEffect(() => {
     console.log('Initializing sceneState');
     if (!refContainer.current) {
@@ -275,16 +286,6 @@ const DreamSpace = () => {
 
       const moveSpeed = 10;
       const rotateSpeed = 0.002;
-      const moveState = {
-        forward: false,
-        backward: false,
-        left: false,
-        right: false,
-        up: false,
-        down: false,
-        tiltLeft: false,
-        tiltRight: false,
-      };
 
       let isDragging = false;
       let previousMousePosition = { x: 0, y: 0 };
@@ -294,12 +295,12 @@ const DreamSpace = () => {
 
         // Update camera position based on move state
         const moveVector = new Vector3();
-        if (moveState.forward) moveVector.z -= moveSpeed;
-        if (moveState.backward) moveVector.z += moveSpeed;
-        if (moveState.left) moveVector.x -= moveSpeed;
-        if (moveState.right) moveVector.x += moveSpeed;
-        if (moveState.up) moveVector.y += moveSpeed;
-        if (moveState.down) moveVector.y -= moveSpeed;
+        if (moveState.current.forward) moveVector.z -= moveSpeed;
+        if (moveState.current.backward) moveVector.z += moveSpeed;
+        if (moveState.current.left) moveVector.x -= moveSpeed;
+        if (moveState.current.right) moveVector.x += moveSpeed;
+        if (moveState.current.up) moveVector.y += moveSpeed;
+        if (moveState.current.down) moveVector.y -= moveSpeed;
 
         camera.translateX(moveVector.x);
         camera.translateY(moveVector.y);
@@ -307,10 +308,10 @@ const DreamSpace = () => {
 
         // Handle tilt (roll) rotation
         const tiltSpeed = 0.02;
-        if (moveState.tiltLeft) {
+        if (moveState.current.tiltLeft) {
           camera.rotateZ(tiltSpeed);
         }
-        if (moveState.tiltRight) {
+        if (moveState.current.tiltRight) {
           camera.rotateZ(-tiltSpeed);
         }
 
@@ -368,27 +369,27 @@ const DreamSpace = () => {
 
       const onKeyDown = (event) => {
         switch (event.key.toLowerCase()) {
-          case 'w': moveState.forward = true; break;
-          case 's': moveState.backward = true; break;
-          case 'a': moveState.left = true; break;
-          case 'd': moveState.right = true; break;
-          case ' ': moveState.up = true; break;
-          case 'shift': moveState.down = true; break;
-          case 'q': moveState.tiltLeft = true; break;
-          case 'e': moveState.tiltRight = true; break;
+          case 'w': moveState.current.forward = true; break;
+          case 's': moveState.current.backward = true; break;
+          case 'a': moveState.current.left = true; break;
+          case 'd': moveState.current.right = true; break;
+          case ' ': moveState.current.up = true; break;
+          case 'shift': moveState.current.down = true; break;
+          case 'q': moveState.current.tiltLeft = true; break;
+          case 'e': moveState.current.tiltRight = true; break;
         }
       };
 
       const onKeyUp = (event) => {
         switch (event.key.toLowerCase()) {
-          case 'w': moveState.forward = false; break;
-          case 's': moveState.backward = false; break;
-          case 'a': moveState.left = false; break;
-          case 'd': moveState.right = false; break;
-          case ' ': moveState.up = false; break;
-          case 'shift': moveState.down = false; break;
-          case 'q': moveState.tiltLeft = false; break;
-          case 'e': moveState.tiltRight = false; break;
+          case 'w': moveState.current.forward = false; break;
+          case 's': moveState.current.backward = false; break;
+          case 'a': moveState.current.left = false; break;
+          case 'd': moveState.current.right = false; break;
+          case ' ': moveState.current.up = false; break;
+          case 'shift': moveState.current.down = false; break;
+          case 'q': moveState.current.tiltLeft = false; break;
+          case 'e': moveState.current.tiltRight = false; break;
         }
       };
 
