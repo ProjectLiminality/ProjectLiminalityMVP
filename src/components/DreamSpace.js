@@ -324,15 +324,14 @@ const DreamSpace = () => {
           const movementX = event.clientX - previousMousePosition.x;
           const movementY = event.clientY - previousMousePosition.y;
 
-          // Update the camera's quaternion for smooth rotation without roll
-          const rotationQuaternion = new THREE.Quaternion();
-          rotationQuaternion.setFromEuler(new THREE.Euler(
-            -movementY * rotateSpeed,
-            -movementX * rotateSpeed,
-            0,
-            'XYZ'
-          ));
-          camera.quaternion.multiplyQuaternions(rotationQuaternion, camera.quaternion);
+          // Rotate around world Y axis for left/right movement
+          camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), -movementX * rotateSpeed);
+
+          // Rotate around local X axis for up/down movement
+          camera.rotateX(-movementY * rotateSpeed);
+
+          // Ensure the camera's up vector stays aligned with world up
+          camera.up.set(0, 1, 0);
 
           previousMousePosition = { x: event.clientX, y: event.clientY };
         }
