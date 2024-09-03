@@ -293,8 +293,10 @@ const DreamSpace = () => {
       const animate = () => {
         requestAnimationFrame(animate);
 
-        // Update camera position based on move state
+        // Reset moveVector at the start of each frame
         const moveVector = new Vector3();
+
+        // Update moveVector based on current move state
         if (moveState.current.forward) moveVector.z -= moveSpeed;
         if (moveState.current.backward) moveVector.z += moveSpeed;
         if (moveState.current.left) moveVector.x -= moveSpeed;
@@ -302,6 +304,7 @@ const DreamSpace = () => {
         if (moveState.current.up) moveVector.y += moveSpeed;
         if (moveState.current.down) moveVector.y -= moveSpeed;
 
+        // Apply the movement
         camera.translateX(moveVector.x);
         camera.translateY(moveVector.y);
         camera.translateZ(moveVector.z);
