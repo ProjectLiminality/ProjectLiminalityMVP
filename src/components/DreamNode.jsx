@@ -26,7 +26,7 @@ const log = (message, ...args) => {
  *   isHovered: boolean
  * }> & React.RefAttributes<unknown>>}
  */
-const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene, isHovered }, ref) => {
+const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene, isHovered, onDreamGraphClick }, ref) => {
   log('DreamNode rendered', { repoName, isHovered });
 
   const [showOverlay, setShowOverlay] = useState(false);
@@ -107,7 +107,10 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
 
   const handleClick = useCallback(() => {
     onNodeClick(repoName);
-  }, [onNodeClick, repoName]);
+    if (onDreamGraphClick) {
+      onDreamGraphClick(repoName);
+    }
+  }, [onNodeClick, onDreamGraphClick, repoName]);
 
   useEffect(() => {
     log('DreamNode rendered', { repoName, isHovered, showOverlay });
