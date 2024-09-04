@@ -5,6 +5,7 @@ import { Raycaster, Vector2, Vector3 } from 'three';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode from './DreamNode';
 import DreamNode3D from './DreamNode3D';
+import DreamGraph from './DreamGraph';
 import { createRoot } from 'react-dom/client';
 
 /**
@@ -202,6 +203,14 @@ const DreamSpace = () => {
   }, [sceneState, dreamNodes]);
 
   const [hoveredNode, setHoveredNode] = useState(null);
+
+  const updateNode = useCallback((index, updates) => {
+    setDreamNodes(prevNodes => {
+      const newNodes = [...prevNodes];
+      newNodes[index] = { ...newNodes[index], ...updates };
+      return newNodes;
+    });
+  }, []);
 
   /**
    * Check for intersections with DreamNodes
@@ -438,6 +447,7 @@ const DreamSpace = () => {
           Loading...
         </div>
       )}
+      <DreamGraph dreamNodes={dreamNodes} updateNode={updateNode} />
     </div>
   );
 };
