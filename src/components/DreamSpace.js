@@ -131,7 +131,7 @@ const DreamSpace = () => {
         }
       };
 
-      fetchDreamNodes(5, true); // Fetch 5 random nodes
+      fetchDreamNodes(10, true); // Fetch 5 random nodes
     }
   }, [sceneState]);
 
