@@ -14,33 +14,16 @@ const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
     if (dreamNodes.length === 0) return;
 
     raycaster.setFromCamera(mouse.current, camera);
-
-    console.log('Checking intersection...');
-    console.log('Mouse position:', mouse.current);
-    console.log('Camera position:', camera.position);
-    console.log('Scene children count:', scene.children.length);
-
     const intersects = raycaster.intersectObjects(scene.children, true);
-    console.log('Intersects:', intersects);
     
     if (intersects.length > 0) {
-      const intersectedObject = intersects[0].object;
-      const intersectedNode = intersectedObject.parent;
-      console.log('Intersected object:', intersectedObject);
-      console.log('Intersected object type:', intersectedObject.type);
-      console.log('Intersected object userData:', intersectedObject.userData);
-      console.log('Intersected node:', intersectedNode);
-      console.log('Intersected node type:', intersectedNode.type);
-      console.log('Intersected node userData:', intersectedNode.userData);
+      const intersectedNode = intersects[0].object.parent;
       const intersectedRepoName = intersectedNode.userData.repoName;
-      console.log('Intersected repoName:', intersectedRepoName);
       if (hoveredNode !== intersectedRepoName) {
         setHoveredNode(intersectedRepoName);
-        console.log('Hovered node set to:', intersectedRepoName);
       }
     } else if (hoveredNode !== null) {
       setHoveredNode(null);
-      console.log('No intersection, hovered node set to null');
     }
   }, [dreamNodes, hoveredNode, setHoveredNode, raycaster, camera, scene]);
 
