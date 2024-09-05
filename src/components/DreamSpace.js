@@ -1,12 +1,9 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { Canvas, useThree, useFrame, extend } from '@react-three/fiber';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode3DR3F from './DreamNode3DR3F';
 import DreamGraph from './DreamGraph';
-
-extend({ CSS3DRenderer });
 
 
 const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
@@ -66,32 +63,6 @@ const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
   return null;
 };
 
-const CSS3DRendererComponent = () => {
-  const { gl, scene, camera, size } = useThree();
-  const css3dRef = useRef();
-
-  useEffect(() => {
-    const css3dRenderer = new CSS3DRenderer();
-    css3dRenderer.setSize(size.width, size.height);
-    css3dRenderer.domElement.style.position = 'absolute';
-    css3dRenderer.domElement.style.top = '0';
-    css3dRenderer.domElement.style.pointerEvents = 'none';
-    gl.domElement.parentNode.appendChild(css3dRenderer.domElement);
-    css3dRef.current = css3dRenderer;
-
-    return () => {
-      gl.domElement.parentNode.removeChild(css3dRenderer.domElement);
-    };
-  }, [gl, size]);
-
-  useFrame(() => {
-    if (css3dRef.current) {
-      css3dRef.current.render(scene, camera);
-    }
-  });
-
-  return null;
-};
 
 const DreamSpace = () => {
   const [dreamNodes, setDreamNodes] = useState([]);
@@ -285,7 +256,6 @@ const DreamSpace = () => {
           setHoveredNode={setHoveredNode}
         />
         <axesHelper args={[5]} />
-        <CSS3DRendererComponent />
       </Canvas>
       {dreamNodes.length === 0 && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
