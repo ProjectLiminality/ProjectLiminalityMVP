@@ -24,15 +24,29 @@ const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
       const intersectedRepoName = intersectedNode.userData.repoName;
       if (hoveredNode !== intersectedRepoName) {
         setHoveredNode(intersectedRepoName);
+        console.log('Hovered node:', intersectedRepoName);
       }
     } else if (hoveredNode !== null) {
       setHoveredNode(null);
+      console.log('No node hovered');
     }
   }, [dreamNodes, hoveredNode, setHoveredNode, raycaster, camera, scene]);
 
   useFrame(() => {
     checkIntersection();
   });
+
+  useEffect(() => {
+    const updateMouse = (event) => {
+      mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    };
+
+    window.addEventListener('mousemove', updateMouse);
+    return () => {
+      window.removeEventListener('mousemove', updateMouse);
+    };
+  }, []);
 
   return null;
 };
