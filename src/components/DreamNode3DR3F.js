@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Html, useAspect } from '@react-three/drei';
 import * as THREE from 'three';
-import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
+// import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 
 const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode }) => {
@@ -16,20 +16,7 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
   }, [hovered]);
 
-  useEffect(() => {
-    const dreamTalkElement = document.createElement('div');
-    dreamTalkElement.style.width = '300px';
-    dreamTalkElement.style.height = '300px';
-    
-    const css3DObject = new CSS3DObject(dreamTalkElement);
-    css3DObject.position.copy(position);
-    scene.add(css3DObject);
-    css3DRef.current = css3DObject;
-
-    return () => {
-      scene.remove(css3DObject);
-    };
-  }, [position, scene]);
+  // CSS3DObject effect commented out
 
   useFrame(() => {
     if (meshRef.current) {

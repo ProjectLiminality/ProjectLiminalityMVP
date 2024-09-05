@@ -1,12 +1,12 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { Canvas, useThree, useFrame, extend } from '@react-three/fiber';
 import * as THREE from 'three';
-import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
+// import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode3DR3F from './DreamNode3DR3F';
 import DreamGraph from './DreamGraph';
 
-extend({ CSS3DRenderer, CSS3DObject });
+// extend({ CSS3DRenderer, CSS3DObject });
 
 const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
   const { raycaster, camera, scene } = useThree();
@@ -17,14 +17,22 @@ const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
 
     raycaster.setFromCamera(mouse.current, camera);
 
+    console.log('Checking intersection...');
+    console.log('Mouse position:', mouse.current);
+    console.log('Camera position:', camera.position);
+    console.log('Scene children count:', scene.children.length);
+
     const intersects = raycaster.intersectObjects(scene.children, true);
+    console.log('Intersects:', intersects);
     
     if (intersects.length > 0) {
       const intersectedObject = intersects[0].object;
       const intersectedNode = intersectedObject.parent;
       console.log('Intersected object:', intersectedObject);
+      console.log('Intersected object type:', intersectedObject.type);
       console.log('Intersected object userData:', intersectedObject.userData);
       console.log('Intersected node:', intersectedNode);
+      console.log('Intersected node type:', intersectedNode.type);
       console.log('Intersected node userData:', intersectedNode.userData);
       const intersectedRepoName = intersectedNode.userData.repoName;
       console.log('Intersected repoName:', intersectedRepoName);
@@ -57,32 +65,7 @@ const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
   return null;
 };
 
-const CSS3DRendererComponent = () => {
-  const { gl, scene, camera } = useThree();
-  const css3dRendererRef = useRef();
-
-  useEffect(() => {
-    const css3dRenderer = new CSS3DRenderer();
-    css3dRenderer.setSize(window.innerWidth, window.innerHeight);
-    css3dRenderer.domElement.style.position = 'absolute';
-    css3dRenderer.domElement.style.top = '0';
-    css3dRenderer.domElement.style.pointerEvents = 'none';
-    document.body.appendChild(css3dRenderer.domElement);
-    css3dRendererRef.current = css3dRenderer;
-
-    return () => {
-      document.body.removeChild(css3dRenderer.domElement);
-    };
-  }, []);
-
-  useFrame(() => {
-    if (css3dRendererRef.current) {
-      css3dRendererRef.current.render(scene, camera);
-    }
-  });
-
-  return null;
-};
+// CSS3DRendererComponent commented out
 
 const DreamSpace = () => {
   const [dreamNodes, setDreamNodes] = useState([]);
@@ -276,19 +259,7 @@ const DreamSpace = () => {
           setHoveredNode={setHoveredNode}
         />
         <axesHelper args={[5]} />
-        <CSS3DRendererComponent />
-        <primitive object={(() => {
-          const el = document.createElement('div');
-          el.style.width = '200px';
-          el.style.height = '200px';
-          el.style.background = 'red';
-          el.style.color = 'white';
-          el.style.display = 'flex';
-          el.style.justifyContent = 'center';
-          el.style.alignItems = 'center';
-          el.textContent = 'Test CSS3D Object';
-          return new CSS3DObject(el);
-        })()} position={[0, 0, 0]} />
+        {/* CSS3DRendererComponent and CSS3DObject commented out */}
       </Canvas>
       {dreamNodes.length === 0 && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
