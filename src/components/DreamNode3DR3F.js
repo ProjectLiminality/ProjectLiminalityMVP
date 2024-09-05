@@ -46,14 +46,14 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
         }}
         onClick={() => onNodeClick(repoName)}
       >
-        <boxGeometry args={[50, 50, 50]} />
+        <boxGeometry args={[10, 10, 10]} />
         <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
       </mesh>
       <Html
         transform
         occlude
-        position={[0, 0, 0]}
-        scale={10}
+        position={[0, 0, 10.1]}
+        scale={20}
         style={{
           width: '300px',
           height: '300px',
@@ -76,9 +76,9 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
       <Html
         transform
         occlude
-        position={[0, 0, 0]}
+        position={[0, 0, 10]}
         rotation={[0, Math.PI, 0]}
-        scale={10}
+        scale={20}
         style={{
           width: '300px',
           height: '300px',
