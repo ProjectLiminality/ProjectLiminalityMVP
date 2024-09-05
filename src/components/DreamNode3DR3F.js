@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import DreamTalk from './DreamTalk';
 
-const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode }) => {
+const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode, mediaContent, metadata }) => {
   const groupRef = useRef();
   const meshRef = useRef();
   const [hovered, setHovered] = useState(false);
@@ -34,13 +34,20 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
         occlude
         position={[0, 0, 50]}
         style={{
-          width: '2000px',
-          height: '2000px',
+          width: '300px',
+          height: '300px',
           pointerEvents: 'none',
         }}
       >
-        <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 255, 0.5)', padding: '10px' }}>
-          <DreamTalk repoName={repoName} />
+        <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: '10px' }}>
+          <DreamTalk 
+            repoName={repoName}
+            mediaContent={mediaContent}
+            metadata={metadata}
+            onClick={() => onNodeClick(repoName)}
+            isHovered={hovered}
+            borderColor={hovered ? 'hotpink' : 'orange'}
+          />
         </div>
       </Html>
     </group>
