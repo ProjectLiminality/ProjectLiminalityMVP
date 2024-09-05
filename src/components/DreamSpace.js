@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { Raycaster, Vector2, Vector3 } from 'three';
+import { Canvas } from '@react-three/fiber';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode from './DreamNode';
 import DreamNode3D from './DreamNode3D';
