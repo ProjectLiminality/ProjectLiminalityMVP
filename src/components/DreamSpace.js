@@ -1,16 +1,15 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
+import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import { PerspectiveCamera } from '@react-three/drei';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
-import { Raycaster, Vector2, Vector3 } from 'three';
-import { Canvas, extend, useThree, useFrame } from '@react-three/fiber';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode from './DreamNode';
-import DreamNode3D from './DreamNode3D';
 import DreamGraph from './DreamGraph';
 import { createRoot } from 'react-dom/client';
 
-// Extend Three.js objects for use in JSX
-extend({ CSS3DRenderer });
+// We'll create this component next
+import DreamNode3DR3F from './DreamNode3DR3F';
 
 /**
  * @typedef {Object} SceneState
@@ -32,15 +31,11 @@ extend({ CSS3DRenderer });
  */
 const DreamSpace = () => {
   const refContainer = useRef(null);
-  /** @type {[DreamNodeData[], React.Dispatch<React.SetStateAction<DreamNodeData[]>>]} */
   const [dreamNodes, setDreamNodes] = useState([]);
   const [error, setError] = useState(null);
-  /** @type {[SceneState|null, React.Dispatch<React.SetStateAction<SceneState|null>>]} */
-  const [sceneState, setSceneState] = useState(null);
-  /** @type {React.MutableRefObject<Raycaster>} */
-  const raycaster = useRef(new Raycaster());
-  /** @type {React.MutableRefObject<Vector2>} */
-  const mouse = useRef(new Vector2());
+  const raycaster = useRef(new THREE.Raycaster());
+  const mouse = useRef(new THREE.Vector2());
+  const cssRendererRef = useRef(null);
 
   const moveState = useRef({
     forward: false,
@@ -54,19 +49,17 @@ const DreamSpace = () => {
   });
 
   const SceneManager = () => {
-    const { gl, camera } = useThree();
+    const { gl, scene, camera } = useThree();
 
     useEffect(() => {
       if (!refContainer.current) return;
-
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);
 
       const cssRenderer = new CSS3DRenderer();
       cssRenderer.setSize(window.innerWidth, window.innerHeight);
       cssRenderer.domElement.style.position = 'absolute';
       cssRenderer.domElement.style.top = '0';
       refContainer.current.appendChild(cssRenderer.domElement);
+      cssRendererRef.current = cssRenderer;
 
       const handleResize = () => {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -77,20 +70,17 @@ const DreamSpace = () => {
 
       window.addEventListener('resize', handleResize);
 
-      setSceneState({ scene, camera, cssRenderer, cleanup: () => {
-        window.removeEventListener('resize', handleResize);
-        cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
-      }});
-
       return () => {
         window.removeEventListener('resize', handleResize);
-        cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
+        if (cssRenderer.domElement && cssRenderer.domElement.parentNode) {
+          cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
+        }
       };
-    }, [camera, gl]);
+    }, [gl, camera]);
 
     useFrame(() => {
-      if (sceneState) {
-        sceneState.cssRenderer.render(sceneState.scene, camera);
+      if (cssRendererRef.current) {
+        cssRendererRef.current.render(scene, camera);
       }
     });
 
