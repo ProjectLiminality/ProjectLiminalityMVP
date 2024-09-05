@@ -54,9 +54,10 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
         onPointerOut={handlePointerOut}
         onClick={handleClick}
         renderOrder={1}
+        position={[0, 0, 10]}
       >
-        <circleGeometry args={[37.5, 32]} />
-        <meshBasicMaterial color="red" opacity={0.5} transparent visible={true} />
+        <circleGeometry args={[75, 32]} />
+        <meshBasicMaterial color="red" opacity={1} transparent={false} visible={true} />
       </mesh>
       <mesh
         ref={backPlaneRef}
@@ -65,9 +66,10 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
         onClick={handleClick}
         rotation={[0, Math.PI, 0]}
         renderOrder={1}
+        position={[0, 0, -10]}
       >
-        <circleGeometry args={[37.5, 32]} />
-        <meshBasicMaterial color="blue" opacity={0.5} transparent visible={true} />
+        <circleGeometry args={[75, 32]} />
+        <meshBasicMaterial color="blue" opacity={1} transparent={false} visible={true} />
       </mesh>
       <Html
         transform
