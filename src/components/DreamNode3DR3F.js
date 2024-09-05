@@ -64,7 +64,7 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
         onPointerOut={handlePointerOut}
         onClick={handleClick}
       >
-        <circleGeometry args={[7.5, 32]} />
+        <circleGeometry args={[37.5, 32]} />
         <meshBasicMaterial visible={false} />
       </mesh>
       <mesh
@@ -74,7 +74,7 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
         onClick={handleClick}
         rotation={[0, Math.PI, 0]}
       >
-        <circleGeometry args={[7.5, 32]} />
+        <circleGeometry args={[37.5, 32]} />
         <meshBasicMaterial visible={false} />
       </mesh>
       <Html
