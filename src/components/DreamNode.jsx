@@ -29,7 +29,6 @@ const log = (message, ...args) => {
 const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene, isHovered, onDreamGraphClick }, ref) => {
   log('DreamNode rendered', { repoName, isHovered });
 
-  const [showOverlay, setShowOverlay] = useState(false);
   /** @type {[RepoData, React.Dispatch<React.SetStateAction<RepoData>>]} */
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
   const nodeRef = useRef(null);
