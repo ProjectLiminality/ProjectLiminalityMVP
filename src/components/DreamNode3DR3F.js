@@ -52,7 +52,7 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
       <Html
         transform
         occlude
-        position={[0, 0, 75]}
+        position={[0, 0, 0]}
         scale={10}
         style={{
           width: '300px',
@@ -76,7 +76,7 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
       <Html
         transform
         occlude
-        position={[0, 0, -75]}
+        position={[0, 0, 0]}
         rotation={[0, Math.PI, 0]}
         scale={10}
         style={{
