@@ -99,10 +99,6 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
     log('repoName changed', { repoName });
   }, [repoName]);
 
-  useEffect(() => {
-    log('isHovered changed', { repoName, isHovered });
-    setShowOverlay(isHovered);
-  }, [isHovered, repoName]);
 
   const handleClick = useCallback(() => {
     onNodeClick(repoName);
@@ -126,26 +122,6 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
           isHovered={isHovered}
           borderColor={repoData.metadata?.type === 'person' ? RED : BLUE}
         />
-        {showOverlay && (
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: 'white',
-            fontSize: '16px',
-            textAlign: 'center',
-            padding: '10px',
-            boxSizing: 'border-box',
-          }}>
-            <p>{repoData.metadata.description || 'No description available'}</p>
-          </div>
-        )}
       </div>
       <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
         <DreamSong 
