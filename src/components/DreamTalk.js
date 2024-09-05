@@ -4,11 +4,9 @@ import { BLUE, BLACK, WHITE } from '../constants/colors';
 const DreamTalk = ({ repoName, mediaContent, metadata, onClick, isHovered, borderColor }) => {
   const renderMedia = () => {
     if (!mediaContent || !mediaContent.data) {
-      console.log(`No media content for ${repoName}`);
       return null;
     }
 
-    console.log(`Rendering media for ${repoName}:`, mediaContent.type);
     switch (mediaContent.type) {
       case 'image/jpeg':
       case 'image/png':
