@@ -52,7 +52,7 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
       <Html
         transform
         occlude
-        position={[0, 0, 50]}
+        position={[0, 0, 25]}
         style={{
           width: '300px',
           height: '300px',
@@ -70,7 +70,21 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
               borderColor={borderColor}
             />
           </div>
-          <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+        </div>
+      </Html>
+      <Html
+        transform
+        occlude
+        position={[0, 0, -25]}
+        rotation={[0, Math.PI, 0]}
+        style={{
+          width: '300px',
+          height: '300px',
+          pointerEvents: 'none',
+        }}
+      >
+        <div style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d' }}>
+          <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden' }}>
             <DreamSong 
               repoName={repoName}
               metadata={repoData.metadata}
