@@ -9,8 +9,30 @@ const DreamSpace = () => {
   const [dreamNodes, setDreamNodes] = useState([]);
   const [error, setError] = useState(null);
   const [hoveredNode, setHoveredNode] = useState(null);
-  const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
+
+  const checkIntersection = useCallback(() => {
+    if (dreamNodes.length === 0) return;
+
+    const { raycaster, camera, scene } = useThree();
+    raycaster.setFromCamera(mouse.current, camera);
+
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    
+    if (intersects.length > 0) {
+      const intersectedNode = intersects[0].object.parent;
+      const intersectedRepoName = intersectedNode.userData.repoName;
+      if (hoveredNode !== intersectedRepoName) {
+        setHoveredNode(intersectedRepoName);
+      }
+    } else if (hoveredNode !== null) {
+      setHoveredNode(null);
+    }
+  }, [dreamNodes, hoveredNode]);
+
+  useFrame(() => {
+    checkIntersection();
+  });
 
   const moveState = useRef({
     forward: false,
@@ -183,6 +205,7 @@ const DreamSpace = () => {
             position={node.position}
             onNodeClick={handleNodeClick}
             isHovered={hoveredNode === node.repoName}
+            setHoveredNode={setHoveredNode}
           />
         ))}
       </Canvas>
