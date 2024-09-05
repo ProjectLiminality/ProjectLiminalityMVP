@@ -441,36 +441,38 @@ const DreamSpace = () => {
     return <div>Error: {error}</div>;
   }
 
-  return (
-    <div ref={refContainer} style={{ width: '100vw', height: '100vh' }}>
-      <Canvas>
-        {sceneState && (
-          <>
-            {/* Existing Three.js scene content will be rendered here */}
-            {dreamNodes.map((dreamNode, index) => (
-              <DreamNode 
-                key={dreamNode.repoName}
-                ref={el => {
-                  dreamNodeRefs.current[index] = el;
-                }}
-                repoName={dreamNode.repoName} 
-                initialPosition={new THREE.Vector3(index * 350, 0, 0)}
-                cssScene={sceneState.scene}
-                onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
-                isHovered={hoveredNode === dreamNode.repoName}
-              />
-            ))}
-          </>
-        )}
-      </Canvas>
-      {(!sceneState || dreamNodes.length === 0) && (
-        <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-          Loading...
-        </div>
-      )}
-      <DreamGraph dreamNodes={dreamNodes} updateNode={updateNode} />
-    </div>
-  );
+  return (                                                                                                                                                                                                 
+   <div ref={refContainer} style={{ width: '100vw', height: '100vh' }}>                                                                                                                                   
+     <Canvas>                                                                                                                                                                                             
+       {sceneState && (                                                                                                                                                                                   
+         <primitive object={sceneState.scene} />                                                                                                                                                          
+       )}                                                                                                                                                                                                 
+     </Canvas>                                                                                                                                                                                            
+     {sceneState && (                                                                                                                                                                                     
+       <>                                                                                                                                                                                                 
+         {dreamNodes.map((dreamNode, index) => (                                                                                                                                                          
+           <DreamNode                                                                                                                                                                                     
+             key={dreamNode.repoName}                                                                                                                                                                     
+             ref={el => {                                                                                                                                                                                 
+               dreamNodeRefs.current[index] = el;                                                                                                                                                         
+             }}                                                                                                                                                                                           
+             repoName={dreamNode.repoName}                                                                                                                                                                
+             initialPosition={new THREE.Vector3(index * 350, 0, 0)}                                                                                                                                       
+             cssScene={sceneState.scene}                                                                                                                                                                  
+             onNodeClick={(repoName) => console.log('Node clicked:', repoName)}                                                                                                                           
+             isHovered={hoveredNode === dreamNode.repoName}                                                                                                                                               
+           />                                                                                                                                                                                             
+         ))}                                                                                                                                                                                              
+       </>                                                                                                                                                                                                
+     )}                                                                                                                                                                                                   
+     {(!sceneState || dreamNodes.length === 0) && (                                                                                                                                                       
+       <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>                                                                                
+         Loading...                                                                                                                                                                                       
+       </div>                                                                                                                                                                                             
+     )}                                                                                                                                                                                                   
+     <DreamGraph dreamNodes={dreamNodes} updateNode={updateNode} />                                                                                                                                       
+   </div>                                                                                                                                                                                                 
+ );   
 };
 
 export default DreamSpace;
