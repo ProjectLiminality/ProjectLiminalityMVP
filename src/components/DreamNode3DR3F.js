@@ -7,16 +7,19 @@ import DreamTalk from './DreamTalk';
 
 const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode }) => {
   const meshRef = useRef();
-  const css3DRef = useRef();
   const [hovered, setHovered] = useState(false);
-  const { scene } = useThree();
   const [width, height] = useAspect(300, 300);
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
   }, [hovered]);
 
-  // CSS3DObject effect commented out
+  useEffect(() => {
+    if (meshRef.current) {
+      meshRef.current.userData.repoName = repoName;
+      console.log('Set userData for mesh:', meshRef.current.userData);
+    }
+  }, [repoName]);
 
   useFrame(() => {
     if (meshRef.current) {
@@ -26,11 +29,17 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
   });
 
   return (
-    <group position={position}>
+    <group position={position} userData={{ repoName: repoName }}>
       <mesh
         ref={meshRef}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onPointerOver={() => {
+          setHovered(true);
+          setHoveredNode(repoName);
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          setHoveredNode(null);
+        }}
         onClick={() => onNodeClick(repoName)}
       >
         <boxGeometry args={[50, 50, 50]} />
