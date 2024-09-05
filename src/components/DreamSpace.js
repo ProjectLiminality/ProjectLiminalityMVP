@@ -1,41 +1,16 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import * as THREE from 'three';
+import React, { useRef, useState, useCallback } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { PerspectiveCamera } from '@react-three/drei';
-import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
+import * as THREE from 'three';
 import { scanDreamVault } from '../services/electronService';
-import DreamNode from './DreamNode';
-import DreamGraph from './DreamGraph';
-import { createRoot } from 'react-dom/client';
-
-// We'll create this component next
 import DreamNode3DR3F from './DreamNode3DR3F';
+import DreamGraph from './DreamGraph';
 
-/**
- * @typedef {Object} SceneState
- * @property {THREE.Scene} scene
- * @property {THREE.PerspectiveCamera} camera
- * @property {CSS3DRenderer} cssRenderer
- * @property {OrbitControls} controls
- * @property {() => void} cleanup
- */
-
-/**
- * @typedef {Object} DreamNodeData
- * @property {string} repoName
- */
-
-/**
- * DreamSpace component
- * @returns {JSX.Element}
- */
 const DreamSpace = () => {
-  const refContainer = useRef(null);
   const [dreamNodes, setDreamNodes] = useState([]);
   const [error, setError] = useState(null);
+  const [hoveredNode, setHoveredNode] = useState(null);
   const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
-  const cssRendererRef = useRef(null);
 
   const moveState = useRef({
     forward: false,
@@ -48,199 +23,109 @@ const DreamSpace = () => {
     tiltRight: false,
   });
 
-  const SceneManager = () => {
-    const { gl, scene, camera } = useThree();
-
-    useEffect(() => {
-      if (!refContainer.current) return;
-
-      const cssRenderer = new CSS3DRenderer();
-      cssRenderer.setSize(window.innerWidth, window.innerHeight);
-      cssRenderer.domElement.style.position = 'absolute';
-      cssRenderer.domElement.style.top = '0';
-      refContainer.current.appendChild(cssRenderer.domElement);
-      cssRendererRef.current = cssRenderer;
-
-      const handleResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        cssRenderer.setSize(window.innerWidth, window.innerHeight);
-        gl.setSize(window.innerWidth, window.innerHeight);
-      };
-
-      window.addEventListener('resize', handleResize);
-
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        if (cssRenderer.domElement && cssRenderer.domElement.parentNode) {
-          cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
-        }
-      };
-    }, [gl, camera]);
+  const CameraController = () => {
+    const { camera } = useThree();
+    const moveSpeed = 10;
+    const rotateSpeed = 0.002;
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
 
     useFrame(() => {
-      if (cssRendererRef.current) {
-        cssRendererRef.current.render(scene, camera);
+      const moveVector = new THREE.Vector3();
+
+      if (moveState.current.forward) moveVector.z -= moveSpeed;
+      if (moveState.current.backward) moveVector.z += moveSpeed;
+      if (moveState.current.left) moveVector.x -= moveSpeed;
+      if (moveState.current.right) moveVector.x += moveSpeed;
+      if (moveState.current.up) moveVector.y += moveSpeed;
+      if (moveState.current.down) moveVector.y -= moveSpeed;
+
+      camera.translateX(moveVector.x);
+      camera.translateY(moveVector.y);
+      camera.translateZ(moveVector.z);
+
+      const tiltSpeed = 0.02;
+      if (moveState.current.tiltLeft) {
+        camera.rotateZ(tiltSpeed);
+      }
+      if (moveState.current.tiltRight) {
+        camera.rotateZ(-tiltSpeed);
       }
     });
 
-    return null;
-  };
+    const onMouseMove = (event) => {
+      if (isDragging) {
+        const movementX = event.clientX - previousMousePosition.x;
+        const movementY = event.clientY - previousMousePosition.y;
 
-  useEffect(() => {
-    console.log('Initializing sceneState');
-    if (!refContainer.current) {
-      console.log('Container ref is not available yet');
-      return;
-    }
+        camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), -movementX * rotateSpeed);
+        camera.rotateX(-movementY * rotateSpeed);
+        camera.up.set(0, 1, 0);
 
-    try {
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);
+        previousMousePosition = { x: event.clientX, y: event.clientY };
+      }
 
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
-      camera.position.z = 1000;
+      mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    };
 
-      const cssRenderer = new CSS3DRenderer();
-      cssRenderer.setSize(window.innerWidth, window.innerHeight);
-      cssRenderer.domElement.style.position =
- 'absolute';
-      cssRenderer.domElement.style.top = '0';
-      refContainer.current.appendChild(cssRenderer.domElement);
-
-      // Remove OrbitControls
-
-      const handleResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        cssRenderer.setSize(window.innerWidth, window.innerHeight);
-      };
-
-      window.addEventListener('resize', handleResize);
-
-      console.log('sceneState initialized successfully');
-
-      setSceneState({
-        scene,
-        camera,
-        cssRenderer,
-        cleanup: () => {
-          window.removeEventListener('resize', handleResize);
-          cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
-        }
-      });
-    } catch (error) {
-      const errorMessage = 'Error initializing scene: ' + error.message;
-      console.error(errorMessage);
-      setError(errorMessage);
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log('sceneState effect triggered. sceneState:', !!sceneState);
-  }, [sceneState]);
-
-  useEffect(() => {
-    console.log('Fetch DreamNode effect triggered. sceneState:', !!sceneState);
-    if (sceneState) {
-      const fetchDreamNodes = async (count = 5, random = false) => {
-        try {
-          console.log('Scanning DreamVault...');
-          const repos = await scanDreamVault();
-          console.log('Repos found:', repos);
-          if (repos.length > 0) {
-            let selectedRepos;
-            if (random) {
-              selectedRepos = repos
-                .sort(() => 0.5 - Math.random())
-                .slice(0, count);
-            } else {
-              selectedRepos = repos.slice(0, count);
-            }
-            console.log('Setting DreamNodes:', selectedRepos);
-            const newNodes = selectedRepos.map(repo => ({ repoName: repo }));
-            setDreamNodes(newNodes);
-          } else {
-            console.error('No repositories found in the DreamVault');
-            setError('No repositories found in the DreamVault');
-          }
-        } catch (error) {
-          console.error('Error scanning dream vault:', error);
-          setError('Error scanning dream vault: ' + error.message);
-        }
-      };
-
-      fetchDreamNodes(10, true); // Fetch 5 random nodes
-    }
-  }, [sceneState]);
-
-  useEffect(() => {
-    return () => {
-      if (sceneState) {
-        console.log('Cleaning up sceneState');
-        sceneState.cleanup();
+    const onMouseDown = (event) => {
+      if (event.button === 0) {
+        isDragging = true;
+        previousMousePosition = { x: event.clientX, y: event.clientY };
       }
     };
-  }, [sceneState]);
 
-  /** @type {React.MutableRefObject<Array<DreamNode|null>>} */
-  const dreamNodeRefs = useRef([]);
+    const onMouseUp = (event) => {
+      if (event.button === 0) {
+        isDragging = false;
+      }
+    };
 
-  useEffect(() => {
-    if (sceneState && dreamNodes.length > 0) {
-      console.log('Rendering DreamNodes in DreamSpace');
-      const { scene } = sceneState;
-      // Clear existing nodes
-      scene.children = scene.children.filter(child => !(child instanceof DreamNode3D));
-      console.log('Cleared existing nodes. Scene children count:', scene.children.length);
-      
-      // Reset dreamNodeRefs
-      dreamNodeRefs.current = new Array(dreamNodes.length).fill(null);
-      
-      // Add multiple DreamNodes
-      dreamNodes.forEach((dreamNode, index) => {
-        const nodeElement = document.createElement('div');
-        nodeElement.style.width = '300px';
-        nodeElement.style.height = '300px';
-        
-        const root = createRoot(nodeElement);
-        root.render(
-          <DreamNode 
-            key={dreamNode.repoName}
-            ref={el => {
-              dreamNodeRefs.current[index] = el;
-            }}
-            repoName={dreamNode.repoName} 
-            initialPosition={new THREE.Vector3(index * 350, 0, 0)}
-            cssScene={scene}
-            onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
-            isHovered={hoveredNode === dreamNode.repoName}
-          />
-        );
+    const onKeyDown = (event) => {
+      switch (event.key.toLowerCase()) {
+        case 'w': moveState.current.forward = true; break;
+        case 's': moveState.current.backward = true; break;
+        case 'a': moveState.current.left = true; break;
+        case 'd': moveState.current.right = true; break;
+        case ' ': moveState.current.up = true; break;
+        case 'shift': moveState.current.down = true; break;
+        case 'q': moveState.current.tiltLeft = true; break;
+        case 'e': moveState.current.tiltRight = true; break;
+      }
+    };
 
-        // Use a MutationObserver to detect when the DreamNode has been added to the DOM
-        const observer = new MutationObserver(() => {
-          console.log(`DreamNode ${dreamNode.repoName} rendered to nodeElement`);
-          const currentNode = dreamNodeRefs.current[index];
-          if (currentNode && currentNode.object) {
-            scene.add(currentNode.object);
-            console.log(`Added DreamNode ${dreamNode.repoName} to scene. Scene children count:`, scene.children.length);
-          } else {
-            console.log(`Failed to add DreamNode ${dreamNode.repoName} to scene. dreamNodeRefs.current[${index}]:`, currentNode);
-          }
-          observer.disconnect();
-        });
+    const onKeyUp = (event) => {
+      switch (event.key.toLowerCase()) {
+        case 'w': moveState.current.forward = false; break;
+        case 's': moveState.current.backward = false; break;
+        case 'a': moveState.current.left = false; break;
+        case 'd': moveState.current.right = false; break;
+        case ' ': moveState.current.up = false; break;
+        case 'shift': moveState.current.down = false; break;
+        case 'q': moveState.current.tiltLeft = false; break;
+        case 'e': moveState.current.tiltRight = false; break;
+      }
+    };
 
-        observer.observe(nodeElement, { childList: true, subtree: true });
-      });
+    React.useEffect(() => {
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mousedown', onMouseDown);
+      window.addEventListener('mouseup', onMouseUp);
+      window.addEventListener('keydown', onKeyDown);
+      window.addEventListener('keyup', onKeyUp);
 
-      console.log('dreamNodeRefs after rendering:', dreamNodeRefs.current);
-    } else {
-      console.log('Not rendering DreamNode. sceneState:', !!sceneState, 'dreamNodes length:', dreamNodes.length);
-    }
-  }, [sceneState, dreamNodes]);
+      return () => {
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mousedown', onMouseDown);
+        window.removeEventListener('mouseup', onMouseUp);
+        window.removeEventListener('keydown', onKeyDown);
+        window.removeEventListener('keyup', onKeyUp);
+      };
+    }, []);
 
-  const [hoveredNode, setHoveredNode] = useState(null);
+    return null;
+  };
 
   const updateNode = useCallback((index, updates) => {
     setDreamNodes(prevNodes => {
@@ -250,252 +135,58 @@ const DreamSpace = () => {
     });
   }, []);
 
-  /**
-   * Check for intersections with DreamNodes
-   * @param {boolean} [isClick=false] - Whether this check is for a click event
-   */
-  const checkIntersection = useCallback((isClick = false) => {
-    if (!sceneState || dreamNodeRefs.current.length === 0 || dreamNodes.length === 0) {
-      console.log('Skipping intersection check due to missing data');
-      return;
-    }
-
-    raycaster.current.setFromCamera(mouse.current, sceneState.camera);
-    
-    let intersectedNode = null;
-    let intersectedPlane = null;
-
-    for (let i = 0; i < dreamNodeRefs.current.length; i++) {
-      const node = dreamNodeRefs.current[i];
-      if (!node || !node.getFrontPlane || !node.getBackPlane) {
-        continue;
+  React.useEffect(() => {
+    const fetchDreamNodes = async (count = 10, random = true) => {
+      try {
+        console.log('Scanning DreamVault...');
+        const repos = await scanDreamVault();
+        console.log('Repos found:', repos);
+        if (repos.length > 0) {
+          let selectedRepos = random
+            ? repos.sort(() => 0.5 - Math.random()).slice(0, count)
+            : repos.slice(0, count);
+          console.log('Setting DreamNodes:', selectedRepos);
+          const newNodes = selectedRepos.map((repo, index) => ({
+            repoName: repo,
+            position: new THREE.Vector3(index * 350, 0, 0)
+          }));
+          setDreamNodes(newNodes);
+        } else {
+          console.error('No repositories found in the DreamVault');
+          setError('No repositories found in the DreamVault');
+        }
+      } catch (error) {
+        console.error('Error scanning dream vault:', error);
+        setError('Error scanning dream vault: ' + error.message);
       }
+    };
 
-      const intersects = raycaster.current.intersectObjects([
-        node.getFrontPlane(),
-        node.getBackPlane()
-      ], true);
+    fetchDreamNodes();
+  }, []);
 
-      if (intersects.length > 0) {
-        intersectedNode = node;
-        intersectedPlane = intersects[0].object;
-        break;
-      }
-    }
-
-    if (intersectedNode) {
-      const isFrontSide = intersectedPlane === intersectedNode.getFrontPlane();
-      const currentNodeIndex = dreamNodeRefs.current.indexOf(intersectedNode);
-      const currentNode = dreamNodes[currentNodeIndex];
-
-      if (!currentNode) {
-        console.error('Intersected node not found in dreamNodes array');
-        return;
-      }
-
-      if (isClick) {
-        // Handle click event
-        console.log('Clicked on node:', currentNode.repoName, 'Side:', isFrontSide ? 'front' : 'back');
-        intersectedNode.updateRotation(
-          new THREE.Euler(0, isFrontSide ? Math.PI : 0, 0),
-          1000
-        );
-      } else {
-        // Handle hover event
-        if (hoveredNode !== currentNode.repoName) {
-          // Unhover the previously hovered node
-          if (hoveredNode !== null) {
-            const previousNode = dreamNodeRefs.current.find(node => node && node.object && node.object.getRepoName() === hoveredNode);
-            if (previousNode && previousNode.object) {
-              previousNode.object.setHoverScale(false, 0.5);
-            }
-          }
-          
-          console.log('Mouse entered node:', currentNode.repoName, 'Side:', isFrontSide ? 'front' : 'back');
-          setHoveredNode(currentNode.repoName);
-          intersectedNode.object.setHoverScale(true, 0.5);
-        }
-      }
-    } else if (hoveredNode !== null) {
-      // Mouse is not over any node, unhover the previously hovered node
-      const previousNode = dreamNodeRefs.current.find(node => node && node.object && node.object.getRepoName() === hoveredNode);
-      if (previousNode && previousNode.object) {
-        console.log('Mouse left node:', hoveredNode);
-        previousNode.object.setHoverScale(false, 0.5);
-      }
-      setHoveredNode(null);
-    }
-  }, [sceneState, hoveredNode, dreamNodes]);
-
-  const frameCountRef = useRef(0);
-  const animationFrameRef = useRef(null);
-
-  useEffect(() => {
-    if (sceneState) {
-      const { scene, camera, cssRenderer } = sceneState;
-
-      const moveSpeed = 10;
-      const rotateSpeed = 0.002;
-
-      let isDragging = false;
-      let previousMousePosition = { x: 0, y: 0 };
-
-      const animate = () => {
-        frameCountRef.current++;
-
-        // Reset moveVector at the start of each frame
-        const moveVector = new Vector3();
-
-        // Update moveVector based on current move state
-        if (moveState.current.forward) moveVector.z -= moveSpeed;
-        if (moveState.current.backward) moveVector.z += moveSpeed;
-        if (moveState.current.left) moveVector.x -= moveSpeed;
-        if (moveState.current.right) moveVector.x += moveSpeed;
-        if (moveState.current.up) moveVector.y += moveSpeed;
-        if (moveState.current.down) moveVector.y -= moveSpeed;
-
-        // Apply the movement
-        if (!moveVector.equals(new Vector3(0, 0, 0))) {
-          camera.translateX(moveVector.x);
-          camera.translateY(moveVector.y);
-          camera.translateZ(moveVector.z);
-        }
-
-        // Handle tilt (roll) rotation
-        const tiltSpeed = 0.02;
-        if (moveState.current.tiltLeft) {
-          camera.rotateZ(tiltSpeed);
-        }
-        if (moveState.current.tiltRight) {
-          camera.rotateZ(-tiltSpeed);
-        }
-
-        cssRenderer.render(scene, camera);
-
-        // Store the animation frame reference
-        animationFrameRef.current = requestAnimationFrame(animate);
-      };
-
-      // Start the animation loop
-      animate();
-
-      const onMouseMove = (event) => {
-        if (isDragging) {
-          const movementX = event.clientX - previousMousePosition.x;
-          const movementY = event.clientY - previousMousePosition.y;
-
-          // Rotate around world Y axis for left/right movement
-          camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), -movementX * rotateSpeed);
-
-          // Rotate around local X axis for up/down movement
-          camera.rotateX(-movementY * rotateSpeed);
-
-          // Ensure the camera's up vector stays aligned with world up
-          camera.up.set(0, 1, 0);
-
-          previousMousePosition = { x: event.clientX, y: event.clientY };
-        }
-
-        mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        
-        // Only check for intersections if we're not dragging
-        if (!isDragging) {
-          checkIntersection();
-        }
-      };
-
-      const onMouseDown = (event) => {
-        if (event.button === 0) { // Left mouse button
-          isDragging = true;
-          previousMousePosition = { x: event.clientX, y: event.clientY };
-        }
-      };
-
-      const onMouseUp = (event) => {
-        if (event.button === 0) { // Left mouse button
-          isDragging = false;
-        }
-      };
-
-      const onClick = (event) => {
-        if (!isDragging) {
-          mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-          mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-          checkIntersection(true);
-        }
-      };
-
-      const onKeyDown = (event) => {
-        switch (event.key.toLowerCase()) {
-          case 'w': moveState.current.forward = true; break;
-          case 's': moveState.current.backward = true; break;
-          case 'a': moveState.current.left = true; break;
-          case 'd': moveState.current.right = true; break;
-          case ' ': moveState.current.up = true; break;
-          case 'shift': moveState.current.down = true; break;
-          case 'q': moveState.current.tiltLeft = true; break;
-          case 'e': moveState.current.tiltRight = true; break;
-        }
-      };
-
-      const onKeyUp = (event) => {
-        switch (event.key.toLowerCase()) {
-          case 'w': moveState.current.forward = false; break;
-          case 's': moveState.current.backward = false; break;
-          case 'a': moveState.current.left = false; break;
-          case 'd': moveState.current.right = false; break;
-          case ' ': moveState.current.up = false; break;
-          case 'shift': moveState.current.down = false; break;
-          case 'q': moveState.current.tiltLeft = false; break;
-          case 'e': moveState.current.tiltRight = false; break;
-        }
-      };
-
-      cssRenderer.domElement.addEventListener('mousemove', onMouseMove);
-      cssRenderer.domElement.addEventListener('mousedown', onMouseDown);
-      cssRenderer.domElement.addEventListener('mouseup', onMouseUp);
-      cssRenderer.domElement.addEventListener('click', onClick);
-      window.addEventListener('keydown', onKeyDown);
-      window.addEventListener('keyup', onKeyUp);
-
-      return () => {
-        // Cancel the animation frame when the component unmounts or the effect re-runs
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-        }
-        cssRenderer.domElement.removeEventListener('mousemove', onMouseMove);
-        cssRenderer.domElement.removeEventListener('mousedown', onMouseDown);
-        cssRenderer.domElement.removeEventListener('mouseup', onMouseUp);
-        cssRenderer.domElement.removeEventListener('click', onClick);
-        window.removeEventListener('keydown', onKeyDown);
-        window.removeEventListener('keyup', onKeyUp);
-      };
-    }
-  }, [sceneState, checkIntersection]);
+  const handleNodeClick = (repoName) => {
+    console.log('Node clicked:', repoName);
+  };
 
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   return (
-    <div ref={refContainer} style={{ width: '100vw', height: '100vh' }}>
+    <div style={{ width: '100vw', height: '100vh' }}>
       <Canvas camera={{ position: [0, 0, 1000], fov: 75, near: 0.1, far: 3000 }}>
-        <SceneManager />
-        {sceneState && <primitive object={sceneState.scene} />}
+        <CameraController />
+        {dreamNodes.map((node) => (
+          <DreamNode3DR3F
+            key={node.repoName}
+            repoName={node.repoName}
+            position={node.position}
+            onNodeClick={handleNodeClick}
+            isHovered={hoveredNode === node.repoName}
+          />
+        ))}
       </Canvas>
-      {sceneState && dreamNodes.map((dreamNode, index) => (
-        <DreamNode 
-          key={dreamNode.repoName}
-          ref={el => { dreamNodeRefs.current[index] = el; }}
-          repoName={dreamNode.repoName} 
-          initialPosition={new THREE.Vector3(index * 350, 0, 0)}
-          cssScene={sceneState.scene}
-          onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
-          isHovered={hoveredNode === dreamNode.repoName}
-        />
-      ))}
-      {(!sceneState || dreamNodes.length === 0) && (
+      {dreamNodes.length === 0 && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
           Loading...
         </div>
