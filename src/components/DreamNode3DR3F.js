@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Html, useAspect } from '@react-three/drei';
 import * as THREE from 'three';
-// import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
+import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import DreamTalk from './DreamTalk';
 
 const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode }) => {
