@@ -8,6 +8,29 @@ import DreamGraph from './DreamGraph';
 
 extend({ CSS3DRenderer, CSS3DObject });
 
+const DummyCSS3DComponent = () => {
+  const { scene } = useThree();
+  
+  useEffect(() => {
+    const element = document.createElement('div');
+    element.style.width = '100px';
+    element.style.height = '100px';
+    element.style.background = 'red';
+    element.style.opacity = '0.5';
+    element.textContent = 'CSS3D Test';
+
+    const object = new CSS3DObject(element);
+    object.position.set(0, 0, -500);
+    scene.add(object);
+
+    return () => {
+      scene.remove(object);
+    };
+  }, [scene]);
+
+  return null;
+};
+
 const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
   const { raycaster, camera, scene } = useThree();
   const mouse = useRef(new THREE.Vector2());
@@ -285,6 +308,7 @@ const DreamSpace = () => {
         />
         <axesHelper args={[5]} />
         <CSS3DRendererComponent />
+        <DummyCSS3DComponent />
       </Canvas>
       {dreamNodes.length === 0 && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
