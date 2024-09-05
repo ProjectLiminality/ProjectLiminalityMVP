@@ -6,7 +6,7 @@ import { scanDreamVault } from '../services/electronService';
 import DreamNode3DR3F from './DreamNode3DR3F';
 import DreamGraph from './DreamGraph';
 
-extend({ CSS3DRenderer, CSS3DObject });
+extend({ CSS3DRenderer });
 
 
 const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
