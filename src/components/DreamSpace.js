@@ -252,7 +252,7 @@ const DreamSpace = () => {
         ))}
         <axesHelper args={[5]} />
         <CSS3DRendererComponent />
-        <CSS3DObject position={[0, 0, 0]}>
+        <primitive object={new CSS3DObject(document.createElement('div'))} position={[0, 0, 0]}>
           <div style={{ width: '200px', height: '200px', background: 'red', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             Test CSS3D Object
           </div>
