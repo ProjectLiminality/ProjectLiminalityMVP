@@ -5,13 +5,9 @@ import { scanDreamVault } from '../services/electronService';
 import DreamNode3DR3F from './DreamNode3DR3F';
 import DreamGraph from './DreamGraph';
 
-const DreamSpace = () => {
-  const [dreamNodes, setDreamNodes] = useState([]);
-  const [error, setError] = useState(null);
-  const [hoveredNode, setHoveredNode] = useState(null);
-  const mouse = useRef(new THREE.Vector2());
-
+const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
   const { raycaster, camera, scene } = useThree();
+  const mouse = useRef(new THREE.Vector2());
 
   const checkIntersection = useCallback(() => {
     if (dreamNodes.length === 0) return;
@@ -29,11 +25,20 @@ const DreamSpace = () => {
     } else if (hoveredNode !== null) {
       setHoveredNode(null);
     }
-  }, [dreamNodes, hoveredNode, raycaster, camera, scene]);
+  }, [dreamNodes, hoveredNode, setHoveredNode, raycaster, camera, scene]);
 
   useFrame(() => {
     checkIntersection();
   });
+
+  return null;
+};
+
+const DreamSpace = () => {
+  const [dreamNodes, setDreamNodes] = useState([]);
+  const [error, setError] = useState(null);
+  const [hoveredNode, setHoveredNode] = useState(null);
+  const mouse = useRef(new THREE.Vector2());
 
   const moveState = useRef({
     forward: false,
