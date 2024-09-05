@@ -108,7 +108,7 @@ const DreamNode = forwardRef(({ initialPosition, repoName, onNodeClick, cssScene
   }, [onNodeClick, onDreamGraphClick, repoName]);
 
   useEffect(() => {
-    log('DreamNode rendered', { repoName, isHovered, showOverlay });
+    log('DreamNode rendered', { repoName, isHovered });
   });
 
   return (
