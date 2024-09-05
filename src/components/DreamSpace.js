@@ -264,6 +264,11 @@ const DreamSpace = () => {
             setHoveredNode={setHoveredNode}
           />
         ))}
+        <IntersectionChecker
+          dreamNodes={dreamNodes}
+          hoveredNode={hoveredNode}
+          setHoveredNode={setHoveredNode}
+        />
         <axesHelper args={[5]} />
         <CSS3DRendererComponent />
         <primitive object={(() => {
