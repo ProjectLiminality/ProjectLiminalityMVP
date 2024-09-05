@@ -12,13 +12,6 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
   }, [hovered]);
 
-  useFrame(() => {
-    if (groupRef.current) {
-      groupRef.current.rotation.x += 0.01;
-      groupRef.current.rotation.y += 0.01;
-    }
-  });
-
   return (
     <group ref={groupRef} position={position} userData={{ repoName: repoName }}>
       <mesh
@@ -39,10 +32,10 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
       <Html
         transform
         occlude
-        position={[0, 75, 0]}
+        position={[0, 0, 50]}
         style={{
-          width: '200px',
-          height: '200px',
+          width: '2000px',
+          height: '2000px',
           pointerEvents: 'none',
         }}
       >
