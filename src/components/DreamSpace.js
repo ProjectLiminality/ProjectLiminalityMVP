@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { Raycaster, Vector2, Vector3 } from 'three';
 import { Canvas } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode from './DreamNode';
 import DreamNode3D from './DreamNode3D';
@@ -442,7 +443,27 @@ const DreamSpace = () => {
   }
 
   return (
-    <div ref={refContainer}>
+    <div ref={refContainer} style={{ width: '100vw', height: '100vh' }}>
+      <Canvas>
+        {sceneState && (
+          <>
+            {/* Existing Three.js scene content will be rendered here */}
+            {dreamNodes.map((dreamNode, index) => (
+              <DreamNode 
+                key={dreamNode.repoName}
+                ref={el => {
+                  dreamNodeRefs.current[index] = el;
+                }}
+                repoName={dreamNode.repoName} 
+                initialPosition={new THREE.Vector3(index * 350, 0, 0)}
+                cssScene={sceneState.scene}
+                onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
+                isHovered={hoveredNode === dreamNode.repoName}
+              />
+            ))}
+          </>
+        )}
+      </Canvas>
       {(!sceneState || dreamNodes.length === 0) && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
           Loading...
