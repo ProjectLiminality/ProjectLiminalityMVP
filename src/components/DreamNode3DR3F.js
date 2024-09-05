@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
+import * as THREE from 'three';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { getRepoData } from '../utils/fileUtils';
@@ -9,6 +10,8 @@ import { BLUE, RED } from '../constants/colors';
 const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode }) => {
   const groupRef = useRef();
   const meshRef = useRef();
+  const frontPlaneRef = useRef();
+  const backPlaneRef = useRef();
   const [hovered, setHovered] = useState(false);
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
 
@@ -32,22 +35,47 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
 
   const borderColor = repoData.metadata?.type === 'person' ? RED : BLUE;
 
+  const handlePointerOver = () => {
+    setHovered(true);
+    setHoveredNode(repoName);
+  };
+
+  const handlePointerOut = () => {
+    setHovered(false);
+    setHoveredNode(null);
+  };
+
+  const handleClick = () => onNodeClick(repoName);
+
   return (
     <group ref={groupRef} position={position} userData={{ repoName: repoName }}>
       <mesh
         ref={meshRef}
-        onPointerOver={() => {
-          setHovered(true);
-          setHoveredNode(repoName);
-        }}
-        onPointerOut={() => {
-          setHovered(false);
-          setHoveredNode(null);
-        }}
-        onClick={() => onNodeClick(repoName)}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+        onClick={handleClick}
       >
         <boxGeometry args={[10, 10, 10]} />
         <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+      </mesh>
+      <mesh
+        ref={frontPlaneRef}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+        onClick={handleClick}
+      >
+        <circleGeometry args={[7.5, 32]} />
+        <meshBasicMaterial visible={false} />
+      </mesh>
+      <mesh
+        ref={backPlaneRef}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+        onClick={handleClick}
+        rotation={[0, Math.PI, 0]}
+      >
+        <circleGeometry args={[7.5, 32]} />
+        <meshBasicMaterial visible={false} />
       </mesh>
       <Html
         transform
