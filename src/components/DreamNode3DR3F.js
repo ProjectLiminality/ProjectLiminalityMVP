@@ -2,7 +2,9 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import DreamTalk from './DreamTalk';
+import DreamSong from './DreamSong';
 import { getRepoData } from '../utils/fileUtils';
+import { BLUE, RED } from '../constants/colors';
 
 const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode }) => {
   const groupRef = useRef();
@@ -27,6 +29,8 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
     };
     fetchRepoData();
   }, [repoName]);
+
+  const borderColor = repoData.metadata?.type === 'person' ? RED : BLUE;
 
   return (
     <group ref={groupRef} position={position} userData={{ repoName: repoName }}>
@@ -55,15 +59,26 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
           pointerEvents: 'none',
         }}
       >
-        <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: '10px' }}>
-          <DreamTalk 
-            repoName={repoName}
-            mediaContent={repoData.mediaContent}
-            metadata={repoData.metadata}
-            onClick={() => onNodeClick(repoName)}
-            isHovered={hovered}
-            borderColor={hovered ? 'hotpink' : 'orange'}
-          />
+        <div style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d' }}>
+          <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden' }}>
+            <DreamTalk 
+              repoName={repoName}
+              mediaContent={repoData.mediaContent}
+              metadata={repoData.metadata}
+              onClick={() => onNodeClick(repoName)}
+              isHovered={hovered}
+              borderColor={borderColor}
+            />
+          </div>
+          <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+            <DreamSong 
+              repoName={repoName}
+              metadata={repoData.metadata}
+              onClick={() => onNodeClick(repoName)}
+              isHovered={hovered}
+              borderColor={borderColor}
+            />
+          </div>
         </div>
       </Html>
     </group>
