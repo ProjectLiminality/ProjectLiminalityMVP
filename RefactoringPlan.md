@@ -36,22 +36,29 @@
    - Adapt Three.js event listeners to R3F event handlers
    - Preserve existing interaction logic
 
-## Implementation Strategy
-1. Set up React Three Fiber in the project
-2. Refactor DreamSpace to use R3F Canvas
-3. Convert DreamNode3D to an R3F component:
-   - Implement CSS3DObject using R3F's built-in component
-   - Create invisible geometries as R3F mesh components for raycasting
-   - Adapt existing raycasting and intersection logic using R3F hooks
-4. Update DreamNode React component to use the new R3F-based DreamNode
-5. Adjust state management and event handling across the application
-6. Thoroughly test each component after conversion, ensuring all existing functionality is preserved
-7. Update documentation to reflect new architecture
-
-## Key Considerations
-- Preserve existing raycasting and intersection logic
-- Maintain the structure of CSS3DObject with two invisible geometries for interaction
-- Ensure smooth integration of existing React components within CSS3DObjects
-- Adapt animation and update logic to use R3F's useFrame hook
+## Implementation Strategy                                                                                                                                                                               
+ 1. Set up React Three Fiber in the project                                                                                                                                                               
+ 2. Refactor DreamSpace to use R3F Canvas                                                                                                                                                                 
+ 3. Convert DreamNode React component to an R3F component:                                                                                                                                                
+    - Start with the existing DreamNode React component                                                                                                                                                   
+    - Extend it to be an R3F component while preserving all current React functionality                                                                                                                   
+    - Gradually incorporate 3D functionality from DreamNode3D class:                                                                                                                                      
+      - Implement CSS3DObject using R3F's built-in component                                                                                                                                              
+      - Create invisible geometries as R3F mesh components for raycasting                                                                                                                                 
+      - Adapt existing raycasting and intersection logic using R3F hooks                                                                                                                                  
+    - Ensure all existing communication and state management remains intact                                                                                                                               
+ 4. Phase out the separate DreamNode3D class as its functionality is merged into the R3F DreamNode                                                                                                        
+ 5. Adjust state management and event handling across the application as needed                                                                                                                           
+ 6. Thoroughly test each component after conversion, ensuring all existing functionality is preserved                                                                                                     
+ 7. Update documentation to reflect new architecture                                                                                                                                                      
+                                                                                                                                                                                                          
+## Key Considerations                                                                                                                                                                                    
+ - Prioritize preserving existing React logic and communication in DreamNode                                                                                                                              
+ - Incrementally add 3D functionality to the React component, rather than vice versa                                                                                                                      
+ - Maintain the structure of CSS3DObject with two invisible geometries for interaction                                                                                                                    
+ - Ensure smooth integration of existing React components within CSS3DObjects                                                                                                                             
+ - Adapt animation and update logic to use R3F's useFrame hook                                                                                                                                            
+ - Minimize changes to existing React logic and state management                                                                                                                                          
+                                                                   
 
 This refactoring will result in a more cohesive, maintainable, and flexible codebase, while preserving the core functionality and interactions of the existing system. It sets a strong foundation for future development and feature additions within the R3F ecosystem.
