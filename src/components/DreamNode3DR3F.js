@@ -26,7 +26,7 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
         onPointerOut={() => setHovered(false)}
         onClick={() => onNodeClick(repoName)}
       >
-        <boxGeometry args={[1, 1, 1]} />
+        <boxGeometry args={[50, 50, 50]} />
         <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
       </mesh>
       <Html distanceFactor={10}>

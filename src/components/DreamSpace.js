@@ -176,7 +176,11 @@ const DreamSpace = () => {
           console.log('Setting DreamNodes:', selectedRepos);
           const newNodes = selectedRepos.map((repo, index) => ({
             repoName: repo,
-            position: new THREE.Vector3(index * 350, 0, 0)
+            position: new THREE.Vector3(
+              (index % 3) * 200 - 200,
+              Math.floor(index / 3) * 200 - 200,
+              0
+            )
           }));
           setDreamNodes(newNodes);
         } else {
@@ -204,6 +208,8 @@ const DreamSpace = () => {
     <div style={{ width: '100vw', height: '100vh' }}>
       <Canvas camera={{ position: [0, 0, 1000], fov: 75, near: 0.1, far: 3000 }}>
         <CameraController />
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} />
         {dreamNodes.map((node) => (
           <DreamNode3DR3F
             key={node.repoName}
@@ -214,6 +220,7 @@ const DreamSpace = () => {
             setHoveredNode={setHoveredNode}
           />
         ))}
+        <axesHelper args={[5]} />
       </Canvas>
       {dreamNodes.length === 0 && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
@@ -221,6 +228,9 @@ const DreamSpace = () => {
         </div>
       )}
       <DreamGraph dreamNodes={dreamNodes} updateNode={updateNode} />
+      <div style={{ position: 'absolute', bottom: 10, left: 10, color: 'white' }}>
+        Node count: {dreamNodes.length}
+      </div>
     </div>
   );
 };
