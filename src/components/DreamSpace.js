@@ -2,12 +2,15 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { Raycaster, Vector2, Vector3 } from 'three';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, extend, useThree, useFrame } from '@react-three/fiber';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode from './DreamNode';
 import DreamNode3D from './DreamNode3D';
 import DreamGraph from './DreamGraph';
 import { createRoot } from 'react-dom/client';
+
+// Extend Three.js objects for use in JSX
+extend({ CSS3DRenderer });
 
 /**
  * @typedef {Object} SceneState
@@ -49,6 +52,50 @@ const DreamSpace = () => {
     tiltLeft: false,
     tiltRight: false,
   });
+
+  const SceneManager = () => {
+    const { gl, camera } = useThree();
+
+    useEffect(() => {
+      if (!refContainer.current) return;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+
+      const cssRenderer = new CSS3DRenderer();
+      cssRenderer.setSize(window.innerWidth, window.innerHeight);
+      cssRenderer.domElement.style.position = 'absolute';
+      cssRenderer.domElement.style.top = '0';
+      refContainer.current.appendChild(cssRenderer.domElement);
+
+      const handleResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        cssRenderer.setSize(window.innerWidth, window.innerHeight);
+        gl.setSize(window.innerWidth, window.innerHeight);
+      };
+
+      window.addEventListener('resize', handleResize);
+
+      setSceneState({ scene, camera, cssRenderer, cleanup: () => {
+        window.removeEventListener('resize', handleResize);
+        cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
+      }});
+
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        cssRenderer.domElement.parentNode.removeChild(cssRenderer.domElement);
+      };
+    }, [camera, gl]);
+
+    useFrame(() => {
+      if (sceneState) {
+        sceneState.cssRenderer.render(sceneState.scene, camera);
+      }
+    });
+
+    return null;
+  };
 
   useEffect(() => {
     console.log('Initializing sceneState');
@@ -441,38 +488,31 @@ const DreamSpace = () => {
     return <div>Error: {error}</div>;
   }
 
-  return (                                                                                                                                                                                                 
-   <div ref={refContainer} style={{ width: '100vw', height: '100vh' }}>                                                                                                                                   
-     <Canvas>                                                                                                                                                                                             
-       {sceneState && (                                                                                                                                                                                   
-         <primitive object={sceneState.scene} />                                                                                                                                                          
-       )}                                                                                                                                                                                                 
-     </Canvas>                                                                                                                                                                                            
-     {sceneState && (                                                                                                                                                                                     
-       <>                                                                                                                                                                                                 
-         {dreamNodes.map((dreamNode, index) => (                                                                                                                                                          
-           <DreamNode                                                                                                                                                                                     
-             key={dreamNode.repoName}                                                                                                                                                                     
-             ref={el => {                                                                                                                                                                                 
-               dreamNodeRefs.current[index] = el;                                                                                                                                                         
-             }}                                                                                                                                                                                           
-             repoName={dreamNode.repoName}                                                                                                                                                                
-             initialPosition={new THREE.Vector3(index * 350, 0, 0)}                                                                                                                                       
-             cssScene={sceneState.scene}                                                                                                                                                                  
-             onNodeClick={(repoName) => console.log('Node clicked:', repoName)}                                                                                                                           
-             isHovered={hoveredNode === dreamNode.repoName}                                                                                                                                               
-           />                                                                                                                                                                                             
-         ))}                                                                                                                                                                                              
-       </>                                                                                                                                                                                                
-     )}                                                                                                                                                                                                   
-     {(!sceneState || dreamNodes.length === 0) && (                                                                                                                                                       
-       <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>                                                                                
-         Loading...                                                                                                                                                                                       
-       </div>                                                                                                                                                                                             
-     )}                                                                                                                                                                                                   
-     <DreamGraph dreamNodes={dreamNodes} updateNode={updateNode} />                                                                                                                                       
-   </div>                                                                                                                                                                                                 
- );   
+  return (
+    <div ref={refContainer} style={{ width: '100vw', height: '100vh' }}>
+      <Canvas camera={{ position: [0, 0, 1000], fov: 75, near: 0.1, far: 3000 }}>
+        <SceneManager />
+        {sceneState && <primitive object={sceneState.scene} />}
+      </Canvas>
+      {sceneState && dreamNodes.map((dreamNode, index) => (
+        <DreamNode 
+          key={dreamNode.repoName}
+          ref={el => { dreamNodeRefs.current[index] = el; }}
+          repoName={dreamNode.repoName} 
+          initialPosition={new THREE.Vector3(index * 350, 0, 0)}
+          cssScene={sceneState.scene}
+          onNodeClick={(repoName) => console.log('Node clicked:', repoName)}
+          isHovered={hoveredNode === dreamNode.repoName}
+        />
+      ))}
+      {(!sceneState || dreamNodes.length === 0) && (
+        <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+          Loading...
+        </div>
+      )}
+      <DreamGraph dreamNodes={dreamNodes} updateNode={updateNode} />
+    </div>
+  );
 };
 
 export default DreamSpace;
