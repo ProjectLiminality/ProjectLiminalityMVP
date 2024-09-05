@@ -20,15 +20,21 @@ const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
     const intersects = raycaster.intersectObjects(scene.children, true);
     
     if (intersects.length > 0) {
-      const intersectedNode = intersects[0].object.parent;
+      const intersectedObject = intersects[0].object;
+      const intersectedNode = intersectedObject.parent;
+      console.log('Intersected object:', intersectedObject);
+      console.log('Intersected object userData:', intersectedObject.userData);
+      console.log('Intersected node:', intersectedNode);
+      console.log('Intersected node userData:', intersectedNode.userData);
       const intersectedRepoName = intersectedNode.userData.repoName;
+      console.log('Intersected repoName:', intersectedRepoName);
       if (hoveredNode !== intersectedRepoName) {
         setHoveredNode(intersectedRepoName);
-        console.log('Hovered node:', intersectedRepoName);
+        console.log('Hovered node set to:', intersectedRepoName);
       }
     } else if (hoveredNode !== null) {
       setHoveredNode(null);
-      console.log('No node hovered');
+      console.log('No intersection, hovered node set to null');
     }
   }, [dreamNodes, hoveredNode, setHoveredNode, raycaster, camera, scene]);
 
