@@ -252,11 +252,18 @@ const DreamSpace = () => {
         ))}
         <axesHelper args={[5]} />
         <CSS3DRendererComponent />
-        <primitive object={new CSS3DObject(document.createElement('div'))} position={[0, 0, 0]}>
-          <div style={{ width: '200px', height: '200px', background: 'red', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            Test CSS3D Object
-          </div>
-        </CSS3DObject>
+        <primitive object={(() => {
+          const el = document.createElement('div');
+          el.style.width = '200px';
+          el.style.height = '200px';
+          el.style.background = 'red';
+          el.style.color = 'white';
+          el.style.display = 'flex';
+          el.style.justifyContent = 'center';
+          el.style.alignItems = 'center';
+          el.textContent = 'Test CSS3D Object';
+          return new CSS3DObject(el);
+        })()} position={[0, 0, 0]} />
       </Canvas>
       {dreamNodes.length === 0 && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
