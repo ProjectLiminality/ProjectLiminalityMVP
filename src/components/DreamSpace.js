@@ -1,9 +1,12 @@
-import React, { useRef, useState, useCallback } from 'react';
-import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
+import { Canvas, useThree, useFrame, extend } from '@react-three/fiber';
 import * as THREE from 'three';
+import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode3DR3F from './DreamNode3DR3F';
 import DreamGraph from './DreamGraph';
+
+extend({ CSS3DRenderer, CSS3DObject });
 
 const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
   const { raycaster, camera, scene } = useThree();
@@ -29,6 +32,33 @@ const IntersectionChecker = ({ dreamNodes, hoveredNode, setHoveredNode }) => {
 
   useFrame(() => {
     checkIntersection();
+  });
+
+  return null;
+};
+
+const CSS3DRendererComponent = () => {
+  const { gl, scene, camera } = useThree();
+  const css3dRendererRef = useRef();
+
+  useEffect(() => {
+    const css3dRenderer = new CSS3DRenderer();
+    css3dRenderer.setSize(window.innerWidth, window.innerHeight);
+    css3dRenderer.domElement.style.position = 'absolute';
+    css3dRenderer.domElement.style.top = '0';
+    css3dRenderer.domElement.style.pointerEvents = 'none';
+    document.body.appendChild(css3dRenderer.domElement);
+    css3dRendererRef.current = css3dRenderer;
+
+    return () => {
+      document.body.removeChild(css3dRenderer.domElement);
+    };
+  }, []);
+
+  useFrame(() => {
+    if (css3dRendererRef.current) {
+      css3dRendererRef.current.render(scene, camera);
+    }
   });
 
   return null;
@@ -221,6 +251,12 @@ const DreamSpace = () => {
           />
         ))}
         <axesHelper args={[5]} />
+        <CSS3DRendererComponent />
+        <CSS3DObject position={[0, 0, 0]}>
+          <div style={{ width: '200px', height: '200px', background: 'red', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            Test CSS3D Object
+          </div>
+        </CSS3DObject>
       </Canvas>
       {dreamNodes.length === 0 && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
