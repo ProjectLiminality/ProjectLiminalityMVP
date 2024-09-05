@@ -9,7 +9,6 @@ import { BLUE, RED } from '../constants/colors';
 
 const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode }) => {
   const groupRef = useRef();
-  const meshRef = useRef();
   const frontPlaneRef = useRef();
   const backPlaneRef = useRef();
   const [hovered, setHovered] = useState(false);
@@ -50,22 +49,14 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
   return (
     <group ref={groupRef} position={position} userData={{ repoName: repoName }}>
       <mesh
-        ref={meshRef}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-        onClick={handleClick}
-      >
-        <boxGeometry args={[10, 10, 10]} />
-        <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
-      </mesh>
-      <mesh
         ref={frontPlaneRef}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
         onClick={handleClick}
+        renderOrder={1}
       >
         <circleGeometry args={[37.5, 32]} />
-        <meshBasicMaterial visible={false} />
+        <meshBasicMaterial color="red" opacity={0.5} transparent visible={true} />
       </mesh>
       <mesh
         ref={backPlaneRef}
@@ -73,9 +64,10 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
         onPointerOut={handlePointerOut}
         onClick={handleClick}
         rotation={[0, Math.PI, 0]}
+        renderOrder={1}
       >
         <circleGeometry args={[37.5, 32]} />
-        <meshBasicMaterial visible={false} />
+        <meshBasicMaterial color="blue" opacity={0.5} transparent visible={true} />
       </mesh>
       <Html
         transform
