@@ -52,13 +52,35 @@
  6. Thoroughly test each component after conversion, ensuring all existing functionality is preserved                                                                                                     
  7. Update documentation to reflect new architecture                                                                                                                                                      
                                                                                                                                                                                                           
-## Key Considerations                                                                                                                                                                                    
- - Prioritize preserving existing React logic and communication in DreamNode                                                                                                                              
- - Incrementally add 3D functionality to the React component, rather than vice versa                                                                                                                      
- - Maintain the structure of CSS3DObject with two invisible geometries for interaction                                                                                                                    
- - Ensure smooth integration of existing React components within CSS3DObjects                                                                                                                             
- - Adapt animation and update logic to use R3F's useFrame hook                                                                                                                                            
- - Minimize changes to existing React logic and state management                                                                                                                                          
-                                                                   
+## Key Considerations and Implementation Guidelines
 
-This refactoring will result in a more cohesive, maintainable, and flexible codebase, while preserving the core functionality and interactions of the existing system. It sets a strong foundation for future development and feature additions within the R3F ecosystem.
+1. Preserving Existing Functionality:
+   - Prioritize maintaining current React logic and communication in DreamNode and DreamSpace components
+   - Ensure minimal disruption to existing state management and lifecycle handling in DreamSpace
+   - Preserve the sophisticated camera movement system and controls
+   - Maintain the structure of CSS3DObject with two invisible geometries for interaction
+
+2. Refactoring Approach:
+   - Incrementally add 3D functionality to the React components, rather than vice versa
+   - Adapt the DreamSpace component to use R3F Canvas while keeping existing React logic intact
+   - Convert the DreamNode React component to an R3F component, gradually incorporating 3D functionality from DreamNode3D
+   - Phase out the separate DreamNode3D class as its functionality is merged into the R3F DreamNode
+
+3. R3F Integration:
+   - Adapt Three.js scene, camera, and renderer setup to use R3F equivalents
+   - Utilize R3F's useFrame hook for animation and update logic
+   - Adapt current camera control system to work with R3F's useThree and useFrame hooks
+   - Ensure smooth integration of existing React components within the R3F Canvas and CSS3DObjects
+
+4. Performance and Interaction:
+   - Maintain the robustness and responsiveness of the existing camera system, especially in relation to hover states
+   - Carefully adapt raycasting and hover state logic to work within the R3F ecosystem
+   - Pay special attention to maintaining performance optimizations in the current system
+   - Preserve the fixes for previously resolved bugs, particularly those related to camera movement and hover states
+
+5. Testing and Verification:
+   - Thoroughly test each component after conversion to ensure all existing functionality is preserved
+   - Verify that sophisticated interactions between camera movement and hover states remain intact
+   - Conduct extensive testing to prevent the resurfacing of previously fixed bugs during refactoring
+
+By following these guidelines, the refactoring process should result in a seamless integration of R3F while preserving the sophisticated functionality and robustness of the existing system.
