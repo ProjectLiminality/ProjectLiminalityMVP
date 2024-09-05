@@ -11,10 +11,11 @@ const DreamSpace = () => {
   const [hoveredNode, setHoveredNode] = useState(null);
   const mouse = useRef(new THREE.Vector2());
 
+  const { raycaster, camera, scene } = useThree();
+
   const checkIntersection = useCallback(() => {
     if (dreamNodes.length === 0) return;
 
-    const { raycaster, camera, scene } = useThree();
     raycaster.setFromCamera(mouse.current, camera);
 
     const intersects = raycaster.intersectObjects(scene.children, true);
@@ -28,7 +29,7 @@ const DreamSpace = () => {
     } else if (hoveredNode !== null) {
       setHoveredNode(null);
     }
-  }, [dreamNodes, hoveredNode]);
+  }, [dreamNodes, hoveredNode, raycaster, camera, scene]);
 
   useFrame(() => {
     checkIntersection();
