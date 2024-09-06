@@ -10,25 +10,29 @@
 - Added node count display
 - Updated DreamNode3DR3F component to use Html component from @react-three/drei
 - Removed CSS3DObject import and related code
-- Added groupRef to main group element
-- Positioned Html component relative to the group
-- Applied basic styling to Html content
-- Removed cubes and rotation functionality
-- Added front and back plane meshes for raycasting and click/hover detection
+- Implemented Billboard component from @react-three/drei for DreamNode3DR3F
+- Integrated Html components for rendering DreamTalk and DreamSong within Billboard
+- Implemented basic hover and click functionality using R3F patterns
+- Integrated data fetching within DreamNode3DR3F component
 
 ## In Progress
-- Adjusting state management and event handling
-- Fine-tuning 3D interactions and performance
+- Refining state management and event handling in DreamNode3DR3F
+- Optimizing 3D interactions and performance
+- Implementing smooth transitions for hover and flip animations
 
 ## Upcoming Tasks
-- Implement more advanced node interactions
+- Implement advanced node interactions (e.g., scaling based on data)
+- Refactor camera controls to use R3F compatible solutions
 - Thorough testing of each converted component
-- Update documentation
+- Update documentation to reflect new architecture
 - Optimize performance for larger numbers of nodes
 
 ## Notes
-- The RefactoringPlan.md remains unchanged and continues to serve as a guide for the process
-- This document will be updated regularly to reflect the current state of the refactoring effort
-- The basic 3D functionality is now working, providing a solid foundation for further enhancements
-- The transition to using Html from @react-three/drei has simplified the rendering process and improved integration with R3F
-- Front and back plane meshes are now used for raycasting and interaction detection
+- The RefactoringPlan.md has been updated to reflect our current approach
+- The transition to using Billboard and Html from @react-three/drei has significantly simplified our component structure
+- We've successfully integrated 3D functionality with React components, allowing for more flexible and maintainable code
+- The new structure allows for easier scaling, positioning, and rotation of nodes in 3D space
+- We've maintained the ability to render HTML content (DreamTalk and DreamSong) within our 3D environment
+- The refactoring process has opened up possibilities for more advanced 3D interactions and visualizations
+
+Next steps will focus on refining the implementation, ensuring smooth performance, and expanding the functionality of our 3D environment.
