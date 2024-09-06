@@ -1,16 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
-import * as THREE from 'three';
+import React, { useState, useEffect } from 'react';
+import { Billboard, Html } from '@react-three/drei';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { getRepoData } from '../utils/fileUtils';
 import { BLUE, RED } from '../constants/colors';
 
 const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode }) => {
-  const groupRef = useRef();
-  const frontPlaneRef = useRef();
-  const backPlaneRef = useRef();
   const [hovered, setHovered] = useState(false);
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
 
@@ -47,39 +42,28 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
   const handleClick = () => onNodeClick(repoName);
 
   return (
-    <group ref={groupRef} position={position} userData={{ repoName: repoName }}>
-      <mesh
-        ref={frontPlaneRef}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-        onClick={handleClick}
-        renderOrder={1}
-        position={[0, 0, 10]}
-      >
-        <circleGeometry args={[75, 32]} />
-        <meshBasicMaterial color="red" opacity={1} transparent={false} visible={true} />
-      </mesh>
-      <mesh
-        ref={backPlaneRef}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-        onClick={handleClick}
-        rotation={[0, Math.PI, 0]}
-        renderOrder={1}
-        position={[0, 0, -10]}
-      >
-        <circleGeometry args={[75, 32]} />
-        <meshBasicMaterial color="blue" opacity={1} transparent={false} visible={true} />
-      </mesh>
+    <Billboard
+      position={position}
+      follow={true}
+      lockX={false}
+      lockY={false}
+      lockZ={false}
+    >
       <Html
         transform
-        position={[0, 0, 0.1]}
-        scale={20}
+        distanceFactor={20}
         style={{
           width: '300px',
           height: '300px',
-          pointerEvents: 'none',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          cursor: 'pointer',
         }}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+        onClick={handleClick}
       >
         <div style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d' }}>
           <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden' }}>
@@ -87,37 +71,23 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
               repoName={repoName}
               mediaContent={repoData.mediaContent}
               metadata={repoData.metadata}
-              onClick={() => onNodeClick(repoName)}
+              onClick={handleClick}
               isHovered={hovered}
               borderColor={borderColor}
             />
           </div>
-        </div>
-      </Html>
-      <Html
-        transform
-        position={[0, 0, 0]}
-        rotation={[0, Math.PI, 0]}
-        scale={20}
-        style={{
-          width: '300px',
-          height: '300px',
-          pointerEvents: 'none',
-        }}
-      >
-        <div style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d' }}>
-          <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden' }}>
+          <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
             <DreamSong 
               repoName={repoName}
               metadata={repoData.metadata}
-              onClick={() => onNodeClick(repoName)}
+              onClick={handleClick}
               isHovered={hovered}
               borderColor={borderColor}
             />
           </div>
         </div>
       </Html>
-    </group>
+    </Billboard>
   );
 };
 
