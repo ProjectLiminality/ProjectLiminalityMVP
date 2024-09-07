@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { isElectronAvailable, openDirectoryDialog, getDreamVaultPath, setDreamVaultPath as setDreamVaultPathService } from '../services/electronService';
+import { BLACK, BLUE, RED, WHITE } from '../constants/colors';
 
 const SettingsPanel = ({ isOpen, onClose }) => {
   const [dreamVaultPath, setDreamVaultPathState] = useState('');
@@ -65,17 +66,18 @@ const SettingsPanel = ({ isOpen, onClose }) => {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        backgroundColor: 'white',
+        backgroundColor: BLACK,
+        color: WHITE,
         padding: '20px',
         borderRadius: '8px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        boxShadow: `0 0 0 2px ${BLUE}`,
         zIndex: 1000,
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      <h2>Settings</h2>
+      <h2 style={{ color: RED }}>Settings</h2>
       <div style={{ marginBottom: '15px' }}>
-        <label htmlFor="dreamVaultPath">DreamVault Path:</label>
+        <label htmlFor="dreamVaultPath" style={{ color: WHITE }}>DreamVault Path:</label>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <input
             type="text"
@@ -83,24 +85,60 @@ const SettingsPanel = ({ isOpen, onClose }) => {
             value={dreamVaultPath}
             onChange={handleManualInput}
             readOnly={!isManualInput}
-            style={{ marginRight: '10px', padding: '5px', flex: 1 }}
+            style={{ 
+              marginRight: '10px', 
+              padding: '5px', 
+              flex: 1, 
+              backgroundColor: BLACK, 
+              color: WHITE, 
+              border: `1px solid ${BLUE}` 
+            }}
           />
           <button 
             onClick={handleSelectDirectory} 
-            style={{ padding: '5px 10px' }}
+            style={{ 
+              padding: '5px 10px', 
+              backgroundColor: BLUE, 
+              color: WHITE, 
+              border: 'none', 
+              cursor: 'pointer' 
+            }}
           >
             📁 Select Directory
           </button>
         </div>
       </div>
       {isManualInput && (
-        <p style={{ fontSize: '0.8em', color: '#666' }}>
+        <p style={{ fontSize: '0.8em', color: RED }}>
           Enter the DreamVault path manually and click Save.
         </p>
       )}
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button onClick={onClose} style={{ marginRight: '10px', padding: '5px 10px' }}>Cancel</button>
-        <button onClick={handleSave} style={{ padding: '5px 10px' }}>Save</button>
+        <button 
+          onClick={onClose} 
+          style={{ 
+            marginRight: '10px', 
+            padding: '5px 10px', 
+            backgroundColor: RED, 
+            color: WHITE, 
+            border: 'none', 
+            cursor: 'pointer' 
+          }}
+        >
+          Cancel
+        </button>
+        <button 
+          onClick={handleSave} 
+          style={{ 
+            padding: '5px 10px', 
+            backgroundColor: BLUE, 
+            color: WHITE, 
+            border: 'none', 
+            cursor: 'pointer' 
+          }}
+        >
+          Save
+        </button>
       </div>
     </div>
   );
