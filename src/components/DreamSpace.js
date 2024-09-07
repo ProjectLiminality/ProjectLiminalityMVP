@@ -1,6 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { FlyControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { scanDreamVault } from '../services/electronService';
 import DreamNode3DR3F from './DreamNode3DR3F';
@@ -221,7 +220,7 @@ const DreamSpace = () => {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <Canvas camera={{ position: [0, 0, 1000], fov: 75, near: 0.1, far: 3000 }}>
-        <FlyControls movementSpeed={100} rollSpeed={0.5} />
+        <CameraController />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
         {dreamNodes.map((node) => (
