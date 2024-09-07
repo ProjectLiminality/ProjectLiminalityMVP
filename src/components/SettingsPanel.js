@@ -75,7 +75,7 @@ const SettingsPanel = ({ isOpen, onClose }) => {
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      <h2 style={{ color: RED }}>Settings</h2>
+      <h2 style={{ color: WHITE }}>Settings</h2>
       <div style={{ marginBottom: '15px' }}>
         <label htmlFor="dreamVaultPath" style={{ color: WHITE }}>DreamVault Path:</label>
         <div style={{ display: 'flex', alignItems: 'center' }}>
