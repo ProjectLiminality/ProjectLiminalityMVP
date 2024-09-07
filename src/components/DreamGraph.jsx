@@ -8,7 +8,7 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
 
   const positionNodesOnGrid = useCallback(() => {
     const gridSize = Math.ceil(Math.sqrt(nodes.length));
-    const spacing = 200; // Increased spacing to 10000 (50 times the original value)
+    const spacing = 200;
     
     setNodes(prevNodes => prevNodes.map((node, index) => {
       const row = Math.floor(index / gridSize);
@@ -31,10 +31,41 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
   const updateNodePositions = useCallback((clickedNodeIndex) => {
     setNodes(prevNodes => {
       const clickedNode = prevNodes[clickedNodeIndex];
-      return prevNodes.map(node => ({
-        ...node,
-        position: clickedNode.position.clone()
-      }));
+      const otherNodes = prevNodes.filter((_, index) => index !== clickedNodeIndex);
+      
+      // Randomly select related nodes (between 1 and half of the remaining nodes)
+      const relatedCount = Math.floor(Math.random() * (otherNodes.length / 2)) + 1;
+      const relatedNodes = otherNodes.slice(0, relatedCount);
+      const unrelatedNodes = otherNodes.slice(relatedCount);
+
+      // Set up circles
+      const relatedCircleRadius = 300;
+      const unrelatedCircleRadius = 2000; // Outside field of view
+
+      // Position clicked node at origin
+      clickedNode.position.set(0, 0, 0);
+
+      // Position related nodes
+      relatedNodes.forEach((node, index) => {
+        const angle = (index / relatedCount) * Math.PI * 2;
+        node.position.set(
+          Math.cos(angle) * relatedCircleRadius,
+          Math.sin(angle) * relatedCircleRadius,
+          0
+        );
+      });
+
+      // Position unrelated nodes
+      unrelatedNodes.forEach((node, index) => {
+        const angle = (index / unrelatedNodes.length) * Math.PI * 2;
+        node.position.set(
+          Math.cos(angle) * unrelatedCircleRadius,
+          Math.sin(angle) * unrelatedCircleRadius,
+          0
+        );
+      });
+
+      return [clickedNode, ...relatedNodes, ...unrelatedNodes];
     });
   }, []);
 
