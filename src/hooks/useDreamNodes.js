@@ -7,7 +7,7 @@ const useDreamNodes = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchDreamNodes = async (count = 10, random = true) => {
+    const fetchDreamNodes = async (count = 30, random = true) => {
       try {
         console.log('Scanning DreamVault...');
         const repos = await scanDreamVault();

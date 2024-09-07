@@ -6,10 +6,7 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
   const [nodes, setNodes] = useState(initialNodes);
   const [hoveredNode, setHoveredNode] = useState(null);
 
-  console.log('DreamGraph rendered. Initial nodes:', initialNodes);
-
   const positionNodesOnGrid = useCallback(() => {
-    console.log('Positioning nodes on grid');
     const gridSize = Math.ceil(Math.sqrt(nodes.length));
     const spacing = 200;
     
@@ -32,29 +29,19 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
   }, [positionNodesOnGrid]);
 
   const updateNodePositions = useCallback((clickedNodeIndex) => {
-    console.log('Updating node positions. Clicked node index:', clickedNodeIndex);
     setNodes(prevNodes => {
       const clickedNode = prevNodes[clickedNodeIndex];
       const otherNodes = prevNodes.filter((_, index) => index !== clickedNodeIndex);
       
-      // Randomly select related nodes (between 1 and half of the remaining nodes)
       const relatedCount = Math.floor(Math.random() * (otherNodes.length / 2)) + 1;
       const relatedNodes = otherNodes.slice(0, relatedCount);
       const unrelatedNodes = otherNodes.slice(relatedCount);
 
-      console.log('Related nodes count:', relatedNodes.length);
-      console.log('Unrelated nodes count:', unrelatedNodes.length);
-
-      // Set up circles
       const relatedCircleRadius = 300;
-      const unrelatedCircleRadius = 2000; // Outside field of view
+      const unrelatedCircleRadius = 2000;
 
-      // Create new nodes array with updated positions
       const newNodes = [
-        // Clicked node at origin
         { ...clickedNode, position: new THREE.Vector3(0, 0, 0) },
-        
-        // Related nodes
         ...relatedNodes.map((node, index) => {
           const angle = (index / relatedCount) * Math.PI * 2;
           return {
@@ -66,8 +53,6 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
             )
           };
         }),
-        
-        // Unrelated nodes
         ...unrelatedNodes.map((node, index) => {
           const angle = (index / unrelatedNodes.length) * Math.PI * 2;
           return {
@@ -81,15 +66,12 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
         })
       ];
 
-      console.log('New node positions:', newNodes.map(n => ({ repoName: n.repoName, position: n.position.toArray() })));
       return newNodes;
     });
   }, []);
 
   const handleNodeClick = useCallback((repoName) => {
-    console.log('Node clicked:', repoName);
     const clickedNodeIndex = nodes.findIndex(node => node.repoName === repoName);
-    console.log('Clicked node index:', clickedNodeIndex);
     if (clickedNodeIndex !== -1) {
       updateNodePositions(clickedNodeIndex);
     }
