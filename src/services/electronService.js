@@ -3,6 +3,10 @@ export async function readMetadata(repoName) {
 }
 
 export async function writeMetadata(repoName, metadata) {
+  if (!window.electron || !window.electron.fileSystem || typeof window.electron.fileSystem.writeMetadata !== 'function') {
+    console.error('writeMetadata function is not available in the electron context');
+    throw new Error('writeMetadata function is not available');
+  }
   return window.electron.fileSystem.writeMetadata(repoName, metadata);
 }
 

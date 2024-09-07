@@ -35,7 +35,7 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
       await writeMetadata(repoName, metadata);
       onClose();
     } catch (err) {
-      setError('Failed to save metadata');
+      setError('Failed to save metadata: ' + err.message);
       console.error('Error saving metadata:', err);
     }
   };
