@@ -44,14 +44,12 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
   return (
     <Billboard
       position={position}
-      follow={true}
-      lockX={false}
-      lockY={false}
-      lockZ={false}
+      follow={false}
+      scale={20}
     >
       <Html
         transform
-        distanceFactor={20}
+        position={[0, 0, 0.01]}
         style={{
           width: '300px',
           height: '300px',
@@ -65,27 +63,39 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
         onPointerOut={handlePointerOut}
         onClick={handleClick}
       >
-        <div style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d' }}>
-          <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden' }}>
-            <DreamTalk 
-              repoName={repoName}
-              mediaContent={repoData.mediaContent}
-              metadata={repoData.metadata}
-              onClick={handleClick}
-              isHovered={hovered}
-              borderColor={borderColor}
-            />
-          </div>
-          <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
-            <DreamSong 
-              repoName={repoName}
-              metadata={repoData.metadata}
-              onClick={handleClick}
-              isHovered={hovered}
-              borderColor={borderColor}
-            />
-          </div>
-        </div>
+        <DreamTalk 
+          repoName={repoName}
+          mediaContent={repoData.mediaContent}
+          metadata={repoData.metadata}
+          onClick={handleClick}
+          isHovered={hovered}
+          borderColor={borderColor}
+        />
+      </Html>
+      <Html
+        transform
+        position={[0, 0, -0.01]}
+        rotation={[0, Math.PI, 0]}
+        style={{
+          width: '300px',
+          height: '300px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          cursor: 'pointer',
+        }}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+        onClick={handleClick}
+      >
+        <DreamSong 
+          repoName={repoName}
+          metadata={repoData.metadata}
+          onClick={handleClick}
+          isHovered={hovered}
+          borderColor={borderColor}
+        />
       </Html>
     </Billboard>
   );
