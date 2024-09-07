@@ -8,7 +8,7 @@ const DreamGraph = ({ initialNodes }) => {
 
   const positionNodesOnGrid = useCallback(() => {
     const gridSize = Math.ceil(Math.sqrt(nodes.length));
-    const spacing = 10000; // Increased spacing to 10000 (50 times the original value)
+    const spacing = 200; // Increased spacing to 10000 (50 times the original value)
     
     setNodes(prevNodes => prevNodes.map((node, index) => {
       const row = Math.floor(index / gridSize);
