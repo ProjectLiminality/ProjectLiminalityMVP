@@ -3,7 +3,6 @@ const fs = require('fs').promises;
 const path = require('path');
 
 function setupHandlers(ipcMain, store) {
-  // ... existing handlers ...
 
   ipcMain.handle('read-file', async (event, filePath) => {
     try {
