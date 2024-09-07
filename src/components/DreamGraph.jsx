@@ -34,16 +34,19 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
       const clickedNode = prevNodes[clickedNodeIndex];
       const otherNodes = prevNodes.filter((_, index) => index !== clickedNodeIndex);
       
-      const relatedCount = Math.floor(Math.random() * (otherNodes.length / 2)) + 1;
-      const relatedNodes = otherNodes.slice(0, relatedCount);
-      const unrelatedNodes = otherNodes.slice(relatedCount);
+      const relatedNodes = otherNodes.filter(node => node.type !== clickedNode.type);
+      const unrelatedNodes = otherNodes.filter(node => node.type === clickedNode.type);
+      
+      const relatedCount = Math.min(relatedNodes.length, Math.floor(Math.random() * (relatedNodes.length / 2)) + 1);
+      const selectedRelatedNodes = relatedNodes.slice(0, relatedCount);
+      const remainingUnrelatedNodes = [...unrelatedNodes, ...relatedNodes.slice(relatedCount)];
 
       const relatedCircleRadius = 30;
       const unrelatedCircleRadius = 200;
 
       const newNodes = [
         { ...clickedNode, position: new THREE.Vector3(0, 0, 0), scale: 5 },
-        ...relatedNodes.map((node, index) => {
+        ...selectedRelatedNodes.map((node, index) => {
           const angle = (index / relatedCount) * Math.PI * 2;
           return {
             ...node,
@@ -55,8 +58,8 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
             scale: 1
           };
         }),
-        ...unrelatedNodes.map((node, index) => {
-          const angle = (index / unrelatedNodes.length) * Math.PI * 2;
+        ...remainingUnrelatedNodes.map((node, index) => {
+          const angle = (index / remainingUnrelatedNodes.length) * Math.PI * 2;
           return {
             ...node,
             position: new THREE.Vector3(
@@ -93,6 +96,7 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
           isHovered={hoveredNode === node.repoName}
           setHoveredNode={setHoveredNode}
           index={index}
+          type={node.type}
         />
       ))}
     </>
