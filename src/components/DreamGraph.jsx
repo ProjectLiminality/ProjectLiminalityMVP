@@ -6,7 +6,10 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
   const [nodes, setNodes] = useState(initialNodes);
   const [hoveredNode, setHoveredNode] = useState(null);
 
+  console.log('DreamGraph rendered. Initial nodes:', initialNodes);
+
   const positionNodesOnGrid = useCallback(() => {
+    console.log('Positioning nodes on grid');
     const gridSize = Math.ceil(Math.sqrt(nodes.length));
     const spacing = 200;
     
@@ -29,6 +32,7 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
   }, [positionNodesOnGrid]);
 
   const updateNodePositions = useCallback((clickedNodeIndex) => {
+    console.log('Updating node positions. Clicked node index:', clickedNodeIndex);
     setNodes(prevNodes => {
       const clickedNode = prevNodes[clickedNodeIndex];
       const otherNodes = prevNodes.filter((_, index) => index !== clickedNodeIndex);
@@ -37,6 +41,9 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
       const relatedCount = Math.floor(Math.random() * (otherNodes.length / 2)) + 1;
       const relatedNodes = otherNodes.slice(0, relatedCount);
       const unrelatedNodes = otherNodes.slice(relatedCount);
+
+      console.log('Related nodes count:', relatedNodes.length);
+      console.log('Unrelated nodes count:', unrelatedNodes.length);
 
       // Set up circles
       const relatedCircleRadius = 300;
@@ -65,16 +72,19 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
         );
       });
 
-      return [clickedNode, ...relatedNodes, ...unrelatedNodes];
+      const newNodes = [clickedNode, ...relatedNodes, ...unrelatedNodes];
+      console.log('New node positions:', newNodes.map(n => ({ repoName: n.repoName, position: n.position })));
+      return newNodes;
     });
   }, []);
 
   const handleNodeClick = useCallback((repoName) => {
+    console.log('Node clicked:', repoName);
     const clickedNodeIndex = nodes.findIndex(node => node.repoName === repoName);
+    console.log('Clicked node index:', clickedNodeIndex);
     if (clickedNodeIndex !== -1) {
       updateNodePositions(clickedNodeIndex);
     }
-    console.log('Node clicked:', repoName);
     onOpenMetadataPanel(repoName);
   }, [nodes, updateNodePositions, onOpenMetadataPanel]);
 
