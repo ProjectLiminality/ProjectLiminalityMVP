@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Billboard, Html } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
+import gsap from 'gsap';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { getRepoData } from '../utils/fileUtils';
@@ -8,6 +10,8 @@ import { BLUE, RED } from '../constants/colors';
 const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode }) => {
   const [hovered, setHovered] = useState(false);
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
+  const nodeRef = useRef();
+  const targetPosition = useRef(position);
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
@@ -27,6 +31,22 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
     fetchRepoData();
   }, [repoName]);
 
+  useEffect(() => {
+    targetPosition.current = position;
+  }, [position]);
+
+  useFrame(() => {
+    if (nodeRef.current) {
+      gsap.to(nodeRef.current.position, {
+        x: targetPosition.current.x,
+        y: targetPosition.current.y,
+        z: targetPosition.current.z,
+        duration: 2,
+        ease: "power2.inOut"
+      });
+    }
+  });
+
   const borderColor = repoData.metadata?.type === 'person' ? RED : BLUE;
 
   const handlePointerOver = () => {
@@ -43,7 +63,7 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
 
   return (
     <Billboard
-      position={position}
+      ref={nodeRef}
       follow={false}
       scale={20}
     >
