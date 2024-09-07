@@ -1,15 +1,6 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
-const DreamGraph = ({ dreamNodes, updateNode }) => {
-  const handleNodeClick = useCallback((clickedNodeIndex) => {
-    const clickedNode = dreamNodes[clickedNodeIndex];
-    if (clickedNode) {
-      dreamNodes.forEach((node, index) => {
-        updateNode(index, { position: clickedNode.position });
-      });
-    }
-  }, [dreamNodes, updateNode]);
-
+const DreamGraph = ({ dreamNodes, updateNodePositions }) => {
   // This component doesn't render anything visible
   return null;
 };
