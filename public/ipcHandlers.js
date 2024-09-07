@@ -74,6 +74,22 @@ function setupHandlers(ipcMain, store) {
     }
   });
 
+  ipcMain.handle('write-metadata', async (event, repoName, metadata) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const metadataPath = path.join(dreamVaultPath, repoName, '.pl');
+    try {
+      await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
+      return true;
+    } catch (error) {
+      console.error(`Error writing metadata for ${repoName}:`, error);
+      throw error;
+    }
+  });
+
   ipcMain.handle('get-media-file-path', async (event, repoName) => {
     const dreamVaultPath = store.get('dreamVaultPath');
     const repoPath = path.join(dreamVaultPath, repoName);
