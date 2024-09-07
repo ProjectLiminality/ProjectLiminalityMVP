@@ -4,7 +4,7 @@ import * as THREE from 'three';
 
 const CameraController = () => {
   const { camera } = useThree();
-  const moveSpeed = 10;
+  const moveSpeed = 1;
   const rotateSpeed = 0.002;
   let isDragging = useRef(false);
   let previousMousePosition = useRef({ x: 0, y: 0 });

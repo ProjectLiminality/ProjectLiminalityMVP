@@ -8,7 +8,7 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
 
   const positionNodesOnGrid = useCallback(() => {
     const gridSize = Math.ceil(Math.sqrt(nodes.length));
-    const spacing = 200;
+    const spacing = 10;
     
     setNodes(prevNodes => prevNodes.map((node, index) => {
       const row = Math.floor(index / gridSize);
@@ -38,11 +38,11 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
       const relatedNodes = otherNodes.slice(0, relatedCount);
       const unrelatedNodes = otherNodes.slice(relatedCount);
 
-      const relatedCircleRadius = 300;
-      const unrelatedCircleRadius = 2000;
+      const relatedCircleRadius = 30;
+      const unrelatedCircleRadius = 200;
 
       const newNodes = [
-        { ...clickedNode, position: new THREE.Vector3(0, 0, 0), scale: 2 },
+        { ...clickedNode, position: new THREE.Vector3(0, 0, 0), scale: 5 },
         ...relatedNodes.map((node, index) => {
           const angle = (index / relatedCount) * Math.PI * 2;
           return {
