@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import DreamNode3DR3F from './DreamNode3DR3F';
 
 const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
-  const [nodes, setNodes] = useState(initialNodes);
+  const [nodes, setNodes] = useState(initialNodes.map(node => ({ ...node, scale: 1 })));
   const [hoveredNode, setHoveredNode] = useState(null);
 
   const positionNodesOnGrid = useCallback(() => {
@@ -19,7 +19,8 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
           (col - gridSize / 2) * spacing,
           (row - gridSize / 2) * spacing,
           0
-        )
+        ),
+        scale: 1
       };
     }));
   }, [nodes.length]);
@@ -41,7 +42,7 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
       const unrelatedCircleRadius = 2000;
 
       const newNodes = [
-        { ...clickedNode, position: new THREE.Vector3(0, 0, 0) },
+        { ...clickedNode, position: new THREE.Vector3(0, 0, 0), scale: 2 },
         ...relatedNodes.map((node, index) => {
           const angle = (index / relatedCount) * Math.PI * 2;
           return {
@@ -50,7 +51,8 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
               Math.cos(angle) * relatedCircleRadius,
               Math.sin(angle) * relatedCircleRadius,
               0
-            )
+            ),
+            scale: 1
           };
         }),
         ...unrelatedNodes.map((node, index) => {
@@ -61,7 +63,8 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
               Math.cos(angle) * unrelatedCircleRadius,
               Math.sin(angle) * unrelatedCircleRadius,
               0
-            )
+            ),
+            scale: 1
           };
         })
       ];
@@ -85,6 +88,7 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
           key={node.repoName}
           repoName={node.repoName}
           position={node.position}
+          scale={node.scale}
           onNodeClick={handleNodeClick}
           isHovered={hoveredNode === node.repoName}
           setHoveredNode={setHoveredNode}

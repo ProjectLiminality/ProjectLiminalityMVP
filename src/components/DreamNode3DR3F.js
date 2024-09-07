@@ -6,7 +6,7 @@ import DreamSong from './DreamSong';
 import { getRepoData } from '../utils/fileUtils';
 import { BLUE, RED } from '../constants/colors';
 
-const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHoveredNode }) => {
+const DreamNode3DR3F = ({ repoName, position, scale, onNodeClick, isHovered, setHoveredNode }) => {
   const [hovered, setHovered] = useState(false);
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
   const nodeRef = useRef();
@@ -38,8 +38,15 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
         duration: 2,
         ease: "power2.inOut"
       });
+      gsap.to(nodeRef.current.scale, {
+        x: scale,
+        y: scale,
+        z: scale,
+        duration: 2,
+        ease: "power2.inOut"
+      });
     }
-  }, [position]);
+  }, [position, scale]);
 
   const borderColor = repoData.metadata?.type === 'person' ? RED : BLUE;
 
@@ -59,7 +66,6 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
     <Billboard
       ref={nodeRef}
       follow={false}
-      scale={20}
     >
       <Html
         transform
