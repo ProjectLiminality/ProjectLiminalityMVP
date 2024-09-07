@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import * as THREE from 'three';
 import DreamNode3DR3F from './DreamNode3DR3F';
 
-const DreamGraph = ({ initialNodes }) => {
+const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
   const [nodes, setNodes] = useState(initialNodes);
   const [hoveredNode, setHoveredNode] = useState(null);
 
@@ -44,7 +44,8 @@ const DreamGraph = ({ initialNodes }) => {
       updateNodePositions(clickedNodeIndex);
     }
     console.log('Node clicked:', repoName);
-  }, [nodes, updateNodePositions]);
+    onOpenMetadataPanel(repoName);
+  }, [nodes, updateNodePositions, onOpenMetadataPanel]);
 
   return (
     <>
