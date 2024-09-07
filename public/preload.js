@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('electron', {
     getMediaFilePath: (repoName, fileName) => ipcRenderer.invoke('get-media-file-path', repoName, fileName),
     getFileStats: (filePath) => ipcRenderer.invoke('get-file-stats', filePath),
     readMetadata: (repoName) => ipcRenderer.invoke('read-metadata', repoName),
+    writeMetadata: (repoName, metadata) => ipcRenderer.invoke('write-metadata', repoName, metadata),
     readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
     listFiles: (repoName) => ipcRenderer.invoke('list-files', repoName),
   },
