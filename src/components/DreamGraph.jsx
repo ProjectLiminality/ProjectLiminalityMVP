@@ -34,8 +34,8 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
       const clickedNode = prevNodes[clickedNodeIndex];
       const otherNodes = prevNodes.filter((_, index) => index !== clickedNodeIndex);
       
-      const relatedNodes = otherNodes.filter(node => node.type !== clickedNode.type);
-      const unrelatedNodes = otherNodes.filter(node => node.type === clickedNode.type);
+      const relatedNodes = otherNodes.filter(node => node.metadata?.type !== clickedNode.metadata?.type);
+      const unrelatedNodes = otherNodes.filter(node => node.metadata?.type === clickedNode.metadata?.type);
       
       const relatedCount = Math.max(1, Math.min(relatedNodes.length, Math.floor(Math.random() * relatedNodes.length) + 1));
       const selectedRelatedNodes = relatedNodes.slice(0, relatedCount);
