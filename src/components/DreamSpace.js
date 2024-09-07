@@ -1,5 +1,6 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
+import * as THREE from 'three';
 import DreamGraph from './DreamGraph';
 import CameraController from './CameraController';
 import IntersectionChecker from './IntersectionChecker';
@@ -7,6 +8,11 @@ import useDreamNodes from '../hooks/useDreamNodes';
 
 const DreamSpace = () => {
   const { dreamNodes, error } = useDreamNodes();
+
+  const initialNodes = dreamNodes.map(node => ({
+    ...node,
+    position: new THREE.Vector3(0, 0, 0) // Set initial position to origin
+  }));
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -18,7 +24,7 @@ const DreamSpace = () => {
         <CameraController />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
-        <DreamGraph initialNodes={dreamNodes} />
+        <DreamGraph initialNodes={initialNodes} />
         <IntersectionChecker />
         <axesHelper args={[5]} />
       </Canvas>
