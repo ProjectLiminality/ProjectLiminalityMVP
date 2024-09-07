@@ -59,9 +59,6 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
           alignItems: 'center',
           cursor: 'pointer',
         }}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-        onClick={handleClick}
       >
         <DreamTalk 
           repoName={repoName}
@@ -85,9 +82,6 @@ const DreamNode3DR3F = ({ repoName, position, onNodeClick, isHovered, setHovered
           alignItems: 'center',
           cursor: 'pointer',
         }}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-        onClick={handleClick}
       >
         <DreamSong 
           repoName={repoName}
