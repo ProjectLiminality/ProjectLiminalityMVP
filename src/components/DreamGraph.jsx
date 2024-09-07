@@ -49,31 +49,39 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
       const relatedCircleRadius = 300;
       const unrelatedCircleRadius = 2000; // Outside field of view
 
-      // Position clicked node at origin
-      clickedNode.position.set(0, 0, 0);
+      // Create new nodes array with updated positions
+      const newNodes = [
+        // Clicked node at origin
+        { ...clickedNode, position: new THREE.Vector3(0, 0, 0) },
+        
+        // Related nodes
+        ...relatedNodes.map((node, index) => {
+          const angle = (index / relatedCount) * Math.PI * 2;
+          return {
+            ...node,
+            position: new THREE.Vector3(
+              Math.cos(angle) * relatedCircleRadius,
+              Math.sin(angle) * relatedCircleRadius,
+              0
+            )
+          };
+        }),
+        
+        // Unrelated nodes
+        ...unrelatedNodes.map((node, index) => {
+          const angle = (index / unrelatedNodes.length) * Math.PI * 2;
+          return {
+            ...node,
+            position: new THREE.Vector3(
+              Math.cos(angle) * unrelatedCircleRadius,
+              Math.sin(angle) * unrelatedCircleRadius,
+              0
+            )
+          };
+        })
+      ];
 
-      // Position related nodes
-      relatedNodes.forEach((node, index) => {
-        const angle = (index / relatedCount) * Math.PI * 2;
-        node.position.set(
-          Math.cos(angle) * relatedCircleRadius,
-          Math.sin(angle) * relatedCircleRadius,
-          0
-        );
-      });
-
-      // Position unrelated nodes
-      unrelatedNodes.forEach((node, index) => {
-        const angle = (index / unrelatedNodes.length) * Math.PI * 2;
-        node.position.set(
-          Math.cos(angle) * unrelatedCircleRadius,
-          Math.sin(angle) * unrelatedCircleRadius,
-          0
-        );
-      });
-
-      const newNodes = [clickedNode, ...relatedNodes, ...unrelatedNodes];
-      console.log('New node positions:', newNodes.map(n => ({ repoName: n.repoName, position: n.position })));
+      console.log('New node positions:', newNodes.map(n => ({ repoName: n.repoName, position: n.position.toArray() })));
       return newNodes;
     });
   }, []);
