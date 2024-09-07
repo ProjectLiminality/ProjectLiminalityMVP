@@ -2,6 +2,10 @@ export async function readMetadata(repoName) {
   return window.electron.fileSystem.readMetadata(repoName);
 }
 
+export async function writeMetadata(repoName, metadata) {
+  return window.electron.fileSystem.writeMetadata(repoName, metadata);
+}
+
 export async function getMediaFilePath(repoName) {
   return window.electron.fileSystem.getMediaFilePath(repoName);
 }
