@@ -20,13 +20,17 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <DreamSpace />
-      <SettingsPanel 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
-      />
-    </div>
+    <>
+      <div className="App">
+        <DreamSpace />
+      </div>
+      {isSettingsOpen && (
+        <SettingsPanel 
+          isOpen={isSettingsOpen} 
+          onClose={() => setIsSettingsOpen(false)} 
+        />
+      )}
+    </>
   );
 }
 
