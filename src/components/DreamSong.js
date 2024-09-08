@@ -1,78 +1,78 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BLUE, BLACK, WHITE } from '../constants/colors';
+import { readDreamSongCanvas, listMediaFiles } from '../utils/fileUtils';
+import { processDreamSongData } from '../utils/dreamSongUtils';
 
-const DreamSong = ({ repoName, metadata, onClick, isHovered, borderColor }) => {
+const DreamSong = ({ repoName, onClick }) => {
+  const [canvasData, setCanvasData] = useState(null);
+  const [mediaFiles, setMediaFiles] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const canvas = await readDreamSongCanvas(repoName);
+        const processedData = processDreamSongData(canvas);
+        setCanvasData(processedData);
+
+        const media = await listMediaFiles(repoName);
+        setMediaFiles(media);
+      } catch (error) {
+        console.error('Error fetching DreamSong data:', error);
+      }
+    };
+
+    fetchData();
+  }, [repoName]);
+
+  const handleMediaClick = (mediaFile) => {
+    // Here you would implement the logic to interpret media clicks as Dream Node clicks
+    console.log('Media clicked:', mediaFile);
+    onClick(repoName); // Call the parent onClick function
+  };
+
+  const renderMediaElement = (file) => {
+    const isVideo = /\.(mp4|webm|ogg)$/i.test(file);
+    if (isVideo) {
+      return (
+        <video
+          src={file}
+          style={{ maxWidth: '100%', height: 'auto' }}
+          controls
+          onClick={() => handleMediaClick(file)}
+        />
+      );
+    } else {
+      return (
+        <img
+          src={file}
+          alt={file}
+          style={{ maxWidth: '100%', height: 'auto' }}
+          onClick={() => handleMediaClick(file)}
+        />
+      );
+    }
+  };
+
+  const renderNode = (node, index) => {
+    if (Array.isArray(node)) {
+      return (
+        <div key={index} style={{ display: 'flex', flexDirection: index % 2 === 0 ? 'row' : 'row-reverse' }}>
+          {node.map((subNode, subIndex) => renderNode(subNode, `${index}-${subIndex}`))}
+        </div>
+      );
+    } else if (node.type === 'file') {
+      const mediaFile = mediaFiles.find(file => file.endsWith(node.file));
+      return mediaFile ? renderMediaElement(mediaFile) : null;
+    } else if (node.type === 'text') {
+      return <div key={index} dangerouslySetInnerHTML={{ __html: node.text }} />;
+    }
+    return null;
+  };
+
   return (
-    <div 
-      className="dream-song" 
-      onClick={onClick}
-      style={{
-        alignItems: 'center',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '0',
-        boxSizing: 'border-box',
-        width: '100%',
-        height: '100%',
-        backgroundColor: BLACK,
-        borderRadius: '50%',
-        border: `5px solid ${borderColor}`,
-        color: WHITE,
-      }}
-    >
-      <div style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '20px',
-        boxSizing: 'border-box',
-        borderRadius: '50%',
-        overflow: 'hidden',
-        background: isHovered ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
-        transition: 'background 0.3s ease',
-      }}>
-        <h2 style={{ 
-          fontSize: '18px', 
-          margin: '10px 0', 
-          padding: '5px', 
-          textAlign: 'center',
-          wordWrap: 'break-word',
-          overflowWrap: 'break-word',
-          maxWidth: '100%',
-        }}>
-          {repoName}
-        </h2>
-        {metadata && (
-          <>
-            {metadata.dateCreated && (
-              <p style={{ fontSize: '14px', margin: '5px 0', textAlign: 'center' }}>Created: {new Date(metadata.dateCreated).toLocaleDateString()}</p>
-            )}
-            {metadata.tags && metadata.tags.length > 0 && (
-              <p style={{ fontSize: '14px', margin: '5px 0', textAlign: 'center' }}>Tags: {metadata.tags.join(', ')}</p>
-            )}
-            {metadata.aiPrompt && (
-              <p style={{ 
-                fontSize: '14px', 
-                margin: '5px 0',
-                maxHeight: '80px',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical',
-                textAlign: 'center',
-              }}>
-                AI Prompt: {metadata.aiPrompt}
-              </p>
-            )}
-          </>
-        )}
-      </div>
+    <div className="dream-song" style={{ backgroundColor: BLACK, color: WHITE, padding: '20px' }}>
+      <h2>{repoName}</h2>
+      {canvasData && canvasData.map((node, index) => renderNode(node, index))}
     </div>
   );
 };
