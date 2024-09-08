@@ -15,15 +15,18 @@ This document will be used to track the progress of the DreamSong migration proj
 ### Completed Tasks
 - [2024-09-08] Created src/utils/fileUtils.js with readDreamSongCanvas and listMediaFiles functions
 - [2024-09-08] Updated src/services/electronService.js with readFile and listFiles functions
+- [2024-09-08] Created src/utils/dreamSongUtils.js with parseDreamSongCanvas, topologicalSort, and processDreamSongData functions
 
 ### In Progress
-- [2024-09-08] Implementing file system operations for DreamSong migration
+- [2024-09-08] Implementing data processing utilities for DreamSong migration
 
 ### Current Challenges
-- Description of any current challenges or blockers
+- No current challenges
 
 ### Next Steps
-- List of immediate next steps
+- Update src/components/DreamSong.js to use the new utility functions
+- Implement rendering logic for the linear flow of elements in DreamSong.js
+- Add click handling for media files in DreamSong.js
 
 ### Notes
-- Any important notes, decisions, or changes to the plan
+- The topological sort function includes a check for cycles in the graph, which might be useful for error handling or future improvements.
