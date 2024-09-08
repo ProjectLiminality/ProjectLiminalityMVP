@@ -78,3 +78,28 @@ async function getPreferredMediaFile(repoName) {
     return null;
   }
 }
+import { readFile, listFiles } from '../services/electronService';
+
+export async function readDreamSongCanvas(repoName) {
+  try {
+    const canvasPath = `${repoName}/DreamSong.canvas`;
+    const canvasContent = await readFile(canvasPath);
+    return JSON.parse(canvasContent);
+  } catch (error) {
+    console.error('Error reading DreamSong.canvas:', error);
+    throw error;
+  }
+}
+
+export async function listMediaFiles(repoName) {
+  try {
+    const files = await listFiles(repoName);
+    const mediaExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.webm', '.ogg'];
+    return files.filter(file => 
+      mediaExtensions.some(ext => file.toLowerCase().endsWith(ext))
+    );
+  } catch (error) {
+    console.error('Error listing media files:', error);
+    throw error;
+  }
+}

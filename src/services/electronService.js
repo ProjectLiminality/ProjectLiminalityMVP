@@ -1,3 +1,11 @@
+export async function readFile(filePath) {
+  if (!window.electron || !window.electron.fileSystem || typeof window.electron.fileSystem.readFile !== 'function') {
+    console.error('readFile function is not available in the electron context');
+    throw new Error('readFile function is not available');
+  }
+  return window.electron.fileSystem.readFile(filePath);
+}
+
 export async function readMetadata(repoName) {
   return window.electron.fileSystem.readMetadata(repoName);
 }
@@ -23,6 +31,10 @@ export async function getFileStats(filePath) {
 }
 
 export async function listFiles(repoName) {
+  if (!window.electron || !window.electron.fileSystem || typeof window.electron.fileSystem.listFiles !== 'function') {
+    console.error('listFiles function is not available in the electron context');
+    throw new Error('listFiles function is not available');
+  }
   return window.electron.fileSystem.listFiles(repoName);
 }
 

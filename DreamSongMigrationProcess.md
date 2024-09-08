@@ -13,10 +13,11 @@ This document will be used to track the progress of the DreamSong migration proj
 ## Sections
 
 ### Completed Tasks
-- [Date] Task description
+- [2024-09-08] Created src/utils/fileUtils.js with readDreamSongCanvas and listMediaFiles functions
+- [2024-09-08] Updated src/services/electronService.js with readFile and listFiles functions
 
 ### In Progress
-- [Date] Task description
+- [2024-09-08] Implementing file system operations for DreamSong migration
 
 ### Current Challenges
 - Description of any current challenges or blockers
