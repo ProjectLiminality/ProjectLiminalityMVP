@@ -70,18 +70,20 @@ async function getPreferredMediaFile(repoName) {
 
 export async function readDreamSongCanvas(repoName) {
   try {
+    console.log(`Attempting to read DreamSong.canvas for ${repoName}`);
     const canvasPath = `${repoName}/DreamSong.canvas`;
+    console.log(`Full canvas path: ${canvasPath}`);
     const canvasContent = await electronService.readFile(canvasPath);
-    return JSON.parse(canvasContent);
+    console.log(`Canvas content read successfully: ${canvasContent.substring(0, 100)}...`);
+    const parsedContent = JSON.parse(canvasContent);
+    console.log('Canvas content parsed successfully');
+    return parsedContent;
   } catch (error) {
+    console.error(`Error in readDreamSongCanvas for ${repoName}:`, error);
     if (error.message.includes('ENOENT')) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.log(`No DreamSong.canvas found for ${repoName}`);
-      }
-      return null;
-    }
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('Error reading DreamSong.canvas:', error);
+      console.log(`No DreamSong.canvas found for ${repoName}`);
+    } else if (error.name === 'SyntaxError') {
+      console.error('JSON parsing error:', error);
     }
     return null;
   }
@@ -89,14 +91,17 @@ export async function readDreamSongCanvas(repoName) {
 
 export async function listMediaFiles(repoName) {
   try {
+    console.log(`Listing media files for ${repoName}`);
     const files = await electronService.listFiles(repoName);
+    console.log(`Files found in ${repoName}:`, files);
     const mediaExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.webm', '.ogg'];
     const mediaFiles = files.filter(file => 
       mediaExtensions.some(ext => file.toLowerCase().endsWith(ext))
     ).map(file => `${repoName}/${file}`);
+    console.log(`Media files found:`, mediaFiles);
     return mediaFiles;
   } catch (error) {
-    console.error('Error listing media files:', error);
+    console.error(`Error listing media files for ${repoName}:`, error);
     throw error;
   }
 }

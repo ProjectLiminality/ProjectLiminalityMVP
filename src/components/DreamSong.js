@@ -10,7 +10,11 @@ const DreamSong = ({ repoName, onClick }) => {
   useEffect(() => {
     const fetchData = async () => {
       console.log(`Fetching data for repo: ${repoName}`);
+      
+      // Fetch and log DreamSong canvas data
       const canvas = await readDreamSongCanvas(repoName);
+      console.log('Raw DreamSong canvas data:', canvas);
+      
       if (canvas) {
         console.log('DreamSong canvas data fetched successfully');
         const processedData = processDreamSongData(canvas);
@@ -20,6 +24,7 @@ const DreamSong = ({ repoName, onClick }) => {
         console.log('No DreamSong canvas data found');
       }
 
+      // Fetch and log media files
       const media = await listMediaFiles(repoName);
       console.log('Media files fetched:', media);
       setMediaFiles(media);
