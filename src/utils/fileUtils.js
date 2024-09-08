@@ -73,10 +73,26 @@ export async function readDreamSongCanvas(repoName) {
     console.log(`Attempting to read DreamSong.canvas for ${repoName}`);
     const canvasPath = `${repoName}/DreamSong.canvas`;
     console.log(`Full canvas path: ${canvasPath}`);
+    
+    // Check if the file exists before trying to read it
+    const fileExists = await electronService.fileExists(canvasPath);
+    if (!fileExists) {
+      console.log(`DreamSong.canvas does not exist for ${repoName}`);
+      return null;
+    }
+
     const canvasContent = await electronService.readFile(canvasPath);
-    console.log(`Canvas content read successfully: ${canvasContent.substring(0, 100)}...`);
+    console.log(`Canvas content read successfully. Length: ${canvasContent.length}`);
+    console.log(`First 100 characters: ${canvasContent.substring(0, 100)}...`);
+
+    if (!canvasContent || canvasContent.trim() === '') {
+      console.log(`DreamSong.canvas is empty for ${repoName}`);
+      return null;
+    }
+
     const parsedContent = JSON.parse(canvasContent);
     console.log('Canvas content parsed successfully');
+    console.log('Parsed content structure:', JSON.stringify(parsedContent, null, 2).substring(0, 200) + '...');
     return parsedContent;
   } catch (error) {
     console.error(`Error in readDreamSongCanvas for ${repoName}:`, error);
@@ -84,6 +100,7 @@ export async function readDreamSongCanvas(repoName) {
       console.log(`No DreamSong.canvas found for ${repoName}`);
     } else if (error.name === 'SyntaxError') {
       console.error('JSON parsing error:', error);
+      console.log('Raw content causing parse error:', canvasContent);
     }
     return null;
   }

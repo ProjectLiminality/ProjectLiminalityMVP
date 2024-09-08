@@ -6,6 +6,14 @@ export async function readFile(filePath) {
   return window.electron.fileSystem.readFile(filePath);
 }
 
+export async function fileExists(filePath) {
+  if (!window.electron || !window.electron.fileSystem || typeof window.electron.fileSystem.fileExists !== 'function') {
+    console.error('fileExists function is not available in the electron context');
+    throw new Error('fileExists function is not available');
+  }
+  return window.electron.fileSystem.fileExists(filePath);
+}
+
 export async function readMetadata(repoName) {
   return window.electron.fileSystem.readMetadata(repoName);
 }
