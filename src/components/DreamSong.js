@@ -20,7 +20,7 @@ const DreamSong = ({ repoName, onClick }) => {
         setCanvasData(processedData);
 
         const media = await listMediaFiles(repoName);
-        console.log('Media files:', media);
+        console.log('Media files for DreamSong:', media);
         setMediaFiles(media);
       } catch (error) {
         console.error('Error fetching DreamSong data:', error);
@@ -42,7 +42,7 @@ const DreamSong = ({ repoName, onClick }) => {
     if (isVideo) {
       return (
         <video
-          src={file}
+          src={`file://${file}`}
           style={{ maxWidth: '100%', height: 'auto' }}
           controls
           onClick={() => handleMediaClick(file)}
@@ -51,7 +51,7 @@ const DreamSong = ({ repoName, onClick }) => {
     } else {
       return (
         <img
-          src={file}
+          src={`file://${file}`}
           alt={file}
           style={{ maxWidth: '100%', height: 'auto' }}
           onClick={() => handleMediaClick(file)}
