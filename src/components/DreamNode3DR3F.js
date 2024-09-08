@@ -19,7 +19,6 @@ const DreamNode3DR3F = ({ repoName, position, scale, onNodeClick, isHovered, set
     const fetchRepoData = async () => {
       try {
         const data = await getRepoData(repoName);
-        console.log('Fetched repo data:', data);
         setRepoData(data);
       } catch (error) {
         console.error('Error fetching repo data:', error);
