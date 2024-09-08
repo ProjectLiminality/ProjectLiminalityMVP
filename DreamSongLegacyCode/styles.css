@@ -1,0 +1,68 @@
+/* styles.css */
+
+/* Existing styles */
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #000000;
+}
+
+#canvas-container {
+  width: 100%; /* Adjust this percentage as needed */
+  max-width: 2600px; /* Set a max width for very large screens */
+  padding: 20px;
+  background-color: #000000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 150px;
+  flex-direction: row;
+}
+
+.media {
+  flex: 1;
+  max-width: 50%;
+  object-fit: contain;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.text {
+  flex: 0 0 500px; /* Fixed width for readability */
+  max-width: 600px;
+  padding: 10px;
+  color: white;
+  text-align: left;
+  font-size: 34px;
+}
+
+/* New styles for fixing image height and text container */
+.standalone-media {
+  display: block;
+  max-width: 1000px;
+  margin: auto; /* Center the image */
+  height: auto; /* Ensure image height matches its natural height */
+}
+
+.text-container {
+  display: flex;
+  margin: auto; /* Center the text container */
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-direction: column;
+}
+
+.text-container .text {
+  margin: 0; /* Remove any default margin */
+}
