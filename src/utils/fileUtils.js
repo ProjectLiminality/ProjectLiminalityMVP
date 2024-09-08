@@ -75,10 +75,14 @@ export async function readDreamSongCanvas(repoName) {
     return JSON.parse(canvasContent);
   } catch (error) {
     if (error.message.includes('ENOENT')) {
-      console.log(`No DreamSong.canvas found for ${repoName}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`No DreamSong.canvas found for ${repoName}`);
+      }
       return null;
     }
-    console.error('Error reading DreamSong.canvas:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Error reading DreamSong.canvas:', error);
+    }
     return null;
   }
 }
