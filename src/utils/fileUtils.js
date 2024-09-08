@@ -90,17 +90,21 @@ export async function readDreamSongCanvas(repoName) {
       return null;
     }
 
-    const parsedContent = JSON.parse(canvasContent);
-    console.log('Canvas content parsed successfully');
-    console.log('Parsed content structure:', JSON.stringify(parsedContent, null, 2).substring(0, 200) + '...');
+    let parsedContent;
+    try {
+      parsedContent = JSON.parse(canvasContent);
+      console.log('Canvas content parsed successfully');
+      console.log('Parsed content structure:', JSON.stringify(parsedContent, null, 2).substring(0, 200) + '...');
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError);
+      console.log('Raw content causing parse error:', canvasContent);
+      throw parseError;
+    }
     return parsedContent;
   } catch (error) {
     console.error(`Error in readDreamSongCanvas for ${repoName}:`, error);
     if (error.message.includes('ENOENT')) {
       console.log(`No DreamSong.canvas found for ${repoName}`);
-    } else if (error.name === 'SyntaxError') {
-      console.error('JSON parsing error:', error);
-      console.log('Raw content causing parse error:', canvasContent);
     }
     return null;
   }
