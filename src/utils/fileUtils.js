@@ -31,14 +31,10 @@ export async function getRepoData(repoName) {
  */
 async function getPreferredMediaFile(repoName) {
   try {
-    console.log(`Getting preferred media file for ${repoName}`);
     const files = await electronService.listFiles(repoName);
-    console.log(`Files in ${repoName}:`, files);
-    
     const mediaFiles = files.filter(file => 
       file.startsWith(repoName) && preferredExtensions.some(ext => file.toLowerCase().endsWith(ext))
     );
-    console.log(`Media files in ${repoName}:`, mediaFiles);
 
     if (mediaFiles.length > 0) {
       const selectedFile = mediaFiles.sort((a, b) => {
@@ -46,11 +42,8 @@ async function getPreferredMediaFile(repoName) {
         const extB = preferredExtensions.findIndex(ext => b.toLowerCase().endsWith(ext));
         return extA - extB;
       })[0];
-      console.log(`Selected file for ${repoName}:`, selectedFile);
 
       const mediaPath = await electronService.getMediaFilePath(repoName, selectedFile);
-      console.log(`Media path for ${repoName}:`, mediaPath);
-      
       const mediaData = await electronService.readFile(mediaPath);
       const fileExtension = selectedFile.split('.').pop().toLowerCase();
 
@@ -63,7 +56,6 @@ async function getPreferredMediaFile(repoName) {
       };
 
       const mimeType = mimeTypes[fileExtension] || 'application/octet-stream';
-      console.log(`MIME type for ${selectedFile}:`, mimeType);
 
       return {
         type: mimeType,
@@ -71,7 +63,6 @@ async function getPreferredMediaFile(repoName) {
         data: `data:${mimeType};base64,${mediaData}`
       };
     }
-    console.log(`No media files found for ${repoName}`);
     return null;
   } catch (error) {
     console.error(`Error getting preferred media file for ${repoName}:`, error);
@@ -81,10 +72,8 @@ async function getPreferredMediaFile(repoName) {
 
 export async function readDreamSongCanvas(repoName) {
   try {
-    console.log(`Attempting to read DreamSong.canvas for ${repoName}`);
     const canvasPath = `${repoName}/DreamSong.canvas`;
     const canvasContent = await electronService.readFile(canvasPath);
-    console.log('DreamSong.canvas content:', canvasContent);
     return JSON.parse(canvasContent);
   } catch (error) {
     console.error('Error reading DreamSong.canvas:', error);
@@ -97,14 +86,11 @@ export async function readDreamSongCanvas(repoName) {
 
 export async function listMediaFiles(repoName) {
   try {
-    console.log(`Listing media files for ${repoName}`);
     const files = await electronService.listFiles(repoName);
-    console.log('All files:', files);
     const mediaExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.webm', '.ogg'];
     const mediaFiles = files.filter(file => 
       mediaExtensions.some(ext => file.toLowerCase().endsWith(ext))
-    );
-    console.log('Filtered media files:', mediaFiles);
+    ).map(file => `${repoName}/${file}`);
     return mediaFiles;
   } catch (error) {
     console.error('Error listing media files:', error);
