@@ -73,15 +73,18 @@ export async function readDreamSongCanvas(repoName) {
     console.log(`Attempting to read DreamSong.canvas for ${repoName}`);
     const canvasPath = `${repoName}/DreamSong.canvas`;
     console.log(`Full canvas path: ${canvasPath}`);
-    
-    // Check if the file exists before trying to read it
-    const fileExists = await electronService.fileExists(canvasPath);
-    if (!fileExists) {
-      console.log(`DreamSong.canvas does not exist for ${repoName}`);
-      return null;
+
+    let canvasContent;
+    try {
+      canvasContent = await electronService.readFile(canvasPath);
+    } catch (readError) {
+      if (readError.message.includes('ENOENT')) {
+        console.log(`DreamSong.canvas does not exist for ${repoName}`);
+        return null;
+      }
+      throw readError;
     }
 
-    const canvasContent = await electronService.readFile(canvasPath);
     console.log(`Canvas content read successfully. Length: ${canvasContent.length}`);
     console.log(`First 100 characters: ${canvasContent.substring(0, 100)}...`);
 
@@ -103,9 +106,6 @@ export async function readDreamSongCanvas(repoName) {
     return parsedContent;
   } catch (error) {
     console.error(`Error in readDreamSongCanvas for ${repoName}:`, error);
-    if (error.message.includes('ENOENT')) {
-      console.log(`No DreamSong.canvas found for ${repoName}`);
-    }
     return null;
   }
 }
