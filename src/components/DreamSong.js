@@ -13,8 +13,6 @@ const DreamSong = ({ repoName, onClick }) => {
       if (canvas) {
         const processedData = processDreamSongData(canvas);
         setCanvasData(processedData);
-      } else {
-        console.log(`No DreamSong.canvas found for ${repoName}`);
       }
 
       const media = await listMediaFiles(repoName);
