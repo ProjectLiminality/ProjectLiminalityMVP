@@ -22,10 +22,6 @@ export async function getMediaFilePath(repoName) {
   return window.electron.fileSystem.getMediaFilePath(repoName);
 }
 
-export async function readFile(filePath) {
-  return window.electron.fileSystem.readFile(filePath);
-}
-
 export async function getFileStats(filePath) {
   return window.electron.fileSystem.getFileStats(filePath);
 }
