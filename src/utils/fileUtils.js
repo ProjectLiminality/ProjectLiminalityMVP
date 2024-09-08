@@ -13,10 +13,8 @@ const preferredExtensions = ['.gif', '.mp4', '.png', '.jpg', '.jpeg'];
  */
 export async function getRepoData(repoName) {
   try {
-    console.log(`Getting repo data for ${repoName}`);
     const metadata = await electronService.readMetadata(repoName);
     const mediaContent = await getPreferredMediaFile(repoName);
-    console.log(`Repo data for ${repoName}:`, { metadata, mediaContent });
     return { metadata, mediaContent };
   } catch (error) {
     console.error(`Error getting repo data for ${repoName}:`, error);
@@ -76,11 +74,12 @@ export async function readDreamSongCanvas(repoName) {
     const canvasContent = await electronService.readFile(canvasPath);
     return JSON.parse(canvasContent);
   } catch (error) {
-    console.error('Error reading DreamSong.canvas:', error);
     if (error.message.includes('ENOENT')) {
-      throw new Error(`DreamSong.canvas not found for ${repoName}`);
+      console.log(`No DreamSong.canvas found for ${repoName}`);
+      return null;
     }
-    throw error;
+    console.error('Error reading DreamSong.canvas:', error);
+    return null;
   }
 }
 
