@@ -87,3 +87,21 @@
     "ws": "^8.14.2"
   }
 }
+{
+  "name": "mathweb",
+  "version": "1.0.0",
+  "description": "A simple web application for mathematical operations",
+  "main": "index.js",
+  "scripts": {
+    "start": "python mathweb/flask/app.py",
+    "test": "python -m unittest discover tests"
+  },
+  "dependencies": {
+    "flask": "^2.0.1"
+  },
+  "devDependencies": {
+    "pytest": "^6.2.5"
+  },
+  "author": "",
+  "license": "ISC"
+}
