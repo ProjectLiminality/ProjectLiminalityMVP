@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('electron', {
     writeMetadata: (repoName, metadata) => ipcRenderer.invoke('write-metadata', repoName, metadata),
     readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
     listFiles: (repoName) => ipcRenderer.invoke('list-files', repoName),
+    renameRepo: (oldName, newName) => ipcRenderer.invoke('rename-repo', oldName, newName),
   },
   getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
   setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),
