@@ -82,8 +82,11 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
             backgroundColor: BLACK,
             color: WHITE,
             border: `1px solid ${BLUE}`,
-            borderRadius: '4px'
+            borderRadius: '4px',
+            outline: 'none',
           }}
+          onFocus={(e) => e.target.style.boxShadow = `0 0 0 2px ${RED}`}
+          onBlur={(e) => e.target.style.boxShadow = 'none'}
         />
       );
     }

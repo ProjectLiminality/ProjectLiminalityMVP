@@ -52,7 +52,10 @@ const CustomNumberInput = ({ value, onChange }) => {
           appearance: 'textfield',
           MozAppearance: 'textfield',
           WebkitAppearance: 'textfield',
+          outline: 'none',
         }}
+        onFocus={(e) => e.target.style.boxShadow = `0 0 0 2px ${RED}`}
+        onBlur={(e) => e.target.style.boxShadow = 'none'}
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div
