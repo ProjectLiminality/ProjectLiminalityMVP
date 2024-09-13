@@ -63,7 +63,7 @@ const CustomNumberInput = ({ value, onChange }) => {
         >
           <div style={{
             ...upTriangleStyle,
-            borderBottomColor: hoverUp ? WHITE : BLUE,
+            borderBottom: `7.875px solid ${hoverUp ? WHITE : BLUE}`,
           }} />
         </div>
         <div
@@ -74,7 +74,7 @@ const CustomNumberInput = ({ value, onChange }) => {
         >
           <div style={{
             ...downTriangleStyle,
-            borderTopColor: hoverDown ? WHITE : BLUE,
+            borderTop: `7.875px solid ${hoverDown ? WHITE : BLUE}`,
           }} />
         </div>
       </div>
