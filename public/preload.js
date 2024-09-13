@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld('electron', {
   setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),
   scanDreamVault: () => ipcRenderer.invoke('scan-dream-vault'),
   openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
-  isElectron: true
+  isElectron: true,
+  renameRepo: (oldName, newName) => ipcRenderer.invoke('rename-repo', oldName, newName),
 });
 
