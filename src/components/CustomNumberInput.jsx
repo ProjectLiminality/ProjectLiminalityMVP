@@ -6,8 +6,8 @@ const CustomNumberInput = ({ value, onChange }) => {
   const [hoverDown, setHoverDown] = useState(false);
 
   const buttonStyle = {
-    width: '20px',
-    height: '20px',
+    width: '10px',
+    height: '10px',
     backgroundColor: BLACK,
     display: 'flex',
     justifyContent: 'center',
@@ -18,19 +18,19 @@ const CustomNumberInput = ({ value, onChange }) => {
   const triangleStyle = {
     width: 0,
     height: 0,
-    borderLeft: '5px solid transparent',
-    borderRight: '5px solid transparent',
+    borderLeft: '7.5px solid transparent',
+    borderRight: '7.5px solid transparent',
   };
 
   const upTriangleStyle = {
     ...triangleStyle,
-    borderBottom: `7px solid ${BLUE}`,
+    borderBottom: `10.5px solid ${BLUE}`,
     borderTop: 'none',
   };
 
   const downTriangleStyle = {
     ...triangleStyle,
-    borderTop: `7px solid ${BLUE}`,
+    borderTop: `10.5px solid ${BLUE}`,
     borderBottom: 'none',
   };
 
