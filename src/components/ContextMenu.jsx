@@ -22,11 +22,11 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.9em' }}>
         <li 
           onClick={handleEditMetadata}
           style={{ 
-            padding: '10px',
+            padding: '6px 10px',
             cursor: 'pointer',
             transition: 'background-color 0.2s ease',
           }}
@@ -37,7 +37,7 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
         </li>
         <li 
           style={{ 
-            padding: '10px',
+            padding: '6px 10px',
             cursor: 'pointer',
             transition: 'background-color 0.2s ease',
           }}
