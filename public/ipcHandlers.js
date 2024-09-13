@@ -1,7 +1,7 @@
 const { dialog, shell } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
-const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate');
+const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate.js');
 
 function setupHandlers(ipcMain, store) {
 
