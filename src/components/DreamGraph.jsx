@@ -49,12 +49,12 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
       const otherNodes = prevNodes.filter((_, index) => index !== clickedNodeIndex);
       
       const relatedNodes = otherNodes.filter(node => 
-        clickedNode.metadata.relatedNodes.includes(node.repoName) && 
-        node.metadata.type !== clickedNode.metadata.type
+        clickedNode.metadata?.relatedNodes?.includes(node.repoName) && 
+        node.metadata?.type !== clickedNode.metadata?.type
       );
       const unrelatedNodes = otherNodes.filter(node => 
-        !clickedNode.metadata.relatedNodes.includes(node.repoName) || 
-        node.metadata.type === clickedNode.metadata.type
+        !clickedNode.metadata?.relatedNodes?.includes(node.repoName) || 
+        node.metadata?.type === clickedNode.metadata?.type
       );
 
       const relatedCircleRadius = 30;
@@ -112,7 +112,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
           isHovered={hoveredNode === node.repoName}
           setHoveredNode={setHoveredNode}
           index={index}
-          type={node.metadata.type}
+          type={node.metadata?.type || 'unknown'}
         />
       ))}
     </>
