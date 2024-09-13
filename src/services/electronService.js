@@ -49,7 +49,16 @@ export async function renameRepo(oldName, newName) {
     console.error('renameRepo function is not available in the electron context');
     throw new Error('renameRepo function is not available');
   }
-  return window.electron.fileSystem.renameRepo(oldName, newName);
+  try {
+    const result = await window.electron.fileSystem.renameRepo(oldName, newName);
+    if (!result) {
+      throw new Error('Renaming operation failed');
+    }
+    return result;
+  } catch (error) {
+    console.error('Error in renameRepo:', error);
+    throw error;
+  }
 }
 
 export async function scanDreamVault() {
