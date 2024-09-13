@@ -41,8 +41,14 @@ const RenamePanel = ({ isOpen, onClose, repoName }) => {
             borderRadius: '4px',
             outline: 'none',
           }}
-          onFocus={(e) => e.target.style.boxShadow = `0 0 0 2px ${RED}`}
-          onBlur={(e) => e.target.style.boxShadow = 'none'}
+          onFocus={(e) => {
+            e.target.style.boxShadow = `0 0 0 2px ${RED}`;
+            e.target.style.border = `1px solid ${BLACK}`;
+          }}
+          onBlur={(e) => {
+            e.target.style.boxShadow = 'none';
+            e.target.style.border = `1px solid ${BLUE}`;
+          }}
         />
       </div>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
