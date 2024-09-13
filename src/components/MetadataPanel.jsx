@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { readMetadata, writeMetadata } from '../services/electronService';
 import { BLACK, BLUE, RED, WHITE } from '../constants/colors';
+import CustomNumberInput from './CustomNumberInput';
 
 const MetadataPanel = ({ isOpen, onClose, repoName }) => {
   const [metadata, setMetadata] = useState({});
@@ -64,18 +65,9 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
       );
     } else if (key === 'interactions') {
       return (
-        <input
-          type="number"
+        <CustomNumberInput
           value={value}
-          onChange={(e) => handleInputChange(key, parseInt(e.target.value, 10))}
-          style={{ 
-            width: '60%',
-            padding: '5px',
-            backgroundColor: BLACK,
-            color: WHITE,
-            border: `1px solid ${BLUE}`,
-            borderRadius: '4px'
-          }}
+          onChange={(newValue) => handleInputChange(key, newValue)}
         />
       );
     } else {
