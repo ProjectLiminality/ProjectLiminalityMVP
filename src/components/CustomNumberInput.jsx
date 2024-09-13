@@ -50,8 +50,8 @@ const CustomNumberInput = ({ value, onChange }) => {
           marginRight: '5px',
           textAlign: 'center',
           appearance: 'textfield',
-          '-moz-appearance': 'textfield',
-          '-webkit-appearance': 'textfield',
+          MozAppearance: 'textfield',
+          WebkitAppearance: 'textfield',
         }}
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
