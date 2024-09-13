@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BLACK, BLUE, WHITE } from '../constants/colors';
+import { BLACK, BLUE, RED, WHITE } from '../constants/colors';
 
 const RenamePanel = ({ isOpen, onClose, repoName }) => {
   const [newName, setNewName] = useState(repoName);
