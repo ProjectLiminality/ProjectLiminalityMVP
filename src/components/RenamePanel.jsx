@@ -46,6 +46,7 @@ const RenamePanel = ({ isOpen, onClose, repoName }) => {
           backgroundColor: RED,
           color: WHITE,
           border: 'none',
+          borderRadius: '4px',
           cursor: 'pointer'
         }}>
           Cancel
@@ -55,6 +56,7 @@ const RenamePanel = ({ isOpen, onClose, repoName }) => {
           backgroundColor: BLUE,
           color: WHITE,
           border: 'none',
+          borderRadius: '4px',
           cursor: 'pointer',
         }}>
           Save
