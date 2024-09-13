@@ -4,7 +4,7 @@ import { BLACK, BLUE, WHITE } from '../constants/colors';
 const RenamePanel = ({ isOpen, onClose, repoName }) => {
   const [newName, setNewName] = useState(repoName);
 
-  const handleRename = () => {
+  const handleSave = () => {
     // TODO: Implement rename functionality
     console.log(`Renaming ${repoName} to ${newName}`);
     onClose();
@@ -23,41 +23,41 @@ const RenamePanel = ({ isOpen, onClose, repoName }) => {
       padding: '20px',
       borderRadius: '8px',
       zIndex: 1000,
-      border: `1px solid ${BLUE}`,
+      boxShadow: `0 0 0 2px ${BLUE}`,
     }}>
-      <h2>Rename</h2>
+      <h2 style={{ color: WHITE }}>Rename</h2>
       <input
         type="text"
         value={newName}
         onChange={(e) => setNewName(e.target.value)}
         style={{
           width: '100%',
-          padding: '8px',
+          padding: '5px',
           marginBottom: '10px',
           backgroundColor: BLACK,
           color: WHITE,
           border: `1px solid ${BLUE}`,
         }}
       />
-      <div>
-        <button onClick={handleRename} style={{
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+        <button onClick={onClose} style={{ 
+          marginRight: '10px',
+          padding: '5px 10px',
+          backgroundColor: RED,
+          color: WHITE,
+          border: 'none',
+          cursor: 'pointer'
+        }}>
+          Cancel
+        </button>
+        <button onClick={handleSave} style={{
+          padding: '5px 10px',
           backgroundColor: BLUE,
           color: WHITE,
           border: 'none',
-          padding: '8px 16px',
-          marginRight: '10px',
           cursor: 'pointer',
         }}>
-          Rename
-        </button>
-        <button onClick={onClose} style={{
-          backgroundColor: 'transparent',
-          color: WHITE,
-          border: `1px solid ${WHITE}`,
-          padding: '8px 16px',
-          cursor: 'pointer',
-        }}>
-          Cancel
+          Save
         </button>
       </div>
     </div>
