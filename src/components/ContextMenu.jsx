@@ -1,14 +1,13 @@
 import React from 'react';
 import { BLACK, BLUE, RED, WHITE } from '../constants/colors';
 
-const ContextMenu = ({ repoName, onClose, onEditMetadata }) => {
+const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
   return (
     <div 
       style={{
         position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
+        top: position.y,
+        left: position.x,
         backgroundColor: BLACK,
         color: WHITE,
         padding: '20px',

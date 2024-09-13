@@ -28,18 +28,26 @@ function App() {
     console.log(`Opening MetadataPanel: ${repoName}`);
     setSelectedRepoName(repoName);
     setIsMetadataPanelOpen(true);
+    setContextMenu(null); // Close context menu when opening metadata panel
   };
 
-  const handleNodeRightClick = (repoName) => {
+  const handleNodeRightClick = (repoName, event) => {
     console.log(`Right-clicked on node: ${repoName}`);
-    setContextMenu({ repoName });
+    event.preventDefault(); // Prevent default context menu
+    setContextMenu({ 
+      repoName, 
+      position: { x: event.clientX, y: event.clientY } 
+    });
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
   };
 
   return (
     <>
-      <div className="App">
+      <div className="App" onClick={handleCloseContextMenu}>
         <DreamSpace 
-          onOpenMetadataPanel={handleOpenMetadataPanel}
           onNodeRightClick={handleNodeRightClick}
         />
       </div>
@@ -59,7 +67,8 @@ function App() {
       {contextMenu && (
         <ContextMenu
           repoName={contextMenu.repoName}
-          onClose={() => setContextMenu(null)}
+          position={contextMenu.position}
+          onClose={handleCloseContextMenu}
           onEditMetadata={handleOpenMetadataPanel}
         />
       )}
