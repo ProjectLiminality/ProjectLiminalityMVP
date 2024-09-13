@@ -67,7 +67,7 @@ const DreamNode = ({ repoName, position, scale, onNodeClick, onNodeRightClick, i
   const handleRightClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    onNodeRightClick(repoName);
+    onNodeRightClick(repoName, event);
   };
 
   return (

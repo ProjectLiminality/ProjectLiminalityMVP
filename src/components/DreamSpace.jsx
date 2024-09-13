@@ -6,7 +6,7 @@ import CameraController from './CameraController';
 import IntersectionChecker from './IntersectionChecker';
 import useDreamNodes from '../hooks/useDreamNodes';
 
-const DreamSpace = ({ onOpenMetadataPanel, onNodeRightClick }) => {
+const DreamSpace = ({ onNodeRightClick }) => {
   const { dreamNodes, error } = useDreamNodes();
 
   const initialNodes = dreamNodes.map(node => ({
@@ -26,7 +26,6 @@ const DreamSpace = ({ onOpenMetadataPanel, onNodeRightClick }) => {
         <pointLight position={[10, 10, 10]} />
         <DreamGraph 
           initialNodes={initialNodes} 
-          onOpenMetadataPanel={onOpenMetadataPanel}
           onNodeRightClick={onNodeRightClick}
         />
         <IntersectionChecker />
