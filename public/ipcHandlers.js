@@ -146,6 +146,24 @@ function setupHandlers(ipcMain, store) {
       throw error;
     }
   });
+
+  ipcMain.handle('rename-repo', async (event, oldName, newName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const oldPath = path.join(dreamVaultPath, oldName);
+    const newPath = path.join(dreamVaultPath, newName);
+
+    try {
+      await fs.rename(oldPath, newPath);
+      return true;
+    } catch (error) {
+      console.error(`Error renaming repo from ${oldName} to ${newName}:`, error);
+      throw error;
+    }
+  });
 }
 
 module.exports = { setupHandlers };

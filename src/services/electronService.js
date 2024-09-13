@@ -44,6 +44,14 @@ export async function listFiles(repoName) {
   return window.electron.fileSystem.listFiles(repoName);
 }
 
+export async function renameRepo(oldName, newName) {
+  if (!window.electron || !window.electron.fileSystem || typeof window.electron.fileSystem.renameRepo !== 'function') {
+    console.error('renameRepo function is not available in the electron context');
+    throw new Error('renameRepo function is not available');
+  }
+  return window.electron.fileSystem.renameRepo(oldName, newName);
+}
+
 export async function scanDreamVault() {
   return window.electron.scanDreamVault();
 }

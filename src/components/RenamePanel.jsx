@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { BLACK, BLUE, RED, WHITE } from '../constants/colors';
+import { renameRepo } from '../services/electronService';
 
 const RenamePanel = ({ isOpen, onClose, repoName }) => {
   const [newName, setNewName] = useState(repoName);
+  const [error, setError] = useState(null);
 
-  const handleSave = () => {
-    // TODO: Implement rename functionality
-    console.log(`Renaming ${repoName} to ${newName}`);
-    onClose();
+  const handleSave = async () => {
+    try {
+      setError(null);
+      await renameRepo(repoName, newName);
+      onClose();
+    } catch (error) {
+      console.error(`Error renaming ${repoName} to ${newName}:`, error);
+      setError(`Failed to rename repository: ${error.message}`);
+    }
   };
 
   if (!isOpen) return null;
@@ -49,6 +56,7 @@ const RenamePanel = ({ isOpen, onClose, repoName }) => {
           }}
         />
       </div>
+      {error && <div style={{ color: RED, marginBottom: '10px' }}>{error}</div>}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
         <button onClick={onClose} style={{ 
           marginRight: '10px',
