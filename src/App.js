@@ -25,6 +25,7 @@ function App() {
   }, []);
 
   const handleOpenMetadataPanel = (repoName) => {
+    console.log(`Opening MetadataPanel: ${repoName}`);
     setSelectedRepoName(repoName);
     setIsMetadataPanelOpen(true);
   };
