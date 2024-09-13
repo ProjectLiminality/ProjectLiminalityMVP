@@ -45,20 +45,22 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
     if (key === 'type') {
       return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <label style={{ marginRight: '10px' }}>
+          <label style={{ marginRight: '10px', color: BLUE }}>
             <input
               type="radio"
               value="idea"
               checked={value === 'idea'}
               onChange={() => handleInputChange(key, 'idea')}
+              style={{ accentColor: BLUE }}
             /> Idea
           </label>
-          <label>
+          <label style={{ color: RED }}>
             <input
               type="radio"
               value="person"
               checked={value === 'person'}
               onChange={() => handleInputChange(key, 'person')}
+              style={{ accentColor: RED }}
             /> Person
           </label>
         </div>
