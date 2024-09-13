@@ -1,7 +1,12 @@
 import React from 'react';
-import { BLACK, BLUE, RED, WHITE } from '../constants/colors';
+import { BLACK, BLUE, WHITE } from '../constants/colors';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
+  const handleEditMetadata = () => {
+    onEditMetadata(repoName);
+    onClose();
+  };
+
   return (
     <div 
       style={{
@@ -10,45 +15,27 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
         left: position.x,
         backgroundColor: BLACK,
         color: WHITE,
-        padding: '20px',
-        borderRadius: '8px',
-        boxShadow: `0 0 0 2px ${BLUE}`,
+        padding: '10px',
+        borderRadius: '4px',
+        boxShadow: `0 0 0 1px ${BLUE}`,
         zIndex: 1000,
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      <h2 style={{ color: WHITE }}>Context Menu</h2>
-      <p>Repository: {repoName}</p>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-        <button 
-          onClick={() => {
-            onEditMetadata(repoName);
-            onClose();
-          }}
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        <li 
+          onClick={handleEditMetadata}
           style={{ 
-            marginRight: '10px',
             padding: '5px 10px',
-            backgroundColor: BLUE,
-            color: WHITE,
-            border: 'none',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            hover: {
+              backgroundColor: BLUE,
+            }
           }}
         >
           Edit Metadata
-        </button>
-        <button 
-          onClick={onClose}
-          style={{ 
-            padding: '5px 10px',
-            backgroundColor: RED,
-            color: WHITE,
-            border: 'none',
-            cursor: 'pointer'
-          }}
-        >
-          Close
-        </button>
-      </div>
+        </li>
+      </ul>
     </div>
   );
 };
