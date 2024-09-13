@@ -1,4 +1,4 @@
-const { dialog } = require('electron');
+const { dialog, shell } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -16,6 +16,15 @@ function setupHandlers(ipcMain, store) {
       console.error('Error reading file:', error);
       return null;
     }
+  });
+
+  ipcMain.handle('open-in-finder', async (event, repoName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+    const repoPath = path.join(dreamVaultPath, repoName);
+    await shell.openPath(repoPath);
   });
   ipcMain.handle('open-directory-dialog', async () => {
     const result = await dialog.showOpenDialog({

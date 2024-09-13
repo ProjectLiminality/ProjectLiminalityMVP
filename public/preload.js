@@ -16,5 +16,6 @@ contextBridge.exposeInMainWorld('electron', {
   openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
   isElectron: true,
   renameRepo: (oldName, newName) => ipcRenderer.invoke('rename-repo', oldName, newName),
+  openInFinder: (repoName) => ipcRenderer.invoke('open-in-finder', repoName),
 });
 

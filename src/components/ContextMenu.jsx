@@ -1,7 +1,7 @@
 import React from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
 
-const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename }) => {
+const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInFinder }) => {
   const handleEditMetadata = () => {
     onEditMetadata(repoName);
     onClose();
@@ -9,6 +9,11 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename }) 
 
   const handleRename = () => {
     onRename(repoName);
+    onClose();
+  };
+
+  const handleOpenInFinder = () => {
+    onOpenInFinder(repoName);
     onClose();
   };
 
@@ -51,6 +56,18 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename }) 
           onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
         >
           Rename
+        </li>
+        <li 
+          onClick={handleOpenInFinder}
+          style={{ 
+            padding: '6px 10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Open in Finder
         </li>
       </ul>
     </div>

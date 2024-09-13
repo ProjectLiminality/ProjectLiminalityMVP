@@ -18,6 +18,18 @@ const DreamSpace = ({ onNodeRightClick }) => {
     return <div>Error: {error}</div>;
   }
 
+  const handleOpenInFinder = (repoName) => {
+    if (window.electron && window.electron.openInFinder) {
+      window.electron.openInFinder(repoName);
+    } else {
+      console.error('openInFinder is not available');
+    }
+  };
+
+  const handleNodeRightClick = (event, repoName) => {
+    onNodeRightClick(event, repoName, handleOpenInFinder);
+  };
+
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <Canvas camera={{ position: [0, 0, 50], fov: 75, near: 0.1, far: 3000 }}>
@@ -26,7 +38,7 @@ const DreamSpace = ({ onNodeRightClick }) => {
         <pointLight position={[10, 10, 10]} />
         <DreamGraph 
           initialNodes={initialNodes} 
-          onNodeRightClick={onNodeRightClick}
+          onNodeRightClick={handleNodeRightClick}
         />
         <IntersectionChecker />
         <axesHelper args={[5]} />
