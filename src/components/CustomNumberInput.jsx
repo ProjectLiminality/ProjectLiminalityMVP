@@ -18,19 +18,19 @@ const CustomNumberInput = ({ value, onChange }) => {
   const triangleStyle = {
     width: 0,
     height: 0,
-    borderLeft: '7.5px solid transparent',
-    borderRight: '7.5px solid transparent',
+    borderLeft: '5.625px solid transparent',
+    borderRight: '5.625px solid transparent',
   };
 
   const upTriangleStyle = {
     ...triangleStyle,
-    borderBottom: `10.5px solid ${BLUE}`,
+    borderBottom: `7.875px solid ${BLUE}`,
     borderTop: 'none',
   };
 
   const downTriangleStyle = {
     ...triangleStyle,
-    borderTop: `10.5px solid ${BLUE}`,
+    borderTop: `7.875px solid ${BLUE}`,
     borderBottom: 'none',
   };
 
