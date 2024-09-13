@@ -18,7 +18,7 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
         borderRadius: '4px',
         overflow: 'hidden',
         zIndex: 1000,
-        border: `2px solid ${BLUE}`,
+        border: `1px solid ${BLUE}`,
       }}
       onClick={(e) => e.stopPropagation()}
     >
