@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import * as THREE from 'three';
-import DreamNode3DR3F from './DreamNode3DR3F';
+import DreamNode3DR3F from './DreamNode';
 
 const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
   const [nodes, setNodes] = useState(initialNodes.map(node => ({ ...node, scale: 1 })));

@@ -6,7 +6,7 @@ import DreamSong from './DreamSong';
 import { getRepoData } from '../utils/fileUtils';
 import { BLUE, RED } from '../constants/colors';
 
-const DreamNode3DR3F = ({ repoName, position, scale, onNodeClick, isHovered, setHoveredNode }) => {
+const DreamNode = ({ repoName, position, scale, onNodeClick, isHovered, setHoveredNode }) => {
   const [hovered, setHovered] = useState(false);
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
   const nodeRef = useRef();
@@ -114,4 +114,4 @@ const DreamNode3DR3F = ({ repoName, position, scale, onNodeClick, isHovered, set
   );
 };
 
-export default DreamNode3DR3F;
+export default DreamNode;
