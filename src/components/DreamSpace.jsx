@@ -30,6 +30,14 @@ const DreamSpace = ({ onNodeRightClick }) => {
     onNodeRightClick(event, repoName, handleOpenInFinder);
   };
 
+  const handleOpenInFinder = (repoName) => {
+    if (window.electron && window.electron.openInFinder) {
+      window.electron.openInFinder(repoName);
+    } else {
+      console.error('openInFinder is not available');
+    }
+  };
+
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <Canvas camera={{ position: [0, 0, 50], fov: 75, near: 0.1, far: 3000 }}>

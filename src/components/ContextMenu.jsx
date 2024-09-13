@@ -1,7 +1,7 @@
 import React from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
 
-const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInFinder }) => {
+const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename }) => {
   const handleEditMetadata = () => {
     onEditMetadata(repoName);
     onClose();
@@ -13,7 +13,11 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
   };
 
   const handleOpenInFinder = () => {
-    onOpenInFinder(repoName);
+    if (window.electron && window.electron.openInFinder) {
+      window.electron.openInFinder(repoName);
+    } else {
+      console.error('openInFinder is not available');
+    }
     onClose();
   };
 
