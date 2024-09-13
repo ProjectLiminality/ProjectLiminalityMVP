@@ -1,7 +1,7 @@
 import React from 'react';
 import { BLUE, BLACK, WHITE } from '../constants/colors';
 
-const DreamTalk = ({ repoName, mediaContent, metadata, onClick, isHovered, borderColor }) => {
+const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onRightClick, isHovered, borderColor }) => {
   const renderMedia = () => {
     if (!mediaContent || !mediaContent.data) {
       return null;
@@ -28,6 +28,10 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, isHovered, borde
     <div 
       className="dream-talk" 
       onClick={onClick}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        onRightClick(e);
+      }}
       style={{
         position: 'relative',
         overflow: 'hidden',

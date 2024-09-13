@@ -3,7 +3,7 @@ import { BLUE, BLACK, WHITE } from '../constants/colors';
 import { readDreamSongCanvas, listMediaFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 
-const DreamSong = ({ repoName, onClick }) => {
+const DreamSong = ({ repoName, onClick, onRightClick }) => {
   const [canvasData, setCanvasData] = useState(null);
   const [mediaFiles, setMediaFiles] = useState([]);
 
@@ -81,7 +81,15 @@ const DreamSong = ({ repoName, onClick }) => {
   };
 
   return (
-    <div className="dream-song" style={{ backgroundColor: BLACK, color: WHITE, padding: '20px' }}>
+    <div 
+      className="dream-song" 
+      style={{ backgroundColor: BLACK, color: WHITE, padding: '20px' }}
+      onClick={onClick}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        onRightClick(e);
+      }}
+    >
       <h2>{repoName}</h2>
       {canvasData ? (
         canvasData.map((node, index) => renderNode(node, index))

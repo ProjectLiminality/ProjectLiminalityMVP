@@ -94,6 +94,7 @@ const DreamNode = ({ repoName, position, scale, onNodeClick, onNodeRightClick, i
           mediaContent={repoData.mediaContent}
           metadata={repoData.metadata}
           onClick={handleClick}
+          onRightClick={handleRightClick}
           isHovered={hovered}
           borderColor={borderColor}
         />
@@ -116,6 +117,7 @@ const DreamNode = ({ repoName, position, scale, onNodeClick, onNodeRightClick, i
           repoName={repoName}
           metadata={repoData.metadata}
           onClick={handleClick}
+          onRightClick={handleRightClick}
           isHovered={hovered}
           borderColor={borderColor}
         />
