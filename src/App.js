@@ -3,10 +3,12 @@ import DreamSpace from './components/DreamSpace';
 import SettingsPanel from './components/SettingsPanel';
 import MetadataPanel from './components/MetadataPanel';
 import ContextMenu from './components/ContextMenu';
+import RenamePanel from './components/RenamePanel';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMetadataPanelOpen, setIsMetadataPanelOpen] = useState(false);
+  const [isRenamePanelOpen, setIsRenamePanelOpen] = useState(false);
   const [selectedRepoName, setSelectedRepoName] = useState('');
   const [contextMenu, setContextMenu] = useState(null);
 
@@ -29,6 +31,13 @@ function App() {
     setSelectedRepoName(repoName);
     setIsMetadataPanelOpen(true);
     setContextMenu(null); // Close context menu when opening metadata panel
+  };
+
+  const handleOpenRenamePanel = (repoName) => {
+    console.log(`Opening RenamePanel: ${repoName}`);
+    setSelectedRepoName(repoName);
+    setIsRenamePanelOpen(true);
+    setContextMenu(null); // Close context menu when opening rename panel
   };
 
   const handleNodeRightClick = (repoName, event) => {
@@ -64,12 +73,20 @@ function App() {
           repoName={selectedRepoName}
         />
       )}
+      {isRenamePanelOpen && (
+        <RenamePanel
+          isOpen={isRenamePanelOpen}
+          onClose={() => setIsRenamePanelOpen(false)}
+          repoName={selectedRepoName}
+        />
+      )}
       {contextMenu && (
         <ContextMenu
           repoName={contextMenu.repoName}
           position={contextMenu.position}
           onClose={handleCloseContextMenu}
           onEditMetadata={handleOpenMetadataPanel}
+          onRename={handleOpenRenamePanel}
         />
       )}
     </>

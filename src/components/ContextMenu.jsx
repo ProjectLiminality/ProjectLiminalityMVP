@@ -1,9 +1,14 @@
 import React from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
 
-const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
+const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename }) => {
   const handleEditMetadata = () => {
     onEditMetadata(repoName);
+    onClose();
+  };
+
+  const handleRename = () => {
+    onRename(repoName);
     onClose();
   };
 
@@ -36,6 +41,7 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
           Edit Metadata
         </li>
         <li 
+          onClick={handleRename}
           style={{ 
             padding: '6px 10px',
             cursor: 'pointer',
