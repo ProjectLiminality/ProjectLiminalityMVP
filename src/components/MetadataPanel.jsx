@@ -40,6 +40,63 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
     }
   };
 
+  const renderInput = (key, value) => {
+    if (key === 'type') {
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <label style={{ marginRight: '10px' }}>
+            <input
+              type="radio"
+              value="idea"
+              checked={value === 'idea'}
+              onChange={() => handleInputChange(key, 'idea')}
+            /> Idea
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="person"
+              checked={value === 'person'}
+              onChange={() => handleInputChange(key, 'person')}
+            /> Person
+          </label>
+        </div>
+      );
+    } else if (key === 'interactions') {
+      return (
+        <input
+          type="number"
+          value={value}
+          onChange={(e) => handleInputChange(key, parseInt(e.target.value, 10))}
+          style={{ 
+            width: '60%',
+            padding: '5px',
+            backgroundColor: BLACK,
+            color: WHITE,
+            border: `1px solid ${BLUE}`,
+            borderRadius: '4px'
+          }}
+        />
+      );
+    } else {
+      return (
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => handleInputChange(key, e.target.value)}
+          style={{ 
+            width: '60%',
+            padding: '5px',
+            backgroundColor: BLACK,
+            color: WHITE,
+            border: `1px solid ${BLUE}`,
+            borderRadius: '4px'
+          }}
+        />
+      );
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -69,19 +126,7 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
           {Object.entries(metadata).map(([key, value]) => (
             <div key={key} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <label style={{ width: '30%', marginRight: '10px', textAlign: 'right' }}>{key}:</label>
-              <input
-                type="text"
-                value={value}
-                onChange={(e) => handleInputChange(key, e.target.value)}
-                style={{ 
-                  width: '60%',
-                  padding: '5px',
-                  backgroundColor: BLACK,
-                  color: WHITE,
-                  border: `1px solid ${BLUE}`,
-                  borderRadius: '4px'
-                }}
-              />
+              {renderInput(key, value)}
             </div>
           ))}
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
