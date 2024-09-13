@@ -208,15 +208,12 @@ function setupHandlers(ipcMain, store) {
       // Check if template exists
       await fs.access(templatePath);
 
-      // Clone the template
-      await fs.cp(templatePath, newNodePath, { recursive: true });
-
-      // Remove the .git directory from the new node
-      await fs.rm(path.join(newNodePath, '.git'), { recursive: true, force: true });
-
-      // Initialize new git repository
+      // Clone the template repository
       const { execSync } = require('child_process');
-      execSync('git init', { cwd: newNodePath });
+      execSync(`git clone "${templatePath}" "${newNodePath}"`, { stdio: 'inherit' });
+
+      // Remove the origin remote to disconnect from the template
+      execSync('git remote remove origin', { cwd: newNodePath });
 
       console.log(`Successfully created new node: ${newNodeName}`);
       return newNodeName;
