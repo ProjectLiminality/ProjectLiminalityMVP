@@ -158,6 +158,7 @@ function setupHandlers(ipcMain, store) {
 
     try {
       await fs.rename(oldPath, newPath);
+      console.log(`Successfully renamed repo from ${oldName} to ${newName}`);
       return true;
     } catch (error) {
       console.error(`Error renaming repo from ${oldName} to ${newName}:`, error);
