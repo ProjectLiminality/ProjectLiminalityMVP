@@ -26,20 +26,22 @@ const RenamePanel = ({ isOpen, onClose, repoName }) => {
       boxShadow: `0 0 0 2px ${BLUE}`,
     }}>
       <h2 style={{ color: WHITE }}>Rename</h2>
-      <input
-        type="text"
-        value={newName}
-        onChange={(e) => setNewName(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '5px',
-          marginBottom: '10px',
-          backgroundColor: BLACK,
-          color: WHITE,
-          border: `1px solid ${BLUE}`,
-          borderRadius: '4px',
-        }}
-      />
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <input
+          type="text"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          style={{
+            width: '80%',
+            padding: '5px',
+            marginBottom: '10px',
+            backgroundColor: BLACK,
+            color: WHITE,
+            border: `1px solid ${BLUE}`,
+            borderRadius: '4px',
+          }}
+        />
+      </div>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
         <button onClick={onClose} style={{ 
           marginRight: '10px',

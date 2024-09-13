@@ -55,10 +55,11 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
         borderRadius: '8px',
         boxShadow: `0 0 0 2px ${BLUE}`,
         zIndex: 1000,
+        width: '400px',
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      <h2 style={{ color: WHITE }}>Metadata Editor</h2>
+      <h2 style={{ color: WHITE, textAlign: 'center' }}>Metadata Editor</h2>
       {isLoading ? (
         <p>Loading metadata...</p>
       ) : error ? (
@@ -66,14 +67,14 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
       ) : (
         <>
           {Object.entries(metadata).map(([key, value]) => (
-            <div key={key} style={{ marginBottom: '10px' }}>
-              <label style={{ display: 'block', marginBottom: '5px' }}>{key}:</label>
+            <div key={key} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <label style={{ width: '30%', marginRight: '10px', textAlign: 'right' }}>{key}:</label>
               <input
                 type="text"
                 value={value}
                 onChange={(e) => handleInputChange(key, e.target.value)}
                 style={{ 
-                  width: '100%',
+                  width: '60%',
                   padding: '5px',
                   backgroundColor: BLACK,
                   color: WHITE,
@@ -83,7 +84,7 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
               />
             </div>
           ))}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
             <button 
               onClick={onClose}
               style={{ 
