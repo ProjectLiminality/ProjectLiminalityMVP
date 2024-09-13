@@ -29,6 +29,22 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
     positionNodesOnGrid();
   }, [positionNodesOnGrid]);
 
+  // New useEffect hook for Escape key
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        positionNodesOnGrid();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [positionNodesOnGrid]);
+
   const updateNodePositions = useCallback((clickedNodeIndex) => {
     setNodes(prevNodes => {
       const clickedNode = prevNodes[clickedNodeIndex];
