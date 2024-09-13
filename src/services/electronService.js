@@ -83,3 +83,10 @@ export async function openDirectoryDialog() {
   }
   throw new Error('Electron is not available');
 }
+
+export async function createNewNode() {
+  if (isElectronAvailable()) {
+    return window.electron.createNewNode();
+  }
+  throw new Error('Electron is not available');
+}

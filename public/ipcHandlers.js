@@ -193,6 +193,38 @@ function setupHandlers(ipcMain, store) {
       throw error;
     }
   });
+
+  ipcMain.handle('create-new-node', async () => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const templatePath = path.join(dreamVaultPath, 'DreamNode');
+    const newNodeName = 'NewNode';
+    const newNodePath = path.join(dreamVaultPath, newNodeName);
+
+    try {
+      // Check if template exists
+      await fs.access(templatePath);
+
+      // Clone the template
+      await fs.cp(templatePath, newNodePath, { recursive: true });
+
+      // Remove the .git directory from the new node
+      await fs.rm(path.join(newNodePath, '.git'), { recursive: true, force: true });
+
+      // Initialize new git repository
+      const { execSync } = require('child_process');
+      execSync('git init', { cwd: newNodePath });
+
+      console.log(`Successfully created new node: ${newNodeName}`);
+      return newNodeName;
+    } catch (error) {
+      console.error('Error creating new node:', error);
+      throw error;
+    }
+  });
 }
 
 module.exports = { setupHandlers };
