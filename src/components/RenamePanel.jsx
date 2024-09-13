@@ -26,13 +26,13 @@ const RenamePanel = ({ isOpen, onClose, repoName }) => {
       boxShadow: `0 0 0 2px ${BLUE}`,
     }}>
       <h2 style={{ color: WHITE }}>Rename</h2>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '0 20px' }}>
         <input
           type="text"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           style={{
-            width: '80%',
+            width: '100%',
             padding: '5px',
             marginBottom: '10px',
             backgroundColor: BLACK,
