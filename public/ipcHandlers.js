@@ -1,6 +1,7 @@
 const { dialog, shell } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
+const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate');
 
 function setupHandlers(ipcMain, store) {
 
@@ -80,8 +81,26 @@ function setupHandlers(ipcMain, store) {
     const metadataPath = path.join(dreamVaultPath, repoName, '.pl');
     try {
       const data = await fs.readFile(metadataPath, 'utf8');
-      return JSON.parse(data);
+      let metadata = JSON.parse(data);
+
+      // Ensure all template fields are present
+      for (const [key, defaultValue] of Object.entries(metadataTemplate)) {
+        if (!(key in metadata)) {
+          metadata[key] = defaultValue;
+        }
+      }
+
+      // Write back the updated metadata
+      await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
+
+      return metadata;
     } catch (error) {
+      if (error.code === 'ENOENT') {
+        // If the file doesn't exist, create it with the template
+        const newMetadata = { ...metadataTemplate };
+        await fs.writeFile(metadataPath, JSON.stringify(newMetadata, null, 2), 'utf8');
+        return newMetadata;
+      }
       console.error(`Error reading metadata for ${repoName}:`, error);
       throw error;
     }

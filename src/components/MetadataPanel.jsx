@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { readMetadata, writeMetadata } from '../services/electronService';
 import { BLACK, BLUE, RED, WHITE } from '../constants/colors';
 import CustomNumberInput from './CustomNumberInput';
+import { metadataTemplate, getDefaultValue } from '../utils/metadataTemplate';
 
 const MetadataPanel = ({ isOpen, onClose, repoName }) => {
   const [metadata, setMetadata] = useState({});
@@ -70,6 +71,28 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
         <CustomNumberInput
           value={value}
           onChange={(newValue) => handleInputChange(key, newValue)}
+        />
+      );
+    } else if (key === 'relatedNodes') {
+      return (
+        <textarea
+          value={Array.isArray(value) ? value.join(', ') : ''}
+          onChange={(e) => handleInputChange(key, e.target.value.split(',').map(item => item.trim()))}
+          style={{ 
+            width: '60%',
+            padding: '5px',
+            backgroundColor: BLACK,
+            color: WHITE,
+            border: `1px solid ${BLUE}`,
+            borderRadius: '4px',
+            outline: 'none',
+          }}
+          onFocus={(e) => {
+            e.target.style.border = `1px solid ${RED}`;
+          }}
+          onBlur={(e) => {
+            e.target.style.border = `1px solid ${BLUE}`;
+          }}
         />
       );
     } else {
