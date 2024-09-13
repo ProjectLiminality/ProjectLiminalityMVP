@@ -15,9 +15,8 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
         left: position.x,
         backgroundColor: BLACK,
         color: WHITE,
-        padding: '10px',
         borderRadius: '4px',
-        boxShadow: `0 0 0 1px ${BLUE}`,
+        overflow: 'hidden',
         zIndex: 1000,
       }}
       onClick={(e) => e.stopPropagation()}
@@ -26,8 +25,9 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
         <li 
           onClick={handleEditMetadata}
           style={{ 
-            padding: '5px 10px',
+            padding: '10px',
             cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
           }}
           onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
           onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
