@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import * as THREE from 'three';
-import DreamNode3DR3F from './DreamNode';
+import DreamNode from './DreamNode';
 
 const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
   const [nodes, setNodes] = useState(initialNodes.map(node => ({ ...node, scale: 1 })));
@@ -102,7 +102,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
   return (
     <>
       {nodes.map((node, index) => (
-        <DreamNode3DR3F
+        <DreamNode
           key={node.repoName}
           repoName={node.repoName}
           position={node.position}
