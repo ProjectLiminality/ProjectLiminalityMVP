@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import * as THREE from 'three';
 import DreamNode3DR3F from './DreamNode';
 
-const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
+const DreamGraph = ({ initialNodes, onOpenMetadataPanel, onNodeRightClick }) => {
   const [nodes, setNodes] = useState(initialNodes.map(node => ({ ...node, scale: 1 })));
   const [hoveredNode, setHoveredNode] = useState(null);
 
@@ -100,6 +100,10 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
     onOpenMetadataPanel(repoName);
   }, [nodes, updateNodePositions, onOpenMetadataPanel]);
 
+  const handleNodeRightClick = useCallback((repoName) => {
+    onNodeRightClick(repoName);
+  }, [onNodeRightClick]);
+
   return (
     <>
       {nodes.map((node, index) => (
@@ -109,6 +113,7 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel }) => {
           position={node.position}
           scale={node.scale}
           onNodeClick={handleNodeClick}
+          onNodeRightClick={handleNodeRightClick}
           isHovered={hoveredNode === node.repoName}
           setHoveredNode={setHoveredNode}
           index={index}

@@ -6,7 +6,7 @@ import DreamSong from './DreamSong';
 import { getRepoData } from '../utils/fileUtils';
 import { BLUE, RED } from '../constants/colors';
 
-const DreamNode = ({ repoName, position, scale, onNodeClick, isHovered, setHoveredNode }) => {
+const DreamNode = ({ repoName, position, scale, onNodeClick, onNodeRightClick, isHovered, setHoveredNode }) => {
   const [hovered, setHovered] = useState(false);
   const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
   const nodeRef = useRef();
@@ -61,10 +61,16 @@ const DreamNode = ({ repoName, position, scale, onNodeClick, isHovered, setHover
 
   const handleClick = () => onNodeClick(repoName);
 
+  const handleRightClick = (event) => {
+    event.preventDefault();
+    onNodeRightClick(repoName);
+  };
+
   return (
     <Billboard
       ref={nodeRef}
       follow={false}
+      onContextMenu={handleRightClick}
     >
       <Html
         transform

@@ -27,10 +27,18 @@ function App() {
     setIsMetadataPanelOpen(true);
   };
 
+  const handleNodeRightClick = (repoName) => {
+    console.log(`Right-clicked on node: ${repoName}`);
+    // Implement right-click behavior here
+  };
+
   return (
     <>
       <div className="App">
-        <DreamSpace onOpenMetadataPanel={handleOpenMetadataPanel} />
+        <DreamSpace 
+          onOpenMetadataPanel={handleOpenMetadataPanel}
+          onNodeRightClick={handleNodeRightClick}
+        />
       </div>
       {isSettingsOpen && (
         <SettingsPanel 
