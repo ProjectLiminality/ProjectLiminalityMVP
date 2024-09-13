@@ -77,7 +77,8 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
                   padding: '5px',
                   backgroundColor: BLACK,
                   color: WHITE,
-                  border: `1px solid ${BLUE}`
+                  border: `1px solid ${BLUE}`,
+                  borderRadius: '4px'
                 }}
               />
             </div>

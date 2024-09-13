@@ -37,6 +37,7 @@ const RenamePanel = ({ isOpen, onClose, repoName }) => {
           backgroundColor: BLACK,
           color: WHITE,
           border: `1px solid ${BLUE}`,
+          borderRadius: '4px',
         }}
       />
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
