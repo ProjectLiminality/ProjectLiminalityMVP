@@ -55,11 +55,9 @@ const CustomNumberInput = ({ value, onChange }) => {
           outline: 'none',
         }}
         onFocus={(e) => {
-          e.target.style.boxShadow = `0 0 0 2px ${RED}`;
-          e.target.style.border = `1px solid ${BLACK}`;
+          e.target.style.border = `1px solid ${RED}`;
         }}
         onBlur={(e) => {
-          e.target.style.boxShadow = 'none';
           e.target.style.border = `1px solid ${BLUE}`;
         }}
       />
