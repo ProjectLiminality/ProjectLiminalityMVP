@@ -28,10 +28,9 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
           style={{ 
             padding: '5px 10px',
             cursor: 'pointer',
-            hover: {
-              backgroundColor: BLUE,
-            }
           }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
         >
           Edit Metadata
         </li>
