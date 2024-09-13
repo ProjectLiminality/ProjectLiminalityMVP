@@ -3,6 +3,7 @@ import DreamSpace from './components/DreamSpace';
 import SettingsPanel from './components/SettingsPanel';
 import MetadataPanel from './components/MetadataPanel';
 import ContextMenu from './components/ContextMenu';
+import ContextMenu from './components/ContextMenu';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -53,6 +54,13 @@ function App() {
           isOpen={isMetadataPanelOpen}
           onClose={() => setIsMetadataPanelOpen(false)}
           repoName={selectedRepoName}
+        />
+      )}
+      {contextMenu && (
+        <ContextMenu
+          repoName={contextMenu.repoName}
+          onClose={() => setContextMenu(null)}
+          onEditMetadata={handleOpenMetadataPanel}
         />
       )}
       {contextMenu && (
