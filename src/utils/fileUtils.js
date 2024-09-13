@@ -70,42 +70,22 @@ async function getPreferredMediaFile(repoName) {
 
 export async function readDreamSongCanvas(repoName) {
   try {
-    console.log(`Attempting to read DreamSong.canvas for ${repoName}`);
     const canvasPath = `${repoName}/DreamSong.canvas`;
-    console.log(`Full canvas path: ${canvasPath}`);
-
-    let canvasContent;
-    try {
-      canvasContent = await electronService.readFile(canvasPath);
-    } catch (readError) {
-      if (readError.message.includes('ENOENT')) {
-        console.log(`DreamSong.canvas does not exist for ${repoName}`);
-        return null;
-      }
-      throw readError;
-    }
-
-    console.log(`Canvas content read successfully. Length: ${canvasContent.length}`);
-    console.log(`First 100 characters: ${canvasContent.substring(0, 100)}...`);
+    const canvasContent = await electronService.readFile(canvasPath);
 
     if (!canvasContent || canvasContent.trim() === '') {
-      console.log(`DreamSong.canvas is empty for ${repoName}`);
       return null;
     }
 
-    let parsedContent;
-    try {
-      parsedContent = JSON.parse(canvasContent);
-      console.log('Canvas content parsed successfully');
-      console.log('Parsed content structure:', JSON.stringify(parsedContent, null, 2).substring(0, 200) + '...');
-    } catch (parseError) {
-      console.error('JSON parsing error:', parseError);
-      console.log('Raw content causing parse error:', canvasContent);
-      throw parseError;
-    }
+    const parsedContent = JSON.parse(canvasContent);
     return parsedContent;
   } catch (error) {
-    console.error(`Error in readDreamSongCanvas for ${repoName}:`, error);
+    if (error.code === 'ENOENT') {
+      // File doesn't exist, return silently
+      return null;
+    }
+    // For other errors, log them but don't throw
+    console.error(`Error reading DreamSong.canvas for ${repoName}:`, error);
     return null;
   }
 }

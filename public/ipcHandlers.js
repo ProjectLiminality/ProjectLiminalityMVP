@@ -9,8 +9,12 @@ function setupHandlers(ipcMain, store) {
       const data = await fs.readFile(filePath);
       return data.toString('base64');
     } catch (error) {
+      if (error.code === 'ENOENT') {
+        // File doesn't exist, return null silently
+        return null;
+      }
       console.error('Error reading file:', error);
-      throw error;
+      return null;
     }
   });
   ipcMain.handle('open-directory-dialog', async () => {

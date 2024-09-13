@@ -1,6 +1,13 @@
 const path = require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
+
+// Silence console output in production
+if (!isDev) {
+  console.log = () => {};
+  console.warn = () => {};
+  console.error = () => {};
+}
 const Store = require('electron-store');
 const { setupHandlers } = require('./ipcHandlers');
 const fs = require('fs').promises;
