@@ -35,6 +35,17 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata }) => {
         >
           Edit Metadata
         </li>
+        <li 
+          style={{ 
+            padding: '10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Rename
+        </li>
       </ul>
     </div>
   );
