@@ -97,12 +97,11 @@ const DreamGraph = ({ initialNodes, onOpenMetadataPanel, onNodeRightClick }) => 
     if (clickedNodeIndex !== -1) {
       updateNodePositions(clickedNodeIndex);
     }
-    onOpenMetadataPanel(repoName);
-  }, [nodes, updateNodePositions, onOpenMetadataPanel]);
+  }, [nodes, updateNodePositions]);
 
   const handleNodeRightClick = useCallback((repoName) => {
-    onNodeRightClick(repoName);
-  }, [onNodeRightClick]);
+    onOpenMetadataPanel(repoName);
+  }, [onOpenMetadataPanel]);
 
   return (
     <>

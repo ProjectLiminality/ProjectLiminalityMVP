@@ -59,10 +59,14 @@ const DreamNode = ({ repoName, position, scale, onNodeClick, onNodeRightClick, i
     setHoveredNode(null);
   };
 
-  const handleClick = () => onNodeClick(repoName);
+  const handleClick = (event) => {
+    event.stopPropagation();
+    onNodeClick(repoName);
+  };
 
   const handleRightClick = (event) => {
     event.preventDefault();
+    event.stopPropagation();
     onNodeRightClick(repoName);
   };
 

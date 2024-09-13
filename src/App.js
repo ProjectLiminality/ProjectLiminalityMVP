@@ -29,7 +29,7 @@ function App() {
 
   const handleNodeRightClick = (repoName) => {
     console.log(`Right-clicked on node: ${repoName}`);
-    // Implement right-click behavior here
+    handleOpenMetadataPanel(repoName);
   };
 
   return (
