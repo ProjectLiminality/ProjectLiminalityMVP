@@ -54,8 +54,14 @@ const CustomNumberInput = ({ value, onChange }) => {
           WebkitAppearance: 'textfield',
           outline: 'none',
         }}
-        onFocus={(e) => e.target.style.boxShadow = `0 0 0 2px ${RED}`}
-        onBlur={(e) => e.target.style.boxShadow = 'none'}
+        onFocus={(e) => {
+          e.target.style.boxShadow = `0 0 0 2px ${RED}`;
+          e.target.style.border = `1px solid ${BLACK}`;
+        }}
+        onBlur={(e) => {
+          e.target.style.boxShadow = 'none';
+          e.target.style.border = `1px solid ${BLUE}`;
+        }}
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div
