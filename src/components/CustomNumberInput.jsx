@@ -9,7 +9,6 @@ const CustomNumberInput = ({ value, onChange }) => {
     width: '20px',
     height: '20px',
     backgroundColor: BLACK,
-    border: `1px solid ${BLUE}`,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -23,6 +22,18 @@ const CustomNumberInput = ({ value, onChange }) => {
     borderRight: '5px solid transparent',
   };
 
+  const upTriangleStyle = {
+    ...triangleStyle,
+    borderBottom: `7px solid ${BLUE}`,
+    borderTop: 'none',
+  };
+
+  const downTriangleStyle = {
+    ...triangleStyle,
+    borderTop: `7px solid ${BLUE}`,
+    borderBottom: 'none',
+  };
+
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <input
@@ -30,13 +41,17 @@ const CustomNumberInput = ({ value, onChange }) => {
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value, 10))}
         style={{
-          width: '50px',
+          width: '40px',
           padding: '5px',
           backgroundColor: BLACK,
           color: WHITE,
           border: `1px solid ${BLUE}`,
           borderRadius: '4px',
           marginRight: '5px',
+          textAlign: 'center',
+          appearance: 'textfield',
+          '-moz-appearance': 'textfield',
+          '-webkit-appearance': 'textfield',
         }}
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -47,8 +62,8 @@ const CustomNumberInput = ({ value, onChange }) => {
           onClick={() => onChange(value + 1)}
         >
           <div style={{
-            ...triangleStyle,
-            borderBottom: `7px solid ${hoverUp ? BLUE : BLACK}`,
+            ...upTriangleStyle,
+            borderBottomColor: hoverUp ? WHITE : BLUE,
           }} />
         </div>
         <div
@@ -58,8 +73,8 @@ const CustomNumberInput = ({ value, onChange }) => {
           onClick={() => onChange(value - 1)}
         >
           <div style={{
-            ...triangleStyle,
-            borderTop: `7px solid ${hoverDown ? BLUE : BLACK}`,
+            ...downTriangleStyle,
+            borderTopColor: hoverDown ? WHITE : BLUE,
           }} />
         </div>
       </div>
