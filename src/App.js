@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import DreamSpace from './components/DreamSpace';
 import SettingsPanel from './components/SettingsPanel';
 import MetadataPanel from './components/MetadataPanel';
+import ContextMenu from './components/ContextMenu';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMetadataPanelOpen, setIsMetadataPanelOpen] = useState(false);
   const [selectedRepoName, setSelectedRepoName] = useState('');
+  const [contextMenu, setContextMenu] = useState(null);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -29,7 +31,7 @@ function App() {
 
   const handleNodeRightClick = (repoName) => {
     console.log(`Right-clicked on node: ${repoName}`);
-    handleOpenMetadataPanel(repoName);
+    setContextMenu({ repoName });
   };
 
   return (
@@ -51,6 +53,13 @@ function App() {
           isOpen={isMetadataPanelOpen}
           onClose={() => setIsMetadataPanelOpen(false)}
           repoName={selectedRepoName}
+        />
+      )}
+      {contextMenu && (
+        <ContextMenu
+          repoName={contextMenu.repoName}
+          onClose={() => setContextMenu(null)}
+          onEditMetadata={handleOpenMetadataPanel}
         />
       )}
     </>
