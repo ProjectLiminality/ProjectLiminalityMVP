@@ -29,7 +29,6 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
     positionNodesOnGrid();
   }, [positionNodesOnGrid]);
 
-  // New useEffect hook for Escape key
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
@@ -39,7 +38,6 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
 
     window.addEventListener('keydown', handleKeyDown);
 
-    // Cleanup function
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
@@ -50,20 +48,22 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
       const clickedNode = prevNodes[clickedNodeIndex];
       const otherNodes = prevNodes.filter((_, index) => index !== clickedNodeIndex);
       
-      const relatedNodes = otherNodes.filter(node => node.metadata?.type !== clickedNode.metadata?.type);
-      const unrelatedNodes = otherNodes.filter(node => node.metadata?.type === clickedNode.metadata?.type);
-      
-      const relatedCount = Math.max(1, Math.min(relatedNodes.length, Math.floor(Math.random() * relatedNodes.length) + 1));
-      const selectedRelatedNodes = relatedNodes.slice(0, relatedCount);
-      const remainingUnrelatedNodes = [...unrelatedNodes, ...relatedNodes.slice(relatedCount)];
+      const relatedNodes = otherNodes.filter(node => 
+        clickedNode.metadata.relatedNodes.includes(node.repoName) && 
+        node.metadata.type !== clickedNode.metadata.type
+      );
+      const unrelatedNodes = otherNodes.filter(node => 
+        !clickedNode.metadata.relatedNodes.includes(node.repoName) || 
+        node.metadata.type === clickedNode.metadata.type
+      );
 
       const relatedCircleRadius = 30;
       const unrelatedCircleRadius = 200;
 
       const newNodes = [
         { ...clickedNode, position: new THREE.Vector3(0, 0, 0), scale: 5 },
-        ...selectedRelatedNodes.map((node, index) => {
-          const angle = (index / relatedCount) * Math.PI * 2;
+        ...relatedNodes.map((node, index) => {
+          const angle = (index / relatedNodes.length) * Math.PI * 2;
           return {
             ...node,
             position: new THREE.Vector3(
@@ -74,8 +74,8 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
             scale: 1
           };
         }),
-        ...remainingUnrelatedNodes.map((node, index) => {
-          const angle = (index / remainingUnrelatedNodes.length) * Math.PI * 2;
+        ...unrelatedNodes.map((node, index) => {
+          const angle = (index / unrelatedNodes.length) * Math.PI * 2;
           return {
             ...node,
             position: new THREE.Vector3(
@@ -112,7 +112,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
           isHovered={hoveredNode === node.repoName}
           setHoveredNode={setHoveredNode}
           index={index}
-          type={node.type}
+          type={node.metadata.type}
         />
       ))}
     </>
