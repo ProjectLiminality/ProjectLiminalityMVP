@@ -1,7 +1,7 @@
 import React from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
 
-const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename }) => {
+const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
   const handleEditMetadata = () => {
     onEditMetadata(repoName);
     onClose();
@@ -17,6 +17,15 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename }) 
       window.electron.openInFinder(repoName);
     } else {
       console.error('openInFinder is not available');
+    }
+    onClose();
+  };
+
+  const handleOpenInGitFox = () => {
+    if (window.electron && window.electron.openInGitFox) {
+      window.electron.openInGitFox(repoName);
+    } else {
+      console.error('openInGitFox is not available');
     }
     onClose();
   };
@@ -72,6 +81,18 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename }) 
           onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
         >
           Open in Finder
+        </li>
+        <li 
+          onClick={handleOpenInGitFox}
+          style={{ 
+            padding: '6px 10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Open in GitFox
         </li>
       </ul>
     </div>

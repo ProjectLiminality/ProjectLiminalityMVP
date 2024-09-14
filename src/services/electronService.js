@@ -84,6 +84,13 @@ export async function openDirectoryDialog() {
   throw new Error('Electron is not available');
 }
 
+export async function openInGitFox(repoName) {
+  if (isElectronAvailable()) {
+    return window.electron.openInGitFox(repoName);
+  }
+  throw new Error('Electron is not available');
+}
+
 export async function createNewNode(nodeName) {
   if (isElectronAvailable()) {
     if (!nodeName) {

@@ -1,6 +1,7 @@
 const { dialog, shell } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
+const { exec } = require('child_process');
 const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate.js');
 
 function setupHandlers(ipcMain, store) {
@@ -26,6 +27,25 @@ function setupHandlers(ipcMain, store) {
     }
     const repoPath = path.join(dreamVaultPath, repoName);
     await shell.openPath(repoPath);
+  });
+
+  ipcMain.handle('open-in-gitfox', async (event, repoName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+    const repoPath = path.join(dreamVaultPath, repoName);
+    return new Promise((resolve, reject) => {
+      exec(`cd "${dreamVaultPath}" && gitfox "${repoName}"`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error opening GitFox: ${error}`);
+          reject(error);
+        } else {
+          console.log(`GitFox opened for ${repoName}`);
+          resolve();
+        }
+      });
+    });
   });
   ipcMain.handle('open-directory-dialog', async () => {
     const result = await dialog.showOpenDialog({

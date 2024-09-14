@@ -5,6 +5,7 @@ import MetadataPanel from './components/MetadataPanel';
 import ContextMenu from './components/ContextMenu';
 import RenamePanel from './components/RenamePanel';
 import NodeCreationPanel from './components/NodeCreationPanel';
+import { openInGitFox } from './services/electronService';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -148,6 +149,7 @@ function App() {
           onClose={handleCloseContextMenu}
           onEditMetadata={handleOpenMetadataPanel}
           onRename={handleOpenRenamePanel}
+          onOpenInGitFox={() => openInGitFox(contextMenu.repoName)}
         />
       )}
     </>

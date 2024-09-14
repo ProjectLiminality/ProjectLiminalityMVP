@@ -18,5 +18,6 @@ contextBridge.exposeInMainWorld('electron', {
   openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
   isElectron: true,
   openInFinder: (repoName) => ipcRenderer.invoke('open-in-finder', repoName),
+  openInGitFox: (repoName) => ipcRenderer.invoke('open-in-gitfox', repoName),
 });
 
