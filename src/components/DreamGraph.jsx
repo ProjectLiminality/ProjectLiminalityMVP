@@ -1,10 +1,28 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
+import { getRepoData } from '../utils/fileUtils';
 
 const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
-  const [nodes, setNodes] = useState(initialNodes.map(node => ({ ...node, scale: 1 })));
+  const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
+
+  useEffect(() => {
+    const fetchNodesData = async () => {
+      const nodesData = await Promise.all(initialNodes.map(async (node) => {
+        const { metadata, mediaContent } = await getRepoData(node.repoName);
+        return {
+          ...node,
+          metadata,
+          mediaContent,
+          scale: 1,
+          position: new THREE.Vector3(0, 0, 0)
+        };
+      }));
+      setNodes(nodesData);
+    };
+    fetchNodesData();
+  }, [initialNodes]);
 
   const positionNodesOnGrid = useCallback(() => {
     const gridSize = Math.ceil(Math.sqrt(nodes.length));
@@ -123,15 +141,12 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
       {nodes.map((node, index) => (
         <DreamNode
           key={node.repoName}
-          repoName={node.repoName}
-          position={node.position}
-          scale={node.scale}
+          {...node}
           onNodeClick={handleNodeClick}
           onNodeRightClick={onNodeRightClick}
           isHovered={hoveredNode === node.repoName}
           setHoveredNode={setHoveredNode}
           index={index}
-          type={node.metadata?.type || 'unknown'}
         />
       ))}
     </>

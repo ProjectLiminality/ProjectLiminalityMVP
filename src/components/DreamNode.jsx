@@ -1,34 +1,17 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Billboard, Html } from '@react-three/drei';
 import gsap from 'gsap';
 import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
-import { getRepoData } from '../utils/fileUtils';
 import { BLUE, RED } from '../constants/colors';
 
-const DreamNode = ({ repoName, position, scale, onNodeClick, onNodeRightClick, isHovered, setHoveredNode }) => {
+const DreamNode = ({ repoName, position, scale, metadata, mediaContent, onNodeClick, onNodeRightClick, isHovered, setHoveredNode }) => {
   const [hovered, setHovered] = useState(false);
-  const [repoData, setRepoData] = useState({ metadata: {}, mediaContent: null });
   const nodeRef = useRef();
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
   }, [hovered]);
-
-  const fetchRepoData = useCallback(async () => {
-    try {
-      const data = await getRepoData(repoName);
-      setRepoData(data);
-      console.log(`DreamNode - ${repoName} metadata:`, data.metadata);
-    } catch (error) {
-      console.error('Error fetching repo data:', error);
-      setRepoData({ metadata: {}, mediaContent: null });
-    }
-  }, [repoName]);
-
-  useEffect(() => {
-    fetchRepoData();
-  }, [fetchRepoData]);
 
   useEffect(() => {
     if (nodeRef.current) {
@@ -49,7 +32,7 @@ const DreamNode = ({ repoName, position, scale, onNodeClick, onNodeRightClick, i
     }
   }, [position, scale]);
 
-  const borderColor = repoData.metadata?.type === 'person' ? RED : BLUE;
+  const borderColor = metadata?.type === 'person' ? RED : BLUE;
 
   const handlePointerOver = () => {
     setHovered(true);
@@ -93,8 +76,8 @@ const DreamNode = ({ repoName, position, scale, onNodeClick, onNodeRightClick, i
       >
         <DreamTalk 
           repoName={repoName}
-          mediaContent={repoData.mediaContent}
-          metadata={repoData.metadata}
+          mediaContent={mediaContent}
+          metadata={metadata}
           onClick={handleClick}
           onRightClick={handleRightClick}
           isHovered={hovered}
@@ -117,7 +100,7 @@ const DreamNode = ({ repoName, position, scale, onNodeClick, onNodeRightClick, i
       >
         <DreamSong 
           repoName={repoName}
-          metadata={repoData.metadata}
+          metadata={metadata}
           onClick={handleClick}
           onRightClick={handleRightClick}
           isHovered={hovered}
