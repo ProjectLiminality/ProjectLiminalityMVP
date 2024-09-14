@@ -9,10 +9,12 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
   const [metadata, setMetadata] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [relatedNodesOptions, setRelatedNodesOptions] = useState([]);
 
   useEffect(() => {
     if (isOpen && repoName) {
       loadMetadata();
+      fetchRelatedNodesOptions();
     }
   }, [isOpen, repoName]);
 
@@ -27,6 +29,16 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
       console.error('Error loading metadata:', err);
     }
     setIsLoading(false);
+  };
+
+  const fetchRelatedNodesOptions = async () => {
+    try {
+      const repoNames = await getAllRepoNames();
+      setRelatedNodesOptions(repoNames.map(name => ({ value: name, label: name })));
+    } catch (error) {
+      console.error('Error fetching repo names:', error);
+      setRelatedNodesOptions([]);
+    }
   };
 
   const handleInputChange = (key, value) => {
@@ -75,25 +87,10 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
         />
       );
     } else if (key === 'relatedNodes') {
-      const [options, setOptions] = useState([]);
-
-      useEffect(() => {
-        const fetchOptions = async () => {
-          try {
-            const repoNames = await getAllRepoNames();
-            setOptions(repoNames.map(name => ({ value: name, label: name })));
-          } catch (error) {
-            console.error('Error fetching repo names:', error);
-            setOptions([]);
-          }
-        };
-        fetchOptions();
-      }, []);
-
       return (
         <Select
           isMulti
-          options={options}
+          options={relatedNodesOptions}
           value={Array.isArray(value) ? value.map(v => ({ value: v, label: v })) : []}
           onChange={(selectedOptions) => {
             handleInputChange(key, selectedOptions ? selectedOptions.map(option => option.value) : []);
