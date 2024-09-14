@@ -7,15 +7,20 @@ const useDreamNodes = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchDreamNodes = async (count = 30, random = true) => {
+    const fetchDreamNodes = async (count = 30, random = true, useCount = false) => {
       try {
         console.log('Scanning DreamVault...');
         const repos = await scanDreamVault();
         console.log('Repos found:', repos);
         if (repos.length > 0) {
-          let selectedRepos = random
-            ? repos.sort(() => 0.5 - Math.random()).slice(0, count)
-            : repos.slice(0, count);
+          let selectedRepos = repos;
+          if (useCount) {
+            selectedRepos = random
+              ? repos.sort(() => 0.5 - Math.random()).slice(0, count)
+              : repos.slice(0, count);
+          } else if (random) {
+            selectedRepos = repos.sort(() => 0.5 - Math.random());
+          }
           console.log('Setting DreamNodes:', selectedRepos);
           const newNodes = selectedRepos.map((repo, index) => ({
             repoName: repo,
