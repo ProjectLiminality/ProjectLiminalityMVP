@@ -95,16 +95,13 @@ export async function createNewNode(nodeName) {
   throw new Error('Electron is not available');
 }
 
-export async function addFileToNode(nodeName, file) {
+export async function addFileToNode(nodeName, fileData) {
   if (isElectronAvailable()) {
-    if (!nodeName || !file) {
-      throw new Error('Both nodeName and file are required');
+    if (!nodeName || !fileData) {
+      throw new Error('Both nodeName and fileData are required');
     }
-    console.log(`Attempting to add file ${file.name} to node ${nodeName}`);
-    return window.electron.fileSystem.addFileToNode(nodeName, {
-      name: file.name,
-      data: await file.arrayBuffer()
-    });
+    console.log(`Attempting to add file ${fileData.name} to node ${nodeName}`);
+    return window.electron.fileSystem.addFileToNode(nodeName, fileData);
   }
   throw new Error('Electron is not available');
 }

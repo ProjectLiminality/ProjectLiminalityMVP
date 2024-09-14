@@ -29,13 +29,29 @@ function App() {
         console.log(`New node created: ${newNode}`);
         
         if (newNode) {
-          const fileAdded = await window.electron.fileSystem.addFileToNode(newNode, file);
-          if (fileAdded) {
-            console.log(`File ${file.name} added to node ${newNode}`);
-            // You might want to refresh the DreamSpace or update the state here
-          } else {
-            console.error(`Failed to add file ${file.name} to node ${newNode}`);
-          }
+          // Read the file as an ArrayBuffer
+          const fileReader = new FileReader();
+          fileReader.onload = async (e) => {
+            const arrayBuffer = e.target.result;
+            const fileData = {
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              lastModified: file.lastModified,
+              data: arrayBuffer
+            };
+            const fileAdded = await window.electron.fileSystem.addFileToNode(newNode, fileData);
+            if (fileAdded) {
+              console.log(`File ${file.name} added to node ${newNode}`);
+              // You might want to refresh the DreamSpace or update the state here
+            } else {
+              console.error(`Failed to add file ${file.name} to node ${newNode}`);
+            }
+          };
+          fileReader.onerror = (error) => {
+            console.error('Error reading file:', error);
+          };
+          fileReader.readAsArrayBuffer(file);
         }
       } catch (error) {
         console.error('Error in drag and drop process:', error);

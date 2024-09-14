@@ -236,9 +236,9 @@ function setupHandlers(ipcMain, store) {
     }
   });
 
-  ipcMain.handle('add-file-to-node', async (event, nodeName, file) => {
-    if (!nodeName || !file) {
-      throw new Error('Both nodeName and file are required');
+  ipcMain.handle('add-file-to-node', async (event, nodeName, fileData) => {
+    if (!nodeName || !fileData) {
+      throw new Error('Both nodeName and fileData are required');
     }
 
     const dreamVaultPath = store.get('dreamVaultPath', '');
@@ -247,16 +247,16 @@ function setupHandlers(ipcMain, store) {
     }
 
     const nodePath = path.join(dreamVaultPath, nodeName);
-    const filePath = path.join(nodePath, file.name);
+    const filePath = path.join(nodePath, fileData.name);
 
     try {
       // Check if the node exists
       await fs.access(nodePath);
 
       // Write the file to the node directory
-      await fs.writeFile(filePath, Buffer.from(file.data));
+      await fs.writeFile(filePath, Buffer.from(fileData.data));
 
-      console.log(`Successfully added file ${file.name} to node ${nodeName}`);
+      console.log(`Successfully added file ${fileData.name} to node ${nodeName}`);
       return true;
     } catch (error) {
       console.error(`Error adding file to node ${nodeName}:`, error);
