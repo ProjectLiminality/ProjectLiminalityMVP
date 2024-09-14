@@ -18,11 +18,19 @@ function App() {
     event.preventDefault();
   }, []);
 
-  const handleDrop = useCallback((event) => {
+  const handleDrop = useCallback(async (event) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file) {
       console.log('Dropped file name:', file.name);
+      try {
+        const nodeName = file.name.split('.')[0]; // Use the filename without extension as the node name
+        await window.electron.fileSystem.createNewNode(nodeName);
+        console.log(`New node created: ${nodeName}`);
+        // You might want to refresh the DreamSpace or update the state here
+      } catch (error) {
+        console.error('Error creating new node:', error);
+      }
     }
   }, []);
 
