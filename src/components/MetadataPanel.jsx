@@ -118,7 +118,9 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
             }),
             option: (provided, state) => ({
               ...provided,
-              backgroundColor: state.isFocused ? BLUE : BLACK,
+              backgroundColor: state.isFocused 
+                ? (metadata.type === 'idea' ? BLUE : RED) 
+                : BLACK,
               color: WHITE,
             }),
             multiValue: (provided) => ({
