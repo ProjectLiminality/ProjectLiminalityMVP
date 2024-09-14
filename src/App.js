@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DreamSpace from './components/DreamSpace';
 import SettingsPanel from './components/SettingsPanel';
 import MetadataPanel from './components/MetadataPanel';
@@ -14,6 +14,18 @@ function App() {
   const [selectedRepoName, setSelectedRepoName] = useState('');
   const [contextMenu, setContextMenu] = useState(null);
 
+  const handleDragOver = useCallback((event) => {
+    event.preventDefault();
+  }, []);
+
+  const handleDrop = useCallback((event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      console.log('Dropped file name:', file.name);
+    }
+  }, []);
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.metaKey && event.key === ',') {
@@ -26,11 +38,15 @@ function App() {
     };
 
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('dragover', handleDragOver);
+    window.addEventListener('drop', handleDrop);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('dragover', handleDragOver);
+      window.removeEventListener('drop', handleDrop);
     };
-  }, []);
+  }, [handleDragOver, handleDrop]);
 
   const handleOpenMetadataPanel = (repoName) => {
     console.log(`Opening MetadataPanel: ${repoName}`);
