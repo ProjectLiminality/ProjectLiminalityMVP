@@ -9,14 +9,13 @@ contextBridge.exposeInMainWorld('electron', {
     readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
     listFiles: (repoName) => ipcRenderer.invoke('list-files', repoName),
     renameRepo: (oldName, newName) => ipcRenderer.invoke('rename-repo', oldName, newName),
+    createNewNode: (nodeName) => ipcRenderer.invoke('create-new-node', nodeName),
   },
   getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
   setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),
   scanDreamVault: () => ipcRenderer.invoke('scan-dream-vault'),
   openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
   isElectron: true,
-  renameRepo: (oldName, newName) => ipcRenderer.invoke('rename-repo', oldName, newName),
-  createNewNode: () => ipcRenderer.invoke('create-new-node'),
   openInFinder: (repoName) => ipcRenderer.invoke('open-in-finder', repoName),
 });
 
