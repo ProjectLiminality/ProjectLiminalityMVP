@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Billboard, Html } from '@react-three/drei';
 import gsap from 'gsap';
 import DreamTalk from './DreamTalk';
@@ -15,18 +15,20 @@ const DreamNode = ({ repoName, position, scale, onNodeClick, onNodeRightClick, i
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
   }, [hovered]);
 
-  useEffect(() => {
-    const fetchRepoData = async () => {
-      try {
-        const data = await getRepoData(repoName);
-        setRepoData(data);
-      } catch (error) {
-        console.error('Error fetching repo data:', error);
-        setRepoData({ metadata: {}, mediaContent: null });
-      }
-    };
-    fetchRepoData();
+  const fetchRepoData = useCallback(async () => {
+    try {
+      const data = await getRepoData(repoName);
+      setRepoData(data);
+      console.log(`DreamNode - ${repoName} metadata:`, data.metadata);
+    } catch (error) {
+      console.error('Error fetching repo data:', error);
+      setRepoData({ metadata: {}, mediaContent: null });
+    }
   }, [repoName]);
+
+  useEffect(() => {
+    fetchRepoData();
+  }, [fetchRepoData]);
 
   useEffect(() => {
     if (nodeRef.current) {

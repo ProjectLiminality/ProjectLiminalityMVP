@@ -10,19 +10,30 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
     const gridSize = Math.ceil(Math.sqrt(nodes.length));
     const spacing = 10;
     
-    setNodes(prevNodes => prevNodes.map((node, index) => {
-      const row = Math.floor(index / gridSize);
-      const col = index % gridSize;
-      return {
-        ...node,
-        position: new THREE.Vector3(
-          (col - gridSize / 2) * spacing,
-          (row - gridSize / 2) * spacing,
-          0
-        ),
-        scale: 1
-      };
-    }));
+    setNodes(prevNodes => {
+      const newNodes = prevNodes.map((node, index) => {
+        const row = Math.floor(index / gridSize);
+        const col = index % gridSize;
+        return {
+          ...node,
+          position: new THREE.Vector3(
+            (col - gridSize / 2) * spacing,
+            (row - gridSize / 2) * spacing,
+            0
+          ),
+          scale: 1
+        };
+      });
+
+      console.log('DreamGraph - Nodes positioned on grid:', newNodes.map(node => ({
+        repoName: node.repoName,
+        position: node.position,
+        scale: node.scale,
+        type: node.metadata?.type
+      })));
+
+      return newNodes;
+    });
   }, [nodes.length]);
 
   useEffect(() => {
@@ -95,6 +106,14 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
   const handleNodeClick = useCallback((repoName) => {
     const clickedNodeIndex = nodes.findIndex(node => node.repoName === repoName);
     if (clickedNodeIndex !== -1) {
+      console.log('DreamGraph - Node clicked:', {
+        clickedNode: nodes[clickedNodeIndex],
+        allNodes: nodes.map(node => ({
+          repoName: node.repoName,
+          type: node.metadata?.type,
+          relatedNodes: node.metadata?.relatedNodes
+        }))
+      });
       updateNodePositions(clickedNodeIndex);
     }
   }, [nodes, updateNodePositions]);
