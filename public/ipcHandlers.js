@@ -235,6 +235,34 @@ function setupHandlers(ipcMain, store) {
       throw error;
     }
   });
+
+  ipcMain.handle('add-file-to-node', async (event, nodeName, file) => {
+    if (!nodeName || !file) {
+      throw new Error('Both nodeName and file are required');
+    }
+
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const nodePath = path.join(dreamVaultPath, nodeName);
+    const filePath = path.join(nodePath, file.name);
+
+    try {
+      // Check if the node exists
+      await fs.access(nodePath);
+
+      // Write the file to the node directory
+      await fs.writeFile(filePath, Buffer.from(file.data));
+
+      console.log(`Successfully added file ${file.name} to node ${nodeName}`);
+      return true;
+    } catch (error) {
+      console.error(`Error adding file to node ${nodeName}:`, error);
+      throw error;
+    }
+  });
 }
 
 module.exports = { setupHandlers };

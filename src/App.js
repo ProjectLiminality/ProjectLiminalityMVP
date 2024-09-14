@@ -25,11 +25,20 @@ function App() {
       console.log('Dropped file name:', file.name);
       try {
         const nodeName = file.name.split('.')[0]; // Use the filename without extension as the node name
-        await window.electron.fileSystem.createNewNode(nodeName);
-        console.log(`New node created: ${nodeName}`);
-        // You might want to refresh the DreamSpace or update the state here
+        const newNode = await window.electron.fileSystem.createNewNode(nodeName);
+        console.log(`New node created: ${newNode}`);
+        
+        if (newNode) {
+          const fileAdded = await window.electron.fileSystem.addFileToNode(newNode, file);
+          if (fileAdded) {
+            console.log(`File ${file.name} added to node ${newNode}`);
+            // You might want to refresh the DreamSpace or update the state here
+          } else {
+            console.error(`Failed to add file ${file.name} to node ${newNode}`);
+          }
+        }
       } catch (error) {
-        console.error('Error creating new node:', error);
+        console.error('Error in drag and drop process:', error);
       }
     }
   }, []);

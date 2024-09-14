@@ -106,3 +106,24 @@ export async function listMediaFiles(repoName) {
     throw error;
   }
 }
+
+export async function addFileToNode(nodeName, file) {
+  try {
+    if (!nodeName || !file) {
+      throw new Error('Both nodeName and file are required');
+    }
+
+    const result = await electronService.addFileToNode(nodeName, file);
+    
+    if (result) {
+      console.log(`File ${file.name} successfully added to node ${nodeName}`);
+      return true;
+    } else {
+      console.error(`Failed to add file ${file.name} to node ${nodeName}`);
+      return false;
+    }
+  } catch (error) {
+    console.error('Error in addFileToNode:', error);
+    return false;
+  }
+}
