@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { readMetadata, writeMetadata } from '../services/electronService';
+import Select from 'react-select';
+import { readMetadata, writeMetadata, getAllRepoNames } from '../services/electronService';
 import { BLACK, BLUE, RED, WHITE } from '../constants/colors';
 import CustomNumberInput from './CustomNumberInput';
 import { metadataTemplate, getDefaultValue } from '../utils/metadataTemplate';
@@ -74,24 +75,49 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
         />
       );
     } else if (key === 'relatedNodes') {
+      const options = getAllRepoNames().map(name => ({ value: name, label: name }));
       return (
-        <textarea
-          value={Array.isArray(value) ? value.join(', ') : ''}
-          onChange={(e) => handleInputChange(key, e.target.value.split(',').map(item => item.trim()))}
-          style={{ 
-            width: '60%',
-            padding: '5px',
-            backgroundColor: BLACK,
-            color: WHITE,
-            border: `1px solid ${BLUE}`,
-            borderRadius: '4px',
-            outline: 'none',
+        <Select
+          isMulti
+          options={options}
+          value={value.map(v => ({ value: v, label: v }))}
+          onChange={(selectedOptions) => {
+            handleInputChange(key, selectedOptions.map(option => option.value));
           }}
-          onFocus={(e) => {
-            e.target.style.border = `1px solid ${RED}`;
-          }}
-          onBlur={(e) => {
-            e.target.style.border = `1px solid ${BLUE}`;
+          styles={{
+            control: (provided) => ({
+              ...provided,
+              backgroundColor: BLACK,
+              borderColor: BLUE,
+              '&:hover': {
+                borderColor: RED
+              }
+            }),
+            menu: (provided) => ({
+              ...provided,
+              backgroundColor: BLACK,
+            }),
+            option: (provided, state) => ({
+              ...provided,
+              backgroundColor: state.isFocused ? BLUE : BLACK,
+              color: WHITE,
+            }),
+            multiValue: (provided) => ({
+              ...provided,
+              backgroundColor: BLUE,
+            }),
+            multiValueLabel: (provided) => ({
+              ...provided,
+              color: WHITE,
+            }),
+            multiValueRemove: (provided) => ({
+              ...provided,
+              color: WHITE,
+              ':hover': {
+                backgroundColor: RED,
+                color: WHITE,
+              },
+            }),
           }}
         />
       );
