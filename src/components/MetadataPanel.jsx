@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { readMetadata, writeMetadata, getAllRepoNames } from '../services/electronService';
+import { readMetadata, writeMetadata, getAllRepoNamesAndTypes } from '../services/electronService';
 import { BLACK, BLUE, RED, WHITE } from '../constants/colors';
 import CustomNumberInput from './CustomNumberInput';
 import { metadataTemplate, getDefaultValue } from '../utils/metadataTemplate';
@@ -14,9 +14,14 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
   useEffect(() => {
     if (isOpen && repoName) {
       loadMetadata();
-      fetchRelatedNodesOptions();
     }
   }, [isOpen, repoName]);
+
+  useEffect(() => {
+    if (metadata.type) {
+      fetchRelatedNodesOptions();
+    }
+  }, [metadata.type]);
 
   const loadMetadata = async () => {
     setIsLoading(true);
@@ -33,10 +38,12 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
 
   const fetchRelatedNodesOptions = async () => {
     try {
-      const repoNames = await getAllRepoNames();
-      setRelatedNodesOptions(repoNames.map(name => ({ value: name, label: name })));
+      const repos = await getAllRepoNamesAndTypes();
+      const currentNodeType = metadata.type;
+      const filteredRepos = repos.filter(repo => repo.type !== currentNodeType);
+      setRelatedNodesOptions(filteredRepos.map(repo => ({ value: repo.name, label: repo.name })));
     } catch (error) {
-      console.error('Error fetching repo names:', error);
+      console.error('Error fetching repo names and types:', error);
       setRelatedNodesOptions([]);
     }
   };

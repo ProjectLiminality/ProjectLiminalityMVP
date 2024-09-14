@@ -13,7 +13,7 @@ contextBridge.exposeInMainWorld('electron', {
     addFileToNode: (nodeName, file) => ipcRenderer.invoke('add-file-to-node', nodeName, file),
     stageFile: (nodeName, fileName) => ipcRenderer.invoke('stage-file', nodeName, fileName),
     commitChanges: (nodeName, commitMessage) => ipcRenderer.invoke('commit-changes', nodeName, commitMessage),
-    getAllRepoNames: () => ipcRenderer.invoke('get-all-repo-names'),
+    getAllRepoNamesAndTypes: () => ipcRenderer.invoke('get-all-repo-names-and-types'),
   },
   getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
   setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),

@@ -325,7 +325,7 @@ function setupHandlers(ipcMain, store) {
     }
   });
 
-  ipcMain.handle('get-all-repo-names', async () => {
+  ipcMain.handle('get-all-repo-names-and-types', async () => {
     const dreamVaultPath = store.get('dreamVaultPath', '');
     if (!dreamVaultPath) {
       throw new Error('Dream Vault path not set');
@@ -339,18 +339,20 @@ function setupHandlers(ipcMain, store) {
         if (entry.isDirectory()) {
           const repoPath = path.join(dreamVaultPath, entry.name);
           const gitDir = path.join(repoPath, '.git');
+          const metadataPath = path.join(repoPath, '.pl');
           try {
             await fs.access(gitDir);
-            gitRepos.push(entry.name);
+            const metadata = JSON.parse(await fs.readFile(metadataPath, 'utf8'));
+            gitRepos.push({ name: entry.name, type: metadata.type });
           } catch (error) {
-            // Not a git repository, skip
+            // Not a git repository or metadata not found, skip
           }
         }
       }
 
       return gitRepos;
     } catch (error) {
-      console.error('Error getting all repo names:', error);
+      console.error('Error getting all repo names and types:', error);
       throw error;
     }
   });
