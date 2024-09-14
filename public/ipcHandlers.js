@@ -324,6 +324,36 @@ function setupHandlers(ipcMain, store) {
       throw error;
     }
   });
+
+  ipcMain.handle('get-all-repo-names', async () => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    try {
+      const entries = await fs.readdir(dreamVaultPath, { withFileTypes: true });
+      const gitRepos = [];
+
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const repoPath = path.join(dreamVaultPath, entry.name);
+          const gitDir = path.join(repoPath, '.git');
+          try {
+            await fs.access(gitDir);
+            gitRepos.push(entry.name);
+          } catch (error) {
+            // Not a git repository, skip
+          }
+        }
+      }
+
+      return gitRepos;
+    } catch (error) {
+      console.error('Error getting all repo names:', error);
+      throw error;
+    }
+  });
 }
 
 module.exports = { setupHandlers };

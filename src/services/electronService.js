@@ -126,3 +126,10 @@ export async function commitChanges(nodeName, commitMessage) {
   }
   throw new Error('Electron is not available');
 }
+
+export async function getAllRepoNames() {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.getAllRepoNames();
+  }
+  throw new Error('Electron is not available');
+}
