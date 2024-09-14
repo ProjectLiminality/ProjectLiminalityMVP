@@ -29,10 +29,13 @@ export async function getRepoData(repoName) {
  */
 async function getPreferredMediaFile(repoName) {
   try {
+    console.log(`Getting preferred media file for ${repoName}`);
     const files = await electronService.listFiles(repoName);
+    console.log(`Files in ${repoName}:`, files);
     const mediaFiles = files.filter(file => 
       file.startsWith(repoName) && preferredExtensions.some(ext => file.toLowerCase().endsWith(ext))
     );
+    console.log(`Media files found:`, mediaFiles);
 
     if (mediaFiles.length > 0) {
       const selectedFile = mediaFiles.sort((a, b) => {
@@ -40,11 +43,22 @@ async function getPreferredMediaFile(repoName) {
         const extB = preferredExtensions.findIndex(ext => b.toLowerCase().endsWith(ext));
         return extA - extB;
       })[0];
+      console.log(`Selected file:`, selectedFile);
 
       const mediaPath = await electronService.getMediaFilePath(repoName, selectedFile);
-      const mediaData = await electronService.readFile(mediaPath);
-      const fileExtension = selectedFile.split('.').pop().toLowerCase();
+      console.log(`Media path:`, mediaPath);
+      if (!mediaPath) {
+        console.error(`No media path found for ${selectedFile} in ${repoName}`);
+        return null;
+      }
 
+      const mediaData = await electronService.readFile(mediaPath);
+      if (!mediaData) {
+        console.error(`Failed to read file data for ${mediaPath}`);
+        return null;
+      }
+
+      const fileExtension = selectedFile.split('.').pop().toLowerCase();
       const mimeTypes = {
         'mp4': 'video/mp4',
         'gif': 'image/gif',
@@ -52,7 +66,6 @@ async function getPreferredMediaFile(repoName) {
         'jpg': 'image/jpeg',
         'jpeg': 'image/jpeg'
       };
-
       const mimeType = mimeTypes[fileExtension] || 'application/octet-stream';
 
       return {
@@ -61,6 +74,7 @@ async function getPreferredMediaFile(repoName) {
         data: `data:${mimeType};base64,${mediaData}`
       };
     }
+    console.log(`No media files found for ${repoName}`);
     return null;
   } catch (error) {
     console.error(`Error getting preferred media file for ${repoName}:`, error);
