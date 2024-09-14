@@ -7,18 +7,15 @@ const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemp
 function setupHandlers(ipcMain, store) {
 
   ipcMain.handle('read-file', async (event, filePath) => {
-    console.log('Attempting to read file:', filePath);
     if (!filePath) {
       console.error('Error: filePath is null or undefined');
       return null;
     }
     try {
       const data = await fs.readFile(filePath);
-      console.log('File read successfully:', filePath);
       return data.toString('base64');
     } catch (error) {
       if (error.code === 'ENOENT') {
-        console.log('File does not exist:', filePath);
         return null;
       }
       console.error('Error reading file:', filePath, error);
