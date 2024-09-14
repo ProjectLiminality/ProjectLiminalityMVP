@@ -89,7 +89,8 @@ export async function createNewNode(nodeName) {
     if (!nodeName) {
       throw new Error('Node name is required');
     }
-    return window.electron.createNewNode(nodeName);
+    console.log('Attempting to create new node with name:', nodeName);
+    return window.electron.fileSystem.createNewNode(nodeName);
   }
   throw new Error('Electron is not available');
 }

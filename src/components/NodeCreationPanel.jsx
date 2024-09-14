@@ -12,7 +12,8 @@ const NodeCreationPanel = ({ isOpen, onClose }) => {
       if (!nodeName.trim()) {
         throw new Error('Node name cannot be empty');
       }
-      await createNewNode(nodeName.trim());
+      const result = await createNewNode(nodeName.trim());
+      console.log('Node creation result:', result);
       onClose();
     } catch (error) {
       console.error(`Error creating new node ${nodeName}:`, error);
