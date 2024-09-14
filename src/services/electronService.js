@@ -129,7 +129,8 @@ export async function commitChanges(nodeName, commitMessage) {
 
 export async function getAllRepoNames() {
   if (isElectronAvailable()) {
-    return window.electron.fileSystem.getAllRepoNames();
+    const repoNames = await window.electron.fileSystem.getAllRepoNames();
+    return Array.isArray(repoNames) ? repoNames : [];
   }
   throw new Error('Electron is not available');
 }

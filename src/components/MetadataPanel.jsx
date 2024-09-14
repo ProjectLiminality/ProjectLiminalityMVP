@@ -76,13 +76,28 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
       );
     } else if (key === 'relatedNodes') {
       const options = getAllRepoNames().map(name => ({ value: name, label: name }));
+      const [options, setOptions] = useState([]);
+
+      useEffect(() => {
+        const fetchOptions = async () => {
+          try {
+            const repoNames = await getAllRepoNames();
+            setOptions(repoNames.map(name => ({ value: name, label: name })));
+          } catch (error) {
+            console.error('Error fetching repo names:', error);
+            setOptions([]);
+          }
+        };
+        fetchOptions();
+      }, []);
+
       return (
         <Select
           isMulti
           options={options}
-          value={value.map(v => ({ value: v, label: v }))}
+          value={Array.isArray(value) ? value.map(v => ({ value: v, label: v })) : []}
           onChange={(selectedOptions) => {
-            handleInputChange(key, selectedOptions.map(option => option.value));
+            handleInputChange(key, selectedOptions ? selectedOptions.map(option => option.value) : []);
           }}
           styles={{
             control: (provided) => ({
