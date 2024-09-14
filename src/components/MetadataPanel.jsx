@@ -100,6 +100,7 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
               ...provided,
               backgroundColor: BLACK,
               borderColor: BLUE,
+              width: '450px',
               '&:hover': {
                 borderColor: RED
               }
@@ -173,7 +174,7 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
         borderRadius: '8px',
         boxShadow: `0 0 0 2px ${BLUE}`,
         zIndex: 1000,
-        width: '400px',
+        width: '600px',
       }}
       onClick={(e) => e.stopPropagation()}
     >
