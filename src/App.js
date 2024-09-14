@@ -4,12 +4,13 @@ import SettingsPanel from './components/SettingsPanel';
 import MetadataPanel from './components/MetadataPanel';
 import ContextMenu from './components/ContextMenu';
 import RenamePanel from './components/RenamePanel';
-import { createNewNode } from './services/electronService';
+import NodeCreationPanel from './components/NodeCreationPanel';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMetadataPanelOpen, setIsMetadataPanelOpen] = useState(false);
   const [isRenamePanelOpen, setIsRenamePanelOpen] = useState(false);
+  const [isNodeCreationPanelOpen, setIsNodeCreationPanelOpen] = useState(false);
   const [selectedRepoName, setSelectedRepoName] = useState('');
   const [contextMenu, setContextMenu] = useState(null);
 
@@ -20,7 +21,7 @@ function App() {
       }
       if (event.metaKey && event.key === 'n') {
         event.preventDefault();
-        handleCreateNewNode();
+        setIsNodeCreationPanelOpen(true);
       }
     };
 
@@ -30,18 +31,6 @@ function App() {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
-
-  const handleCreateNewNode = async () => {
-    try {
-      const newNodeName = await createNewNode();
-      console.log(`New node created: ${newNodeName}`);
-      // TODO: Update the UI to reflect the new node
-      // This might involve refreshing the DreamSpace component
-    } catch (error) {
-      console.error('Failed to create new node:', error);
-      // TODO: Show an error message to the user
-    }
-  };
 
   const handleOpenMetadataPanel = (repoName) => {
     console.log(`Opening MetadataPanel: ${repoName}`);
@@ -95,6 +84,12 @@ function App() {
           isOpen={isRenamePanelOpen}
           onClose={() => setIsRenamePanelOpen(false)}
           repoName={selectedRepoName}
+        />
+      )}
+      {isNodeCreationPanelOpen && (
+        <NodeCreationPanel
+          isOpen={isNodeCreationPanelOpen}
+          onClose={() => setIsNodeCreationPanelOpen(false)}
         />
       )}
       {contextMenu && (

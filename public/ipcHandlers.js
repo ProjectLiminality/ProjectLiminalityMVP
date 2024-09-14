@@ -194,19 +194,28 @@ function setupHandlers(ipcMain, store) {
     }
   });
 
-  ipcMain.handle('create-new-node', async () => {
+  ipcMain.handle('create-new-node', async (event, nodeName) => {
     const dreamVaultPath = store.get('dreamVaultPath', '');
     if (!dreamVaultPath) {
       throw new Error('Dream Vault path not set');
     }
 
     const templatePath = path.join(dreamVaultPath, 'DreamNode');
-    const newNodeName = 'NewNode';
-    const newNodePath = path.join(dreamVaultPath, newNodeName);
+    const newNodePath = path.join(dreamVaultPath, nodeName);
 
     try {
       // Check if template exists
       await fs.access(templatePath);
+
+      // Check if a node with the same name already exists
+      try {
+        await fs.access(newNodePath);
+        throw new Error(`A node with the name "${nodeName}" already exists`);
+      } catch (error) {
+        if (error.code !== 'ENOENT') {
+          throw error;
+        }
+      }
 
       // Clone the template repository
       const { execSync } = require('child_process');
@@ -215,8 +224,8 @@ function setupHandlers(ipcMain, store) {
       // Remove the origin remote to disconnect from the template
       execSync('git remote remove origin', { cwd: newNodePath });
 
-      console.log(`Successfully created new node: ${newNodeName}`);
-      return newNodeName;
+      console.log(`Successfully created new node: ${nodeName}`);
+      return nodeName;
     } catch (error) {
       console.error('Error creating new node:', error);
       throw error;
