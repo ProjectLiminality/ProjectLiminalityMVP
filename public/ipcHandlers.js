@@ -195,6 +195,10 @@ function setupHandlers(ipcMain, store) {
   });
 
   ipcMain.handle('create-new-node', async (event, nodeName) => {
+    if (!nodeName) {
+      throw new Error('Node name is required');
+    }
+
     const dreamVaultPath = store.get('dreamVaultPath', '');
     if (!dreamVaultPath) {
       throw new Error('Dream Vault path not set');
