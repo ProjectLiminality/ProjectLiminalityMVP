@@ -123,7 +123,7 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
             }),
             multiValue: (provided) => ({
               ...provided,
-              backgroundColor: BLUE,
+              backgroundColor: metadata.type === 'idea' ? BLUE : RED,
             }),
             multiValueLabel: (provided) => ({
               ...provided,
@@ -133,7 +133,7 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
               ...provided,
               color: WHITE,
               ':hover': {
-                backgroundColor: RED,
+                backgroundColor: metadata.type === 'idea' ? RED : BLUE,
                 color: WHITE,
               },
             }),
