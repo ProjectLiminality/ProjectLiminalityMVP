@@ -75,7 +75,6 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
         />
       );
     } else if (key === 'relatedNodes') {
-      const options = getAllRepoNames().map(name => ({ value: name, label: name }));
       const [options, setOptions] = useState([]);
 
       useEffect(() => {
