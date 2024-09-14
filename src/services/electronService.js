@@ -45,12 +45,12 @@ export async function listFiles(repoName) {
 }
 
 export async function renameRepo(oldName, newName) {
-  if (!window.electron || typeof window.electron.renameRepo !== 'function') {
+  if (!window.electron || !window.electron.fileSystem || typeof window.electron.fileSystem.renameRepo !== 'function') {
     console.error('renameRepo function is not available in the electron context');
     throw new Error('renameRepo function is not available');
   }
   try {
-    const result = await window.electron.renameRepo(oldName, newName);
+    const result = await window.electron.fileSystem.renameRepo(oldName, newName);
     if (!result) {
       throw new Error('Renaming operation failed');
     }
