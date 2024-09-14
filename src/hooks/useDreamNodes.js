@@ -41,7 +41,8 @@ const useDreamNodes = () => {
       }
     };
 
-    fetchDreamNodes();
+    // Call fetchDreamNodes with useCount set to false to disable the count limit
+    fetchDreamNodes(30, true, false);
   }, []);
 
   return { dreamNodes, setDreamNodes, error };
