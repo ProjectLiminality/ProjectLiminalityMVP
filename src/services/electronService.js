@@ -112,3 +112,17 @@ export async function addFileToNode(nodeName, fileData) {
   }
   throw new Error('Electron is not available');
 }
+
+export async function stageFile(nodeName, fileName) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.stageFile(nodeName, fileName);
+  }
+  throw new Error('Electron is not available');
+}
+
+export async function commitChanges(nodeName, commitMessage) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.commitChanges(nodeName, commitMessage);
+  }
+  throw new Error('Electron is not available');
+}

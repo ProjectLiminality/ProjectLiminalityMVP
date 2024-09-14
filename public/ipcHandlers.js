@@ -283,6 +283,44 @@ function setupHandlers(ipcMain, store) {
       throw error;
     }
   });
+
+  ipcMain.handle('stage-file', async (event, nodeName, fileName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const nodePath = path.join(dreamVaultPath, nodeName);
+
+    try {
+      const { execSync } = require('child_process');
+      execSync(`git add "${fileName}"`, { cwd: nodePath });
+      console.log(`Successfully staged file ${fileName} in node ${nodeName}`);
+      return true;
+    } catch (error) {
+      console.error(`Error staging file ${fileName} in node ${nodeName}:`, error);
+      throw error;
+    }
+  });
+
+  ipcMain.handle('commit-changes', async (event, nodeName, commitMessage) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const nodePath = path.join(dreamVaultPath, nodeName);
+
+    try {
+      const { execSync } = require('child_process');
+      execSync(`git commit -m "${commitMessage}"`, { cwd: nodePath });
+      console.log(`Successfully committed changes in node ${nodeName}`);
+      return true;
+    } catch (error) {
+      console.error(`Error committing changes in node ${nodeName}:`, error);
+      throw error;
+    }
+  });
 }
 
 module.exports = { setupHandlers };

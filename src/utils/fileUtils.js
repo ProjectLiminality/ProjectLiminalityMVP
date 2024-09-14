@@ -117,11 +117,25 @@ export async function addFileToNode(nodeName, file) {
     
     if (result) {
       console.log(`File ${file.name} successfully added to node ${nodeName}`);
-      return true;
+      
+      // Stage and commit the added file
+      const stageResult = await electronService.stageFile(nodeName, file.name);
+      if (stageResult) {
+        const commitMessage = `Added ${file.name}`;
+        const commitResult = await electronService.commitChanges(nodeName, commitMessage);
+        if (commitResult) {
+          console.log(`Changes committed for ${file.name} in node ${nodeName}`);
+          return true;
+        } else {
+          console.error(`Failed to commit changes for ${file.name} in node ${nodeName}`);
+        }
+      } else {
+        console.error(`Failed to stage ${file.name} in node ${nodeName}`);
+      }
     } else {
       console.error(`Failed to add file ${file.name} to node ${nodeName}`);
-      return false;
     }
+    return false;
   } catch (error) {
     console.error('Error in addFileToNode:', error);
     return false;
