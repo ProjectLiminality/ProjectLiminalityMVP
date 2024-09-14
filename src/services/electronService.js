@@ -101,7 +101,10 @@ export async function addFileToNode(nodeName, file) {
       throw new Error('Both nodeName and file are required');
     }
     console.log(`Attempting to add file ${file.name} to node ${nodeName}`);
-    return window.electron.fileSystem.addFileToNode(nodeName, file);
+    return window.electron.fileSystem.addFileToNode(nodeName, {
+      name: file.name,
+      data: await file.arrayBuffer()
+    });
   }
   throw new Error('Electron is not available');
 }
