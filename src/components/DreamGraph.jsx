@@ -114,11 +114,16 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      requestAnimationFrame(() => positionNodesOnSphere());
+      requestAnimationFrame(() => {
+        positionNodesOnSphere();
+        if (resetCamera) {
+          resetCamera();
+        }
+      });
     }, 100); // Short delay to ensure nodes are loaded
 
     return () => clearTimeout(timer);
-  }, [positionNodesOnSphere]);
+  }, [positionNodesOnSphere, resetCamera]);
 
   const updateNodePositions = useCallback((clickedNodeIndex) => {
     setNodes(prevNodes => {

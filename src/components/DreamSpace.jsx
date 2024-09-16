@@ -56,7 +56,7 @@ const DreamSpace = ({ onNodeRightClick }) => {
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Canvas camera={{ position: [0, 0, 50], fov: 75, near: 0.1, far: 3000 }}>
+      <Canvas camera={{ position: [0, 0, 100], fov: 75, near: 0.1, far: 3000 }}>
         <CameraController onResetCamera={onResetCamera} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
