@@ -6,6 +6,7 @@ import { getRepoData } from '../utils/fileUtils';
 
 const MAX_SCALE = 2; // Maximum scale for nodes
 const MIN_SCALE = 0.5; // Minimum scale for nodes
+const SPHERE_RADIUS = 100; // Radius of the sphere for node positioning
 
 const calculateNodeScale = (nodePosition, size) => {
   const radius = Math.sqrt(nodePosition.x ** 2 + nodePosition.y ** 2);
