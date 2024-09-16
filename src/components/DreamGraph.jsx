@@ -56,31 +56,13 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
     });
   }, [nodes.length]);
 
-  useEffect(() => {
-    positionNodesOnSphere();
-  }, [positionNodesOnSphere]);
-
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        positionNodesOnSphere();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [positionNodesOnSphere]);
-
   const positionNodesOnSphere = useCallback(() => {
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
     
     setNodes(prevNodes => {
       const newNodes = prevNodes.map((node, index) => {
         const i = index + 1;
-        const phi = Math.acos(1 - 2 * i / (nodes.length + 1));
+        const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
         const theta = 2 * Math.PI * i / goldenRatio;
 
         const x = SPHERE_RADIUS * Math.sin(phi) * Math.cos(theta);
@@ -103,7 +85,25 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
 
       return newNodes;
     });
-  }, [nodes.length]);
+  }, []);
+
+  useEffect(() => {
+    positionNodesOnSphere();
+  }, [positionNodesOnSphere]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        positionNodesOnSphere();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [positionNodesOnSphere]);
 
   const updateNodePositions = useCallback((clickedNodeIndex) => {
     setNodes(prevNodes => {
