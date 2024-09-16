@@ -60,7 +60,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
     
     setNodes(prevNodes => {
-      const newNodes = prevNodes.map((node, index) => {
+      return prevNodes.map((node, index) => {
         const i = index + 1;
         const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
         const theta = 2 * Math.PI * i / goldenRatio;
@@ -75,15 +75,6 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
           scale: 1
         };
       });
-
-      console.log('DreamGraph - Nodes positioned on sphere:', newNodes.map(node => ({
-        repoName: node.repoName,
-        position: node.position,
-        scale: node.scale,
-        type: node.metadata?.type
-      })));
-
-      return newNodes;
     });
   }, []);
 
