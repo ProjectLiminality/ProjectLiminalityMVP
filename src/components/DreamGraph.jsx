@@ -3,7 +3,9 @@ import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
 
-const SPHERE_RADIUS = 100; // Adjusted for better visibility
+const SPHERE_RADIUS = 1000; // Increased sphere radius
+const MAX_SCALE = 100; // Maximum scale for nodes
+const MIN_SCALE = 0.1; // Minimum scale for nodes
 
 const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   const [nodes, setNodes] = useState([]);

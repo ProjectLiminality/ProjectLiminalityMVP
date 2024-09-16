@@ -26,8 +26,8 @@ const DreamNode = ({ repoName, position, scale, metadata, mediaContent, onNodeCl
         x: scale,
         y: scale,
         z: scale,
-        duration: 2,
-        ease: "power2.inOut"
+        duration: 0.5,
+        ease: "power2.out"
       });
     }
   }, [position, scale]);
