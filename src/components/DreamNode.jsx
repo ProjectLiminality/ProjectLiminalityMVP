@@ -58,7 +58,10 @@ const DreamNode = ({ repoName, position, scale, metadata, mediaContent, onNodeCl
   return (
     <Billboard
       ref={nodeRef}
-      follow={false}
+      follow={true}
+      lockX={false}
+      lockY={false}
+      lockZ={false}
       onContextMenu={handleRightClick}
     >
       <Html

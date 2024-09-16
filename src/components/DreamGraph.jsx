@@ -72,7 +72,8 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
         return {
           ...node,
           position: new THREE.Vector3(x, y, z),
-          scale: 1
+          scale: 1,
+          rotation: new THREE.Euler(0, 0, 0) // Add this line to ensure proper rotation
         };
       });
     });
