@@ -1,17 +1,16 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import * as THREE from 'three';
-import { useFrame } from '@react-three/fiber';
+import { useThree, useFrame } from '@react-three/fiber';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
 
-const SPHERE_RADIUS = 1000; // Increased sphere radius
-const MAX_SCALE = 100; // Maximum scale for nodes
-const MIN_SCALE = 0.1; // Minimum scale for nodes
+const MAX_SCALE = 2; // Maximum scale for nodes
+const MIN_SCALE = 0.5; // Minimum scale for nodes
 
-const calculateNodeScale = (nodePosition, cameraPosition) => {
-  const distance = nodePosition.distanceTo(cameraPosition);
-  const normalizedDistance = distance / SPHERE_RADIUS;
-  const scale = MAX_SCALE * Math.exp(-normalizedDistance * normalizedDistance / 0.1);
+const calculateNodeScale = (nodePosition, size) => {
+  const radius = Math.sqrt(nodePosition.x ** 2 + nodePosition.y ** 2);
+  const normalizedRadius = radius / (Math.min(size.width, size.height) / 2);
+  const scale = MAX_SCALE * (1 - normalizedRadius);
   return Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
 };
 
@@ -19,11 +18,12 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
+  const { size } = useThree();
 
-  useFrame(({ camera }) => {
+  useFrame(() => {
     setNodes((prevNodes) =>
       prevNodes.map((node) => {
-        const newScale = calculateNodeScale(node.position, camera.position);
+        const newScale = calculateNodeScale(node.position, size);
         if (Math.abs(node.scale - newScale) > 0.01) {
           return { ...node, scale: newScale };
         }
