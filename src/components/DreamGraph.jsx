@@ -7,10 +7,29 @@ const SPHERE_RADIUS = 1000; // Increased sphere radius
 const MAX_SCALE = 100; // Maximum scale for nodes
 const MIN_SCALE = 0.1; // Minimum scale for nodes
 
+const calculateNodeScale = (nodePosition, cameraPosition) => {
+  const distance = nodePosition.distanceTo(cameraPosition);
+  const normalizedDistance = distance / SPHERE_RADIUS;
+  const scale = MAX_SCALE * Math.exp(-normalizedDistance * normalizedDistance / 0.1);
+  return Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
+};
+
 const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
+
+  useFrame(({ camera }) => {
+    setNodes((prevNodes) =>
+      prevNodes.map((node) => {
+        const newScale = calculateNodeScale(node.position, camera.position);
+        if (Math.abs(node.scale - newScale) > 0.01) {
+          return { ...node, scale: newScale };
+        }
+        return node;
+      })
+    );
+  });
 
   useEffect(() => {
     const fetchNodesData = async () => {
