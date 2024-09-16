@@ -1,13 +1,37 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import gsap from 'gsap';
 
-const CameraController = () => {
+const CameraController = ({ onResetCamera }) => {
   const { camera } = useThree();
   const moveSpeed = 1;
   const rotateSpeed = 0.002;
   let isDragging = useRef(false);
   let previousMousePosition = useRef({ x: 0, y: 0 });
+
+  const resetCamera = () => {
+    gsap.to(camera.position, {
+      x: 0,
+      y: 0,
+      z: 50,
+      duration: 2,
+      ease: "power2.inOut"
+    });
+    gsap.to(camera.rotation, {
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 2,
+      ease: "power2.inOut"
+    });
+  };
+
+  useEffect(() => {
+    if (onResetCamera) {
+      onResetCamera(resetCamera);
+    }
+  }, [onResetCamera]);
 
   const moveState = useRef({
     forward: false,

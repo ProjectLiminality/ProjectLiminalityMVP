@@ -9,6 +9,7 @@ import useDreamNodes from '../hooks/useDreamNodes';
 const DreamSpace = ({ onNodeRightClick }) => {
   const { dreamNodes, error } = useDreamNodes();
   const [initialNodes, setInitialNodes] = useState([]);
+  const [resetCamera, setResetCamera] = useState(null);
 
   useEffect(() => {
     if (dreamNodes.length > 0) {
@@ -35,16 +36,35 @@ const DreamSpace = ({ onNodeRightClick }) => {
     return <div>Error: {error}</div>;
   }
 
+  const onResetCamera = useCallback((resetFunc) => {
+    setResetCamera(() => resetFunc);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && resetCamera) {
+        resetCamera();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [resetCamera]);
+
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <Canvas camera={{ position: [0, 0, 50], fov: 75, near: 0.1, far: 3000 }}>
-        <CameraController />
+        <CameraController onResetCamera={onResetCamera} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
         {initialNodes.length > 0 && (
           <DreamGraph 
             initialNodes={initialNodes} 
             onNodeRightClick={handleNodeRightClick}
+            resetCamera={resetCamera}
           />
         )}
         <IntersectionChecker />

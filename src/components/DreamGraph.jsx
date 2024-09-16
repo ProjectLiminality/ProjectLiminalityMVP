@@ -5,7 +5,7 @@ import { getRepoData } from '../utils/fileUtils';
 
 const SPHERE_RADIUS = 100; // Adjusted for better visibility
 
-const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
+const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
@@ -133,8 +133,11 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
     const clickedNodeIndex = nodes.findIndex(node => node.repoName === repoName);
     if (clickedNodeIndex !== -1) {
       updateNodePositions(clickedNodeIndex);
+      if (resetCamera) {
+        resetCamera();
+      }
     }
-  }, [nodes, updateNodePositions]);
+  }, [nodes, updateNodePositions, resetCamera]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
