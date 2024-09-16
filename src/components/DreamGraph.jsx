@@ -8,6 +8,7 @@ const SPHERE_RADIUS = 100; // Adjusted for better visibility
 const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
   const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
+  const [isSphericalLayout, setIsSphericalLayout] = useState(true);
 
   useEffect(() => {
     const fetchNodesData = async () => {
@@ -54,6 +55,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
 
       return newNodes;
     });
+    setIsSphericalLayout(false);
   }, [nodes.length]);
 
   const positionNodesOnSphere = useCallback(() => {
@@ -73,10 +75,11 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
           ...node,
           position: new THREE.Vector3(x, y, z),
           scale: 1,
-          rotation: new THREE.Euler(0, 0, 0) // Add this line to ensure proper rotation
+          rotation: new THREE.Euler(0, 0, 0)
         };
       });
     });
+    setIsSphericalLayout(true);
   }, []);
 
   useEffect(() => {
@@ -134,6 +137,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
 
       return newNodes;
     });
+    setIsSphericalLayout(false);
   }, []);
 
   const handleNodeClick = useCallback((repoName) => {
@@ -150,6 +154,22 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
       updateNodePositions(clickedNodeIndex);
     }
   }, [nodes, updateNodePositions]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        if (!isSphericalLayout) {
+          positionNodesOnSphere();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [positionNodesOnSphere, isSphericalLayout]);
 
   return (
     <>
