@@ -16,7 +16,9 @@ const calculateNodeScale = (screenPosition, size) => {
   );
   const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
   const normalizedDistance = distanceFromCenter / maxDistance;
-  const scale = MAX_SCALE * (1 - normalizedDistance);
+  // Reduce the characteristic radius by half
+  const focusedDistance = normalizedDistance * 2;
+  const scale = MAX_SCALE * (1 - Math.min(1, focusedDistance));
   return Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
 };
 
