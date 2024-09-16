@@ -32,10 +32,6 @@ const DreamSpace = ({ onNodeRightClick }) => {
     onNodeRightClick(event, repoName, handleOpenInFinder);
   };
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   const onResetCamera = useCallback((resetFunc) => {
     setResetCamera(() => resetFunc);
   }, []);
@@ -53,6 +49,10 @@ const DreamSpace = ({ onNodeRightClick }) => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [resetCamera]);
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
