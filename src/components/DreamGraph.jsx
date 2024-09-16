@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
 
-const SPHERE_RADIUS = 200; // Adjust this value to match your camera distance
+const SPHERE_RADIUS = 100; // Adjusted for better visibility
 
 const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
   const [nodes, setNodes] = useState([]);
@@ -79,7 +79,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
   }, []);
 
   useEffect(() => {
-    positionNodesOnSphere();
+    requestAnimationFrame(() => positionNodesOnSphere());
   }, [positionNodesOnSphere]);
 
   useEffect(() => {
