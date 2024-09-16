@@ -4,9 +4,9 @@ import { useThree, useFrame } from '@react-three/fiber';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
 
-const MAX_SCALE = 10; // Maximum scale for nodes
+const MAX_SCALE = 50; // Maximum scale for nodes
 const MIN_SCALE = 1; // Minimum scale for nodes
-const SPHERE_RADIUS = 500; // Radius of the sphere for node positioning
+const SPHERE_RADIUS = 1000; // Radius of the sphere for node positioning
 
 const calculateNodeScale = (screenPosition, size) => {
   const centerX = size.width / 2;
