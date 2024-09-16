@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
@@ -32,7 +32,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
     const spacing = 10;
     
     setNodes(prevNodes => {
-      const newNodes = prevNodes.map((node, index) => {
+      return prevNodes.map((node, index) => {
         const row = Math.floor(index / gridSize);
         const col = index % gridSize;
         return {
@@ -45,15 +45,6 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
           scale: 1
         };
       });
-
-      console.log('DreamGraph - Nodes positioned on grid:', newNodes.map(node => ({
-        repoName: node.repoName,
-        position: node.position,
-        scale: node.scale,
-        type: node.metadata?.type
-      })));
-
-      return newNodes;
     });
     setIsSphericalLayout(false);
   }, [nodes.length]);
@@ -107,7 +98,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
       const relatedCircleRadius = 30;
       const unrelatedCircleRadius = 200;
 
-      const newNodes = [
+      return [
         { ...clickedNode, position: new THREE.Vector3(0, 0, 0), scale: 5 },
         ...relatedNodes.map((node, index) => {
           const angle = (index / relatedNodes.length) * Math.PI * 2;
@@ -134,8 +125,6 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
           };
         })
       ];
-
-      return newNodes;
     });
     setIsSphericalLayout(false);
   }, []);
@@ -143,24 +132,14 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
   const handleNodeClick = useCallback((repoName) => {
     const clickedNodeIndex = nodes.findIndex(node => node.repoName === repoName);
     if (clickedNodeIndex !== -1) {
-      console.log('DreamGraph - Node clicked:', {
-        clickedNode: nodes[clickedNodeIndex],
-        allNodes: nodes.map(node => ({
-          repoName: node.repoName,
-          type: node.metadata?.type,
-          relatedNodes: node.metadata?.relatedNodes
-        }))
-      });
       updateNodePositions(clickedNodeIndex);
     }
   }, [nodes, updateNodePositions]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        if (!isSphericalLayout) {
-          positionNodesOnSphere();
-        }
+      if (event.key === 'Escape' && !isSphericalLayout) {
+        positionNodesOnSphere();
       }
     };
 
@@ -171,21 +150,21 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
     };
   }, [positionNodesOnSphere, isSphericalLayout]);
 
-  return (
-    <>
-      {nodes.map((node, index) => (
-        <DreamNode
-          key={node.repoName}
-          {...node}
-          onNodeClick={handleNodeClick}
-          onNodeRightClick={onNodeRightClick}
-          isHovered={hoveredNode === node.repoName}
-          setHoveredNode={setHoveredNode}
-          index={index}
-        />
-      ))}
-    </>
-  );
+  const renderedNodes = useMemo(() => {
+    return nodes.map((node, index) => (
+      <DreamNode
+        key={node.repoName}
+        {...node}
+        onNodeClick={handleNodeClick}
+        onNodeRightClick={onNodeRightClick}
+        isHovered={hoveredNode === node.repoName}
+        setHoveredNode={setHoveredNode}
+        index={index}
+      />
+    ));
+  }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, setHoveredNode]);
+
+  return <>{renderedNodes}</>;
 };
 
 export default DreamGraph;

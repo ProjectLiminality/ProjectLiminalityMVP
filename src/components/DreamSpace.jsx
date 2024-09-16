@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 import DreamGraph from './DreamGraph';
@@ -8,15 +8,16 @@ import useDreamNodes from '../hooks/useDreamNodes';
 
 const DreamSpace = ({ onNodeRightClick }) => {
   const { dreamNodes, error } = useDreamNodes();
+  const [initialNodes, setInitialNodes] = useState([]);
 
-  const initialNodes = dreamNodes.map(node => ({
-    ...node,
-    position: new THREE.Vector3(0, 0, 0) // Set initial position to origin
-  }));
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  useEffect(() => {
+    if (dreamNodes.length > 0) {
+      setInitialNodes(dreamNodes.map(node => ({
+        ...node,
+        position: new THREE.Vector3(0, 0, 0) // Set initial position to origin
+      })));
+    }
+  }, [dreamNodes]);
 
   const handleOpenInFinder = (repoName) => {
     if (window.electron && window.electron.openInFinder) {
@@ -30,16 +31,22 @@ const DreamSpace = ({ onNodeRightClick }) => {
     onNodeRightClick(event, repoName, handleOpenInFinder);
   };
 
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <Canvas camera={{ position: [0, 0, 50], fov: 75, near: 0.1, far: 3000 }}>
         <CameraController />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
-        <DreamGraph 
-          initialNodes={initialNodes} 
-          onNodeRightClick={handleNodeRightClick}
-        />
+        {initialNodes.length > 0 && (
+          <DreamGraph 
+            initialNodes={initialNodes} 
+            onNodeRightClick={handleNodeRightClick}
+          />
+        )}
         <IntersectionChecker />
         <axesHelper args={[5]} />
       </Canvas>
