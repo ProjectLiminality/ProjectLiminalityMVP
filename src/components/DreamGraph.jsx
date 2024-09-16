@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import * as THREE from 'three';
+import { useFrame } from '@react-three/fiber';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
 
