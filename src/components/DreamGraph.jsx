@@ -79,21 +79,11 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
   }, []);
 
   useEffect(() => {
-    requestAnimationFrame(() => positionNodesOnSphere());
-  }, [positionNodesOnSphere]);
+    const timer = setTimeout(() => {
+      requestAnimationFrame(() => positionNodesOnSphere());
+    }, 100); // Short delay to ensure nodes are loaded
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        positionNodesOnSphere();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
+    return () => clearTimeout(timer);
   }, [positionNodesOnSphere]);
 
   const updateNodePositions = useCallback((clickedNodeIndex) => {

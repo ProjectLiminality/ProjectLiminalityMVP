@@ -22,13 +22,9 @@ const useDreamNodes = () => {
             selectedRepos = repos.sort(() => 0.5 - Math.random());
           }
           console.log('Setting DreamNodes:', selectedRepos);
-          const newNodes = selectedRepos.map((repo, index) => ({
+          const newNodes = selectedRepos.map((repo) => ({
             repoName: repo,
-            position: new THREE.Vector3(
-              (index % 3) * 200 - 200,
-              Math.floor(index / 3) * 200 - 200,
-              0
-            )
+            position: new THREE.Vector3(0, 0, 0) // Start at origin
           }));
           setDreamNodes(newNodes);
         } else {
