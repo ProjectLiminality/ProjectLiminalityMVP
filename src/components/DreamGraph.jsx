@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
 
+const SPHERE_RADIUS = 200; // Adjust this value to match your camera distance
+
 const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
   const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
@@ -55,13 +57,13 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
   }, [nodes.length]);
 
   useEffect(() => {
-    positionNodesOnGrid();
-  }, [positionNodesOnGrid]);
+    positionNodesOnSphere();
+  }, [positionNodesOnSphere]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        positionNodesOnGrid();
+        positionNodesOnSphere();
       }
     };
 
@@ -70,7 +72,38 @@ const DreamGraph = ({ initialNodes, onNodeRightClick }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [positionNodesOnGrid]);
+  }, [positionNodesOnSphere]);
+
+  const positionNodesOnSphere = useCallback(() => {
+    const goldenRatio = (1 + Math.sqrt(5)) / 2;
+    
+    setNodes(prevNodes => {
+      const newNodes = prevNodes.map((node, index) => {
+        const i = index + 1;
+        const phi = Math.acos(1 - 2 * i / (nodes.length + 1));
+        const theta = 2 * Math.PI * i / goldenRatio;
+
+        const x = SPHERE_RADIUS * Math.sin(phi) * Math.cos(theta);
+        const y = SPHERE_RADIUS * Math.sin(phi) * Math.sin(theta);
+        const z = SPHERE_RADIUS * Math.cos(phi);
+
+        return {
+          ...node,
+          position: new THREE.Vector3(x, y, z),
+          scale: 1
+        };
+      });
+
+      console.log('DreamGraph - Nodes positioned on sphere:', newNodes.map(node => ({
+        repoName: node.repoName,
+        position: node.position,
+        scale: node.scale,
+        type: node.metadata?.type
+      })));
+
+      return newNodes;
+    });
+  }, [nodes.length]);
 
   const updateNodePositions = useCallback((clickedNodeIndex) => {
     setNodes(prevNodes => {
