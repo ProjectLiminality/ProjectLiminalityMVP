@@ -1,17 +1,22 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
 
-const MAX_SCALE = 2; // Maximum scale for nodes
-const MIN_SCALE = 0.5; // Minimum scale for nodes
-const SPHERE_RADIUS = 100; // Radius of the sphere for node positioning
+const MAX_SCALE = 10; // Maximum scale for nodes
+const MIN_SCALE = 1; // Minimum scale for nodes
+const SPHERE_RADIUS = 500; // Radius of the sphere for node positioning
 
-const calculateNodeScale = (nodePosition, size) => {
-  const radius = Math.sqrt(nodePosition.x ** 2 + nodePosition.y ** 2);
-  const normalizedRadius = radius / (Math.min(size.width, size.height) / 2);
-  const scale = MAX_SCALE * (1 - normalizedRadius);
+const calculateNodeScale = (screenPosition, size) => {
+  const centerX = size.width / 2;
+  const centerY = size.height / 2;
+  const distanceFromCenter = Math.sqrt(
+    (screenPosition.x - centerX) ** 2 + (screenPosition.y - centerY) ** 2
+  );
+  const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
+  const normalizedDistance = distanceFromCenter / maxDistance;
+  const scale = MAX_SCALE * (1 - normalizedDistance);
   return Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
 };
 
@@ -21,10 +26,19 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
   const { size } = useThree();
 
+  const { camera } = useThree();
+  const tempV = useRef(new THREE.Vector3());
+
   useFrame(() => {
     setNodes((prevNodes) =>
       prevNodes.map((node) => {
-        const newScale = calculateNodeScale(node.position, size);
+        tempV.current.copy(node.position);
+        tempV.current.project(camera);
+        const screenPosition = {
+          x: (tempV.current.x * 0.5 + 0.5) * size.width,
+          y: (tempV.current.y * -0.5 + 0.5) * size.height
+        };
+        const newScale = calculateNodeScale(screenPosition, size);
         if (Math.abs(node.scale - newScale) > 0.01) {
           return { ...node, scale: newScale };
         }
