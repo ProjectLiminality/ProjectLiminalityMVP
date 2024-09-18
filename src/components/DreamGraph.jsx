@@ -9,6 +9,9 @@ const MIN_SCALE = 1; // Minimum scale for nodes
 const SPHERE_RADIUS = 1000; // Radius of the sphere for node positioning
 
 const calculateViewScaleFactor = (node, camera, size) => {
+  if (node.isInLiminalView) {
+    return node.liminalScaleFactor;
+  }
   const tempV = new THREE.Vector3();
   tempV.copy(node.position).project(camera);
   const screenPosition = {
@@ -39,11 +42,9 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   useFrame(() => {
     setNodes((prevNodes) =>
       prevNodes.map((node) => {
-        if (!node.isInLiminalView) {
-          const newViewScaleFactor = calculateViewScaleFactor(node, camera, size);
-          if (Math.abs(node.viewScaleFactor - newViewScaleFactor) > 0.01) {
-            return { ...node, viewScaleFactor: newViewScaleFactor };
-          }
+        const newViewScaleFactor = calculateViewScaleFactor(node, camera, size);
+        if (Math.abs(node.viewScaleFactor - newViewScaleFactor) > 0.01) {
+          return { ...node, viewScaleFactor: newViewScaleFactor };
         }
         return node;
       })
@@ -151,6 +152,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
           ...clickedNode, 
           position: new THREE.Vector3(0, 0, 0), 
           liminalScaleFactor: 5, 
+          viewScaleFactor: 5,
           isInLiminalView: true 
         },
         ...relatedNodes.map((node, index) => {
@@ -163,6 +165,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
               0
             ),
             liminalScaleFactor: 1,
+            viewScaleFactor: 1,
             isInLiminalView: true
           };
         }),
@@ -176,6 +179,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
               0
             ),
             liminalScaleFactor: 0.5,
+            viewScaleFactor: 0.5,
             isInLiminalView: true
           };
         })
@@ -213,6 +217,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
       <DreamNode
         key={node.repoName}
         {...node}
+        scale={node.baseScale * (node.isInLiminalView ? node.liminalScaleFactor : node.viewScaleFactor)}
         onNodeClick={handleNodeClick}
         onNodeRightClick={onNodeRightClick}
         isHovered={hoveredNode === node.repoName}
