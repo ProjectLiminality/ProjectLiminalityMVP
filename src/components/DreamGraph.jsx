@@ -8,7 +8,13 @@ const MAX_SCALE = 50; // Maximum scale for nodes
 const MIN_SCALE = 1; // Minimum scale for nodes
 const SPHERE_RADIUS = 1000; // Radius of the sphere for node positioning
 
-const calculateNodeScale = (screenPosition, size) => {
+const calculateViewScaleFactor = (node, camera, size) => {
+  const tempV = new THREE.Vector3();
+  tempV.copy(node.position).project(camera);
+  const screenPosition = {
+    x: (tempV.x * 0.5 + 0.5) * size.width,
+    y: (tempV.y * -0.5 + 0.5) * size.height
+  };
   const centerX = size.width / 2;
   const centerY = size.height / 2;
   const distanceFromCenter = Math.sqrt(
@@ -16,10 +22,9 @@ const calculateNodeScale = (screenPosition, size) => {
   );
   const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
   const normalizedDistance = distanceFromCenter / maxDistance;
-  // Reduce the characteristic radius by half
   const focusedDistance = normalizedDistance * 2;
   const scale = MAX_SCALE * (1 - Math.min(1, focusedDistance));
-  return Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale));
+  return Math.max(MIN_SCALE / node.baseScale, Math.min(MAX_SCALE / node.baseScale, scale));
 };
 
 const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
@@ -34,15 +39,11 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   useFrame(() => {
     setNodes((prevNodes) =>
       prevNodes.map((node) => {
-        tempV.current.copy(node.position);
-        tempV.current.project(camera);
-        const screenPosition = {
-          x: (tempV.current.x * 0.5 + 0.5) * size.width,
-          y: (tempV.current.y * -0.5 + 0.5) * size.height
-        };
-        const newScale = calculateNodeScale(screenPosition, size);
-        if (Math.abs(node.scale - newScale) > 0.01) {
-          return { ...node, scale: newScale };
+        if (!node.isInLiminalView) {
+          const newViewScaleFactor = calculateViewScaleFactor(node, camera, size);
+          if (Math.abs(node.viewScaleFactor - newViewScaleFactor) > 0.01) {
+            return { ...node, viewScaleFactor: newViewScaleFactor };
+          }
         }
         return node;
       })
@@ -57,7 +58,10 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
           ...node,
           metadata,
           mediaContent,
-          scale: 1,
+          baseScale: 1,
+          viewScaleFactor: 1,
+          liminalScaleFactor: 1,
+          isInLiminalView: false,
           position: new THREE.Vector3(0, 0, 0)
         };
       }));
@@ -143,7 +147,12 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
       const unrelatedCircleRadius = 200;
 
       return [
-        { ...clickedNode, position: new THREE.Vector3(0, 0, 0), scale: 5 },
+        { 
+          ...clickedNode, 
+          position: new THREE.Vector3(0, 0, 0), 
+          liminalScaleFactor: 5, 
+          isInLiminalView: true 
+        },
         ...relatedNodes.map((node, index) => {
           const angle = (index / relatedNodes.length) * Math.PI * 2;
           return {
@@ -153,7 +162,8 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
               Math.sin(angle) * relatedCircleRadius,
               0
             ),
-            scale: 1
+            liminalScaleFactor: 1,
+            isInLiminalView: true
           };
         }),
         ...unrelatedNodes.map((node, index) => {
@@ -165,7 +175,8 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
               Math.sin(angle) * unrelatedCircleRadius,
               0
             ),
-            scale: 1
+            liminalScaleFactor: 0.5,
+            isInLiminalView: true
           };
         })
       ];
