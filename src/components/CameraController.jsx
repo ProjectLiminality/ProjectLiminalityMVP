@@ -78,8 +78,8 @@ const CameraController = ({ onResetCamera }) => {
       const movementX = event.clientX - previousMousePosition.current.x;
       const movementY = event.clientY - previousMousePosition.current.y;
 
-      camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), -movementX * rotateSpeed);
-      camera.rotateX(-movementY * rotateSpeed);
+      camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), movementX * rotateSpeed);
+      camera.rotateX(movementY * rotateSpeed);
       camera.up.set(0, 1, 0);
 
       previousMousePosition.current = { x: event.clientX, y: event.clientY };
