@@ -42,9 +42,11 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   useFrame(() => {
     setNodes((prevNodes) =>
       prevNodes.map((node) => {
-        const newViewScaleFactor = calculateViewScaleFactor(node, camera, size);
-        if (Math.abs(node.viewScaleFactor - newViewScaleFactor) > 0.01) {
-          return { ...node, viewScaleFactor: newViewScaleFactor };
+        if (!node.isInLiminalView) {
+          const newViewScaleFactor = calculateViewScaleFactor(node, camera, size);
+          if (Math.abs(node.viewScaleFactor - newViewScaleFactor) > 0.01) {
+            return { ...node, viewScaleFactor: newViewScaleFactor };
+          }
         }
         return node;
       })
@@ -110,7 +112,10 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
           ...node,
           position: new THREE.Vector3(x, y, z),
           scale: 1,
-          rotation: new THREE.Euler(0, 0, 0)
+          rotation: new THREE.Euler(0, 0, 0),
+          liminalScaleFactor: 1,
+          viewScaleFactor: 1,
+          isInLiminalView: false
         };
       });
     });
