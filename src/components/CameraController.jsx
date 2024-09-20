@@ -14,7 +14,7 @@ const CameraController = ({ onResetCamera }) => {
     gsap.to(camera.position, {
       x: 0,
       y: 0,
-      z: 100,
+      z: 50,
       duration: 2,
       ease: "power2.inOut"
     });
@@ -29,7 +29,7 @@ const CameraController = ({ onResetCamera }) => {
 
   useEffect(() => {
     // Initial camera setup
-    camera.position.set(0, 0, 100);
+    camera.position.set(0, 0, 50);
     camera.lookAt(0, 0, 0);
   }, [camera]);
 
