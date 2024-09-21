@@ -26,12 +26,12 @@ const calculateViewScaleFactor = (node, camera, size) => {
   );
   const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
   const normalizedDistance = distanceFromCenter / maxDistance;
-  const focusedDistance = normalizedDistance * 2;
+  const focusedDistance = normalizedDistance *2;
   const scale = MAX_SCALE * (1 - Math.min(1, focusedDistance));
   return Math.max(MIN_SCALE / node.baseScale, Math.min(MAX_SCALE / node.baseScale, scale));
 };
 
-const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
+const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoAction }) => {
   const [history, dispatch] = useReducer(historyReducer, { past: [], present: null, future: [] });
   const [hoveredNode, setHoveredNode] = useState(null);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
@@ -205,15 +205,17 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   }, [history.present, updateNodePositions, resetCamera]);
 
   useEffect(() => {
+    if (undoRedoAction === 'undo') {
+      dispatch(undo());
+    } else if (undoRedoAction === 'redo') {
+      dispatch(redo());
+    }
+  }, [undoRedoAction]);
+
+  useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape' && !isSphericalLayout) {
         positionNodesOnSphere();
-      } else if ((event.metaKey || event.ctrlKey) && event.key === 'z') {
-        if (event.shiftKey) {
-          dispatch(redo());
-        } else {
-          dispatch(undo());
-        }
       }
     };
 

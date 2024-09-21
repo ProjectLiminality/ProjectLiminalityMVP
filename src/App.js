@@ -14,6 +14,7 @@ function App() {
   const [isNodeCreationPanelOpen, setIsNodeCreationPanelOpen] = useState(false);
   const [selectedRepoName, setSelectedRepoName] = useState('');
   const [contextMenu, setContextMenu] = useState(null);
+  const [undoRedoAction, setUndoRedoAction] = useState(null);
 
   const handleDragOver = useCallback((event) => {
     event.preventDefault();
@@ -69,6 +70,10 @@ function App() {
         event.preventDefault();
         setIsNodeCreationPanelOpen(true);
       }
+      if (event.metaKey && event.key === 'z') {
+        event.preventDefault();
+        setUndoRedoAction(event.shiftKey ? 'redo' : 'undo');
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -81,6 +86,14 @@ function App() {
       window.removeEventListener('drop', handleDrop);
     };
   }, [handleDragOver, handleDrop]);
+
+  useEffect(() => {
+    if (undoRedoAction) {
+      // Reset the action after it's been processed
+      const timer = setTimeout(() => setUndoRedoAction(null), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [undoRedoAction]);
 
   const handleOpenMetadataPanel = (repoName) => {
     console.log(`Opening MetadataPanel: ${repoName}`);
@@ -114,6 +127,7 @@ function App() {
       <div className="App" onClick={handleCloseContextMenu}>
         <DreamSpace 
           onNodeRightClick={handleNodeRightClick}
+          undoRedoAction={undoRedoAction}
         />
       </div>
       {isSettingsOpen && (
