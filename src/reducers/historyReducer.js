@@ -50,7 +50,6 @@ export const historyReducer = produce((draft, action) => {
         draft.present = previous.state;
         draft.lastAction = previous.action;
         logGraphState(draft);
-        return { ...draft, lastAction: previous.action };
       } else {
         console.log('No more actions to undo');
       }
@@ -63,7 +62,6 @@ export const historyReducer = produce((draft, action) => {
         draft.present = next.state;
         draft.lastAction = next.action;
         logGraphState(draft);
-        return { ...draft, lastAction: next.action };
       } else {
         console.log('No more actions to redo');
       }
