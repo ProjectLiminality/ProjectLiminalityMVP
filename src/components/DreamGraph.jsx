@@ -206,8 +206,10 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
 
   useEffect(() => {
     if (undoRedoAction === 'undo') {
+      console.log('Performing undo action');
       dispatch(undo());
     } else if (undoRedoAction === 'redo') {
+      console.log('Performing redo action');
       dispatch(redo());
     }
   }, [undoRedoAction]);

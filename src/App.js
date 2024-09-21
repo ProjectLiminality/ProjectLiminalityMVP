@@ -72,7 +72,13 @@ function App() {
       }
       if (event.metaKey && event.key === 'z') {
         event.preventDefault();
-        setUndoRedoAction(event.shiftKey ? 'redo' : 'undo');
+        console.log('Undo shortcut detected');
+        setUndoRedoAction('undo');
+      }
+      if (event.metaKey && event.key === 'y') {
+        event.preventDefault();
+        console.log('Redo shortcut detected');
+        setUndoRedoAction('redo');
       }
     };
 

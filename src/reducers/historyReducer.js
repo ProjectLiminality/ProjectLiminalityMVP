@@ -20,16 +20,22 @@ export const historyReducer = produce((draft, action) => {
       break;
     case 'UNDO':
       if (draft.past.length > 0) {
+        console.log('Undoing action');
         const previous = draft.past.pop();
         draft.future.unshift(draft.present);
         draft.present = previous;
+      } else {
+        console.log('No more actions to undo');
       }
       break;
     case 'REDO':
       if (draft.future.length > 0) {
+        console.log('Redoing action');
         const next = draft.future.shift();
         draft.past.push(draft.present);
         draft.present = next;
+      } else {
+        console.log('No more actions to redo');
       }
       break;
     default:
