@@ -24,7 +24,7 @@ export const historyReducer = produce((draft, action) => {
         const previous = draft.past.pop();
         draft.future.unshift({ state: draft.present, action: action.lastAction });
         draft.present = previous.state;
-        return { ...draft, lastAction: previous.action };
+        draft.lastAction = previous.action;
       } else {
         console.log('No more actions to undo');
       }
@@ -35,7 +35,7 @@ export const historyReducer = produce((draft, action) => {
         const next = draft.future.shift();
         draft.past.push({ state: draft.present, action: action.lastAction });
         draft.present = next.state;
-        return { ...draft, lastAction: next.action };
+        draft.lastAction = next.action;
       } else {
         console.log('No more actions to redo');
       }
