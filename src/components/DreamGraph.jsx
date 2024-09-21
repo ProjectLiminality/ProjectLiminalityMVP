@@ -209,8 +209,9 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
 
   useEffect(() => {
     if (undoRedoAction === 'undo') {
-      console.log('Performing undo action');
+      console.log('Performing undo action in DreamGraph');
       const result = dispatch(undo());
+      console.log('Undo result:', result);
       if (result && result.lastAction) {
         if (result.lastAction.type === ACTIONS.POSITION_ON_SPHERE) {
           positionNodesOnSphere();
@@ -219,8 +220,9 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
         }
       }
     } else if (undoRedoAction === 'redo') {
-      console.log('Performing redo action');
+      console.log('Performing redo action in DreamGraph');
       const result = dispatch(redo());
+      console.log('Redo result:', result);
       if (result && result.lastAction) {
         if (result.lastAction.type === ACTIONS.POSITION_ON_SPHERE) {
           positionNodesOnSphere();
