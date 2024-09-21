@@ -95,9 +95,9 @@ function App() {
 
   useEffect(() => {
     if (undoRedoAction) {
-      // Reset the action after it's been processed
-      const timer = setTimeout(() => setUndoRedoAction(null), 100);
-      return () => clearTimeout(timer);
+      // Perform the action immediately and reset
+      console.log(`Performing ${undoRedoAction} action`);
+      setUndoRedoAction(null);
     }
   }, [undoRedoAction]);
 

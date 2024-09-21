@@ -50,6 +50,7 @@ export const historyReducer = produce((draft, action) => {
         draft.present = previous.state;
         draft.lastAction = previous.action;
         logGraphState(draft);
+        return draft; // Return the draft to prevent further processing
       } else {
         console.log('No more actions to undo');
       }
