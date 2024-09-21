@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef, useReducer } from 'react';
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
+import { historyReducer, updateGraph, undo, redo } from '../reducers/historyReducer';
 
 const MAX_SCALE = 50; // Maximum scale for nodes
 const MIN_SCALE = 1; // Minimum scale for nodes
@@ -31,7 +32,7 @@ const calculateViewScaleFactor = (node, camera, size) => {
 };
 
 const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
-  const [nodes, setNodes] = useState([]);
+  const [history, dispatch] = useReducer(historyReducer, { past: [], present: null, future: [] });
   const [hoveredNode, setHoveredNode] = useState(null);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
   const { size } = useThree();
@@ -40,17 +41,19 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   const tempV = useRef(new THREE.Vector3());
 
   useFrame(() => {
-    setNodes((prevNodes) =>
-      prevNodes.map((node) => {
-        if (!node.isInLiminalView) {
-          const newViewScaleFactor = calculateViewScaleFactor(node, camera, size);
-          if (Math.abs(node.viewScaleFactor - newViewScaleFactor) > 0.01) {
-            return { ...node, viewScaleFactor: newViewScaleFactor };
+    if (history.present) {
+      dispatch(updateGraph(
+        history.present.map((node) => {
+          if (!node.isInLiminalView) {
+            const newViewScaleFactor = calculateViewScaleFactor(node, camera, size);
+            if (Math.abs(node.viewScaleFactor - newViewScaleFactor) > 0.01) {
+              return { ...node, viewScaleFactor: newViewScaleFactor };
+            }
           }
-        }
-        return node;
-      })
-    );
+          return node;
+        })
+      ));
+    }
   });
 
   useEffect(() => {
@@ -68,59 +71,57 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
           position: new THREE.Vector3(0, 0, 0)
         };
       }));
-      setNodes(nodesData);
+      dispatch(updateGraph(nodesData));
     };
     fetchNodesData();
   }, [initialNodes]);
 
   const positionNodesOnGrid = useCallback(() => {
-    const gridSize = Math.ceil(Math.sqrt(nodes.length));
+    const gridSize = Math.ceil(Math.sqrt(history.present.length));
     const spacing = 10;
     
-    setNodes(prevNodes => {
-      return prevNodes.map((node, index) => {
-        const row = Math.floor(index / gridSize);
-        const col = index % gridSize;
-        return {
-          ...node,
-          position: new THREE.Vector3(
-            (col - gridSize / 2) * spacing,
-            (row - gridSize / 2) * spacing,
-            0
-          ),
-          scale: 1
-        };
-      });
+    const newNodes = history.present.map((node, index) => {
+      const row = Math.floor(index / gridSize);
+      const col = index % gridSize;
+      return {
+        ...node,
+        position: new THREE.Vector3(
+          (col - gridSize / 2) * spacing,
+          (row - gridSize / 2) * spacing,
+          0
+        ),
+        scale: 1
+      };
     });
+    dispatch(updateGraph(newNodes));
     setIsSphericalLayout(false);
-  }, [nodes.length]);
+  }, [history.present]);
 
   const positionNodesOnSphere = useCallback(() => {
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
     
-    setNodes(prevNodes => {
-      return prevNodes.map((node, index) => {
-        const i = index + 1;
-        const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
-        const theta = 2 * Math.PI * i / goldenRatio;
+    const newNodes = history.present.map((node, index) => {
+      const i = index + 1;
+      const phi = Math.acos(1 - 2 * i / (history.present.length + 1));
+      const theta = 2 * Math.PI * i / goldenRatio;
 
-        const x = SPHERE_RADIUS * Math.sin(phi) * Math.cos(theta);
-        const y = SPHERE_RADIUS * Math.sin(phi) * Math.sin(theta);
-        const z = SPHERE_RADIUS * Math.cos(phi);
+      const x = SPHERE_RADIUS * Math.sin(phi) * Math.cos(theta);
+      const y = SPHERE_RADIUS * Math.sin(phi) * Math.sin(theta);
+      const z = SPHERE_RADIUS * Math.cos(phi);
 
-        return {
-          ...node,
-          position: new THREE.Vector3(x, y, z),
-          scale: 1,
-          rotation: new THREE.Euler(0, 0, 0),
-          liminalScaleFactor: 1,
-          viewScaleFactor: 1,
-          isInLiminalView: false
-        };
-      });
+      return {
+        ...node,
+        position: new THREE.Vector3(x, y, z),
+        scale: 1,
+        rotation: new THREE.Euler(0, 0, 0),
+        liminalScaleFactor: 1,
+        viewScaleFactor: 1,
+        isInLiminalView: false
+      };
     });
+    dispatch(updateGraph(newNodes));
     setIsSphericalLayout(true);
-  }, []);
+  }, [history.present]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -136,77 +137,83 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   }, [positionNodesOnSphere, resetCamera]);
 
   const updateNodePositions = useCallback((clickedNodeIndex) => {
-    setNodes(prevNodes => {
-      const clickedNode = prevNodes[clickedNodeIndex];
-      const otherNodes = prevNodes.filter((_, index) => index !== clickedNodeIndex);
-      
-      const relatedNodes = otherNodes.filter(node => 
-        clickedNode.metadata?.relatedNodes?.includes(node.repoName) && 
-        node.metadata?.type !== clickedNode.metadata?.type
-      );
-      const unrelatedNodes = otherNodes.filter(node => 
-        !clickedNode.metadata?.relatedNodes?.includes(node.repoName) || 
-        node.metadata?.type === clickedNode.metadata?.type
-      );
+    const newNodes = [...history.present];
+    const clickedNode = newNodes[clickedNodeIndex];
+    const otherNodes = newNodes.filter((_, index) => index !== clickedNodeIndex);
+    
+    const relatedNodes = otherNodes.filter(node => 
+      clickedNode.metadata?.relatedNodes?.includes(node.repoName) && 
+      node.metadata?.type !== clickedNode.metadata?.type
+    );
+    const unrelatedNodes = otherNodes.filter(node => 
+      !clickedNode.metadata?.relatedNodes?.includes(node.repoName) || 
+      node.metadata?.type === clickedNode.metadata?.type
+    );
 
-      const relatedCircleRadius = 30;
-      const unrelatedCircleRadius = 200;
+    const relatedCircleRadius = 30;
+    const unrelatedCircleRadius = 200;
 
-      return [
-        { 
-          ...clickedNode, 
-          position: new THREE.Vector3(0, 0, 0), 
-          liminalScaleFactor: 5, 
-          viewScaleFactor: 5,
-          isInLiminalView: true 
-        },
-        ...relatedNodes.map((node, index) => {
-          const angle = (index / relatedNodes.length) * Math.PI * 2;
-          return {
-            ...node,
-            position: new THREE.Vector3(
-              Math.cos(angle) * relatedCircleRadius,
-              Math.sin(angle) * relatedCircleRadius,
-              0
-            ),
-            liminalScaleFactor: 1,
-            viewScaleFactor: 1,
-            isInLiminalView: true
-          };
-        }),
-        ...unrelatedNodes.map((node, index) => {
-          const angle = (index / unrelatedNodes.length) * Math.PI * 2;
-          return {
-            ...node,
-            position: new THREE.Vector3(
-              Math.cos(angle) * unrelatedCircleRadius,
-              Math.sin(angle) * unrelatedCircleRadius,
-              0
-            ),
-            liminalScaleFactor: 0.5,
-            viewScaleFactor: 0.5,
-            isInLiminalView: true
-          };
-        })
-      ];
-    });
+    const updatedNodes = [
+      { 
+        ...clickedNode, 
+        position: new THREE.Vector3(0, 0, 0), 
+        liminalScaleFactor: 5, 
+        viewScaleFactor: 5,
+        isInLiminalView: true 
+      },
+      ...relatedNodes.map((node, index) => {
+        const angle = (index / relatedNodes.length) * Math.PI * 2;
+        return {
+          ...node,
+          position: new THREE.Vector3(
+            Math.cos(angle) * relatedCircleRadius,
+            Math.sin(angle) * relatedCircleRadius,
+            0
+          ),
+          liminalScaleFactor: 1,
+          viewScaleFactor: 1,
+          isInLiminalView: true
+        };
+      }),
+      ...unrelatedNodes.map((node, index) => {
+        const angle = (index / unrelatedNodes.length) * Math.PI * 2;
+        return {
+          ...node,
+          position: new THREE.Vector3(
+            Math.cos(angle) * unrelatedCircleRadius,
+            Math.sin(angle) * unrelatedCircleRadius,
+            0
+          ),
+          liminalScaleFactor: 0.5,
+          viewScaleFactor: 0.5,
+          isInLiminalView: true
+        };
+      })
+    ];
+    dispatch(updateGraph(updatedNodes));
     setIsSphericalLayout(false);
-  }, []);
+  }, [history.present]);
 
   const handleNodeClick = useCallback((repoName) => {
-    const clickedNodeIndex = nodes.findIndex(node => node.repoName === repoName);
+    const clickedNodeIndex = history.present.findIndex(node => node.repoName === repoName);
     if (clickedNodeIndex !== -1) {
       updateNodePositions(clickedNodeIndex);
       if (resetCamera) {
         resetCamera();
       }
     }
-  }, [nodes, updateNodePositions, resetCamera]);
+  }, [history.present, updateNodePositions, resetCamera]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape' && !isSphericalLayout) {
         positionNodesOnSphere();
+      } else if ((event.metaKey || event.ctrlKey) && event.key === 'z') {
+        if (event.shiftKey) {
+          dispatch(redo());
+        } else {
+          dispatch(undo());
+        }
       }
     };
 
@@ -218,7 +225,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   }, [positionNodesOnSphere, isSphericalLayout]);
 
   const renderedNodes = useMemo(() => {
-    return nodes.map((node, index) => (
+    return history.present ? history.present.map((node, index) => (
       <DreamNode
         key={node.repoName}
         {...node}
@@ -229,8 +236,8 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         setHoveredNode={setHoveredNode}
         index={index}
       />
-    ));
-  }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, setHoveredNode]);
+    )) : null;
+  }, [history.present, hoveredNode, handleNodeClick, onNodeRightClick, setHoveredNode]);
 
   return <>{renderedNodes}</>;
 };
