@@ -9,31 +9,37 @@ const initialState = {
 const MAX_HISTORY_LENGTH = 50;
 
 const logGraphState = (state) => {
-  console.log('Current Graph State:');
-  console.log('Past:', state.past.length, 'actions');
-  console.log('Present:', state.present ? `${state.present.length} nodes` : 'null');
-  console.log('Future:', state.future.length, 'actions');
-  if (state.present) {
-    console.log('Nodes:', state.present.map(node => ({
-      repoName: node.repoName,
-      position: node.position.toArray(),
-      isInLiminalView: node.isInLiminalView
-    })));
+  if (state.lastAction && state.lastAction.type !== 'UPDATE_VIEW_SCALE_FACTORS') {
+    console.log('Current Graph State:');
+    console.log('Past:', state.past.length, 'actions');
+    console.log('Present:', state.present ? `${state.present.length} nodes` : 'null');
+    console.log('Future:', state.future.length, 'actions');
+    if (state.present) {
+      console.log('Nodes:', state.present.map(node => ({
+        repoName: node.repoName,
+        position: node.position.toArray(),
+        isInLiminalView: node.isInLiminalView
+      })));
+    }
+    console.log('Last Action:', state.lastAction);
   }
-  console.log('Last Action:', state.lastAction);
 };
 
 export const historyReducer = produce((draft, action) => {
   switch (action.type) {
     case 'UPDATE_GRAPH':
-      draft.past.push({ state: draft.present, action: action.lastAction });
-      if (draft.past.length > MAX_HISTORY_LENGTH) {
-        draft.past.shift();
+      if (action.lastAction && action.lastAction.type !== 'UPDATE_VIEW_SCALE_FACTORS') {
+        draft.past.push({ state: draft.present, action: action.lastAction });
+        if (draft.past.length > MAX_HISTORY_LENGTH) {
+          draft.past.shift();
+        }
+        draft.present = action.payload;
+        draft.future = [];
+        draft.lastAction = action.lastAction;
+        console.log('Graph updated:', action.lastAction.type);
+      } else {
+        draft.present = action.payload;
       }
-      draft.present = action.payload;
-      draft.future = [];
-      draft.lastAction = action.lastAction;
-      console.log('Graph updated');
       break;
     case 'UNDO':
       if (draft.past.length > 0) {
