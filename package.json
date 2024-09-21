@@ -1,4 +1,7 @@
 {
+  "dependencies": {
+    "react-select": "^5.7.3"
+  },
   "name": "dreamspace",
   "version": "0.1.0",
   "private": true,
