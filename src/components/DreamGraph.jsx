@@ -9,6 +9,11 @@ const MAX_SCALE = 50; // Maximum scale for nodes
 const MIN_SCALE = 1; // Minimum scale for nodes
 const SPHERE_RADIUS = 1000; // Radius of the sphere for node positioning
 
+const ACTIONS = {
+  POSITION_ON_SPHERE: 'POSITION_ON_SPHERE',
+  UPDATE_NODE_POSITIONS: 'UPDATE_NODE_POSITIONS'
+};
+
 const calculateViewScaleFactor = (node, camera, size) => {
   if (node.isInLiminalView) {
     return node.liminalScaleFactor;
@@ -119,9 +124,9 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
         isInLiminalView: false
       };
     });
-    dispatch(updateGraph(newNodes));
+    dispatch(updateGraph(newNodes, { type: ACTIONS.POSITION_ON_SPHERE }));
     setIsSphericalLayout(true);
-  }, [history.present]);
+  }, [history.present, dispatch]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -190,9 +195,9 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
         };
       })
     ];
-    dispatch(updateGraph(updatedNodes));
+    dispatch(updateGraph(updatedNodes, { type: ACTIONS.UPDATE_NODE_POSITIONS, clickedNodeIndex }));
     setIsSphericalLayout(false);
-  }, [history.present]);
+  }, [history.present, dispatch]);
 
   const handleNodeClick = useCallback((repoName) => {
     const clickedNodeIndex = history.present.findIndex(node => node.repoName === repoName);
@@ -207,12 +212,26 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
   useEffect(() => {
     if (undoRedoAction === 'undo') {
       console.log('Performing undo action');
-      dispatch(undo());
+      const result = dispatch(undo());
+      if (result && result.lastAction) {
+        if (result.lastAction.type === ACTIONS.POSITION_ON_SPHERE) {
+          positionNodesOnSphere();
+        } else if (result.lastAction.type === ACTIONS.UPDATE_NODE_POSITIONS) {
+          updateNodePositions(result.lastAction.clickedNodeIndex);
+        }
+      }
     } else if (undoRedoAction === 'redo') {
       console.log('Performing redo action');
-      dispatch(redo());
+      const result = dispatch(redo());
+      if (result && result.lastAction) {
+        if (result.lastAction.type === ACTIONS.POSITION_ON_SPHERE) {
+          positionNodesOnSphere();
+        } else if (result.lastAction.type === ACTIONS.UPDATE_NODE_POSITIONS) {
+          updateNodePositions(result.lastAction.clickedNodeIndex);
+        }
+      }
     }
-  }, [undoRedoAction]);
+  }, [undoRedoAction, dispatch, positionNodesOnSphere, updateNodePositions]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {

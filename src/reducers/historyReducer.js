@@ -11,7 +11,7 @@ const MAX_HISTORY_LENGTH = 50;
 export const historyReducer = produce((draft, action) => {
   switch (action.type) {
     case 'UPDATE_GRAPH':
-      draft.past.push(draft.present);
+      draft.past.push({ state: draft.present, action: action.lastAction });
       if (draft.past.length > MAX_HISTORY_LENGTH) {
         draft.past.shift();
       }
@@ -22,8 +22,9 @@ export const historyReducer = produce((draft, action) => {
       if (draft.past.length > 0) {
         console.log('Undoing action');
         const previous = draft.past.pop();
-        draft.future.unshift(draft.present);
-        draft.present = previous;
+        draft.future.unshift({ state: draft.present, action: action.lastAction });
+        draft.present = previous.state;
+        return { ...draft, lastAction: previous.action };
       } else {
         console.log('No more actions to undo');
       }
@@ -32,8 +33,9 @@ export const historyReducer = produce((draft, action) => {
       if (draft.future.length > 0) {
         console.log('Redoing action');
         const next = draft.future.shift();
-        draft.past.push(draft.present);
-        draft.present = next;
+        draft.past.push({ state: draft.present, action: action.lastAction });
+        draft.present = next.state;
+        return { ...draft, lastAction: next.action };
       } else {
         console.log('No more actions to redo');
       }
@@ -43,6 +45,10 @@ export const historyReducer = produce((draft, action) => {
   }
 });
 
-export const updateGraph = (newState) => ({ type: 'UPDATE_GRAPH', payload: newState });
+export const updateGraph = (newState, lastAction) => ({ 
+  type: 'UPDATE_GRAPH', 
+  payload: newState, 
+  lastAction 
+});
 export const undo = () => ({ type: 'UNDO' });
 export const redo = () => ({ type: 'REDO' });
