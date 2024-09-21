@@ -212,26 +212,22 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
   }, [history.present, updateNodePositions, resetCamera]);
 
   useEffect(() => {
-    if (undoRedoAction === 'undo') {
-      console.log('Performing undo action in DreamGraph');
-      const result = dispatch(undo());
-      console.log('Undo result:', result);
+    if (undoRedoAction === 'undo' || undoRedoAction === 'redo') {
+      console.log(`Performing ${undoRedoAction} action in DreamGraph`);
+      const result = dispatch(undoRedoAction === 'undo' ? undo() : redo());
+      console.log(`${undoRedoAction} result:`, result);
       if (result && result.lastAction) {
-        if (result.lastAction.type === ACTIONS.POSITION_ON_SPHERE) {
-          positionNodesOnSphere();
-        } else if (result.lastAction.type === ACTIONS.UPDATE_NODE_POSITIONS) {
-          updateNodePositions(result.lastAction.clickedNodeIndex);
-        }
-      }
-    } else if (undoRedoAction === 'redo') {
-      console.log('Performing redo action in DreamGraph');
-      const result = dispatch(redo());
-      console.log('Redo result:', result);
-      if (result && result.lastAction) {
-        if (result.lastAction.type === ACTIONS.POSITION_ON_SPHERE) {
-          positionNodesOnSphere();
-        } else if (result.lastAction.type === ACTIONS.UPDATE_NODE_POSITIONS) {
-          updateNodePositions(result.lastAction.clickedNodeIndex);
+        console.log('Executing last action:', result.lastAction.type);
+        switch (result.lastAction.type) {
+          case ACTIONS.POSITION_ON_SPHERE:
+            positionNodesOnSphere();
+            break;
+          case ACTIONS.UPDATE_NODE_POSITIONS:
+            updateNodePositions(result.lastAction.clickedNodeIndex);
+            break;
+          // Add more cases as needed for other action types
+          default:
+            console.log('Unknown action type:', result.lastAction.type);
         }
       }
     }

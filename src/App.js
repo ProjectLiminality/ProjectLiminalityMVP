@@ -95,11 +95,14 @@ function App() {
 
   useEffect(() => {
     if (undoRedoAction) {
-      // Perform the action immediately and reset
-      console.log(`Performing ${undoRedoAction} action`);
-      setUndoRedoAction(null);
+      console.log(`Initiating ${undoRedoAction} action`);
+      // We don't reset undoRedoAction here, it will be handled in DreamGraph
     }
   }, [undoRedoAction]);
+
+  const handleUndoRedo = useCallback((action) => {
+    setUndoRedoAction(action);
+  }, []);
 
   const handleOpenMetadataPanel = (repoName) => {
     console.log(`Opening MetadataPanel: ${repoName}`);
@@ -134,6 +137,7 @@ function App() {
         <DreamSpace 
           onNodeRightClick={handleNodeRightClick}
           undoRedoAction={undoRedoAction}
+          onUndoRedo={handleUndoRedo}
         />
       </div>
       {isSettingsOpen && (
