@@ -58,7 +58,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
       });
 
       if (JSON.stringify(updatedNodes) !== JSON.stringify(history.present)) {
-        dispatch(updateGraph(updatedNodes, { type: 'UPDATE_VIEW_SCALE_FACTORS' }));
+        dispatch({ type: 'UPDATE_VIEW_SCALE_FACTORS', payload: updatedNodes });
       }
     }
   });

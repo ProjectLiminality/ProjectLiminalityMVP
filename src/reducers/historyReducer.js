@@ -28,18 +28,18 @@ const logGraphState = (state) => {
 export const historyReducer = produce((draft, action) => {
   switch (action.type) {
     case 'UPDATE_GRAPH':
-      if (action.lastAction && action.lastAction.type !== 'UPDATE_VIEW_SCALE_FACTORS') {
-        draft.past.push({ state: draft.present, action: action.lastAction });
-        if (draft.past.length > MAX_HISTORY_LENGTH) {
-          draft.past.shift();
-        }
-        draft.present = action.payload;
-        draft.future = [];
-        draft.lastAction = action.lastAction;
-        console.log('Graph updated:', action.lastAction.type);
-      } else {
-        draft.present = action.payload;
+      draft.past.push({ state: draft.present, action: action.lastAction });
+      if (draft.past.length > MAX_HISTORY_LENGTH) {
+        draft.past.shift();
       }
+      draft.present = action.payload;
+      draft.future = [];
+      draft.lastAction = action.lastAction;
+      console.log('Graph updated:', action.lastAction.type);
+      logGraphState(draft);
+      break;
+    case 'UPDATE_VIEW_SCALE_FACTORS':
+      draft.present = action.payload;
       break;
     case 'UNDO':
       if (draft.past.length > 0) {
@@ -48,6 +48,7 @@ export const historyReducer = produce((draft, action) => {
         draft.future.unshift({ state: draft.present, action: draft.lastAction });
         draft.present = previous.state;
         draft.lastAction = previous.action;
+        logGraphState(draft);
       } else {
         console.log('No more actions to undo');
       }
@@ -59,6 +60,7 @@ export const historyReducer = produce((draft, action) => {
         draft.past.push({ state: draft.present, action: draft.lastAction });
         draft.present = next.state;
         draft.lastAction = next.action;
+        logGraphState(draft);
       } else {
         console.log('No more actions to redo');
       }
@@ -66,7 +68,6 @@ export const historyReducer = produce((draft, action) => {
     default:
       break;
   }
-  logGraphState(draft);
 });
 
 export const updateGraph = (newState, lastAction) => ({ 
