@@ -28,7 +28,14 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
     setError(null);
     try {
       const data = await readMetadata(repoName);
-      setMetadata(data);
+      // Ensure all fields have a default value
+      const defaultMetadata = {
+        type: 'idea',
+        interactions: 0,
+        relatedNodes: [],
+        ...data
+      };
+      setMetadata(defaultMetadata);
     } catch (err) {
       setError('Failed to load metadata');
       console.error('Error loading metadata:', err);
@@ -89,7 +96,7 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
     } else if (key === 'interactions') {
       return (
         <CustomNumberInput
-          value={value}
+          value={value || 0}
           onChange={(newValue) => handleInputChange(key, newValue)}
         />
       );
@@ -147,7 +154,7 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
       return (
         <input
           type="text"
-          value={value}
+          value={value || ''}
           onChange={(e) => handleInputChange(key, e.target.value)}
           style={{ 
             width: '60%',
