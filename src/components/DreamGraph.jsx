@@ -63,8 +63,13 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
 
   useEffect(() => {
     const fetchNodesData = async () => {
-      const nodesData = await Promise.all(initialNodes.map(async (node) => {
+      const nodesData = await Promise.all(initialNodes.map(async (node, index) => {
         const { metadata, mediaContent } = await getRepoData(node.repoName);
+        const phi = Math.acos(1 - 2 * (index + 1) / (initialNodes.length + 1));
+        const theta = 2 * Math.PI * (index + 1) / ((1 + Math.sqrt(5)) / 2);
+        const x = SPHERE_RADIUS * Math.sin(phi) * Math.cos(theta);
+        const y = SPHERE_RADIUS * Math.sin(phi) * Math.sin(theta);
+        const z = SPHERE_RADIUS * Math.cos(phi);
         return {
           ...node,
           metadata,
@@ -73,10 +78,10 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
           viewScaleFactor: 1,
           liminalScaleFactor: 1,
           isInLiminalView: false,
-          position: new THREE.Vector3(0, 0, 0)
+          position: new THREE.Vector3(x, y, z)
         };
       }));
-      dispatch(updateGraph(nodesData));
+      dispatch(updateGraph(nodesData, { type: ACTIONS.POSITION_ON_SPHERE }));
     };
     fetchNodesData();
   }, [initialNodes]);
@@ -129,17 +134,10 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
   }, [history.present, dispatch]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      requestAnimationFrame(() => {
-        positionNodesOnSphere();
-        if (resetCamera) {
-          resetCamera();
-        }
-      });
-    }, 100); // Short delay to ensure nodes are loaded
-
-    return () => clearTimeout(timer);
-  }, [positionNodesOnSphere, resetCamera]);
+    if (resetCamera) {
+      resetCamera();
+    }
+  }, [resetCamera]);
 
   const updateNodePositions = useCallback((clickedNodeIndex) => {
     const newNodes = [...history.present];
