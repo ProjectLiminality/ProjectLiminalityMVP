@@ -47,17 +47,19 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
 
   useFrame(() => {
     if (history.present) {
+      let hasChanges = false;
       const updatedNodes = history.present.map((node) => {
         if (!node.isInLiminalView) {
           const newViewScaleFactor = calculateViewScaleFactor(node, camera, size);
           if (Math.abs(node.viewScaleFactor - newViewScaleFactor) > 0.01) {
+            hasChanges = true;
             return { ...node, viewScaleFactor: newViewScaleFactor };
           }
         }
         return node;
       });
 
-      if (JSON.stringify(updatedNodes) !== JSON.stringify(history.present)) {
+      if (hasChanges) {
         dispatch({ type: 'UPDATE_VIEW_SCALE_FACTORS', payload: updatedNodes });
       }
     }

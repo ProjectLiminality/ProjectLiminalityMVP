@@ -40,7 +40,8 @@ export const historyReducer = produce((draft, action) => {
       break;
     case 'UPDATE_VIEW_SCALE_FACTORS':
       draft.present = action.payload;
-      break;
+      // Don't update past, future, or lastAction for scale factor updates
+      return; // Exit early to avoid unnecessary state updates
     case 'UNDO':
       if (draft.past.length > 0) {
         console.log('Undoing action');
