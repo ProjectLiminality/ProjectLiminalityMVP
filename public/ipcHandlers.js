@@ -3,6 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const { exec } = require('child_process');
 const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate.js');
+const { updateBidirectionalRelationships } = require('../src/utils/metadataUtils.js');
 
 function setupHandlers(ipcMain, store) {
 
@@ -129,7 +130,7 @@ function setupHandlers(ipcMain, store) {
     }
   });
 
-  ipcMain.handle('write-metadata', async (event, repoName, metadata) => {
+  ipcMain.handle('write-metadata', async (event, repoName, newMetadata) => {
     const dreamVaultPath = store.get('dreamVaultPath', '');
     if (!dreamVaultPath) {
       throw new Error('Dream Vault path not set');
@@ -137,7 +138,23 @@ function setupHandlers(ipcMain, store) {
 
     const metadataPath = path.join(dreamVaultPath, repoName, '.pl');
     try {
-      await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
+      // Read the existing metadata
+      let oldMetadata = {};
+      try {
+        const oldData = await fs.readFile(metadataPath, 'utf8');
+        oldMetadata = JSON.parse(oldData);
+      } catch (readError) {
+        if (readError.code !== 'ENOENT') {
+          throw readError;
+        }
+        // If the file doesn't exist, oldMetadata remains an empty object
+      }
+
+      // Update bidirectional relationships
+      await updateBidirectionalRelationships(dreamVaultPath, repoName, oldMetadata, newMetadata);
+
+      // Write the new metadata
+      await fs.writeFile(metadataPath, JSON.stringify(newMetadata, null, 2), 'utf8');
       return true;
     } catch (error) {
       console.error(`Error writing metadata for ${repoName}:`, error);
