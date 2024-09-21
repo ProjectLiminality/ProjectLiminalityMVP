@@ -96,7 +96,11 @@ function App() {
   useEffect(() => {
     if (undoRedoAction) {
       console.log(`Initiating ${undoRedoAction} action`);
-      // We don't reset undoRedoAction here, it will be handled in DreamGraph
+      // Reset undoRedoAction after a short delay
+      const timer = setTimeout(() => {
+        setUndoRedoAction(null);
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [undoRedoAction]);
 

@@ -28,12 +28,14 @@ const logGraphState = (state) => {
 export const historyReducer = produce((draft, action) => {
   switch (action.type) {
     case 'UPDATE_GRAPH':
-      draft.past.push({ state: draft.present, action: action.lastAction });
-      if (draft.past.length > MAX_HISTORY_LENGTH) {
-        draft.past.shift();
+      if (action.addToHistory) {
+        draft.past.push({ state: draft.present, action: action.lastAction });
+        if (draft.past.length > MAX_HISTORY_LENGTH) {
+          draft.past.shift();
+        }
+        draft.future = [];
       }
       draft.present = action.payload;
-      draft.future = [];
       draft.lastAction = action.lastAction;
       console.log('Graph updated:', action.lastAction.type);
       logGraphState(draft);
@@ -71,10 +73,11 @@ export const historyReducer = produce((draft, action) => {
   }
 });
 
-export const updateGraph = (newState, lastAction) => ({ 
+export const updateGraph = (newState, lastAction, addToHistory = true) => ({ 
   type: 'UPDATE_GRAPH', 
   payload: newState, 
-  lastAction 
+  lastAction,
+  addToHistory
 });
 export const undo = () => ({ type: 'UNDO' });
 export const redo = () => ({ type: 'REDO' });

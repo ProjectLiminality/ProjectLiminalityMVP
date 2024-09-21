@@ -111,9 +111,9 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
     setIsSphericalLayout(false);
   }, [history.present]);
 
-  const positionNodesOnSphere = useCallback(() => {
+  const positionNodesOnSphere = useCallback((addToHistory = true) => {
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
-    
+  
     const newNodes = history.present.map((node, index) => {
       const i = index + 1;
       const phi = Math.acos(1 - 2 * i / (history.present.length + 1));
@@ -133,7 +133,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
         isInLiminalView: false
       };
     });
-    dispatch(updateGraph(newNodes, { type: ACTIONS.POSITION_ON_SPHERE }));
+    dispatch(updateGraph(newNodes, { type: ACTIONS.POSITION_ON_SPHERE }, addToHistory));
     setIsSphericalLayout(true);
   }, [history.present, dispatch]);
 
@@ -143,11 +143,11 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
     }
   }, [resetCamera]);
 
-  const updateNodePositions = useCallback((clickedNodeIndex) => {
+  const updateNodePositions = useCallback((clickedNodeIndex, addToHistory = true) => {
     const newNodes = [...history.present];
     const clickedNode = newNodes[clickedNodeIndex];
     const otherNodes = newNodes.filter((_, index) => index !== clickedNodeIndex);
-    
+  
     const relatedNodes = otherNodes.filter(node => 
       clickedNode.metadata?.relatedNodes?.includes(node.repoName) && 
       node.metadata?.type !== clickedNode.metadata?.type
@@ -197,7 +197,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
         };
       })
     ];
-    dispatch(updateGraph(updatedNodes, { type: ACTIONS.UPDATE_NODE_POSITIONS, clickedNodeIndex }));
+    dispatch(updateGraph(updatedNodes, { type: ACTIONS.UPDATE_NODE_POSITIONS, clickedNodeIndex }, addToHistory));
     setIsSphericalLayout(false);
   }, [history.present, dispatch]);
 
@@ -220,10 +220,10 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera, undoRedoActio
         console.log('Executing last action:', result.lastAction.type);
         switch (result.lastAction.type) {
           case ACTIONS.POSITION_ON_SPHERE:
-            positionNodesOnSphere();
+            positionNodesOnSphere(false);
             break;
           case ACTIONS.UPDATE_NODE_POSITIONS:
-            updateNodePositions(result.lastAction.clickedNodeIndex);
+            updateNodePositions(result.lastAction.clickedNodeIndex, false);
             break;
           // Add more cases as needed for other action types
           default:
