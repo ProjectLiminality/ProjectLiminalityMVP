@@ -25,11 +25,12 @@ const DreamSong = ({ repoName, onClick, onRightClick }) => {
     onClick(repoName);
   };
 
-  const renderMediaElement = (file) => {
+  const renderMediaElement = (file, index) => {
     const isVideo = /\.(mp4|webm|ogg)$/i.test(file);
     if (isVideo) {
       return (
         <video
+          key={`video-${index}`}
           src={`file://${file}`}
           style={{ maxWidth: '100%', height: 'auto' }}
           controls
@@ -39,6 +40,7 @@ const DreamSong = ({ repoName, onClick, onRightClick }) => {
     } else {
       return (
         <img
+          key={`img-${index}`}
           src={`file://${file}`}
           alt={file}
           style={{ maxWidth: '100%', height: 'auto' }}
@@ -51,15 +53,15 @@ const DreamSong = ({ repoName, onClick, onRightClick }) => {
   const renderNode = (node, index) => {
     if (Array.isArray(node)) {
       return (
-        <div key={index} style={{ display: 'flex', flexDirection: index % 2 === 0 ? 'row' : 'row-reverse' }}>
+        <div key={`array-${index}`} style={{ display: 'flex', flexDirection: index % 2 === 0 ? 'row' : 'row-reverse' }}>
           {node.map((subNode, subIndex) => renderNode(subNode, `${index}-${subIndex}`))}
         </div>
       );
     } else if (node.type === 'file') {
       const mediaFile = mediaFiles.find(file => file.endsWith(node.file));
-      return mediaFile ? renderMediaElement(mediaFile) : null;
+      return mediaFile ? renderMediaElement(mediaFile, `file-${index}`) : null;
     } else if (node.type === 'text') {
-      return <div key={index} dangerouslySetInnerHTML={{ __html: node.text }} />;
+      return <div key={`text-${index}`} dangerouslySetInnerHTML={{ __html: node.text }} />;
     }
     return null;
   };
@@ -67,7 +69,15 @@ const DreamSong = ({ repoName, onClick, onRightClick }) => {
   return (
     <div 
       className="dream-song" 
-      style={{ backgroundColor: BLACK, color: WHITE, padding: '20px' }}
+      style={{ 
+        backgroundColor: BLACK, 
+        color: WHITE, 
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '20px'
+      }}
       onClick={onClick}
       onContextMenu={(e) => {
         e.preventDefault();
@@ -75,11 +85,13 @@ const DreamSong = ({ repoName, onClick, onRightClick }) => {
       }}
     >
       <h2>{repoName}</h2>
-      {canvasData ? (
-        canvasData.map((node, index) => renderNode(node, index))
-      ) : (
-        <p>No DreamSong data available</p>
-      )}
+      <div style={{ width: '100%', maxWidth: '800px' }}>
+        {canvasData ? (
+          canvasData.map((node, index) => renderNode(node, index))
+        ) : (
+          <p>No DreamSong data available</p>
+        )}
+      </div>
     </div>
   );
 };
