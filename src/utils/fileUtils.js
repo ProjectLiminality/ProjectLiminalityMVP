@@ -66,7 +66,9 @@ export async function readDreamSongCanvas(repoName) {
       return null;
     }
     console.log('DreamSong.canvas content:', canvasContent);
-    return JSON.parse(canvasContent);
+    const parsedContent = JSON.parse(canvasContent);
+    console.log('Parsed DreamSong.canvas content:', parsedContent);
+    return parsedContent;  // Return parsed JSON
   } catch (error) {
     console.error('Error parsing DreamSong.canvas:', error);
     return null;

@@ -1,15 +1,13 @@
 // Function to parse DreamSong.canvas data
 export function parseDreamSongCanvas(canvasData) {
-  try {
-    const parsedData = JSON.parse(canvasData);
-    return {
-      nodes: parsedData.nodes || [],
-      edges: parsedData.edges || []
-    };
-  } catch (error) {
-    console.error('Error parsing DreamSong.canvas data:', error);
+  if (typeof canvasData !== 'object' || canvasData === null) {
+    console.error('Invalid DreamSong.canvas data:', canvasData);
     return { nodes: [], edges: [] };
   }
+  return {
+    nodes: canvasData.nodes || [],
+    edges: canvasData.edges || []
+  };
 }
 
 // Function to perform topological sorting of nodes
