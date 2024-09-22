@@ -7,7 +7,7 @@ export async function getRepoData(repoName) {
     const metadata = await electronService.readMetadata(repoName);
     const dreamTalkMedia = await getPreferredMediaFile(repoName);
     const dreamSongMedia = await getDreamSongMedia(repoName);
-    return { metadata, dreamTalkMedia, dreamSongMedia };
+    return { metadata, mediaContent: dreamTalkMedia, dreamSongMedia };
   } catch (error) {
     return { metadata: {}, dreamTalkMedia: null, dreamSongMedia: null };
   }

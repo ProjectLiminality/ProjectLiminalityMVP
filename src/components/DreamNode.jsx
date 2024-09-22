@@ -5,7 +5,7 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { BLUE, RED } from '../constants/colors';
 
-const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, isHovered, setHoveredNode }) => {
+const DreamNode = ({ repoName, position, scale, metadata, mediaContent, dreamSongMedia, onNodeClick, onNodeRightClick, isHovered, setHoveredNode }) => {
   const [hovered, setHovered] = useState(false);
   const nodeRef = useRef();
 
@@ -79,7 +79,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
       >
         <DreamTalk 
           repoName={repoName}
-          mediaContent={dreamTalkMedia}
+          mediaContent={mediaContent}
           metadata={metadata}
           onClick={handleClick}
           onRightClick={handleRightClick}
