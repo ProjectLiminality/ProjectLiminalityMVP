@@ -1,25 +1,25 @@
 import React from 'react';
 import { BLUE, BLACK, WHITE } from '../constants/colors';
 
-const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onRightClick, isHovered, borderColor }) => {
+const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, isHovered, borderColor }) => {
   const renderMedia = () => {
-    if (!mediaContent || !mediaContent.data) {
+    if (!dreamTalkMedia || !dreamTalkMedia.data) {
       return null;
     }
 
-    switch (mediaContent.type) {
+    switch (dreamTalkMedia.type) {
       case 'image/jpeg':
       case 'image/png':
       case 'image/gif':
-        return <img src={mediaContent.data} alt={repoName} style={{ width: '75%', height: '75%', objectFit: mediaContent.type === 'image/gif' ? 'cover' : 'contain', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />;
+        return <img src={dreamTalkMedia.data} alt={repoName} style={{ width: '75%', height: '75%', objectFit: dreamTalkMedia.type === 'image/gif' ? 'cover' : 'contain', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />;
       case 'audio/mpeg':
       case 'audio/wav':
-        return <audio controls src={mediaContent.data} style={{ width: '90%', maxWidth: '250px' }} />;
+        return <audio controls src={dreamTalkMedia.data} style={{ width: '90%', maxWidth: '250px' }} />;
       case 'video/mp4':
       case 'video/webm':
-        return <video controls src={mediaContent.data} style={{ width: '75%', height: '75%', objectFit: 'contain', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />;
+        return <video controls src={dreamTalkMedia.data} style={{ width: '75%', height: '75%', objectFit: 'contain', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />;
       default:
-        console.log(`Unsupported media type for ${repoName}:`, mediaContent.type);
+        console.log(`Unsupported media type for ${repoName}:`, dreamTalkMedia.type);
         return null;
     }
   };
@@ -68,8 +68,8 @@ const DreamTalk = ({ repoName, mediaContent, metadata, onClick, onRightClick, is
         alignItems: 'center',
         padding: '20px',
         boxSizing: 'border-box',
-        background: !mediaContent ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
-        opacity: !mediaContent ? 1 : 0,
+        background: !dreamTalkMedia ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
+        opacity: !dreamTalkMedia ? 1 : 0,
         transition: 'opacity 0.3s ease, background 0.3s ease',
       }}>
         <h2 style={{ 

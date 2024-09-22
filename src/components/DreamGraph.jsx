@@ -56,11 +56,12 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   useEffect(() => {
     const fetchNodesData = async () => {
       const nodesData = await Promise.all(initialNodes.map(async (node) => {
-        const { metadata, mediaContent } = await getRepoData(node.repoName);
+        const { metadata, dreamTalkMedia, dreamSongMedia } = await getRepoData(node.repoName);
         return {
           ...node,
           metadata,
-          mediaContent,
+          dreamTalkMedia,
+          dreamSongMedia,
           baseScale: 1,
           viewScaleFactor: 1,
           liminalScaleFactor: 1,

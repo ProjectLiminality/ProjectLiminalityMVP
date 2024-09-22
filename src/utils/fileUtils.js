@@ -9,9 +9,9 @@ export async function getRepoData(repoName) {
     const dreamSongMedia = await getDreamSongMedia(repoName);
     console.log('DreamTalk media:', dreamTalkMedia);
     console.log('DreamSong media:', dreamSongMedia);
-    return { metadata, mediaContent: dreamTalkMedia, dreamSongMedia: dreamSongMedia };
+    return { metadata, dreamTalkMedia, dreamSongMedia };
   } catch (error) {
-    return { metadata: {}, mediaContent: null, dreamSongMedia: null };
+    return { metadata: {}, dreamTalkMedia: null, dreamSongMedia: null };
   }
 }
 
