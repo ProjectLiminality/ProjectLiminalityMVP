@@ -1,14 +1,14 @@
 # Undo/Redo Feature Implementation Plan
 
 ## 1. Set up Redux
-- [x] Install dependencies (redux, react-redux, @reduxjs/toolkit)
-- [x] Create store (src/store/index.js)
-- [x] Set up history reducer (src/store/historySlice.js)
+- [ ] Install dependencies (redux, react-redux, @reduxjs/toolkit)
+- [ ] Create store (src/store/index.js)
+- [ ] Set up history reducer (src/store/historySlice.js)
 
 ## 2. Modify DreamGraph Component
-- [x] Implement action creators for node clicks and escape key presses
-- [x] Dispatch these actions to the Redux store
-- [x] Connect the DreamGraph component to the Redux store
+- [ ] Implement action creators for node clicks and escape key presses
+- [ ] Dispatch these actions to the Redux store
+- [ ] Connect the DreamGraph component to the Redux store
 
 ## 3. Update App Component
 - [ ] Add keyboard event listeners for undo (Cmd+Z) and redo (Cmd+Shift+Z)
