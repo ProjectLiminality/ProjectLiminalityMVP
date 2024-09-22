@@ -5,6 +5,16 @@ import { processDreamSongData } from '../utils/dreamSongUtils';
 
 const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
   const [processedMedia, setProcessedMedia] = useState([]);
+  const [mediaFiles, setMediaFiles] = useState([]);
+
+  useEffect(() => {
+    const fetchMediaFiles = async () => {
+      const files = await listMediaFiles(repoName);
+      setMediaFiles(files);
+    };
+
+    fetchMediaFiles();
+  }, [repoName]);
 
   useEffect(() => {
     if (dreamSongMedia) {
@@ -78,8 +88,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
     >
       <h2>{repoName}</h2>
       <div style={{ width: '100%', maxWidth: '800px' }}>
-        {canvasData ? (
-          canvasData.map((node, index) => renderNode(node, index))
+        {processedMedia.length > 0 ? (
+          processedMedia.map((node, index) => renderNode(node, index))
         ) : (
           <p>No DreamSong data available</p>
         )}
