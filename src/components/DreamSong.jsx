@@ -3,23 +3,15 @@ import { BLUE, BLACK, WHITE } from '../constants/colors';
 import { readDreamSongCanvas, listMediaFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 
-const DreamSong = ({ repoName, onClick, onRightClick }) => {
-  const [canvasData, setCanvasData] = useState(null);
-  const [mediaFiles, setMediaFiles] = useState([]);
+const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
+  const [processedMedia, setProcessedMedia] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const canvas = await readDreamSongCanvas(repoName);
-      if (canvas) {
-        const processedData = processDreamSongData(canvas);
-        setCanvasData(processedData);
-      }
-      const media = await listMediaFiles(repoName);
-      setMediaFiles(media);
-    };
-
-    fetchData();
-  }, [repoName]);
+    if (dreamSongMedia) {
+      const processed = processDreamSongData(dreamSongMedia);
+      setProcessedMedia(processed);
+    }
+  }, [dreamSongMedia]);
 
   const handleMediaClick = (mediaFile) => {
     onClick(repoName);

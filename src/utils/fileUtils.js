@@ -5,11 +5,59 @@ const preferredExtensions = ['.gif', '.mp4', '.png', '.jpg', '.jpeg'];
 export async function getRepoData(repoName) {
   try {
     const metadata = await electronService.readMetadata(repoName);
-    const mediaContent = await getPreferredMediaFile(repoName);
-    return { metadata, mediaContent };
+    const dreamTalkMedia = await getPreferredMediaFile(repoName);
+    const dreamSongMedia = await getDreamSongMedia(repoName);
+    return { metadata, dreamTalkMedia, dreamSongMedia };
   } catch (error) {
-    return { metadata: {}, mediaContent: null };
+    return { metadata: {}, dreamTalkMedia: null, dreamSongMedia: null };
   }
+}
+
+async function getDreamSongMedia(repoName) {
+  try {
+    const files = await electronService.listFiles(repoName);
+    const mediaFiles = files.filter(file => 
+      preferredExtensions.some(ext => file.toLowerCase().endsWith(ext))
+    );
+
+    const mediaPromises = mediaFiles.map(async file => {
+      const mediaPath = await electronService.getMediaFilePath(repoName, file);
+      if (!mediaPath) {
+        return null;
+      }
+
+      const mediaData = await electronService.readFile(mediaPath);
+      if (!mediaData) {
+        return null;
+      }
+
+      const fileExtension = file.split('.').pop().toLowerCase();
+      const mimeType = getMimeType(fileExtension);
+
+      return {
+        type: mimeType,
+        path: mediaPath,
+        data: `data:${mimeType};base64,${mediaData}`
+      };
+    });
+
+    const mediaContents = await Promise.all(mediaPromises);
+    return mediaContents.filter(media => media !== null);
+  } catch (error) {
+    console.error('Error getting DreamSong media:', error);
+    return null;
+  }
+}
+
+function getMimeType(fileExtension) {
+  const mimeTypes = {
+    'mp4': 'video/mp4',
+    'gif': 'image/gif',
+    'png': 'image/png',
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg'
+  };
+  return mimeTypes[fileExtension] || 'application/octet-stream';
 }
 
 async function getPreferredMediaFile(repoName) {
