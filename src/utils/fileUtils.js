@@ -60,15 +60,15 @@ async function getPreferredMediaFile(repoName) {
 
 export async function readDreamSongCanvas(repoName) {
   try {
-    const canvasPath = `${repoName}/DreamSong.canvas`;
-    const canvasContent = await electronService.readFile(canvasPath);
-
+    const canvasContent = await electronService.readDreamSongCanvas(repoName);
     if (!canvasContent || canvasContent.trim() === '') {
+      console.log('DreamSong.canvas is empty or not found');
       return null;
     }
-
+    console.log('DreamSong.canvas content:', canvasContent);
     return JSON.parse(canvasContent);
   } catch (error) {
+    console.error('Error parsing DreamSong.canvas:', error);
     return null;
   }
 }

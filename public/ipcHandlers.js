@@ -373,6 +373,18 @@ function setupHandlers(ipcMain, store) {
       throw error;
     }
   });
+
+  ipcMain.handle('read-dreamsong-canvas', async (event, repoName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    const canvasPath = path.join(dreamVaultPath, repoName, 'DreamSong.canvas');
+    try {
+      const data = await fs.readFile(canvasPath, 'utf8');
+      return data;
+    } catch (error) {
+      console.error(`Error reading DreamSong.canvas for ${repoName}:`, error);
+      return null;
+    }
+  });
 }
 
 module.exports = { setupHandlers };

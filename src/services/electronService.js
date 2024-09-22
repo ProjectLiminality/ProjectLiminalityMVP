@@ -20,6 +20,14 @@ export async function readMetadata(repoName) {
   return window.electron.fileSystem.readMetadata(repoName);
 }
 
+export async function readDreamSongCanvas(repoName) {
+  if (!window.electron || !window.electron.fileSystem || typeof window.electron.fileSystem.readDreamSongCanvas !== 'function') {
+    console.error('readDreamSongCanvas function is not available in the electron context');
+    return null;
+  }
+  return window.electron.fileSystem.readDreamSongCanvas(repoName);
+}
+
 export async function writeMetadata(repoName, metadata) {
   if (!window.electron || !window.electron.fileSystem || typeof window.electron.fileSystem.writeMetadata !== 'function') {
     console.error('writeMetadata function is not available in the electron context');

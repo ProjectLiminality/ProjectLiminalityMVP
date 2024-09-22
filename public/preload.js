@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('electron', {
     readMetadata: (repoName) => ipcRenderer.invoke('read-metadata', repoName),
     writeMetadata: (repoName, metadata) => ipcRenderer.invoke('write-metadata', repoName, metadata),
     readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
+    readDreamSongCanvas: (repoName) => ipcRenderer.invoke('read-dreamsong-canvas', repoName),
     listFiles: (repoName) => ipcRenderer.invoke('list-files', repoName),
     renameRepo: (oldName, newName) => ipcRenderer.invoke('rename-repo', oldName, newName),
     createNewNode: (nodeName) => ipcRenderer.invoke('create-new-node', nodeName),
