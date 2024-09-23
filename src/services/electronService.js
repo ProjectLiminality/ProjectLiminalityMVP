@@ -40,6 +40,10 @@ export async function getMediaFilePath(repoName) {
   return window.electron.fileSystem.getMediaFilePath(repoName);
 }
 
+export async function getDreamSongMediaFilePath(repoName, fileName) {
+  return window.electron.fileSystem.getDreamSongMediaFilePath(repoName, fileName);
+}
+
 export async function getFileStats(filePath) {
   return window.electron.fileSystem.getFileStats(filePath);
 }

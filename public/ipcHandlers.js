@@ -186,6 +186,20 @@ function setupHandlers(ipcMain, store) {
     }
   });
 
+  ipcMain.handle('get-dreamsong-media-file-path', async (event, repoName, fileName) => {
+    const dreamVaultPath = store.get('dreamVaultPath');
+    const repoPath = path.join(dreamVaultPath, repoName);
+    const filePath = path.join(repoPath, fileName);
+    
+    try {
+      await fs.access(filePath);
+      return filePath;
+    } catch (error) {
+      console.error(`Error accessing DreamSong media file ${fileName} for ${repoName}:`, error);
+      return null;
+    }
+  });
+
   ipcMain.handle('get-file-stats', async (event, filePath) => {
     try {
       const stats = await fs.stat(filePath);

@@ -27,12 +27,12 @@ async function getDreamSongMedia(repoName) {
     console.log('DreamSong file nodes:', fileNodes);
     const mediaPromises = fileNodes.map(async node => {
       const fileName = node.file.split('/').pop();
-      console.log(fileName)
-      const mediaPath = await electronService.getMediaFilePath(repoName, fileName);
+      console.log(fileName);
+      const mediaPath = await electronService.getDreamSongMediaFilePath(repoName, fileName);
       if (!mediaPath) {
         return null;
       }
-      console.log(mediaPath)
+      console.log(mediaPath);
 
       const mediaData = await electronService.readFile(mediaPath);
       if (!mediaData) {
