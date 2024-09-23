@@ -25,10 +25,11 @@ async function getDreamSongMedia(repoName) {
 
     const fileNodes = canvasData.nodes.filter(node => node.type === 'file' && node.file);
     const mediaPromises = fileNodes.map(async node => {
-      const fileName = node.file.split('/').pop();
-      const mediaPath = await electronService.getDreamSongMediaFilePath(repoName, fileName);
+      // Remove the repo name from the beginning of the file path
+      const filePath = node.file.startsWith(repoName + '/') ? node.file.slice(repoName.length + 1) : node.file;
+      const mediaPath = await electronService.getDreamSongMediaFilePath(repoName, filePath);
       if (!mediaPath) {
-        console.warn(`Media file not found: ${fileName}`);
+        console.warn(`Media file not found: ${filePath}`);
         return null;
       }
 
@@ -38,7 +39,7 @@ async function getDreamSongMedia(repoName) {
         return null;
       }
 
-      const fileExtension = mediaPath.split('.').pop().toLowerCase();
+      const fileExtension = filePath.split('.').pop().toLowerCase();
       const mimeType = getMimeType(fileExtension);
 
       return {
