@@ -66,7 +66,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
     >
       <Html
         transform
-        position={[-2, 0, 0.01]}
+        position={[0, 0, 0.01]}
         style={{
           width: '300px',
           height: '300px',
@@ -89,8 +89,8 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
       </Html>
       <Html
         transform
-        position={[2, 0, -0.01]}
-        rotation={[0, 0*Math.PI, 0]}
+        position={[0, 0, -0.01]}
+        rotation={[0, Math.PI, 0]}
         style={{
           width: '300px',
           height: '300px',
