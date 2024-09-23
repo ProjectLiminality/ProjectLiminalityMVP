@@ -2,7 +2,8 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
   fileSystem: {
-    getMediaFilePath: (repoName, fileName) => ipcRenderer.invoke('get-media-file-path', repoName, fileName),
+    getMediaFilePath: (repoName) => ipcRenderer.invoke('get-media-file-path', repoName),
+    getDreamSongMediaFilePath: (repoName, fileName) => ipcRenderer.invoke('get-dreamsong-media-file-path', repoName, fileName),
     getFileStats: (filePath) => ipcRenderer.invoke('get-file-stats', filePath),
     readMetadata: (repoName) => ipcRenderer.invoke('read-metadata', repoName),
     writeMetadata: (repoName, metadata) => ipcRenderer.invoke('write-metadata', repoName, metadata),
