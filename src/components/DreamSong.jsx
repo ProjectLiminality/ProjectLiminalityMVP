@@ -19,7 +19,25 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
   }, [repoName]);
 
   const handleMediaClick = (event, mediaFile) => {
+    event.stopPropagation(); // Prevent the click from bubbling up to the parent
     console.log('Clicked on media:', mediaFile);
+    
+    // Parse the mediaFile path
+    const pathParts = mediaFile.split('/');
+    let targetRepo;
+
+    if (pathParts.length === 2) {
+      // File is in the root of the current repo
+      targetRepo = repoName;
+    } else if (pathParts.length > 2) {
+      // File is in a sub-module
+      targetRepo = pathParts[pathParts.length - 2];
+    }
+
+    if (targetRepo) {
+      console.log('Triggering click for repo:', targetRepo);
+      onClick(targetRepo);
+    }
   };
 
   const renderMediaElement = (file, index) => {
