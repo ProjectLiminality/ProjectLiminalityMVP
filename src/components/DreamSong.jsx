@@ -19,8 +19,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
   }, [repoName]);
 
   const handleMediaClick = (event, mediaFile) => {
-    event.stopPropagation();
-    onClick(repoName);
+    console.log('Clicked on media:', mediaFile);
   };
 
   const renderMediaElement = (file, index) => {
