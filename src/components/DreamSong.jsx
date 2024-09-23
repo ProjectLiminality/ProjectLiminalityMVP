@@ -22,7 +22,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
     console.log('Clicked on media:', mediaFile);
     
     // Parse the mediaFile path
-    const pathParts = mediaFile.split('/');
+    const pathParts = mediaFile
     let targetRepo;
 
     if (pathParts.length === 2) {
