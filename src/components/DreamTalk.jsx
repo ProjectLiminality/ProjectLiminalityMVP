@@ -27,7 +27,7 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
   return (
     <div 
       className="dream-talk" 
-      onClick={onClick}
+      onClick={() => onClick(repoName)}
       onContextMenu={(e) => {
         e.preventDefault();
         onRightClick(e);

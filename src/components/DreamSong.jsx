@@ -18,31 +18,29 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
     fetchAndProcessCanvas();
   }, [repoName]);
 
-  const handleMediaClick = (event) => {                                                                                                                                                                                   
-     const mediaFile = event.target.alt;                                                                                                                                                                                                     
-     console.log('Clicked on media:', mediaFile);                                                                                                                                                                                                                                                                                                                                               
-                                                                                                                                                                                                                                      
-     if (typeof mediaFile === 'string') {                                                                                                                                                                                             
-       // Parse the mediaFile path                                                                                                                                                                                                    
-       const pathParts = mediaFile.split('/');                                                                                                                                                                                        
-       let targetRepo;                                                                                                                                                                                                                
-                                                                                                                                                                                                                                      
-       if (pathParts.length === 2) {                                                                                                                                                                                                  
-         // File is in the root of the current repo                                                                                                                                                                                   
-         targetRepo = repoName;                                                                                                                                                                                                       
-       } else if (pathParts.length > 2) {                                                                                                                                                                                             
-         // File is in a sub-module                                                                                                                                                                                                   
-         targetRepo = pathParts[pathParts.length - 2];                                                                                                                                                                                
-       }                                                                                                                                                                                                                              
-                                                                                                                                                                                                                                      
-       if (targetRepo) {                                                                                                                                                                                                              
-         console.log('Triggering click for repo:', targetRepo);                                                                                                                                                                       
-         onClick(targetRepo);                                                                                                                                                                                                         
-       }                                                                                                                                                                                                                              
-     } else {                                                                                                                                                                                                                         
-       console.error('Invalid mediaFile:', mediaFile);                                                                                                                                                                                
-     }                                                                                                                                                                                                                                
-   };                                 
+  const handleMediaClick = (event) => {
+    event.stopPropagation(); // Prevent the click from bubbling up to the parent
+    const mediaFile = event.target.alt;
+    console.log('Clicked on media:', mediaFile);
+
+    if (typeof mediaFile === 'string') {
+      const pathParts = mediaFile.split('/');
+      let targetRepo;
+
+      if (pathParts.length === 2) {
+        targetRepo = repoName;
+      } else if (pathParts.length > 2) {
+        targetRepo = pathParts[pathParts.length - 2];
+      }
+
+      if (targetRepo) {
+        console.log('Triggering click for repo:', targetRepo);
+        onClick(targetRepo);
+      }
+    } else {
+      console.error('Invalid mediaFile:', mediaFile);
+    }
+  };
 
   const renderMediaElement = (file, index) => {
     const mediaItem = dreamSongMedia.find(item => item.filePath === file);

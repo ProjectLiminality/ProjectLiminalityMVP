@@ -194,13 +194,15 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
     setIsSphericalLayout(false);
   }, []);
 
-  const handleNodeClick = useCallback((repoName) => {
-    const clickedNodeIndex = nodes.findIndex(node => node.repoName === repoName);
+  const handleNodeClick = useCallback((clickedRepoName) => {
+    const clickedNodeIndex = nodes.findIndex(node => node.repoName === clickedRepoName);
     if (clickedNodeIndex !== -1) {
       updateNodePositions(clickedNodeIndex);
       if (resetCamera) {
         resetCamera();
       }
+    } else {
+      console.warn(`Node with repoName "${clickedRepoName}" not found`);
     }
   }, [nodes, updateNodePositions, resetCamera]);
 

@@ -45,8 +45,8 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
     setHoveredNode(null);
   };
 
-  const handleClick = (event) => {
-    onNodeClick(repoName);
+  const handleClick = (clickedRepoName) => {
+    onNodeClick(clickedRepoName || repoName);
   };
 
   const handleRightClick = (event) => {
