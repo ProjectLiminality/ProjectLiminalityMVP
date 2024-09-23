@@ -18,7 +18,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
     fetchAndProcessCanvas();
   }, [repoName]);
 
-  const handleMediaClick = (mediaFile) => {
+  const handleMediaClick = (event, mediaFile) => {
+    event.stopPropagation();
     onClick(repoName);
   };
 
@@ -34,7 +35,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
           src={`data:${mediaItem.mimeType};base64,${mediaItem.data}`}
           style={{ maxWidth: '100%', height: 'auto' }}
           controls
-          onClick={() => handleMediaClick(file)}
+          onClick={(event) => handleMediaClick(event, file)}
         />
       );
     } else {
@@ -44,7 +45,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
           src={`data:${mediaItem.mimeType};base64,${mediaItem.data}`}
           alt={file}
           style={{ maxWidth: '100%', height: 'auto' }}
-          onClick={() => handleMediaClick(file)}
+          onClick={(event) => handleMediaClick(event, file)}
         />
       );
     }
