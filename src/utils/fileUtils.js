@@ -25,7 +25,12 @@ async function getDreamSongMedia(repoName) {
 
     const fileNodes = canvasData.nodes.filter(node => node.type === 'file' && node.file);
     const mediaPromises = fileNodes.map(async node => {
-      const mediaPath = node.file;
+      const fileName = node.file.split('/').pop();
+      const mediaPath = await electronService.getMediaFilePath(repoName, fileName);
+      if (!mediaPath) {
+        return null;
+      }
+      console.log(mediaPath)
 
       const mediaData = await electronService.readFile(mediaPath);
       if (!mediaData) {
