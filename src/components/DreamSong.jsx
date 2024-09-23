@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { BLACK, WHITE } from '../constants/colors';
+import { BLACK, WHITE, BLUE } from '../constants/colors';
 import { readDreamSongCanvas } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 
-const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
+const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColor }) => {
   const [processedNodes, setProcessedNodes] = useState([]);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
   }, [repoName]);
 
   const handleMediaClick = (event) => {
-    event.stopPropagation(); // Prevent the click from bubbling up to the parent
+    event.stopPropagation();
     const mediaFile = event.target.alt;
     console.log('Clicked on media:', mediaFile);
 
@@ -83,13 +83,14 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
     <div 
       className="dream-song" 
       style={{ 
-        backgroundColor: BLACK, 
-        color: WHITE, 
-        padding: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '20px'
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        borderRadius: '50%',
+        border: `5px solid ${borderColor || BLUE}`,
+        backgroundColor: BLACK,
+        color: WHITE,
       }}
       onClick={onClick}
       onContextMenu={(e) => {
@@ -97,13 +98,32 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
         onRightClick(e);
       }}
     >
-      <h2>{repoName}</h2>
-      <div style={{ width: '100%', maxWidth: '800px' }}>
-        {processedNodes.length > 0 ? (
-          processedNodes.map((node, index) => renderNode(node, index))
-        ) : (
-          <p>No DreamSong data available</p>
-        )}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '90%',
+          height: '90%',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          padding: '20px',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '20px',
+        }}
+      >
+        <h2>{repoName}</h2>
+        <div style={{ width: '100%', maxWidth: '800px' }}>
+          {processedNodes.length > 0 ? (
+            processedNodes.map((node, index) => renderNode(node, index))
+          ) : (
+            <p>No DreamSong data available</p>
+          )}
+        </div>
       </div>
     </div>
   );
