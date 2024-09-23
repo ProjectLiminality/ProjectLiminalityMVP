@@ -6,12 +6,12 @@ export async function getRepoData(repoName) {
   try {
     const metadata = await electronService.readMetadata(repoName);
     const dreamTalkMedia = await getPreferredMediaFile(repoName);
+    const dreamSongCanvas = await readDreamSongCanvas(repoName);
     const dreamSongMedia = await getDreamSongMedia(repoName);
-    console.log('DreamTalk media:', dreamTalkMedia);
-    console.log('DreamSong media:', dreamSongMedia);
-    return { metadata, dreamTalkMedia, dreamSongMedia };
+    return { metadata, dreamTalkMedia, dreamSongCanvas, dreamSongMedia };
   } catch (error) {
-    return { metadata: {}, dreamTalkMedia: null, dreamSongMedia: null };
+    console.error('Error getting repo data:', error);
+    return { metadata: {}, dreamTalkMedia: null, dreamSongCanvas: null, dreamSongMedia: [] };
   }
 }
 
@@ -20,19 +20,17 @@ async function getDreamSongMedia(repoName) {
     const canvasData = await readDreamSongCanvas(repoName);
     if (!canvasData || !canvasData.nodes) {
       console.error('Invalid DreamSong.canvas data');
-      return null;
+      return [];
     }
 
     const fileNodes = canvasData.nodes.filter(node => node.type === 'file' && node.file);
-    console.log('DreamSong file nodes:', fileNodes);
     const mediaPromises = fileNodes.map(async node => {
       const fileName = node.file.split('/').pop();
-      console.log(fileName);
       const mediaPath = await electronService.getDreamSongMediaFilePath(repoName, fileName);
       if (!mediaPath) {
+        console.warn(`Media file not found: ${fileName}`);
         return null;
       }
-      console.log(mediaPath);
 
       const mediaData = await electronService.readFile(mediaPath);
       if (!mediaData) {
@@ -44,9 +42,11 @@ async function getDreamSongMedia(repoName) {
       const mimeType = getMimeType(fileExtension);
 
       return {
+        id: node.id,
         type: mimeType,
-        path: mediaPath,
-        data: `data:${mimeType};base64,${mediaData}`
+        filePath: node.file,
+        data: mediaData,
+        mimeType: mimeType
       };
     });
 
@@ -54,7 +54,7 @@ async function getDreamSongMedia(repoName) {
     return mediaContents.filter(media => media !== null);
   } catch (error) {
     console.error('Error getting DreamSong media:', error);
-    return null;
+    return [];
   }
 }
 
@@ -122,10 +122,9 @@ export async function readDreamSongCanvas(repoName) {
       console.log('DreamSong.canvas is empty or not found');
       return null;
     }
-    console.log('DreamSong.canvas content:', canvasContent);
     const parsedContent = JSON.parse(canvasContent);
     console.log('Parsed DreamSong.canvas content:', parsedContent);
-    return parsedContent;  // Return parsed JSON
+    return parsedContent;
   } catch (error) {
     console.error('Error parsing DreamSong.canvas:', error);
     return null;
