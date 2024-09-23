@@ -18,8 +18,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
     fetchAndProcessCanvas();
   }, [repoName]);
 
-  const handleMediaClick = (event, mediaFile) => {
-    event.stopPropagation(); // Prevent the click from bubbling up to the parent
+  const handleMediaClick = (mediaFile) => {
     console.log('Clicked on media:', mediaFile);
     
     // Parse the mediaFile path
