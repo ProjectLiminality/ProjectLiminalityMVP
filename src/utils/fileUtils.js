@@ -17,23 +17,28 @@ export async function getRepoData(repoName) {
 
 async function getDreamSongMedia(repoName) {
   try {
-    const files = await electronService.listFiles(repoName);
-    const mediaFiles = files.filter(file => 
-      preferredExtensions.some(ext => file.toLowerCase().endsWith(ext))
-    );
+    const canvasData = await readDreamSongCanvas(repoName);
+    if (!canvasData || !canvasData.nodes) {
+      console.error('Invalid DreamSong.canvas data');
+      return null;
+    }
 
-    const mediaPromises = mediaFiles.map(async file => {
-      const mediaPath = await electronService.getMediaFilePath(repoName, file);
+    const fileNodes = canvasData.nodes.filter(node => node.type === 'file' && node.file);
+    const mediaPromises = fileNodes.map(async node => {
+      const filePath = node.file;
+      const mediaPath = await electronService.getMediaFilePath(repoName, filePath);
       if (!mediaPath) {
+        console.warn(`Media file not found: ${filePath}`);
         return null;
       }
 
       const mediaData = await electronService.readFile(mediaPath);
       if (!mediaData) {
+        console.warn(`Failed to read media file: ${filePath}`);
         return null;
       }
 
-      const fileExtension = file.split('.').pop().toLowerCase();
+      const fileExtension = filePath.split('.').pop().toLowerCase();
       const mimeType = getMimeType(fileExtension);
 
       return {
