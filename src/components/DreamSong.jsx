@@ -99,6 +99,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
       }}
     >
       <div
+        className="dream-song-content"
         style={{
           position: 'absolute',
           top: '50%',
@@ -106,8 +107,10 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           transform: 'translate(-50%, -50%)',
           width: '90%',
           height: '90%',
-          overflowY: 'auto',
+          overflowY: 'scroll',
           overflowX: 'hidden',
+          scrollbarWidth: 'none',  // Firefox
+          msOverflowStyle: 'none',  // Internet Explorer 10+
           padding: '20px',
           boxSizing: 'border-box',
           display: 'flex',
@@ -116,6 +119,13 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           gap: '20px',
         }}
       >
+        <style>
+          {`
+            .dream-song-content::-webkit-scrollbar {
+              display: none;
+            }
+          `}
+        </style>
         <h2>{repoName}</h2>
         <div style={{ width: '100%', maxWidth: '800px' }}>
           {processedNodes.length > 0 ? (
