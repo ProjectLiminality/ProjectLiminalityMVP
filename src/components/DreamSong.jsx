@@ -18,11 +18,12 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
     fetchAndProcessCanvas();
   }, [repoName]);
 
-  const handleMediaClick = (mediaFile) => {
+  const handleMediaClick = (event) => {
+    const mediaFile = event.target.alt;
     console.log('Clicked on media:', mediaFile);
     
     // Parse the mediaFile path
-    const pathParts = mediaFile
+    const pathParts = mediaFile.split('/');
     let targetRepo;
 
     if (pathParts.length === 2) {
@@ -51,7 +52,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
           src={`data:${mediaItem.mimeType};base64,${mediaItem.data}`}
           style={{ maxWidth: '100%', height: 'auto' }}
           controls
-          onClick={(event) => handleMediaClick(event, file)}
+          onClick={handleMediaClick}
         />
       );
     } else {
@@ -61,7 +62,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
           src={`data:${mediaItem.mimeType};base64,${mediaItem.data}`}
           alt={file}
           style={{ maxWidth: '100%', height: 'auto' }}
-          onClick={(event) => handleMediaClick(event, file)}
+          onClick={handleMediaClick}
         />
       );
     }
