@@ -1,39 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { BLUE, BLACK, WHITE } from '../constants/colors';
-import { readDreamSongCanvas, listMediaFiles } from '../utils/fileUtils';
+import { BLACK, WHITE } from '../constants/colors';
+import { readDreamSongCanvas } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 
 const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
-  const [processedMedia, setProcessedMedia] = useState([]);
-  const [mediaFiles, setMediaFiles] = useState([]);
+  const [processedNodes, setProcessedNodes] = useState([]);
 
   useEffect(() => {
-    const fetchMediaFiles = async () => {
-      const files = await listMediaFiles(repoName);
-      setMediaFiles(files);
+    const fetchAndProcessCanvas = async () => {
+      const canvasData = await readDreamSongCanvas(repoName);
+      if (canvasData) {
+        const processed = processDreamSongData(canvasData);
+        setProcessedNodes(processed);
+      }
     };
 
-    fetchMediaFiles();
+    fetchAndProcessCanvas();
   }, [repoName]);
-
-  useEffect(() => {
-    if (dreamSongMedia) {
-      const processed = processDreamSongData(dreamSongMedia);
-      setProcessedMedia(processed);
-    }
-  }, [dreamSongMedia]);
 
   const handleMediaClick = (mediaFile) => {
     onClick(repoName);
   };
 
   const renderMediaElement = (file, index) => {
+    const mediaItem = dreamSongMedia.find(item => item.filePath === file);
+    if (!mediaItem) return null;
+
     const isVideo = /\.(mp4|webm|ogg)$/i.test(file);
     if (isVideo) {
       return (
         <video
           key={`video-${index}`}
-          src={`file://${file}`}
+          src={`data:${mediaItem.mimeType};base64,${mediaItem.data}`}
           style={{ maxWidth: '100%', height: 'auto' }}
           controls
           onClick={() => handleMediaClick(file)}
@@ -43,7 +41,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
       return (
         <img
           key={`img-${index}`}
-          src={`file://${file}`}
+          src={`data:${mediaItem.mimeType};base64,${mediaItem.data}`}
           alt={file}
           style={{ maxWidth: '100%', height: 'auto' }}
           onClick={() => handleMediaClick(file)}
@@ -53,15 +51,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
   };
 
   const renderNode = (node, index) => {
-    if (Array.isArray(node)) {
-      return (
-        <div key={`array-${index}`} style={{ display: 'flex', flexDirection: index % 2 === 0 ? 'row' : 'row-reverse' }}>
-          {node.map((subNode, subIndex) => renderNode(subNode, `${index}-${subIndex}`))}
-        </div>
-      );
-    } else if (node.type === 'file') {
-      const mediaFile = mediaFiles.find(file => file.endsWith(node.file));
-      return mediaFile ? renderMediaElement(mediaFile, `file-${index}`) : null;
+    if (node.type === 'file') {
+      return renderMediaElement(node.file, `file-${index}`);
     } else if (node.type === 'text') {
       return <div key={`text-${index}`} dangerouslySetInnerHTML={{ __html: node.text }} />;
     }
@@ -88,8 +79,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick }) => {
     >
       <h2>{repoName}</h2>
       <div style={{ width: '100%', maxWidth: '800px' }}>
-        {processedMedia.length > 0 ? (
-          processedMedia.map((node, index) => renderNode(node, index))
+        {processedNodes.length > 0 ? (
+          processedNodes.map((node, index) => renderNode(node, index))
         ) : (
           <p>No DreamSong data available</p>
         )}
