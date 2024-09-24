@@ -271,20 +271,6 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     }
   }, [nodes, updateNodePositions, resetCamera, centeredNode, addInteraction]);
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        handleEscape();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [handleEscape]);
-
   const handleEscape = useCallback((addToHistory = true) => {
     addInteraction(INTERACTION_TYPES.ESCAPE, {}, addToHistory);
     if (centeredNode) {
@@ -302,6 +288,20 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
       }
     }
   }, [positionNodesOnSphere, isSphericalLayout, resetCamera, centeredNode, nodes, addInteraction]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        handleEscape();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleEscape]);
 
   const renderedNodes = useMemo(() => {
     return nodes.map((node, index) => (
