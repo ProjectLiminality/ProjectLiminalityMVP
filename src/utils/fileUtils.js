@@ -19,23 +19,19 @@ async function getDreamSongMedia(repoName) {
   try {
     const canvasData = await readDreamSongCanvas(repoName);
     if (!canvasData || !canvasData.nodes) {
-      console.error('Invalid DreamSong.canvas data');
       return [];
     }
 
     const fileNodes = canvasData.nodes.filter(node => node.type === 'file' && node.file);
     const mediaPromises = fileNodes.map(async node => {
-      // Remove the repo name from the beginning of the file path
       const filePath = node.file.startsWith(repoName + '/') ? node.file.slice(repoName.length + 1) : node.file;
       const mediaPath = await electronService.getDreamSongMediaFilePath(repoName, filePath);
       if (!mediaPath) {
-        console.warn(`Media file not found: ${filePath}`);
         return null;
       }
 
       const mediaData = await electronService.readFile(mediaPath);
       if (!mediaData) {
-        console.warn(`Failed to read media file: ${mediaPath}`);
         return null;
       }
 
@@ -54,7 +50,6 @@ async function getDreamSongMedia(repoName) {
     const mediaContents = await Promise.all(mediaPromises);
     return mediaContents.filter(media => media !== null);
   } catch (error) {
-    console.error('Error getting DreamSong media:', error);
     return [];
   }
 }
@@ -120,11 +115,11 @@ export async function readDreamSongCanvas(repoName) {
   try {
     const canvasContent = await electronService.readDreamSongCanvas(repoName);
     if (!canvasContent || canvasContent.trim() === '') {
-      return null;
+      return { nodes: [], edges: [] };
     }
     return JSON.parse(canvasContent);
   } catch (error) {
-    return null;
+    return { nodes: [], edges: [] };
   }
 }
 
