@@ -21,7 +21,6 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
   const handleMediaClick = (event) => {
     event.stopPropagation();
     const mediaFile = event.target.alt;
-    console.log('Clicked on media:', mediaFile);
 
     if (typeof mediaFile === 'string') {
       const pathParts = mediaFile.split('/');
@@ -34,11 +33,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
       }
 
       if (targetRepo) {
-        console.log('Triggering click for repo:', targetRepo);
         onClick(targetRepo);
       }
-    } else {
-      console.error('Invalid mediaFile:', mediaFile);
     }
   };
 
