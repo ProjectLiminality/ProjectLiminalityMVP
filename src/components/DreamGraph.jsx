@@ -74,6 +74,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
   const addInteraction = useCallback((type, data, addToHistory = true) => {
     if (addToHistory) {
       setInteractionHistory(prev => [...prev, { type, data, timestamp: Date.now() }]);
+      setRedoStack([]); // Clear the redo stack when a new action is performed
     }
   }, []);
 
@@ -319,6 +320,8 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     ));
   }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, setHoveredNode, centeredNode]);
 
+  const [redoStack, setRedoStack] = useState([]);
+
   useImperativeHandle(ref, () => ({
     handleUndo: () => {
       setInteractionHistory(prevHistory => {
@@ -329,8 +332,9 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
 
         const newHistory = prevHistory.slice(0, -1);
         const lastAction = newHistory[newHistory.length - 1];
+        const undoneAction = prevHistory[prevHistory.length - 1];
 
-        console.log('Undoing action:', lastAction);
+        console.log('Undoing action:', undoneAction);
 
         // Execute the last action without adding to history
         switch (lastAction.type) {
@@ -344,8 +348,34 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
             console.log('Unknown action type:', lastAction.type);
         }
 
+        setRedoStack(prevRedoStack => [...prevRedoStack, undoneAction]);
+
         return newHistory;
       });
+    },
+    handleRedo: () => {
+      if (redoStack.length === 0) {
+        console.log('Nothing to redo');
+        return;
+      }
+
+      const actionToRedo = redoStack[redoStack.length - 1];
+      console.log('Redoing action:', actionToRedo);
+
+      // Execute the redo action without adding to history
+      switch (actionToRedo.type) {
+        case INTERACTION_TYPES.NODE_CLICK:
+          handleNodeClick(actionToRedo.data.repoName, false);
+          break;
+        case INTERACTION_TYPES.ESCAPE:
+          handleEscape(false);
+          break;
+        default:
+          console.log('Unknown action type:', actionToRedo.type);
+      }
+
+      setInteractionHistory(prevHistory => [...prevHistory, actionToRedo]);
+      setRedoStack(prevRedoStack => prevRedoStack.slice(0, -1));
     }
   }));
 

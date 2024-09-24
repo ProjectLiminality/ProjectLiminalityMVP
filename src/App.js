@@ -77,6 +77,12 @@ function App() {
           dreamGraphRef.current.handleUndo();
         }
       }
+      if (event.metaKey && event.key === 'y') {
+        event.preventDefault();
+        if (dreamGraphRef.current) {
+          dreamGraphRef.current.handleRedo();
+        }
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
