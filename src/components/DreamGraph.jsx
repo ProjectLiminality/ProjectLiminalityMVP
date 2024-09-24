@@ -230,10 +230,24 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
             const phi = Math.acos(1 - 2 * i / (nodes.length + 1));
             const theta = 2 * Math.PI * i / goldenRatio;
 
+            // Calculate deltas
+            const zAxisPhi = 0; // The z-axis intersects the sphere at phi = 0
+            const zAxisTheta = 0; // The azimuthal angle doesn't matter for the z-axis, so we use 0
+
+            const deltaPhi = Math.abs(phi - zAxisPhi);
+            const deltaTheta = Math.min(
+              Math.abs(theta - zAxisTheta),
+              Math.abs(theta - (zAxisTheta + 2 * Math.PI))
+            );
+
             console.log('Last centered node:', centeredNode);
             console.log('Destination spherical coordinates:', {
               theta: theta * (180 / Math.PI),  // Convert to degrees
               phi: phi * (180 / Math.PI)  // Convert to degrees
+            });
+            console.log('Deltas from z-axis (in degrees):', {
+              deltaPhi: deltaPhi * (180 / Math.PI),
+              deltaTheta: deltaTheta * (180 / Math.PI)
             });
           }
         }
