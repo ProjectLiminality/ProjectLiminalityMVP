@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import DreamSpace from './components/DreamSpace';
 import SettingsPanel from './components/SettingsPanel';
 import MetadataPanel from './components/MetadataPanel';
+import DreamGraph from './components/DreamGraph';
 import ContextMenu from './components/ContextMenu';
 import RenamePanel from './components/RenamePanel';
 import NodeCreationPanel from './components/NodeCreationPanel';
@@ -14,6 +15,7 @@ function App() {
   const [isNodeCreationPanelOpen, setIsNodeCreationPanelOpen] = useState(false);
   const [selectedRepoName, setSelectedRepoName] = useState('');
   const [contextMenu, setContextMenu] = useState(null);
+  const dreamGraphRef = useRef(null);
 
   const handleDragOver = useCallback((event) => {
     event.preventDefault();
@@ -69,6 +71,12 @@ function App() {
         event.preventDefault();
         setIsNodeCreationPanelOpen(true);
       }
+      if (event.metaKey && event.key === 'z') {
+        event.preventDefault();
+        if (dreamGraphRef.current) {
+          dreamGraphRef.current.handleUndo();
+        }
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -114,6 +122,7 @@ function App() {
       <div className="App" onClick={handleCloseContextMenu}>
         <DreamSpace 
           onNodeRightClick={handleNodeRightClick}
+          dreamGraphRef={dreamGraphRef}
         />
       </div>
       {isSettingsOpen && (

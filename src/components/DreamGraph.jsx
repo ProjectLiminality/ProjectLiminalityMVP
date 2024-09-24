@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import DreamNode from './DreamNode';
@@ -56,7 +56,7 @@ const applyRotationToPosition = (position, rotation) => {
   return position.applyQuaternion(rotation).normalize().multiplyScalar(SPHERE_RADIUS);
 };
 
-const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
+const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, ref) => {
   const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
@@ -313,7 +313,14 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
     ));
   }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, setHoveredNode, centeredNode]);
 
+  useImperativeHandle(ref, () => ({
+    handleUndo: () => {
+      console.log('Undo');
+      // Implement your undo logic here
+    }
+  }));
+
   return <>{renderedNodes}</>;
-};
+});
 
 export default DreamGraph;

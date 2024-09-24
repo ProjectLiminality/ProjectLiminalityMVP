@@ -6,7 +6,7 @@ import CameraController from './CameraController';
 import IntersectionChecker from './IntersectionChecker';
 import useDreamNodes from '../hooks/useDreamNodes';
 
-const DreamSpace = ({ onNodeRightClick }) => {
+const DreamSpace = ({ onNodeRightClick, dreamGraphRef }) => {
   const { dreamNodes, error } = useDreamNodes();
   const [initialNodes, setInitialNodes] = useState([]);
   const [resetCamera, setResetCamera] = useState(null);
@@ -62,6 +62,7 @@ const DreamSpace = ({ onNodeRightClick }) => {
         <pointLight position={[10, 10, 10]} />
         {initialNodes.length > 0 && (
           <DreamGraph 
+            ref={dreamGraphRef}
             initialNodes={initialNodes} 
             onNodeRightClick={handleNodeRightClick}
             resetCamera={resetCamera}
