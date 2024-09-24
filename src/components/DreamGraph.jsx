@@ -323,15 +323,12 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     handleUndo: () => {
       setInteractionHistory(prevHistory => {
         if (prevHistory.length < 2) {
-          console.log('Nothing to undo');
           return prevHistory;
         }
 
         const newHistory = prevHistory.slice(0, -1);
         const lastAction = newHistory[newHistory.length - 1];
         const undoneAction = prevHistory[prevHistory.length - 1];
-
-        console.log('Undoing action:', undoneAction);
 
         // Execute the last action without adding to history
         switch (lastAction.type) {
