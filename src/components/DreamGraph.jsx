@@ -34,6 +34,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
+  const [centeredNode, setCenteredNode] = useState(null);
   const { size } = useThree();
 
   const { camera } = useThree();
@@ -153,7 +154,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
       const relatedCircleRadius = 30;
       const unrelatedCircleRadius = 200;
 
-      return [
+      const newNodes = [
         { 
           ...clickedNode, 
           position: new THREE.Vector3(0, 0, 0), 
@@ -190,6 +191,9 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
           };
         })
       ];
+
+      setCenteredNode(clickedNode.repoName);
+      return newNodes;
     });
     setIsSphericalLayout(false);
   }, []);
@@ -197,6 +201,12 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   const handleNodeClick = useCallback((clickedRepoName) => {
     const clickedNodeIndex = nodes.findIndex(node => node.repoName === clickedRepoName);
     if (clickedNodeIndex !== -1) {
+      // Reset the flip state of the previously centered node
+      if (centeredNode) {
+        setNodes(prevNodes => prevNodes.map(node => 
+          node.repoName === centeredNode ? { ...node, isFlipped: false } : node
+        ));
+      }
       updateNodePositions(clickedNodeIndex);
       if (resetCamera) {
         resetCamera();
@@ -204,7 +214,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
     } else {
       console.warn(`Node with repoName "${clickedRepoName}" not found`);
     }
-  }, [nodes, updateNodePositions, resetCamera]);
+  }, [nodes, updateNodePositions, resetCamera, centeredNode]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -231,9 +241,10 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         isHovered={hoveredNode === node.repoName}
         setHoveredNode={setHoveredNode}
         index={index}
+        isCentered={centeredNode === node.repoName}
       />
     ));
-  }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, setHoveredNode]);
+  }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, setHoveredNode, centeredNode]);
 
   return <>{renderedNodes}</>;
 };

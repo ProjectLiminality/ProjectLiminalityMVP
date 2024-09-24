@@ -5,12 +5,18 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { BLUE, RED } from '../constants/colors';
 
-const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, isHovered, setHoveredNode }) => {
+const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, isHovered, setHoveredNode, isCentered }) => {
   const firstDreamSongMedia = dreamSongMedia && dreamSongMedia.length > 0 ? dreamSongMedia[0] : null;
   const [hovered, setHovered] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const nodeRef = useRef();
   const groupRef = useRef();
+
+  useEffect(() => {
+    if (!isCentered) {
+      setIsFlipped(false);
+    }
+  }, [isCentered]);
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
