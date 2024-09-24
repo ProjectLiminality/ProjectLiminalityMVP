@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
-import { Matrix4, Quaternion, Euler } from 'three';
+import { Quaternion, Vector3 } from 'three';
 
 const MAX_SCALE = 50; // Maximum scale for nodes
 const MIN_SCALE = 1; // Minimum scale for nodes
@@ -37,18 +37,14 @@ const calculateViewScaleFactor = (node, camera, size) => {
   return Math.max(MIN_SCALE / node.baseScale, Math.min(MAX_SCALE / node.baseScale, scale));
 };
 
-const calculateRotationMatrix = (deltaPhi, deltaTheta) => {
-  console.log('Delta Phi:', deltaPhi, 'Delta Theta:', deltaTheta);
-  const rotationX = new Quaternion().setFromEuler(new Euler(deltaPhi, 0, 0));
-  const rotationY = new Quaternion().setFromEuler(new Euler(0, deltaTheta, 0));
-  const combinedRotation = new Quaternion().multiplyQuaternions(rotationY, rotationX);
-  const matrix = new Matrix4().makeRotationFromQuaternion(combinedRotation);
-  console.log('Rotation Matrix:', matrix.elements);
-  return matrix;
+const calculateRotation = (phi, theta) => {
+  const rotationY = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), -theta);
+  const rotationX = new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), -phi);
+  return rotationY.multiply(rotationX);
 };
 
-const applyRotationToPosition = (position, rotationMatrix) => {
-  return position.applyMatrix4(rotationMatrix);
+const applyRotationToPosition = (position, rotation) => {
+  return position.applyQuaternion(rotation);
 };
 
 const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
@@ -122,26 +118,19 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
     
     setNodes(prevNodes => {
-      let rotationMatrix = new Matrix4().identity();
+      let rotation = new Quaternion();
 
       if (centeredNodeIndex !== -1) {
-        const centeredNode = prevNodes[centeredNodeIndex];
         const i = centeredNodeIndex + 1;
         const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
         const theta = 2 * Math.PI * i / goldenRatio;
 
-        console.log('Centered Node Repo Name:', centeredNode.repoName);
+        console.log('Centered Node Repo Name:', prevNodes[centeredNodeIndex].repoName);
         console.log('Original Phi:', phi, 'Original Theta:', theta);
 
-        // Make delta phi and delta theta the negative of the original values
-        const deltaPhi = -phi;
-        const deltaTheta = -theta + Math.PI/2;
-
-        console.log('Delta Phi:', deltaPhi, 'Delta Theta:', deltaTheta);
-
-        rotationMatrix = calculateRotationMatrix(deltaPhi, deltaTheta);
+        rotation = calculateRotation(phi, theta);
         
-        console.log('Rotation Matrix:', rotationMatrix.elements);
+        console.log('Rotation:', rotation);
       }
 
       return prevNodes.map((node, index) => {
@@ -154,7 +143,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         const z = SPHERE_RADIUS * Math.cos(phi);
 
         const originalPosition = new THREE.Vector3(x, y, z);
-        const rotatedPosition = applyRotationToPosition(originalPosition, rotationMatrix);
+        const rotatedPosition = applyRotationToPosition(originalPosition, rotation);
 
         console.log(`Node ${node.repoName} - Original Position:`, originalPosition);
         console.log(`Node ${node.repoName} - Rotated Position:`, rotatedPosition);
