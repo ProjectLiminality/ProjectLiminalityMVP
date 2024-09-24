@@ -71,8 +71,10 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     console.log('Interaction History:', interactionHistory);
   }, [interactionHistory]);
 
-  const addInteraction = useCallback((type, data) => {
-    setInteractionHistory(prev => [...prev, { type, data, timestamp: Date.now() }]);
+  const addInteraction = useCallback((type, data, addToHistory = true) => {
+    if (addToHistory) {
+      setInteractionHistory(prev => [...prev, { type, data, timestamp: Date.now() }]);
+    }
   }, []);
 
   useFrame(() => {
@@ -252,7 +254,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     setIsSphericalLayout(false);
   }, []);
 
-  const handleNodeClick = useCallback((clickedRepoName) => {
+  const handleNodeClick = useCallback((clickedRepoName, addToHistory = true) => {
     const clickedNodeIndex = nodes.findIndex(node => node.repoName === clickedRepoName);
     if (clickedNodeIndex !== -1) {
       // Reset the flip state of the previously centered node
@@ -265,28 +267,14 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
       if (resetCamera) {
         resetCamera();
       }
-      addInteraction(INTERACTION_TYPES.NODE_CLICK, { repoName: clickedRepoName });
+      addInteraction(INTERACTION_TYPES.NODE_CLICK, { repoName: clickedRepoName }, addToHistory);
     }
   }, [nodes, updateNodePositions, resetCamera, centeredNode, addInteraction]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        addInteraction(INTERACTION_TYPES.ESCAPE, {});
-        if (centeredNode) {
-          const nodeIndex = nodes.findIndex(node => node.repoName === centeredNode);
-          if (nodeIndex !== -1) {
-            positionNodesOnSphere(nodeIndex);
-            if (resetCamera) {
-              resetCamera();
-            }
-          }
-        } else if (!isSphericalLayout) {
-          positionNodesOnSphere();
-          if (resetCamera) {
-            resetCamera();
-          }
-        }
+        handleEscape();
       }
     };
 
@@ -295,6 +283,24 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
+  }, []);
+
+  const handleEscape = useCallback((addToHistory = true) => {
+    addInteraction(INTERACTION_TYPES.ESCAPE, {}, addToHistory);
+    if (centeredNode) {
+      const nodeIndex = nodes.findIndex(node => node.repoName === centeredNode);
+      if (nodeIndex !== -1) {
+        positionNodesOnSphere(nodeIndex);
+        if (resetCamera) {
+          resetCamera();
+        }
+      }
+    } else if (!isSphericalLayout) {
+      positionNodesOnSphere();
+      if (resetCamera) {
+        resetCamera();
+      }
+    }
   }, [positionNodesOnSphere, isSphericalLayout, resetCamera, centeredNode, nodes, addInteraction]);
 
   const renderedNodes = useMemo(() => {
@@ -326,26 +332,13 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
 
         console.log('Undoing action:', lastAction);
 
-        // Execute the last action
+        // Execute the last action without adding to history
         switch (lastAction.type) {
           case INTERACTION_TYPES.NODE_CLICK:
-            handleNodeClick(lastAction.data.repoName);
+            handleNodeClick(lastAction.data.repoName, false);
             break;
           case INTERACTION_TYPES.ESCAPE:
-            if (centeredNode) {
-              const nodeIndex = nodes.findIndex(node => node.repoName === centeredNode);
-              if (nodeIndex !== -1) {
-                positionNodesOnSphere(nodeIndex);
-                if (resetCamera) {
-                  resetCamera();
-                }
-              }
-            } else if (!isSphericalLayout) {
-              positionNodesOnSphere();
-              if (resetCamera) {
-                resetCamera();
-              }
-            }
+            handleEscape(false);
             break;
           default:
             console.log('Unknown action type:', lastAction.type);
