@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
+import { Matrix4, Quaternion, Euler } from 'three';
 
 const MAX_SCALE = 50; // Maximum scale for nodes
 const MIN_SCALE = 1; // Minimum scale for nodes
@@ -34,6 +35,17 @@ const calculateViewScaleFactor = (node, camera, size) => {
   const focusedDistance = normalizedDistance * 2;
   const scale = MAX_SCALE * (1 - Math.min(1, focusedDistance));
   return Math.max(MIN_SCALE / node.baseScale, Math.min(MAX_SCALE / node.baseScale, scale));
+};
+
+const calculateRotationMatrix = (deltaPhi, deltaTheta) => {
+  const rotationX = new Quaternion().setFromEuler(new Euler(deltaPhi, 0, 0));
+  const rotationY = new Quaternion().setFromEuler(new Euler(0, deltaTheta, 0));
+  const combinedRotation = new Quaternion().multiplyQuaternions(rotationY, rotationX);
+  return new Matrix4().makeRotationFromQuaternion(combinedRotation);
+};
+
+const applyRotationToPosition = (position, rotationMatrix) => {
+  return position.applyMatrix4(rotationMatrix);
 };
 
 const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
@@ -103,10 +115,23 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
     setIsSphericalLayout(false);
   }, [nodes.length]);
 
-  const positionNodesOnSphere = useCallback(() => {
+  const positionNodesOnSphere = useCallback((centeredNodeIndex = -1) => {
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
     
     setNodes(prevNodes => {
+      let rotationMatrix = new Matrix4().identity();
+
+      if (centeredNodeIndex !== -1) {
+        const i = centeredNodeIndex + 1;
+        const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
+        const theta = 2 * Math.PI * i / goldenRatio;
+
+        const deltaPhi = Math.PI / 2 - phi;
+        const deltaTheta = -theta;
+
+        rotationMatrix = calculateRotationMatrix(deltaPhi, deltaTheta);
+      }
+
       return prevNodes.map((node, index) => {
         const i = index + 1;
         const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
@@ -116,10 +141,12 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         const y = SPHERE_RADIUS * Math.sin(phi) * Math.sin(theta);
         const z = SPHERE_RADIUS * Math.cos(phi);
 
+        const rotatedPosition = applyRotationToPosition(new THREE.Vector3(x, y, z), rotationMatrix);
+
         return {
           ...node,
           ...DEFAULT_NODE_STATE,
-          position: new THREE.Vector3(x, y, z),
+          position: rotatedPosition,
           scale: 1,
           rotation: new THREE.Euler(0, 0, 0),
         };
@@ -225,33 +252,12 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         if (centeredNode) {
           const nodeIndex = nodes.findIndex(node => node.repoName === centeredNode);
           if (nodeIndex !== -1) {
-            const goldenRatio = (1 + Math.sqrt(5)) / 2;
-            const i = nodeIndex + 1;
-            const phi = Math.acos(1 - 2 * i / (nodes.length + 1));
-            const theta = 2 * Math.PI * i / goldenRatio;
-
-            // Calculate deltas
-            const zAxisPhi = 0; // The z-axis intersects the sphere at phi = 0
-            const zAxisTheta = 0; // The azimuthal angle doesn't matter for the z-axis, so we use 0
-
-            const deltaPhi = Math.abs(phi - zAxisPhi);
-            const deltaTheta = Math.min(
-              Math.abs(theta - zAxisTheta),
-              Math.abs(theta - (zAxisTheta + 2 * Math.PI))
-            );
-
-            console.log('Last centered node:', centeredNode);
-            console.log('Destination spherical coordinates:', {
-              theta: theta * (180 / Math.PI),  // Convert to degrees
-              phi: phi * (180 / Math.PI)  // Convert to degrees
-            });
-            console.log('Deltas from z-axis (in degrees):', {
-              deltaPhi: deltaPhi * (180 / Math.PI),
-              deltaTheta: deltaTheta * (180 / Math.PI)
-            });
+            positionNodesOnSphere(nodeIndex);
+            if (resetCamera) {
+              resetCamera();
+            }
           }
-        }
-        if (!isSphericalLayout) {
+        } else if (!isSphericalLayout) {
           positionNodesOnSphere();
           if (resetCamera) {
             resetCamera();
