@@ -38,10 +38,13 @@ const calculateViewScaleFactor = (node, camera, size) => {
 };
 
 const calculateRotationMatrix = (deltaPhi, deltaTheta) => {
+  console.log('Delta Phi:', deltaPhi, 'Delta Theta:', deltaTheta);
   const rotationX = new Quaternion().setFromEuler(new Euler(deltaPhi, 0, 0));
   const rotationY = new Quaternion().setFromEuler(new Euler(0, deltaTheta, 0));
   const combinedRotation = new Quaternion().multiplyQuaternions(rotationY, rotationX);
-  return new Matrix4().makeRotationFromQuaternion(combinedRotation);
+  const matrix = new Matrix4().makeRotationFromQuaternion(combinedRotation);
+  console.log('Rotation Matrix:', matrix.elements);
+  return matrix;
 };
 
 const applyRotationToPosition = (position, rotationMatrix) => {
@@ -126,8 +129,14 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
         const theta = 2 * Math.PI * i / goldenRatio;
 
-        const deltaPhi = Math.PI / 2 - phi;
+        console.log('Centered Node Index:', centeredNodeIndex);
+        console.log('Original Phi:', phi, 'Original Theta:', theta);
+
+        // Change this line to position at the back of the sphere
+        const deltaPhi = -Math.PI / 2 - phi;
         const deltaTheta = -theta;
+
+        console.log('Delta Phi:', deltaPhi, 'Delta Theta:', deltaTheta);
 
         rotationMatrix = calculateRotationMatrix(deltaPhi, deltaTheta);
       }
