@@ -221,10 +221,27 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'Escape' && !isSphericalLayout) {
-        positionNodesOnSphere();
-        if (resetCamera) {
-          resetCamera();
+      if (event.key === 'Escape') {
+        if (centeredNode) {
+          const nodeIndex = nodes.findIndex(node => node.repoName === centeredNode);
+          if (nodeIndex !== -1) {
+            const node = nodes[nodeIndex];
+            const { x, y, z } = node.position;
+            const r = Math.sqrt(x*x + y*y + z*z);
+            const theta = Math.atan2(y, x);
+            const phi = Math.acos(z / r);
+            console.log('Last centered node:', centeredNode);
+            console.log('Spherical coordinates:', {
+              theta: theta * (180 / Math.PI),  // Convert to degrees
+              phi: phi * (180 / Math.PI)  // Convert to degrees
+            });
+          }
+        }
+        if (!isSphericalLayout) {
+          positionNodesOnSphere();
+          if (resetCamera) {
+            resetCamera();
+          }
         }
       }
     };
@@ -234,7 +251,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [positionNodesOnSphere, isSphericalLayout, resetCamera]);
+  }, [positionNodesOnSphere, isSphericalLayout, resetCamera, centeredNode, nodes]);
 
   const renderedNodes = useMemo(() => {
     return nodes.map((node, index) => (
