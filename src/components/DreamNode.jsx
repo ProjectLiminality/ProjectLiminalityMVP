@@ -64,53 +64,55 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
       lockZ={false}
       onContextMenu={handleRightClick}
     >
-      <Html
-        transform
-        position={[0, 0, 0.01]}
-        style={{
-          width: '300px',
-          height: '300px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          cursor: 'pointer',
-        }}
-      >
-        <DreamSong 
-          repoName={repoName}
-          dreamSongMedia={dreamSongMedia}
-          metadata={metadata}
-          onClick={handleClick}
-          onRightClick={handleRightClick}
-          isHovered={hovered}
-          borderColor={borderColor}
-        />
-      </Html>
-      <Html
-        transform
-        position={[0, 0, -0.01]}
-        rotation={[0, Math.PI, 0]}
-        style={{
-          width: '300px',
-          height: '300px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          cursor: 'pointer',
-        }}
-      >
-        <DreamTalk 
-          repoName={repoName}
-          dreamTalkMedia={dreamTalkMedia}
-          metadata={metadata}
-          onClick={handleClick}
-          onRightClick={handleRightClick}
-          isHovered={hovered}
-          borderColor={borderColor}
-        />
-      </Html>
+      <group>
+        <Html
+          transform
+          position={[0, 0, 0.01]}
+          style={{
+            width: '300px',
+            height: '300px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <DreamTalk 
+            repoName={repoName}
+            dreamTalkMedia={dreamTalkMedia}
+            metadata={metadata}
+            onClick={handleClick}
+            onRightClick={handleRightClick}
+            isHovered={hovered}
+            borderColor={borderColor}
+          />
+        </Html>
+        <Html
+          transform
+          position={[0, 0, -0.01]}
+          rotation={[0, Math.PI, 0]}
+          style={{
+            width: '300px',
+            height: '300px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <DreamSong 
+            repoName={repoName}
+            dreamSongMedia={dreamSongMedia}
+            metadata={metadata}
+            onClick={handleClick}
+            onRightClick={handleRightClick}
+            isHovered={hovered}
+            borderColor={borderColor}
+          />
+        </Html>
+      </group>
     </Billboard>
   );
 };
