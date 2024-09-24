@@ -31,6 +31,17 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
   }, [isCentered, isFlipped, handleFlip]);
 
   useEffect(() => {
+    if (!isCentered) {
+      setIsFlipped(false);
+      gsap.to(groupRef.current.rotation, {
+        y: 0,
+        duration: 1,
+        ease: "power2.inOut"
+      });
+    }
+  }, [isCentered]);
+
+  useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
   }, [hovered]);
 

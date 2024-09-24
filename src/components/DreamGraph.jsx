@@ -7,6 +7,12 @@ import { getRepoData } from '../utils/fileUtils';
 const MAX_SCALE = 50; // Maximum scale for nodes
 const MIN_SCALE = 1; // Minimum scale for nodes
 const SPHERE_RADIUS = 1000; // Radius of the sphere for node positioning
+const DEFAULT_NODE_STATE = {
+  liminalScaleFactor: 1,
+  viewScaleFactor: 1,
+  isInLiminalView: false,
+  isFlipped: false
+};
 
 const calculateViewScaleFactor = (node, camera, size) => {
   if (node.isInLiminalView) {
@@ -112,16 +118,15 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
 
         return {
           ...node,
+          ...DEFAULT_NODE_STATE,
           position: new THREE.Vector3(x, y, z),
           scale: 1,
           rotation: new THREE.Euler(0, 0, 0),
-          liminalScaleFactor: 1,
-          viewScaleFactor: 1,
-          isInLiminalView: false
         };
       });
     });
     setIsSphericalLayout(true);
+    setCenteredNode(null);
   }, []);
 
   useEffect(() => {
@@ -218,6 +223,9 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape' && !isSphericalLayout) {
         positionNodesOnSphere();
+        if (resetCamera) {
+          resetCamera();
+        }
       }
     };
 
@@ -226,7 +234,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [positionNodesOnSphere, isSphericalLayout]);
+  }, [positionNodesOnSphere, isSphericalLayout, resetCamera]);
 
   const renderedNodes = useMemo(() => {
     return nodes.map((node, index) => (
