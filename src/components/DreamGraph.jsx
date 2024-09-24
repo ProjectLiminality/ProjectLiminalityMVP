@@ -315,8 +315,44 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
 
   useImperativeHandle(ref, () => ({
     handleUndo: () => {
-      console.log('Undo');
-      // Implement your undo logic here
+      setInteractionHistory(prevHistory => {
+        if (prevHistory.length < 2) {
+          console.log('Nothing to undo');
+          return prevHistory;
+        }
+
+        const newHistory = prevHistory.slice(0, -1);
+        const lastAction = newHistory[newHistory.length - 1];
+
+        console.log('Undoing action:', lastAction);
+
+        // Execute the last action
+        switch (lastAction.type) {
+          case INTERACTION_TYPES.NODE_CLICK:
+            handleNodeClick(lastAction.data.repoName);
+            break;
+          case INTERACTION_TYPES.ESCAPE:
+            if (centeredNode) {
+              const nodeIndex = nodes.findIndex(node => node.repoName === centeredNode);
+              if (nodeIndex !== -1) {
+                positionNodesOnSphere(nodeIndex);
+                if (resetCamera) {
+                  resetCamera();
+                }
+              }
+            } else if (!isSphericalLayout) {
+              positionNodesOnSphere();
+              if (resetCamera) {
+                resetCamera();
+              }
+            }
+            break;
+          default:
+            console.log('Unknown action type:', lastAction.type);
+        }
+
+        return newHistory;
+      });
     }
   }));
 
