@@ -199,10 +199,13 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   }, []);
 
   const handleNodeClick = useCallback((clickedRepoName) => {
+    console.log(`Node clicked: ${clickedRepoName}`);
     const clickedNodeIndex = nodes.findIndex(node => node.repoName === clickedRepoName);
     if (clickedNodeIndex !== -1) {
+      console.log(`Previous centered node: ${centeredNode}`);
       // Reset the flip state of the previously centered node
       if (centeredNode) {
+        console.log(`Resetting flip state for previous centered node: ${centeredNode}`);
         setNodes(prevNodes => prevNodes.map(node => 
           node.repoName === centeredNode ? { ...node, isFlipped: false } : node
         ));
@@ -211,6 +214,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
       if (resetCamera) {
         resetCamera();
       }
+      console.log(`New centered node: ${clickedRepoName}`);
     } else {
       console.warn(`Node with repoName "${clickedRepoName}" not found`);
     }

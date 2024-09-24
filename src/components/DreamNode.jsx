@@ -13,10 +13,16 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
   const groupRef = useRef();
 
   useEffect(() => {
+    console.log(`DreamNode ${repoName} - isCentered changed to: ${isCentered}`);
     if (!isCentered) {
+      console.log(`DreamNode ${repoName} - Resetting flip state`);
       setIsFlipped(false);
     }
-  }, [isCentered]);
+  }, [isCentered, repoName]);
+
+  useEffect(() => {
+    console.log(`DreamNode ${repoName} - isFlipped changed to: ${isFlipped}`);
+  }, [isFlipped, repoName]);
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
@@ -64,7 +70,12 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
   };
 
   const handleFlip = () => {
-    setIsFlipped(!isFlipped);
+    console.log(`DreamNode ${repoName} - Flip button clicked`);
+    setIsFlipped(prevState => {
+      const newState = !prevState;
+      console.log(`DreamNode ${repoName} - New flip state: ${newState}`);
+      return newState;
+    });
     gsap.to(groupRef.current.rotation, {
       y: isFlipped ? 0 : Math.PI,
       duration: 1,
