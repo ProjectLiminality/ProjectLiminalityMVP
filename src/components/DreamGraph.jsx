@@ -61,10 +61,19 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
   const [hoveredNode, setHoveredNode] = useState(null);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
   const [centeredNode, setCenteredNode] = useState(null);
+  const [interactionHistory, setInteractionHistory] = useState([]);
   const { size } = useThree();
 
   const { camera } = useThree();
   const tempV = useRef(new THREE.Vector3());
+
+  useEffect(() => {
+    console.log('Interaction History:', interactionHistory);
+  }, [interactionHistory]);
+
+  const addInteraction = useCallback((type, data) => {
+    setInteractionHistory(prev => [...prev, { type, data, timestamp: Date.now() }]);
+  }, []);
 
   useFrame(() => {
     setNodes((prevNodes) =>
@@ -256,12 +265,14 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
       if (resetCamera) {
         resetCamera();
       }
+      addInteraction(INTERACTION_TYPES.NODE_CLICK, { repoName: clickedRepoName });
     }
-  }, [nodes, updateNodePositions, resetCamera, centeredNode]);
+  }, [nodes, updateNodePositions, resetCamera, centeredNode, addInteraction]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
+        addInteraction(INTERACTION_TYPES.ESCAPE, {});
         if (centeredNode) {
           const nodeIndex = nodes.findIndex(node => node.repoName === centeredNode);
           if (nodeIndex !== -1) {
@@ -284,7 +295,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [positionNodesOnSphere, isSphericalLayout, resetCamera, centeredNode, nodes]);
+  }, [positionNodesOnSphere, isSphericalLayout, resetCamera, centeredNode, nodes, addInteraction]);
 
   const renderedNodes = useMemo(() => {
     return nodes.map((node, index) => (
