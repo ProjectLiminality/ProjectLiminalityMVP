@@ -135,9 +135,6 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         const originalVector = new Vector3(x, y, z);
         rotation = calculateRotation(originalVector);
 
-        console.log('Centered Node Repo Name:', prevNodes[centeredNodeIndex].repoName);
-        console.log('Original Vector:', originalVector);
-        console.log('Rotation:', rotation);
       }
 
       return prevNodes.map((node, index) => {
@@ -152,8 +149,6 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         const originalPosition = new Vector3(x, y, z);
         const rotatedPosition = applyRotationToPosition(originalPosition, rotation);
 
-        console.log(`Node ${node.repoName} - Original Position:`, originalPosition);
-        console.log(`Node ${node.repoName} - Rotated Position:`, rotatedPosition);
 
         return {
           ...node,

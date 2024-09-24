@@ -19,7 +19,6 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
       case 'video/webm':
         return <video controls src={dreamTalkMedia.data} style={{ width: '75%', height: '75%', objectFit: 'contain', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />;
       default:
-        console.log(`Unsupported media type for ${repoName}:`, dreamTalkMedia.type);
         return null;
     }
   };
