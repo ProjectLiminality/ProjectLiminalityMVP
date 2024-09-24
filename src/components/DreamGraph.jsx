@@ -134,7 +134,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
 
         // Make delta phi and delta theta the negative of the original values
         const deltaPhi = -phi;
-        const deltaTheta = -theta;
+        const deltaTheta = -theta + Math.PI/2;
 
         console.log('Delta Phi:', deltaPhi, 'Delta Theta:', deltaTheta);
 
