@@ -283,7 +283,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [handleEscape]);
 
   const handleEscape = useCallback((addToHistory = true) => {
     addInteraction(INTERACTION_TYPES.ESCAPE, {}, addToHistory);
