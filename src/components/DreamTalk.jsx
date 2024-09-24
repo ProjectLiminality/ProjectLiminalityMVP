@@ -1,7 +1,7 @@
 import React from 'react';
 import { BLUE, BLACK, WHITE } from '../constants/colors';
 
-const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, isHovered, borderColor }) => {
+const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, isHovered, borderColor, onFlip }) => {
   const renderMedia = () => {
     if (!dreamTalkMedia || !dreamTalkMedia.data) {
       return null;
@@ -99,6 +99,26 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
           </p>
         )}
       </div>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onFlip();
+        }}
+        style={{
+          position: 'absolute',
+          bottom: '10px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: BLUE,
+          color: WHITE,
+          border: 'none',
+          borderRadius: '5px',
+          padding: '5px 10px',
+          cursor: 'pointer',
+        }}
+      >
+        Flip
+      </button>
     </div>
   );
 };

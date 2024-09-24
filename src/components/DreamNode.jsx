@@ -8,7 +8,9 @@ import { BLUE, RED } from '../constants/colors';
 const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, isHovered, setHoveredNode }) => {
   const firstDreamSongMedia = dreamSongMedia && dreamSongMedia.length > 0 ? dreamSongMedia[0] : null;
   const [hovered, setHovered] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
   const nodeRef = useRef();
+  const groupRef = useRef();
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto';
@@ -55,6 +57,15 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
     onNodeRightClick(repoName, event);
   };
 
+  const handleFlip = () => {
+    setIsFlipped(!isFlipped);
+    gsap.to(groupRef.current.rotation, {
+      y: isFlipped ? 0 : Math.PI,
+      duration: 1,
+      ease: "power2.inOut"
+    });
+  };
+
   return (
     <Billboard
       ref={nodeRef}
@@ -64,7 +75,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
       lockZ={false}
       onContextMenu={handleRightClick}
     >
-      <group>
+      <group ref={groupRef}>
         <Html
           transform
           position={[0, 0, 0.01]}
@@ -86,6 +97,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             onRightClick={handleRightClick}
             isHovered={hovered}
             borderColor={borderColor}
+            onFlip={handleFlip}
           />
         </Html>
         <Html
