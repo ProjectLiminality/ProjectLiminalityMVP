@@ -135,8 +135,8 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
 
       return prevNodes.map((node, index) => {
         const i = index + 1;
-        const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
-        const theta = 2 * Math.PI * i / goldenRatio;
+        const phi = Math.PI/2 // Math.acos(1 - 2 * i / (prevNodes.length + 1));
+        const theta = -Math.PI/4 // 2 * Math.PI * i / goldenRatio;
 
         const x = SPHERE_RADIUS * Math.sin(phi) * Math.cos(theta);
         const y = SPHERE_RADIUS * Math.sin(phi) * Math.sin(theta);
@@ -151,7 +151,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         return {
           ...node,
           ...DEFAULT_NODE_STATE,
-          position: rotatedPosition,
+          position: new THREE.Vector3(0,0,-1000),
           scale: 1,
           rotation: new THREE.Euler(0, 0, 0),
         };
