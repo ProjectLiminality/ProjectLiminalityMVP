@@ -225,13 +225,13 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         if (centeredNode) {
           const nodeIndex = nodes.findIndex(node => node.repoName === centeredNode);
           if (nodeIndex !== -1) {
-            const node = nodes[nodeIndex];
-            const { x, y, z } = node.position;
-            const r = Math.sqrt(x*x + y*y + z*z);
-            const theta = Math.atan2(y, x);
-            const phi = Math.acos(z / r);
+            const goldenRatio = (1 + Math.sqrt(5)) / 2;
+            const i = nodeIndex + 1;
+            const phi = Math.acos(1 - 2 * i / (nodes.length + 1));
+            const theta = 2 * Math.PI * i / goldenRatio;
+
             console.log('Last centered node:', centeredNode);
-            console.log('Spherical coordinates:', {
+            console.log('Destination spherical coordinates:', {
               theta: theta * (180 / Math.PI),  // Convert to degrees
               phi: phi * (180 / Math.PI)  // Convert to degrees
             });
