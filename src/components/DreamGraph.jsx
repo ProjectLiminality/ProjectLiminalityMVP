@@ -125,11 +125,12 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
       let rotationMatrix = new Matrix4().identity();
 
       if (centeredNodeIndex !== -1) {
+        const centeredNode = prevNodes[centeredNodeIndex];
         const i = centeredNodeIndex + 1;
         const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
         const theta = 2 * Math.PI * i / goldenRatio;
 
-        console.log('Centered Node Index:', centeredNodeIndex);
+        console.log('Centered Node Repo Name:', centeredNode.repoName);
         console.log('Original Phi:', phi, 'Original Theta:', theta);
 
         // Make delta phi and delta theta the negative of the original values
@@ -139,6 +140,8 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         console.log('Delta Phi:', deltaPhi, 'Delta Theta:', deltaTheta);
 
         rotationMatrix = calculateRotationMatrix(deltaPhi, deltaTheta);
+        
+        console.log('Rotation Matrix:', rotationMatrix.elements);
       }
 
       return prevNodes.map((node, index) => {
@@ -150,7 +153,11 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         const y = SPHERE_RADIUS * Math.sin(phi) * Math.sin(theta);
         const z = SPHERE_RADIUS * Math.cos(phi);
 
-        const rotatedPosition = applyRotationToPosition(new THREE.Vector3(x, y, z), rotationMatrix);
+        const originalPosition = new THREE.Vector3(x, y, z);
+        const rotatedPosition = applyRotationToPosition(originalPosition, rotationMatrix);
+
+        console.log(`Node ${node.repoName} - Original Position:`, originalPosition);
+        console.log(`Node ${node.repoName} - Rotated Position:`, rotatedPosition);
 
         return {
           ...node,
