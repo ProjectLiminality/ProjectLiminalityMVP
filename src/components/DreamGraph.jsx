@@ -37,14 +37,17 @@ const calculateViewScaleFactor = (node, camera, size) => {
   return Math.max(MIN_SCALE / node.baseScale, Math.min(MAX_SCALE / node.baseScale, scale));
 };
 
-const calculateRotation = (phi, theta) => {
-  const rotationY = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), -theta);
-  const rotationX = new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), -phi);
-  return rotationY.multiply(rotationX);
+const calculateRotation = (originalVector) => {
+  const targetVector = new Vector3(0, 0, -1000);
+  const normalizedOriginal = originalVector.clone().normalize();
+  const normalizedTarget = targetVector.clone().normalize();
+  const quaternion = new Quaternion();
+  quaternion.setFromUnitVectors(normalizedOriginal, normalizedTarget);
+  return quaternion;
 };
 
 const applyRotationToPosition = (position, rotation) => {
-  return position.applyQuaternion(rotation);
+  return position.applyQuaternion(rotation).normalize().multiplyScalar(SPHERE_RADIUS);
 };
 
 const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
@@ -125,24 +128,28 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
         const theta = 2 * Math.PI * i / goldenRatio;
 
-        console.log('Centered Node Repo Name:', prevNodes[centeredNodeIndex].repoName);
-        console.log('Original Phi:', phi, 'Original Theta:', theta);
+        const x = SPHERE_RADIUS * Math.sin(phi) * Math.cos(theta);
+        const y = SPHERE_RADIUS * Math.sin(phi) * Math.sin(theta);
+        const z = SPHERE_RADIUS * Math.cos(phi);
 
-        rotation = calculateRotation(phi, theta);
-        
+        const originalVector = new Vector3(x, y, z);
+        rotation = calculateRotation(originalVector);
+
+        console.log('Centered Node Repo Name:', prevNodes[centeredNodeIndex].repoName);
+        console.log('Original Vector:', originalVector);
         console.log('Rotation:', rotation);
       }
 
       return prevNodes.map((node, index) => {
         const i = index + 1;
-        const phi = Math.PI/2 // Math.acos(1 - 2 * i / (prevNodes.length + 1));
-        const theta = -Math.PI/4 // 2 * Math.PI * i / goldenRatio;
+        const phi = Math.acos(1 - 2 * i / (prevNodes.length + 1));
+        const theta = 2 * Math.PI * i / goldenRatio;
 
         const x = SPHERE_RADIUS * Math.sin(phi) * Math.cos(theta);
         const y = SPHERE_RADIUS * Math.sin(phi) * Math.sin(theta);
         const z = SPHERE_RADIUS * Math.cos(phi);
 
-        const originalPosition = new THREE.Vector3(x, y, z);
+        const originalPosition = new Vector3(x, y, z);
         const rotatedPosition = applyRotationToPosition(originalPosition, rotation);
 
         console.log(`Node ${node.repoName} - Original Position:`, originalPosition);
@@ -151,7 +158,7 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         return {
           ...node,
           ...DEFAULT_NODE_STATE,
-          position: new THREE.Vector3(0,0,-1000),
+          position: rotatedPosition,
           scale: 1,
           rotation: new THREE.Euler(0, 0, 0),
         };
