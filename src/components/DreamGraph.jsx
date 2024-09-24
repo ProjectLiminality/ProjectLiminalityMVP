@@ -67,9 +67,6 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
   const { camera } = useThree();
   const tempV = useRef(new THREE.Vector3());
 
-  useEffect(() => {
-    console.log('Interaction History:', interactionHistory);
-  }, [interactionHistory]);
 
   const addInteraction = useCallback((type, data, addToHistory = true) => {
     if (addToHistory) {
@@ -345,7 +342,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
             handleEscape(false);
             break;
           default:
-            console.log('Unknown action type:', lastAction.type);
+            // Unknown action type
         }
 
         setRedoStack(prevRedoStack => [...prevRedoStack, undoneAction]);
@@ -355,12 +352,10 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     },
     handleRedo: () => {
       if (redoStack.length === 0) {
-        console.log('Nothing to redo');
         return;
       }
 
       const actionToRedo = redoStack[redoStack.length - 1];
-      console.log('Redoing action:', actionToRedo);
 
       // Execute the redo action without adding to history
       switch (actionToRedo.type) {
@@ -371,7 +366,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
           handleEscape(false);
           break;
         default:
-          console.log('Unknown action type:', actionToRedo.type);
+          // Unknown action type
       }
 
       setInteractionHistory(prevHistory => [...prevHistory, actionToRedo]);

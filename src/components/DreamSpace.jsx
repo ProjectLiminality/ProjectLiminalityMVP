@@ -24,7 +24,7 @@ const DreamSpace = ({ onNodeRightClick, dreamGraphRef }) => {
     if (window.electron && window.electron.openInFinder) {
       window.electron.openInFinder(repoName);
     } else {
-      console.error('openInFinder is not available');
+      // openInFinder is not available
     }
   };
 

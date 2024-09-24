@@ -25,11 +25,11 @@ function App() {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file) {
-      console.log('Dropped file name:', file.name);
+      // File dropped
       try {
         const nodeName = file.name.split('.')[0]; // Use the filename without extension as the node name
         const newNode = await window.electron.fileSystem.createNewNode(nodeName);
-        console.log(`New node created: ${newNode}`);
+        // New node created
         
         if (newNode) {
           // Read the file as an ArrayBuffer
@@ -45,7 +45,7 @@ function App() {
             };
             const fileAdded = await window.electron.fileSystem.addFileToNode(newNode, fileData);
             if (fileAdded) {
-              console.log(`File ${file.name} added to node ${newNode}`);
+              // File added to node
               // You might want to refresh the DreamSpace or update the state here
             } else {
               console.error(`Failed to add file ${file.name} to node ${newNode}`);
@@ -97,21 +97,18 @@ function App() {
   }, [handleDragOver, handleDrop]);
 
   const handleOpenMetadataPanel = (repoName) => {
-    console.log(`Opening MetadataPanel: ${repoName}`);
     setSelectedRepoName(repoName);
     setIsMetadataPanelOpen(true);
     setContextMenu(null); // Close context menu when opening metadata panel
   };
 
   const handleOpenRenamePanel = (repoName) => {
-    console.log(`Opening RenamePanel: ${repoName}`);
     setSelectedRepoName(repoName);
     setIsRenamePanelOpen(true);
     setContextMenu(null); // Close context menu when opening rename panel
   };
 
   const handleNodeRightClick = (repoName, event) => {
-    console.log(`Right-clicked on node: ${repoName}`);
     event.preventDefault(); // Prevent default context menu
     setContextMenu({ 
       repoName, 
