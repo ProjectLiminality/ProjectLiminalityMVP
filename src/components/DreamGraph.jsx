@@ -132,8 +132,8 @@ const DreamGraph = ({ initialNodes, onNodeRightClick, resetCamera }) => {
         console.log('Centered Node Index:', centeredNodeIndex);
         console.log('Original Phi:', phi, 'Original Theta:', theta);
 
-        // Change this line to position at the back of the sphere
-        const deltaPhi = -Math.PI / 2 - phi;
+        // Make delta phi and delta theta the negative of the original values
+        const deltaPhi = -phi;
         const deltaTheta = -theta;
 
         console.log('Delta Phi:', deltaPhi, 'Delta Theta:', deltaTheta);
