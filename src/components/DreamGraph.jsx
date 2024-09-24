@@ -5,6 +5,12 @@ import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
 import { Quaternion, Vector3 } from 'three';
 
+// New constant for interaction types
+const INTERACTION_TYPES = {
+  NODE_CLICK: 'NODE_CLICK',
+  ESCAPE: 'ESCAPE',
+};
+
 const MAX_SCALE = 50; // Maximum scale for nodes
 const MIN_SCALE = 1; // Minimum scale for nodes
 const SPHERE_RADIUS = 1000; // Radius of the sphere for node positioning
