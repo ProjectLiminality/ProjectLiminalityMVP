@@ -3,7 +3,7 @@ import { BLACK, WHITE, BLUE } from '../constants/colors';
 import { readDreamSongCanvas } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 
-const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColor }) => {
+const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColor, onFlip }) => {
   const [processedNodes, setProcessedNodes] = useState([]);
 
   useEffect(() => {
@@ -135,6 +135,26 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           )}
         </div>
       </div>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onFlip();
+        }}
+        style={{
+          position: 'absolute',
+          bottom: '10px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: BLUE,
+          color: WHITE,
+          border: 'none',
+          borderRadius: '5px',
+          padding: '5px 10px',
+          cursor: 'pointer',
+        }}
+      >
+        Flip
+      </button>
     </div>
   );
 };

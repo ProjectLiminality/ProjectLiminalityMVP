@@ -122,6 +122,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             onRightClick={handleRightClick}
             isHovered={hovered}
             borderColor={borderColor}
+            onFlip={handleFlip}
           />
         </Html>
       </group>
