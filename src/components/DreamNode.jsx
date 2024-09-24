@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Billboard, Html } from '@react-three/drei';
 import gsap from 'gsap';
 import DreamTalk from './DreamTalk';
@@ -12,13 +12,27 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
   const nodeRef = useRef();
   const groupRef = useRef();
 
+  const handleFlip = useCallback(() => {
+    console.log(`DreamNode ${repoName} - Flip triggered`);
+    setIsFlipped(prevState => {
+      const newState = !prevState;
+      console.log(`DreamNode ${repoName} - New flip state: ${newState}`);
+      gsap.to(groupRef.current.rotation, {
+        y: newState ? Math.PI : 0,
+        duration: 1,
+        ease: "power2.inOut"
+      });
+      return newState;
+    });
+  }, [repoName]);
+
   useEffect(() => {
     console.log(`DreamNode ${repoName} - isCentered changed to: ${isCentered}`);
-    if (!isCentered) {
+    if (!isCentered && isFlipped) {
       console.log(`DreamNode ${repoName} - Resetting flip state`);
-      setIsFlipped(false);
+      handleFlip();
     }
-  }, [isCentered, repoName]);
+  }, [isCentered, repoName, isFlipped, handleFlip]);
 
   useEffect(() => {
     console.log(`DreamNode ${repoName} - isFlipped changed to: ${isFlipped}`);
@@ -67,20 +81,6 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
     event.preventDefault();
     event.stopPropagation();
     onNodeRightClick(repoName, event);
-  };
-
-  const handleFlip = () => {
-    console.log(`DreamNode ${repoName} - Flip button clicked`);
-    setIsFlipped(prevState => {
-      const newState = !prevState;
-      console.log(`DreamNode ${repoName} - New flip state: ${newState}`);
-      return newState;
-    });
-    gsap.to(groupRef.current.rotation, {
-      y: isFlipped ? 0 : Math.PI,
-      duration: 1,
-      ease: "power2.inOut"
-    });
   };
 
   return (
