@@ -32,7 +32,7 @@ const useDreamNodes = () => {
             const z = SPHERE_RADIUS * Math.cos(phi);
             return {
               repoName: repo,
-              position: new THREE.Vector3(x, y, z)
+              position: new THREE.Vector3(0, 0, -1000),
             };
           });
           setDreamNodes(newNodes);

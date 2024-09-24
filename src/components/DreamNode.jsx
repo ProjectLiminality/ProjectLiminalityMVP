@@ -58,7 +58,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
         x: scale,
         y: scale,
         z: scale,
-        duration: 2,
+        duration: .5,
         ease: "power2.out"
       });
     }
