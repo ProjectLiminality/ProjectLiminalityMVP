@@ -120,14 +120,10 @@ export async function readDreamSongCanvas(repoName) {
   try {
     const canvasContent = await electronService.readDreamSongCanvas(repoName);
     if (!canvasContent || canvasContent.trim() === '') {
-      console.log('DreamSong.canvas is empty or not found');
       return null;
     }
-    const parsedContent = JSON.parse(canvasContent);
-    console.log('Parsed DreamSong.canvas content:', parsedContent);
-    return parsedContent;
+    return JSON.parse(canvasContent);
   } catch (error) {
-    console.error('Error parsing DreamSong.canvas:', error);
     return null;
   }
 }

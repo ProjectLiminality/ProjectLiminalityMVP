@@ -12,6 +12,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
       if (canvasData) {
         const processed = processDreamSongData(canvasData);
         setProcessedNodes(processed);
+      } else {
+        setProcessedNodes([]);
       }
     };
 

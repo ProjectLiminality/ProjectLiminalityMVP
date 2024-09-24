@@ -1,7 +1,6 @@
 // Function to parse DreamSong.canvas data
 export function parseDreamSongCanvas(canvasData) {
   if (typeof canvasData !== 'object' || canvasData === null) {
-    console.error('Invalid DreamSong.canvas data:', canvasData);
     return { nodes: [], edges: [] };
   }
   return {
@@ -47,7 +46,7 @@ export function topologicalSort(nodes, edges) {
 
   // Check for cycles
   if (sortedNodes.length !== nodes.length) {
-    console.warn('The graph contains a cycle');
+    // Graph contains a cycle, but we'll return what we have
   }
 
   return sortedNodes;
