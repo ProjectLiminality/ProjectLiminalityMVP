@@ -131,26 +131,41 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           )}
         </div>
       </div>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onFlip();
-        }}
+      <div
         style={{
           position: 'absolute',
           bottom: '10px',
           left: '50%',
           transform: 'translateX(-50%)',
-          background: BLUE,
-          color: WHITE,
-          border: 'none',
-          borderRadius: '5px',
-          padding: '5px 10px',
-          cursor: 'pointer',
+          opacity: 0,
+          transition: 'opacity 0.3s ease',
         }}
+        className="flip-button-container"
       >
-        Flip
-      </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onFlip();
+          }}
+          style={{
+            background: BLUE,
+            color: WHITE,
+            border: 'none',
+            borderRadius: '5px',
+            padding: '5px 10px',
+            cursor: 'pointer',
+          }}
+        >
+          Flip
+        </button>
+      </div>
+      <style>
+        {`
+          .dream-song:hover .flip-button-container {
+            opacity: 1;
+          }
+        `}
+      </style>
     </div>
   );
 };
