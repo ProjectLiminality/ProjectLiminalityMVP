@@ -115,7 +115,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     const unrelatedCircleRadius = 1000; // Place unrelated nodes far from view
 
     const honeycombPositions = (index) => {
-      if (index === 0) return [0, 0];
+      if (index === 0) return [0, 0, 0];
 
       // Determine which ring the node is in
       let ring = 1;
@@ -160,7 +160,11 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
       const x = 1.5 * q;
       const y = Math.sqrt(3) * (r + q / 2);
 
-      return [x, y];
+      return [x, y, ring];
+    };
+
+    const calculateNodeScale = (ring) => {
+      return Math.max(0.25, 2 / (2 ** ring));
     };
 
     setNodes(prevNodes => {
@@ -168,14 +172,15 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
       const unrelatedNodes = prevNodes.filter(node => !searchResults.includes(node.repoName));
 
       const honeycombNodes = matchedNodes.map((node, index) => {
-        const [x, y] = honeycombPositions(index);
+        const [x, y, ring] = honeycombPositions(index);
+        const scale = calculateNodeScale(ring);
         return {
           ...node,
           position: new THREE.Vector3(x * spacing, y * spacing, 0),
-          scale: 1,
+          scale: scale,
           isInLiminalView: true,
-          liminalScaleFactor: 1,
-          viewScaleFactor: 1
+          liminalScaleFactor: scale,
+          viewScaleFactor: scale
         };
       });
 
@@ -188,10 +193,10 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
             Math.sin(angle) * unrelatedCircleRadius,
             0
           ),
-          scale: 0.5,
+          scale: 0.25,
           isInLiminalView: true,
-          liminalScaleFactor: 0.5,
-          viewScaleFactor: 0.5
+          liminalScaleFactor: 0.25,
+          viewScaleFactor: 0.25
         };
       });
 
