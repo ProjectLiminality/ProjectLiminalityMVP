@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
 import { getAllRepoNamesAndTypes } from '../services/electronService';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
   const [showSubmoduleMenu, setShowSubmoduleMenu] = useState(false);
   const [availableRepos, setAvailableRepos] = useState([]);
+  const submenuRef = useRef(null);
 
   useEffect(() => {
     const fetchRepos = async () => {
@@ -16,12 +17,23 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
     fetchRepos();
   }, [repoName]);
 
-  // Dummy data for testing
-  const dummyRepos = [
-    { name: 'Repo 1', type: 'dummy' },
-    { name: 'Repo 2', type: 'dummy' },
-    { name: 'Repo 3', type: 'dummy' },
-  ];
+  useEffect(() => {
+    if (showSubmoduleMenu && submenuRef.current) {
+      const submenu = submenuRef.current;
+      const rect = submenu.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      if (rect.bottom > viewportHeight) {
+        submenu.style.top = 'auto';
+        submenu.style.bottom = '0';
+        submenu.style.maxHeight = `${viewportHeight - rect.top}px`;
+      } else {
+        submenu.style.top = '0';
+        submenu.style.bottom = 'auto';
+        submenu.style.maxHeight = `${viewportHeight - rect.top}px`;
+      }
+    }
+  }, [showSubmoduleMenu]);
   const handleEditMetadata = () => {
     onEditMetadata(repoName);
     onClose();
@@ -143,21 +155,25 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
         >
           Add Submodule ▶
           {showSubmoduleMenu && (
-            <ul style={{
-              position: 'absolute',
-              left: '100%',
-              top: 0,
-              backgroundColor: BLACK,
-              border: `1px solid ${BLUE}`,
-              borderRadius: '4px',
-              padding: 0,
-              margin: 0,
-              listStyle: 'none',
-              zIndex: 1001,
-              minWidth: '150px',
-            }}>
+            <ul 
+              ref={submenuRef}
+              style={{
+                position: 'fixed',
+                left: `${position.x + 150}px`, // Adjust this value as needed
+                backgroundColor: BLACK,
+                border: `1px solid ${BLUE}`,
+                borderRadius: '4px',
+                padding: 0,
+                margin: 0,
+                listStyle: 'none',
+                zIndex: 1001,
+                minWidth: '150px',
+                maxHeight: '80vh',
+                overflowY: 'auto',
+              }}
+            >
               {console.log('Rendering submodule menu with repos:', availableRepos)}
-              {(availableRepos.length > 0 ? availableRepos : dummyRepos).map((repo) => (
+              {availableRepos.map((repo) => (
                 <li
                   key={repo.name}
                   onClick={(e) => {
@@ -173,7 +189,7 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
                   onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
                   onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                 >
-                  {repo.name} {repo.type === 'dummy' ? '(Dummy)' : ''}
+                  {repo.name}
                 </li>
               ))}
             </ul>
