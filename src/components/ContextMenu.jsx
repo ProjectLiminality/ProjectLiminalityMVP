@@ -20,18 +20,14 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
   useEffect(() => {
     if (showSubmoduleMenu && submenuRef.current) {
       const submenu = submenuRef.current;
-      const rect = submenu.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-
-      if (rect.bottom > viewportHeight) {
-        submenu.style.top = 'auto';
-        submenu.style.bottom = '0';
-        submenu.style.maxHeight = `${viewportHeight - rect.top}px`;
-      } else {
-        submenu.style.top = '0';
-        submenu.style.bottom = 'auto';
-        submenu.style.maxHeight = `${viewportHeight - rect.top}px`;
-      }
+      const submenuHeight = submenu.offsetHeight;
+      
+      // Calculate the vertical center position
+      const topPosition = Math.max(0, (viewportHeight - submenuHeight) / 2);
+      
+      submenu.style.top = `${topPosition}px`;
+      submenu.style.maxHeight = `${viewportHeight * 0.8}px`; // Limit to 80% of viewport height
     }
   }, [showSubmoduleMenu]);
   const handleEditMetadata = () => {
