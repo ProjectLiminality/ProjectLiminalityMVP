@@ -170,6 +170,8 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
                 minWidth: '150px',
                 maxHeight: '80vh',
                 overflowY: 'auto',
+                scrollbarWidth: 'thin',
+                scrollbarColor: `${BLUE} ${BLACK}`,
               }}
             >
               {console.log('Rendering submodule menu with repos:', availableRepos)}
