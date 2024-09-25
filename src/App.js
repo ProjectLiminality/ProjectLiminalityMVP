@@ -6,6 +6,7 @@ import DreamGraph from './components/DreamGraph';
 import ContextMenu from './components/ContextMenu';
 import RenamePanel from './components/RenamePanel';
 import NodeCreationPanel from './components/NodeCreationPanel';
+import SearchPanel from './components/SearchPanel';
 import { openInGitFox } from './services/electronService';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
   const [isMetadataPanelOpen, setIsMetadataPanelOpen] = useState(false);
   const [isRenamePanelOpen, setIsRenamePanelOpen] = useState(false);
   const [isNodeCreationPanelOpen, setIsNodeCreationPanelOpen] = useState(false);
+  const [isSearchPanelOpen, setIsSearchPanelOpen] = useState(false);
   const [selectedRepoName, setSelectedRepoName] = useState('');
   const [contextMenu, setContextMenu] = useState(null);
   const dreamGraphRef = useRef(null);
@@ -83,6 +85,10 @@ function App() {
           dreamGraphRef.current.handleRedo();
         }
       }
+      if (event.metaKey && event.key === 'f') {
+        event.preventDefault();
+        setIsSearchPanelOpen(true);
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -120,6 +126,14 @@ function App() {
     setContextMenu(null);
   };
 
+  const handleSearch = (searchTerm) => {
+    // TODO: Implement search functionality
+    console.log('Searching for:', searchTerm);
+    setIsSearchPanelOpen(false);
+    // You'll need to pass this search term to your DreamGraph component
+    // or wherever you want to implement the search functionality
+  };
+
   return (
     <>
       <div className="App" onClick={handleCloseContextMenu}>
@@ -152,6 +166,13 @@ function App() {
         <NodeCreationPanel
           isOpen={isNodeCreationPanelOpen}
           onClose={() => setIsNodeCreationPanelOpen(false)}
+        />
+      )}
+      {isSearchPanelOpen && (
+        <SearchPanel
+          isOpen={isSearchPanelOpen}
+          onClose={() => setIsSearchPanelOpen(false)}
+          onSearch={handleSearch}
         />
       )}
       {contextMenu && (
