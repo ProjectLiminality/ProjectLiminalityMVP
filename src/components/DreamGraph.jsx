@@ -206,9 +206,6 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     setCenteredNode(null);
   }, []);
 
-  // Placeholder for search results (hardcoded list for testing)
-  const searchResultsList = ['Narrative', 'ManMachineNature', 'ComplicatedVsComplex']; // Replace with actual repo names for testing
-
   const positionNodesOnSphere = useCallback((centeredNodeIndex = -1) => {
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
     
@@ -364,21 +361,10 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     }
   }, [positionNodesOnSphere, isSphericalLayout, resetCamera, centeredNode, nodes, addInteraction]);
 
-  // Function to trigger search display (for testing)
-  const triggerSearchDisplay = useCallback(() => {
-    displaySearchResults(searchResultsList);
-    if (resetCamera) {
-      resetCamera();
-    }
-  }, [displaySearchResults, searchResultsList, resetCamera]);
-
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         handleEscape();
-      } else if (event.key === 's') {
-        // Trigger search display when 's' key is pressed
-        triggerSearchDisplay();
       }
     };
 
@@ -387,7 +373,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleEscape, triggerSearchDisplay]);
+  }, [handleEscape]);
 
   const renderedNodes = useMemo(() => {
     return nodes.map((node, index) => (
