@@ -101,8 +101,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
           baseScale: 1,
           viewScaleFactor: 1,
           liminalScaleFactor: 1,
-          isInLiminalView: false,
-          position: new THREE.Vector3(0, 0, 0)
+          isInLiminalView: false
         };
       }));
       setNodes(nodesData);

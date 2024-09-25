@@ -14,8 +14,7 @@ const DreamSpace = ({ onNodeRightClick, dreamGraphRef }) => {
   useEffect(() => {
     if (dreamNodes.length > 0) {
       setInitialNodes(dreamNodes.map(node => ({
-        ...node,
-        position: new THREE.Vector3(0, 0, 0) // Set initial position to origin
+        ...node
       })));
     }
   }, [dreamNodes]);
