@@ -137,8 +137,6 @@ function App() {
   };
 
   const handleSearch = (searchTerm) => {
-    console.log('Searching for:', searchTerm);
-  
     if (dreamGraphRef.current) {
       dreamGraphRef.current.performSearch(searchTerm);
     }
