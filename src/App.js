@@ -128,7 +128,6 @@ function App() {
 
   const handleSearch = (searchTerm) => {
     console.log('Searching for:', searchTerm);
-    setIsSearchPanelOpen(false);
   
     if (dreamGraphRef.current) {
       dreamGraphRef.current.performSearch(searchTerm);
@@ -169,13 +168,10 @@ function App() {
           onClose={() => setIsNodeCreationPanelOpen(false)}
         />
       )}
-      {isSearchPanelOpen && (
-        <SearchPanel
-          isOpen={isSearchPanelOpen}
-          onClose={() => setIsSearchPanelOpen(false)}
-          onSearch={handleSearch}
-        />
-      )}
+      <SearchPanel
+        isOpen={isSearchPanelOpen}
+        onSearch={handleSearch}
+      />
       {contextMenu && (
         <ContextMenu
           repoName={contextMenu.repoName}
