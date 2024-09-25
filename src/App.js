@@ -89,6 +89,9 @@ function App() {
         event.preventDefault();
         setIsSearchPanelOpen(true);
       }
+      if (event.key === 'Escape') {
+        setIsSearchPanelOpen(false);
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -171,6 +174,7 @@ function App() {
       <SearchPanel
         isOpen={isSearchPanelOpen}
         onSearch={handleSearch}
+        onClose={() => setIsSearchPanelOpen(false)}
       />
       {contextMenu && (
         <ContextMenu

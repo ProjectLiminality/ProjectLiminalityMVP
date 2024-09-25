@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
 
-const SearchPanel = ({ isOpen, onSearch }) => {
+const SearchPanel = ({ isOpen, onSearch, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -11,6 +11,12 @@ const SearchPanel = ({ isOpen, onSearch }) => {
   }, [searchTerm, onSearch]);
 
   if (!isOpen) return null;
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      onClose();
+    }
+  };
 
   return (
     <div style={{
@@ -29,6 +35,7 @@ const SearchPanel = ({ isOpen, onSearch }) => {
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
+        onKeyDown={handleKeyDown}
         placeholder="Search..."
         style={{
           width: '300px',
