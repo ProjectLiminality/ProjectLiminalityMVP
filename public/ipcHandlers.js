@@ -403,18 +403,43 @@ function setupHandlers(ipcMain, store) {
     console.log(`Submodule repo path: ${submoduleRepoPath}`);
 
     try {
+      // Check if parent repo exists
+      if (!fs.existsSync(parentRepoPath)) {
+        throw new Error(`Parent repo ${parentRepoName} does not exist`);
+      }
+
+      // Check if submodule repo exists
+      if (!fs.existsSync(submoduleRepoPath)) {
+        throw new Error(`Submodule repo ${submoduleRepoName} does not exist`);
+      }
+
       // Add the submodule
       console.log('Adding submodule...');
-      execSync(`git submodule add "${submoduleRepoPath}" "${submoduleRepoName}"`, { cwd: parentRepoPath, stdio: 'inherit' });
+      try {
+        execSync(`git submodule add "${submoduleRepoPath}" "${submoduleRepoName}"`, { cwd: parentRepoPath, stdio: 'pipe' });
+      } catch (error) {
+        console.error('Error output:', error.stderr.toString());
+        throw new Error(`Failed to add submodule: ${error.message}`);
+      }
 
       // Initialize the submodule
       console.log('Initializing submodule...');
-      execSync('git submodule update --init --recursive', { cwd: parentRepoPath, stdio: 'inherit' });
+      try {
+        execSync('git submodule update --init --recursive', { cwd: parentRepoPath, stdio: 'pipe' });
+      } catch (error) {
+        console.error('Error output:', error.stderr.toString());
+        throw new Error(`Failed to initialize submodule: ${error.message}`);
+      }
 
       // Commit the changes
       console.log('Committing changes...');
-      execSync('git add .', { cwd: parentRepoPath, stdio: 'inherit' });
-      execSync(`git commit -m "Add submodule ${submoduleRepoName}"`, { cwd: parentRepoPath, stdio: 'inherit' });
+      try {
+        execSync('git add .', { cwd: parentRepoPath, stdio: 'pipe' });
+        execSync(`git commit -m "Add submodule ${submoduleRepoName}"`, { cwd: parentRepoPath, stdio: 'pipe' });
+      } catch (error) {
+        console.error('Error output:', error.stderr.toString());
+        throw new Error(`Failed to commit changes: ${error.message}`);
+      }
 
       console.log(`Successfully added submodule ${submoduleRepoName} to ${parentRepoName}`);
       return true;
