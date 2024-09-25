@@ -116,23 +116,51 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
 
     const honeycombPositions = (index) => {
       if (index === 0) return [0, 0];
-      const ringNumber = Math.floor((Math.sqrt(12 * index - 3) - 3) / 6) + 1;
-      let positionInRing = index - 3 * ringNumber * (ringNumber - 1) - 1;
-      const sideLength = ringNumber;
-      const side = Math.floor(positionInRing / sideLength);
-      const positionOnSide = positionInRing % sideLength;
 
-      let x = 0, y = 0;
-      switch (side) {
-        case 0: x = positionOnSide; y = -ringNumber; break;
-        case 1: x = ringNumber; y = positionOnSide - ringNumber; break;
-        case 2: x = ringNumber - positionOnSide; y = positionOnSide; break;
-        case 3: x = -positionOnSide; y = ringNumber; break;
-        case 4: x = -ringNumber; y = ringNumber - positionOnSide; break;
-        case 5: x = positionOnSide - ringNumber; y = -positionOnSide; break;
+      // Determine which ring the node is in
+      let ring = 1;
+      let indexInRing = index;
+      let totalNodesInRing = 6 * ring;
+
+      while (indexInRing > totalNodesInRing) {
+        indexInRing -= totalNodesInRing;
+        ring += 1;
+        totalNodesInRing = 6 * ring;
       }
 
-      return [x * Math.sqrt(3), y + x * Math.sqrt(3) / 2];
+      // Calculate side and position on side
+      let side = Math.floor((indexInRing - 1) / ring);
+      let positionOnSide = (indexInRing - 1) % ring;
+
+      // Starting positions for each side in axial coordinates (q, r)
+      const startingPositions = [
+        [ring, 0],        // East
+        [0, ring],        // Northeast
+        [-ring, ring],    // Northwest
+        [-ring, 0],       // West
+        [0, -ring],       // Southwest
+        [ring, -ring],    // Southeast
+      ];
+
+      // Direction vectors for each side in axial coordinates
+      const directions = [
+        [-1, 1],   // Side 0: NE to NW
+        [-1, 0],   // Side 1: NW to W
+        [0, -1],   // Side 2: W to SW
+        [1, -1],   // Side 3: SW to SE
+        [1, 0],    // Side 4: SE to E
+        [0, 1],    // Side 5: E to NE
+      ];
+
+      // Compute axial coordinates (q, r)
+      let q = startingPositions[side][0] + directions[side][0] * positionOnSide;
+      let r = startingPositions[side][1] + directions[side][1] * positionOnSide;
+
+      // Convert axial to Cartesian coordinates
+      const x = 1.5 * q;
+      const y = Math.sqrt(3) * (r + q / 2);
+
+      return [x, y];
     };
 
     setNodes(prevNodes => {
