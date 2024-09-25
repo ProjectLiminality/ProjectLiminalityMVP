@@ -111,24 +111,39 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
   }, [initialNodes]);
 
   const displaySearchResults = useCallback((searchResults) => {
-    const gridSize = Math.ceil(Math.sqrt(searchResults.length));
     const spacing = 10;
     const unrelatedCircleRadius = 1000; // Place unrelated nodes far from view
+
+    const honeycombPositions = (index) => {
+      if (index === 0) return [0, 0];
+      const ringNumber = Math.floor((Math.sqrt(12 * index - 3) - 3) / 6) + 1;
+      let positionInRing = index - 3 * ringNumber * (ringNumber - 1) - 1;
+      const sideLength = ringNumber;
+      const side = Math.floor(positionInRing / sideLength);
+      const positionOnSide = positionInRing % sideLength;
+
+      let x = 0, y = 0;
+      switch (side) {
+        case 0: x = positionOnSide; y = -ringNumber; break;
+        case 1: x = ringNumber; y = positionOnSide - ringNumber; break;
+        case 2: x = ringNumber - positionOnSide; y = positionOnSide; break;
+        case 3: x = -positionOnSide; y = ringNumber; break;
+        case 4: x = -ringNumber; y = ringNumber - positionOnSide; break;
+        case 5: x = positionOnSide - ringNumber; y = -positionOnSide; break;
+      }
+
+      return [x * Math.sqrt(3), y + x * Math.sqrt(3) / 2];
+    };
 
     setNodes(prevNodes => {
       const matchedNodes = prevNodes.filter(node => searchResults.includes(node.repoName));
       const unrelatedNodes = prevNodes.filter(node => !searchResults.includes(node.repoName));
 
-      const gridNodes = matchedNodes.map((node, index) => {
-        const row = Math.floor(index / gridSize);
-        const col = index % gridSize;
+      const honeycombNodes = matchedNodes.map((node, index) => {
+        const [x, y] = honeycombPositions(index);
         return {
           ...node,
-          position: new THREE.Vector3(
-            (col - gridSize / 2) * spacing,
-            (row - gridSize / 2) * spacing,
-            0
-          ),
+          position: new THREE.Vector3(x * spacing, y * spacing, 0),
           scale: 1,
           isInLiminalView: true,
           liminalScaleFactor: 1,
@@ -152,7 +167,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
         };
       });
 
-      return [...gridNodes, ...unrelatedCircleNodes];
+      return [...honeycombNodes, ...unrelatedCircleNodes];
     });
     setIsSphericalLayout(false);
     setCenteredNode(null);
