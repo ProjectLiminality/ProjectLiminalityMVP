@@ -50,7 +50,8 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
     onClose();
   };
 
-  const handleAddSubmodule = () => {
+  const handleAddSubmodule = (e) => {
+    e.stopPropagation();
     setShowSubmoduleMenu(!showSubmoduleMenu);
   };
 
@@ -69,7 +70,7 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
         backgroundColor: BLACK,
         color: WHITE,
         borderRadius: '4px',
-        overflow: 'hidden',
+        overflow: 'visible',
         zIndex: 1000,
         border: `1px solid ${BLUE}`,
       }}
@@ -125,15 +126,20 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
           Open in GitFox
         </li>
         <li 
-          onClick={handleAddSubmodule}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = BLUE;
+            setShowSubmoduleMenu(true);
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = 'transparent';
+            setShowSubmoduleMenu(false);
+          }}
           style={{ 
             padding: '6px 10px',
             cursor: 'pointer',
             transition: 'background-color 0.2s ease',
             position: 'relative',
           }}
-          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
-          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
         >
           Add Submodule ▶
           {showSubmoduleMenu && (
@@ -148,12 +154,16 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
               margin: 0,
               listStyle: 'none',
               zIndex: 1001,
+              minWidth: '150px',
             }}>
               {console.log('Rendering submodule menu with repos:', availableRepos)}
               {(availableRepos.length > 0 ? availableRepos : dummyRepos).map((repo) => (
                 <li
                   key={repo.name}
-                  onClick={() => handleSelectSubmodule(repo.name)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelectSubmodule(repo.name);
+                  }}
                   style={{
                     padding: '6px 10px',
                     cursor: 'pointer',
