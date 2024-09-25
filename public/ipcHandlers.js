@@ -408,10 +408,10 @@ function setupHandlers(ipcMain, store) {
       // Check if submodule repo exists
       await fs.access(submoduleRepoPath);
 
-      // Add the submodule using a relative path
+      // Add the submodule using a file:// URL format
       console.log('Adding submodule...');
-      const relativeSubmodulePath = path.relative(parentRepoPath, submoduleRepoPath);
-      await execAsync(`git submodule add "${relativeSubmodulePath}" "${submoduleRepoName}"`, { cwd: parentRepoPath });
+      const submoduleUrl = `file://${submoduleRepoPath}`;
+      await execAsync(`git submodule add "${submoduleUrl}" "${submoduleRepoName}"`, { cwd: parentRepoPath });
 
       // Initialize the submodule
       console.log('Initializing submodule...');
