@@ -392,7 +392,6 @@ function setupHandlers(ipcMain, store) {
     console.log(`Received request to add submodule ${submoduleRepoName} to ${parentRepoName}`);
     const dreamVaultPath = store.get('dreamVaultPath', '');
     if (!dreamVaultPath) {
-      console.error('Dream Vault path not set');
       throw new Error('Dream Vault path not set');
     }
 
@@ -404,42 +403,23 @@ function setupHandlers(ipcMain, store) {
 
     try {
       // Check if parent repo exists
-      if (!fs.existsSync(parentRepoPath)) {
-        throw new Error(`Parent repo ${parentRepoName} does not exist`);
-      }
-
+      await fs.access(parentRepoPath);
+      
       // Check if submodule repo exists
-      if (!fs.existsSync(submoduleRepoPath)) {
-        throw new Error(`Submodule repo ${submoduleRepoName} does not exist`);
-      }
+      await fs.access(submoduleRepoPath);
 
       // Add the submodule
       console.log('Adding submodule...');
-      try {
-        execSync(`git submodule add "${submoduleRepoPath}" "${submoduleRepoName}"`, { cwd: parentRepoPath, stdio: 'pipe' });
-      } catch (error) {
-        console.error('Error output:', error.stderr.toString());
-        throw new Error(`Failed to add submodule: ${error.message}`);
-      }
+      await execAsync(`git submodule add "${submoduleRepoPath}" "${submoduleRepoName}"`, { cwd: parentRepoPath });
 
       // Initialize the submodule
       console.log('Initializing submodule...');
-      try {
-        execSync('git submodule update --init --recursive', { cwd: parentRepoPath, stdio: 'pipe' });
-      } catch (error) {
-        console.error('Error output:', error.stderr.toString());
-        throw new Error(`Failed to initialize submodule: ${error.message}`);
-      }
+      await execAsync('git submodule update --init --recursive', { cwd: parentRepoPath });
 
       // Commit the changes
       console.log('Committing changes...');
-      try {
-        execSync('git add .', { cwd: parentRepoPath, stdio: 'pipe' });
-        execSync(`git commit -m "Add submodule ${submoduleRepoName}"`, { cwd: parentRepoPath, stdio: 'pipe' });
-      } catch (error) {
-        console.error('Error output:', error.stderr.toString());
-        throw new Error(`Failed to commit changes: ${error.message}`);
-      }
+      await execAsync('git add .', { cwd: parentRepoPath });
+      await execAsync(`git commit -m "Add submodule ${submoduleRepoName}"`, { cwd: parentRepoPath });
 
       console.log(`Successfully added submodule ${submoduleRepoName} to ${parentRepoName}`);
       return true;
@@ -448,6 +428,21 @@ function setupHandlers(ipcMain, store) {
       throw error;
     }
   });
+
+  // Helper function to promisify exec
+  function execAsync(command, options) {
+    return new Promise((resolve, reject) => {
+      exec(command, options, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error executing command: ${command}`);
+          console.error(`Error output: ${stderr}`);
+          reject(error);
+        } else {
+          resolve(stdout);
+        }
+      });
+    });
+  }
 
   ipcMain.handle('read-dreamsong-canvas', async (event, repoName) => {
     const dreamVaultPath = store.get('dreamVaultPath', '');
