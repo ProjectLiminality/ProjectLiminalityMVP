@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
+import { getAllRepoNamesAndTypes } from '../services/electronService';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
+  const [showSubmoduleMenu, setShowSubmoduleMenu] = useState(false);
+  const [availableRepos, setAvailableRepos] = useState([]);
+
+  useEffect(() => {
+    const fetchRepos = async () => {
+      const repos = await getAllRepoNamesAndTypes();
+      setAvailableRepos(repos.filter(repo => repo.name !== repoName));
+    };
+    fetchRepos();
+  }, [repoName]);
   const handleEditMetadata = () => {
     onEditMetadata(repoName);
     onClose();
@@ -31,8 +42,12 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
   };
 
   const handleAddSubmodule = () => {
+    setShowSubmoduleMenu(!showSubmoduleMenu);
+  };
+
+  const handleSelectSubmodule = (submoduleName) => {
+    console.log(`Add Submodule ${submoduleName} to ${repoName}`);
     // TODO: Implement the logic for adding a submodule
-    console.log('Add Submodule clicked for', repoName);
     onClose();
   };
 
@@ -106,11 +121,43 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
             padding: '6px 10px',
             cursor: 'pointer',
             transition: 'background-color 0.2s ease',
+            position: 'relative',
           }}
           onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
           onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
         >
-          Add Submodule
+          Add Submodule ▶
+          {showSubmoduleMenu && (
+            <ul style={{
+              position: 'absolute',
+              left: '100%',
+              top: 0,
+              backgroundColor: BLACK,
+              border: `1px solid ${BLUE}`,
+              borderRadius: '4px',
+              padding: 0,
+              margin: 0,
+              listStyle: 'none',
+              zIndex: 1001,
+            }}>
+              {availableRepos.map((repo) => (
+                <li
+                  key={repo.name}
+                  onClick={() => handleSelectSubmodule(repo.name)}
+                  style={{
+                    padding: '6px 10px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                >
+                  {repo.name}
+                </li>
+              ))}
+            </ul>
+          )}
         </li>
       </ul>
     </div>
