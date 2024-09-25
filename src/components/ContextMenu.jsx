@@ -30,6 +30,12 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
     onClose();
   };
 
+  const handleAddSubmodule = () => {
+    // TODO: Implement the logic for adding a submodule
+    console.log('Add Submodule clicked for', repoName);
+    onClose();
+  };
+
   return (
     <div 
       style={{
@@ -93,6 +99,18 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
           onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
         >
           Open in GitFox
+        </li>
+        <li 
+          onClick={handleAddSubmodule}
+          style={{ 
+            padding: '6px 10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Add Submodule
         </li>
       </ul>
     </div>
