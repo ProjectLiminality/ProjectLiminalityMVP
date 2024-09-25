@@ -1,7 +1,7 @@
 const { dialog, shell } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate.js');
 const { updateBidirectionalRelationships } = require('../src/utils/metadataUtils.js');
 
