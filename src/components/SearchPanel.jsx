@@ -1,14 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
 
 const SearchPanel = ({ isOpen, onSearch, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (searchTerm !== '') {
       onSearch(searchTerm);
     }
   }, [searchTerm, onSearch]);
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setSearchTerm('');
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [onClose]);
 
   if (!isOpen) return null;
 
@@ -32,6 +53,7 @@ const SearchPanel = ({ isOpen, onSearch, onClose }) => {
       boxShadow: `0 0 0 2px ${BLUE}`,
     }}>
       <input
+        ref={inputRef}
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}

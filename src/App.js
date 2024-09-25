@@ -91,6 +91,9 @@ function App() {
       }
       if (event.key === 'Escape') {
         setIsSearchPanelOpen(false);
+        if (dreamGraphRef.current && dreamGraphRef.current.performSearch) {
+          dreamGraphRef.current.performSearch('');
+        }
       }
     };
 
