@@ -109,12 +109,16 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     fetchNodesData();
   }, [initialNodes]);
 
-  const positionNodesOnGrid = useCallback(() => {
-    const gridSize = Math.ceil(Math.sqrt(nodes.length));
+  const displaySearchResults = useCallback((searchResults) => {
+    const gridSize = Math.ceil(Math.sqrt(searchResults.length));
     const spacing = 10;
-    
+    const unrelatedCircleRadius = 1000; // Place unrelated nodes far from view
+
     setNodes(prevNodes => {
-      return prevNodes.map((node, index) => {
+      const matchedNodes = prevNodes.filter(node => searchResults.includes(node.repoName));
+      const unrelatedNodes = prevNodes.filter(node => !searchResults.includes(node.repoName));
+
+      const gridNodes = matchedNodes.map((node, index) => {
         const row = Math.floor(index / gridSize);
         const col = index % gridSize;
         return {
@@ -124,12 +128,37 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
             (row - gridSize / 2) * spacing,
             0
           ),
-          scale: 1
+          scale: 1,
+          isInLiminalView: true,
+          liminalScaleFactor: 1,
+          viewScaleFactor: 1
         };
       });
+
+      const unrelatedCircleNodes = unrelatedNodes.map((node, index) => {
+        const angle = (index / unrelatedNodes.length) * Math.PI * 2;
+        return {
+          ...node,
+          position: new THREE.Vector3(
+            Math.cos(angle) * unrelatedCircleRadius,
+            Math.sin(angle) * unrelatedCircleRadius,
+            0
+          ),
+          scale: 0.5,
+          isInLiminalView: true,
+          liminalScaleFactor: 0.5,
+          viewScaleFactor: 0.5
+        };
+      });
+
+      return [...gridNodes, ...unrelatedCircleNodes];
     });
     setIsSphericalLayout(false);
-  }, [nodes.length]);
+    setCenteredNode(null);
+  }, []);
+
+  // Placeholder for search results (hardcoded list for testing)
+  const searchResultsList = ['repo1', 'repo2', 'repo3']; // Replace with actual repo names for testing
 
   const positionNodesOnSphere = useCallback((centeredNodeIndex = -1) => {
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
@@ -286,10 +315,21 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     }
   }, [positionNodesOnSphere, isSphericalLayout, resetCamera, centeredNode, nodes, addInteraction]);
 
+  // Function to trigger search display (for testing)
+  const triggerSearchDisplay = useCallback(() => {
+    displaySearchResults(searchResultsList);
+    if (resetCamera) {
+      resetCamera();
+    }
+  }, [displaySearchResults, searchResultsList, resetCamera]);
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         handleEscape();
+      } else if (event.key === 's') {
+        // Trigger search display when 's' key is pressed
+        triggerSearchDisplay();
       }
     };
 
@@ -298,7 +338,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleEscape]);
+  }, [handleEscape, triggerSearchDisplay]);
 
   const renderedNodes = useMemo(() => {
     return nodes.map((node, index) => (
