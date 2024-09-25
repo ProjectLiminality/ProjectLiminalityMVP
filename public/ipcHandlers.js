@@ -402,16 +402,18 @@ function setupHandlers(ipcMain, store) {
     console.log(`Submodule repo path: ${submoduleRepoPath}`);
 
     try {
-      // Check if parent repo exists
+      console.log(`Checking if parent repo exists: ${parentRepoPath}`);
       await fs.access(parentRepoPath);
+      console.log('Parent repo exists');
       
-      // Check if submodule repo exists
+      console.log(`Checking if submodule repo exists: ${submoduleRepoPath}`);
       await fs.access(submoduleRepoPath);
+      console.log('Submodule repo exists');
 
-      // Add the submodule using a file:// URL format
+      // Add the submodule using a relative path
       console.log('Adding submodule...');
-      const submoduleUrl = `file://${submoduleRepoPath}`;
-      await execAsync(`git submodule add "${submoduleUrl}" "${submoduleRepoName}"`, { cwd: parentRepoPath });
+      const relativePath = path.relative(parentRepoPath, submoduleRepoPath);
+      await execAsync(`git submodule add "${relativePath}" "${submoduleRepoName}"`, { cwd: parentRepoPath });
 
       // Initialize the submodule
       console.log('Initializing submodule...');
