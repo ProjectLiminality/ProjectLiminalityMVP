@@ -388,6 +388,34 @@ function setupHandlers(ipcMain, store) {
     }
   });
 
+  ipcMain.handle('add-submodule', async (event, parentRepoName, submoduleRepoName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const parentRepoPath = path.join(dreamVaultPath, parentRepoName);
+    const submoduleRepoPath = path.join(dreamVaultPath, submoduleRepoName);
+
+    try {
+      // Add the submodule
+      execSync(`git submodule add "${submoduleRepoPath}" "${submoduleRepoName}"`, { cwd: parentRepoPath });
+
+      // Initialize the submodule
+      execSync('git submodule update --init --recursive', { cwd: parentRepoPath });
+
+      // Commit the changes
+      execSync('git add .', { cwd: parentRepoPath });
+      execSync(`git commit -m "Add submodule ${submoduleRepoName}"`, { cwd: parentRepoPath });
+
+      console.log(`Successfully added submodule ${submoduleRepoName} to ${parentRepoName}`);
+      return true;
+    } catch (error) {
+      console.error(`Error adding submodule ${submoduleRepoName} to ${parentRepoName}:`, error);
+      throw error;
+    }
+  });
+
   ipcMain.handle('read-dreamsong-canvas', async (event, repoName) => {
     const dreamVaultPath = store.get('dreamVaultPath', '');
     const canvasPath = path.join(dreamVaultPath, repoName, 'DreamSong.canvas');

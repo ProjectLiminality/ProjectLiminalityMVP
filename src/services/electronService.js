@@ -146,3 +146,10 @@ export async function getAllRepoNamesAndTypes() {
   }
   throw new Error('Electron is not available');
 }
+
+export async function addSubmodule(parentRepoName, submoduleRepoName) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.addSubmodule(parentRepoName, submoduleRepoName);
+  }
+  throw new Error('Electron is not available');
+}
