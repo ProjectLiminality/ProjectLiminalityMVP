@@ -158,7 +158,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
   }, []);
 
   // Placeholder for search results (hardcoded list for testing)
-  const searchResultsList = ['repo1', 'repo2', 'repo3']; // Replace with actual repo names for testing
+  const searchResultsList = ['Narrative', 'ManMachineNature', 'ComplicatedVsComplex']; // Replace with actual repo names for testing
 
   const positionNodesOnSphere = useCallback((centeredNodeIndex = -1) => {
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
