@@ -389,24 +389,32 @@ function setupHandlers(ipcMain, store) {
   });
 
   ipcMain.handle('add-submodule', async (event, parentRepoName, submoduleRepoName) => {
+    console.log(`Received request to add submodule ${submoduleRepoName} to ${parentRepoName}`);
     const dreamVaultPath = store.get('dreamVaultPath', '');
     if (!dreamVaultPath) {
+      console.error('Dream Vault path not set');
       throw new Error('Dream Vault path not set');
     }
 
     const parentRepoPath = path.join(dreamVaultPath, parentRepoName);
     const submoduleRepoPath = path.join(dreamVaultPath, submoduleRepoName);
 
+    console.log(`Parent repo path: ${parentRepoPath}`);
+    console.log(`Submodule repo path: ${submoduleRepoPath}`);
+
     try {
       // Add the submodule
-      execSync(`git submodule add "${submoduleRepoPath}" "${submoduleRepoName}"`, { cwd: parentRepoPath });
+      console.log('Adding submodule...');
+      execSync(`git submodule add "${submoduleRepoPath}" "${submoduleRepoName}"`, { cwd: parentRepoPath, stdio: 'inherit' });
 
       // Initialize the submodule
-      execSync('git submodule update --init --recursive', { cwd: parentRepoPath });
+      console.log('Initializing submodule...');
+      execSync('git submodule update --init --recursive', { cwd: parentRepoPath, stdio: 'inherit' });
 
       // Commit the changes
-      execSync('git add .', { cwd: parentRepoPath });
-      execSync(`git commit -m "Add submodule ${submoduleRepoName}"`, { cwd: parentRepoPath });
+      console.log('Committing changes...');
+      execSync('git add .', { cwd: parentRepoPath, stdio: 'inherit' });
+      execSync(`git commit -m "Add submodule ${submoduleRepoName}"`, { cwd: parentRepoPath, stdio: 'inherit' });
 
       console.log(`Successfully added submodule ${submoduleRepoName} to ${parentRepoName}`);
       return true;

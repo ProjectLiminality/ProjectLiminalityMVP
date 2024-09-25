@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BLACK, BLUE, WHITE } from '../constants/colors';
-import { getAllRepoNamesAndTypes } from '../services/electronService';
+import { BLACK, BLUE, WHITE, RED } from '../constants/colors';
+import { getAllRepoNamesAndTypes, addSubmodule } from '../services/electronService';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
   const [showSubmoduleMenu, setShowSubmoduleMenu] = useState(false);
@@ -63,10 +63,18 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
     setShowSubmoduleMenu(!showSubmoduleMenu);
   };
 
-  const handleSelectSubmodule = (submoduleName) => {
-    console.log(`Add Submodule ${submoduleName} to ${repoName}`);
-    // TODO: Implement the logic for adding a submodule
-    onClose();
+  const [error, setError] = useState(null);
+
+  const handleSelectSubmodule = async (submoduleName) => {
+    console.log(`Adding Submodule ${submoduleName} to ${repoName}`);
+    try {
+      await addSubmodule(repoName, submoduleName);
+      console.log(`Successfully added submodule ${submoduleName} to ${repoName}`);
+      onClose();
+    } catch (err) {
+      console.error(`Error adding submodule:`, err);
+      setError(`Failed to add submodule: ${err.message}`);
+    }
   };
 
   return (
@@ -84,6 +92,11 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
       }}
       onClick={(e) => e.stopPropagation()}
     >
+      {error && (
+        <div style={{ color: RED, padding: '10px', borderBottom: `1px solid ${BLUE}` }}>
+          {error}
+        </div>
+      )}
       <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.9em' }}>
         <li 
           onClick={handleEditMetadata}

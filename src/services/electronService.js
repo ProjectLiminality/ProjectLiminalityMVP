@@ -149,7 +149,15 @@ export async function getAllRepoNamesAndTypes() {
 
 export async function addSubmodule(parentRepoName, submoduleRepoName) {
   if (isElectronAvailable()) {
-    return window.electron.fileSystem.addSubmodule(parentRepoName, submoduleRepoName);
+    console.log(`Attempting to add submodule ${submoduleRepoName} to ${parentRepoName}`);
+    try {
+      const result = await window.electron.fileSystem.addSubmodule(parentRepoName, submoduleRepoName);
+      console.log(`Submodule addition result:`, result);
+      return result;
+    } catch (error) {
+      console.error(`Error adding submodule:`, error);
+      throw error;
+    }
   }
   throw new Error('Electron is not available');
 }
