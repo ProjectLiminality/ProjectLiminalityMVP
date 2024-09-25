@@ -57,6 +57,7 @@ const applyRotationToPosition = (position, rotation) => {
 };
 
 const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, ref) => {
+  const [searchTerm, setSearchTerm] = useState('');
   const [nodes, setNodes] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
@@ -407,6 +408,15 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
 
       setInteractionHistory(prevHistory => [...prevHistory, actionToRedo]);
       setRedoStack(prevRedoStack => prevRedoStack.slice(0, -1));
+    },
+    performSearch: (term) => {
+      setSearchTerm(term);
+      const searchResults = nodes.filter(node => 
+        node.repoName.toLowerCase().includes(term.toLowerCase()) ||
+        node.metadata?.title?.toLowerCase().includes(term.toLowerCase()) ||
+        node.metadata?.description?.toLowerCase().includes(term.toLowerCase())
+      ).map(node => node.repoName);
+      displaySearchResults(searchResults);
     }
   }));
 

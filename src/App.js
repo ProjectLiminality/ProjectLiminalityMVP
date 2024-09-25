@@ -127,11 +127,12 @@ function App() {
   };
 
   const handleSearch = (searchTerm) => {
-    // TODO: Implement search functionality
     console.log('Searching for:', searchTerm);
     setIsSearchPanelOpen(false);
-    // You'll need to pass this search term to your DreamGraph component
-    // or wherever you want to implement the search functionality
+  
+    if (dreamGraphRef.current) {
+      dreamGraphRef.current.performSearch(searchTerm);
+    }
   };
 
   return (
