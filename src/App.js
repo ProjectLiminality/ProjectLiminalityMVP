@@ -90,9 +90,13 @@ function App() {
         setIsSearchPanelOpen(true);
       }
       if (event.key === 'Escape') {
-        setIsSearchPanelOpen(false);
-        if (dreamGraphRef.current && dreamGraphRef.current.performSearch) {
-          dreamGraphRef.current.performSearch('');
+        if (isSearchPanelOpen) {
+          setIsSearchPanelOpen(false);
+        } else {
+          // Only reset the graph layout if search panel is not open
+          if (dreamGraphRef.current && dreamGraphRef.current.resetLayout) {
+            dreamGraphRef.current.resetLayout();
+          }
         }
       }
     };
@@ -106,7 +110,7 @@ function App() {
       window.removeEventListener('dragover', handleDragOver);
       window.removeEventListener('drop', handleDrop);
     };
-  }, [handleDragOver, handleDrop]);
+  }, [handleDragOver, handleDrop, isSearchPanelOpen]);
 
   const handleOpenMetadataPanel = (repoName) => {
     setSelectedRepoName(repoName);

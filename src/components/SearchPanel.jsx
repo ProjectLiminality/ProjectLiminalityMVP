@@ -22,6 +22,7 @@ const SearchPanel = ({ isOpen, onSearch, onClose }) => {
       if (event.key === 'Escape') {
         setSearchTerm('');
         onClose();
+        onSearch(''); // Reset search results
       }
     };
 
@@ -29,13 +30,20 @@ const SearchPanel = ({ isOpen, onSearch, onClose }) => {
     return () => {
       window.removeEventListener('keydown', handleEscape);
     };
-  }, [onClose]);
+  }, [onClose, onSearch]);
 
   if (!isOpen) return null;
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       onClose();
+    }
+  };
+
+  const handleChange = (e) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value === '') {
+      onSearch(''); // Reset search results when search term is empty
     }
   };
 

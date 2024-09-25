@@ -411,12 +411,21 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
     },
     performSearch: (term) => {
       setSearchTerm(term);
-      const searchResults = nodes.filter(node => 
-        node.repoName.toLowerCase().includes(term.toLowerCase()) ||
-        node.metadata?.title?.toLowerCase().includes(term.toLowerCase()) ||
-        node.metadata?.description?.toLowerCase().includes(term.toLowerCase())
-      ).map(node => node.repoName);
-      displaySearchResults(searchResults);
+      if (term === '') {
+        positionNodesOnSphere();
+        setCenteredNode(null);
+      } else {
+        const searchResults = nodes.filter(node => 
+          node.repoName.toLowerCase().includes(term.toLowerCase()) ||
+          node.metadata?.title?.toLowerCase().includes(term.toLowerCase()) ||
+          node.metadata?.description?.toLowerCase().includes(term.toLowerCase())
+        ).map(node => node.repoName);
+        displaySearchResults(searchResults);
+      }
+    },
+    resetLayout: () => {
+      positionNodesOnSphere();
+      setCenteredNode(null);
     }
   }));
 
