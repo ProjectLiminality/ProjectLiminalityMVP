@@ -9,10 +9,19 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
   useEffect(() => {
     const fetchRepos = async () => {
       const repos = await getAllRepoNamesAndTypes();
-      setAvailableRepos(repos.filter(repo => repo.name !== repoName));
+      const filteredRepos = repos.filter(repo => repo.name !== repoName);
+      console.log('Available repos for submodules:', filteredRepos);
+      setAvailableRepos(filteredRepos);
     };
     fetchRepos();
   }, [repoName]);
+
+  // Dummy data for testing
+  const dummyRepos = [
+    { name: 'Repo 1', type: 'dummy' },
+    { name: 'Repo 2', type: 'dummy' },
+    { name: 'Repo 3', type: 'dummy' },
+  ];
   const handleEditMetadata = () => {
     onEditMetadata(repoName);
     onClose();
@@ -140,7 +149,8 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
               listStyle: 'none',
               zIndex: 1001,
             }}>
-              {availableRepos.map((repo) => (
+              {console.log('Rendering submodule menu with repos:', availableRepos)}
+              {(availableRepos.length > 0 ? availableRepos : dummyRepos).map((repo) => (
                 <li
                   key={repo.name}
                   onClick={() => handleSelectSubmodule(repo.name)}
@@ -153,7 +163,7 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
                   onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
                   onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                 >
-                  {repo.name}
+                  {repo.name} {repo.type === 'dummy' ? '(Dummy)' : ''}
                 </li>
               ))}
             </ul>
