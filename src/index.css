@@ -28,3 +28,24 @@ code {
   top: 0;
   left: 0;
 }
+
+/* Scrollbar styles */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4a4a4a #000000;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #4a4a4a;
+  border-radius: 4px;
+  border: 2px solid #000000;
+}
