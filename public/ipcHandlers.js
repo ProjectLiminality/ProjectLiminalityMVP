@@ -527,7 +527,9 @@ function setupHandlers(ipcMain, store) {
       await fs.mkdir(destinationPath);
 
       // Clone the bundle
-      await execAsync(`git clone ${bundlePath} ${destinationPath}`);
+      const cloneCommand = `git clone "${bundlePath}" "${destinationPath}"`;
+      console.log(`Executing command: ${cloneCommand}`);
+      await execAsync(cloneCommand);
 
       console.log(`Successfully unbundled repository ${repoName} to DreamVault`);
       return { success: true };
@@ -544,7 +546,7 @@ function setupHandlers(ipcMain, store) {
         if (error) {
           console.error(`Error executing command: ${command}`);
           console.error(`Error output: ${stderr}`);
-          reject(error);
+          reject(new Error(`Command failed: ${command}\nError: ${error.message}\nStderr: ${stderr}`));
         } else {
           resolve(stdout);
         }
