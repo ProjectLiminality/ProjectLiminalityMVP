@@ -42,9 +42,10 @@ function App() {
         } catch (error) {
           console.error('Error in drag and drop process:', error);
         }
-      } else if (file.name.endsWith('.bundle')) {
+      } else if (entry.name.endsWith('.bundle')) {
         // Git bundle dropped
         try {
+          const file = event.dataTransfer.files[0];
           const result = await window.electron.fileSystem.unbundleRepositoryToDreamVault(file.path, file.name.replace('.bundle', ''));
           if (result.success) {
             console.log(`Repository bundle ${file.name} successfully unbundled to DreamVault`);
