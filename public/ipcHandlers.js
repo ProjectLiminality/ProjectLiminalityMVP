@@ -476,15 +476,13 @@ function setupHandlers(ipcMain, store) {
     }
   });
 
-  ipcMain.handle('copy-repository-to-dreamvault', async (event, repoName) => {
-    console.log(`Received request to copy repository ${repoName} to DreamVault`);
+  ipcMain.handle('copy-repository-to-dreamvault', async (event, sourcePath, repoName) => {
+    console.log(`Received request to copy repository ${repoName} from ${sourcePath} to DreamVault`);
     const dreamVaultPath = store.get('dreamVaultPath', '');
     if (!dreamVaultPath) {
       throw new Error('Dream Vault path not set');
     }
 
-    const desktopPath = app.getPath('desktop');
-    const sourcePath = path.join(desktopPath, repoName);
     const destinationPath = path.join(dreamVaultPath, repoName);
 
     try {

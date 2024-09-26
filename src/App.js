@@ -31,7 +31,8 @@ function App() {
       if (entry.isDirectory) {
         // Directory dropped
         try {
-          const result = await window.electron.fileSystem.copyRepositoryToDreamVault(entry.name);
+          const file = event.dataTransfer.files[0];
+          const result = await window.electron.fileSystem.copyRepositoryToDreamVault(file.path, entry.name);
           if (result.success) {
             console.log(`Repository ${entry.name} successfully copied to DreamVault`);
             // You might want to refresh the DreamSpace or update the state here

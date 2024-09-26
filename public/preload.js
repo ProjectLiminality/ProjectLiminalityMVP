@@ -18,7 +18,7 @@ contextBridge.exposeInMainWorld('electron', {
     getAllRepoNamesAndTypes: () => ipcRenderer.invoke('get-all-repo-names-and-types'),
     addSubmodule: (parentRepoName, submoduleRepoName) => ipcRenderer.invoke('add-submodule', parentRepoName, submoduleRepoName),
     updateSubmodules: (repoName) => ipcRenderer.invoke('update-submodules', repoName),
-    copyRepositoryToDreamVault: (repoName) => ipcRenderer.invoke('copy-repository-to-dreamvault', repoName),
+    copyRepositoryToDreamVault: (sourcePath, repoName) => ipcRenderer.invoke('copy-repository-to-dreamvault', sourcePath, repoName),
   },
   getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
   setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),
