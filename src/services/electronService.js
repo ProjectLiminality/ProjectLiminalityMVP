@@ -176,3 +176,17 @@ export async function updateSubmodules(repoName) {
   }
   throw new Error('Electron is not available');
 }
+
+export async function copyRepositoryToDreamVault(sourcePath, repoName) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.copyRepositoryToDreamVault(sourcePath, repoName);
+  }
+  throw new Error('Electron is not available');
+}
+
+export async function unbundleRepositoryToDreamVault(bundlePath, repoName) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.unbundleRepositoryToDreamVault(bundlePath, repoName);
+  }
+  throw new Error('Electron is not available');
+}
