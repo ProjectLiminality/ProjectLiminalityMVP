@@ -476,6 +476,33 @@ function setupHandlers(ipcMain, store) {
     }
   });
 
+  ipcMain.handle('copy-repository-to-dreamvault', async (event, repoName) => {
+    console.log(`Received request to copy repository ${repoName} to DreamVault`);
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const sourcePath = path.join(app.getPath('desktop'), repoName); // Assuming the source is on the desktop
+    const destinationPath = path.join(dreamVaultPath, repoName);
+
+    try {
+      // Check if a repository with the same name already exists
+      if (await fs.access(destinationPath).then(() => true).catch(() => false)) {
+        return { success: false, error: 'A repository with the same name already exists in DreamVault' };
+      }
+
+      // Copy the repository
+      await fs.cp(sourcePath, destinationPath, { recursive: true });
+
+      console.log(`Successfully copied repository ${repoName} to DreamVault`);
+      return { success: true };
+    } catch (error) {
+      console.error(`Error copying repository ${repoName} to DreamVault:`, error);
+      return { success: false, error: error.message };
+    }
+  });
+
   // Helper function to promisify exec
   function execAsync(command, options) {
     return new Promise((resolve, reject) => {

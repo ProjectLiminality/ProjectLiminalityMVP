@@ -25,41 +25,58 @@ function App() {
 
   const handleDrop = useCallback(async (event) => {
     event.preventDefault();
-    const file = event.dataTransfer.files[0];
-    if (file) {
-      // File dropped
-      try {
-        const nodeName = file.name.split('.')[0]; // Use the filename without extension as the node name
-        const newNode = await window.electron.fileSystem.createNewNode(nodeName);
-        // New node created
-        
-        if (newNode) {
-          // Read the file as an ArrayBuffer
-          const fileReader = new FileReader();
-          fileReader.onload = async (e) => {
-            const arrayBuffer = e.target.result;
-            const fileData = {
-              name: file.name,
-              type: file.type,
-              size: file.size,
-              lastModified: file.lastModified,
-              data: arrayBuffer
-            };
-            const fileAdded = await window.electron.fileSystem.addFileToNode(newNode, fileData);
-            if (fileAdded) {
-              // File added to node
-              // You might want to refresh the DreamSpace or update the state here
-            } else {
-              console.error(`Failed to add file ${file.name} to node ${newNode}`);
-            }
-          };
-          fileReader.onerror = (error) => {
-            console.error('Error reading file:', error);
-          };
-          fileReader.readAsArrayBuffer(file);
+    const item = event.dataTransfer.items[0];
+    if (item.kind === 'file') {
+      const entry = item.webkitGetAsEntry();
+      if (entry.isDirectory) {
+        // Directory dropped
+        try {
+          const result = await window.electron.fileSystem.copyRepositoryToDreamVault(entry.name);
+          if (result.success) {
+            console.log(`Repository ${entry.name} successfully copied to DreamVault`);
+            // You might want to refresh the DreamSpace or update the state here
+          } else {
+            console.error(`Failed to copy repository: ${result.error}`);
+          }
+        } catch (error) {
+          console.error('Error in drag and drop process:', error);
         }
-      } catch (error) {
-        console.error('Error in drag and drop process:', error);
+      } else {
+        // File dropped
+        const file = event.dataTransfer.files[0];
+        try {
+          const nodeName = file.name.split('.')[0]; // Use the filename without extension as the node name
+          const newNode = await window.electron.fileSystem.createNewNode(nodeName);
+          // New node created
+          
+          if (newNode) {
+            // Read the file as an ArrayBuffer
+            const fileReader = new FileReader();
+            fileReader.onload = async (e) => {
+              const arrayBuffer = e.target.result;
+              const fileData = {
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                lastModified: file.lastModified,
+                data: arrayBuffer
+              };
+              const fileAdded = await window.electron.fileSystem.addFileToNode(newNode, fileData);
+              if (fileAdded) {
+                // File added to node
+                // You might want to refresh the DreamSpace or update the state here
+              } else {
+                console.error(`Failed to add file ${file.name} to node ${newNode}`);
+              }
+            };
+            fileReader.onerror = (error) => {
+              console.error('Error reading file:', error);
+            };
+            fileReader.readAsArrayBuffer(file);
+          }
+        } catch (error) {
+          console.error('Error in drag and drop process:', error);
+        }
       }
     }
   }, []);
