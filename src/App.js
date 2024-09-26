@@ -42,6 +42,19 @@ function App() {
         } catch (error) {
           console.error('Error in drag and drop process:', error);
         }
+      } else if (file.name.endsWith('.bundle')) {
+        // Git bundle dropped
+        try {
+          const result = await window.electron.fileSystem.unbundleRepositoryToDreamVault(file.path, file.name.replace('.bundle', ''));
+          if (result.success) {
+            console.log(`Repository bundle ${file.name} successfully unbundled to DreamVault`);
+            // You might want to refresh the DreamSpace or update the state here
+          } else {
+            console.error(`Failed to unbundle repository: ${result.error}`);
+          }
+        } catch (error) {
+          console.error('Error in drag and drop process:', error);
+        }
       } else {
         // File dropped
         const file = event.dataTransfer.files[0];

@@ -505,6 +505,38 @@ function setupHandlers(ipcMain, store) {
     }
   });
 
+  ipcMain.handle('unbundle-repository-to-dreamvault', async (event, bundlePath, repoName) => {
+    console.log(`Received request to unbundle repository ${repoName} from ${bundlePath} to DreamVault`);
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const destinationPath = path.join(dreamVaultPath, repoName);
+
+    try {
+      // Check if the bundle file exists
+      await fs.access(bundlePath);
+
+      // Check if a repository with the same name already exists in DreamVault
+      if (await fs.access(destinationPath).then(() => true).catch(() => false)) {
+        return { success: false, error: 'A repository with the same name already exists in DreamVault' };
+      }
+
+      // Create the destination directory
+      await fs.mkdir(destinationPath);
+
+      // Clone the bundle
+      await execAsync(`git clone ${bundlePath} ${destinationPath}`);
+
+      console.log(`Successfully unbundled repository ${repoName} to DreamVault`);
+      return { success: true };
+    } catch (error) {
+      console.error(`Error unbundling repository ${repoName} to DreamVault:`, error);
+      return { success: false, error: error.message };
+    }
+  });
+
   // Helper function to promisify exec
   function execAsync(command, options) {
     return new Promise((resolve, reject) => {
