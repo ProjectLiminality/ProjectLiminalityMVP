@@ -161,3 +161,18 @@ export async function addSubmodule(parentRepoName, submoduleRepoName) {
   }
   throw new Error('Electron is not available');
 }
+
+export async function updateSubmodules(repoName) {
+  if (isElectronAvailable()) {
+    console.log(`Updating submodules for ${repoName}`);
+    try {
+      const result = await window.electron.fileSystem.updateSubmodules(repoName);
+      console.log(`Submodules update result:`, result);
+      return result;
+    } catch (error) {
+      console.error(`Error updating submodules:`, error);
+      throw error;
+    }
+  }
+  throw new Error('Electron is not available');
+}
