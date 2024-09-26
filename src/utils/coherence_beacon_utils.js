@@ -61,10 +61,30 @@ function computePositiveDelta(currentSubmodules, dreamSongDependencies) {
   return dreamSongDependencies.filter(dep => !currentSubmodules.includes(dep));
 }
 
-async function identifyFriendsToNotify(newSubmodules, friendsList) {
-  // TODO: Implement logic to identify friends who should be notified
-  // This will require additional backend functionality to check which friends have which repositories
-  return [];
+async function identifyFriendsToNotify(newSubmodules) {
+  const dreamVaultPath = store.get('dreamVaultPath');
+  if (!dreamVaultPath) {
+    throw new Error('Dream Vault path is not set in the application settings');
+  }
+
+  const friendsToNotify = new Set();
+
+  for (const submodule of newSubmodules) {
+    const metadataPath = path.join(dreamVaultPath, submodule, '.pl');
+    try {
+      const data = await fs.readFile(metadataPath, 'utf8');
+      const metadata = JSON.parse(data);
+      
+      if (metadata.relatedNodes && Array.isArray(metadata.relatedNodes)) {
+        metadata.relatedNodes.forEach(friend => friendsToNotify.add(friend));
+      }
+    } catch (error) {
+      console.error(`Error reading metadata for ${submodule}:`, error);
+      // Continue to the next submodule if there's an error
+    }
+  }
+
+  return Array.from(friendsToNotify);
 }
 
 module.exports = {

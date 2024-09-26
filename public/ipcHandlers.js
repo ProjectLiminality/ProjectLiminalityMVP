@@ -461,7 +461,7 @@ function setupHandlers(ipcMain, store) {
       const newSubmodules = computePositiveDelta(currentSubmodules, dreamSongDependencies);
 
       // Identify friends to notify
-      const friendsToNotify = await identifyFriendsToNotify(newSubmodules, []); // TODO: Pass actual friends list
+      const friendsToNotify = await identifyFriendsToNotify(newSubmodules);
 
       // For now, we're not performing any Git operations, just returning the computed data
       return {
