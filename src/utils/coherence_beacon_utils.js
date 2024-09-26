@@ -1,11 +1,27 @@
-import { readDreamSongCanvas } from './fileUtils';
+const fs = require('fs').promises;
+const path = require('path');
 
-export async function parseGitModules(repoName) {
+async function readDreamSongCanvas(repoName) {
+  const dreamVaultPath = process.env.DREAM_VAULT_PATH;
+  if (!dreamVaultPath) {
+    throw new Error('DREAM_VAULT_PATH environment variable is not set');
+  }
+  const canvasPath = path.join(dreamVaultPath, repoName, 'DreamSong.canvas');
+  try {
+    const data = await fs.readFile(canvasPath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading DreamSong.canvas for ${repoName}:`, error);
+    return null;
+  }
+}
+
+async function parseGitModules(repoName) {
   // TODO: Implement parsing of .gitmodules file
   return [];
 }
 
-export async function getDreamSongDependencies(repoName) {
+async function getDreamSongDependencies(repoName) {
   const canvasData = await readDreamSongCanvas(repoName);
   if (!canvasData || !canvasData.nodes) {
     return [];
@@ -20,12 +36,19 @@ export async function getDreamSongDependencies(repoName) {
   return [...new Set(externalDependencies)]; // Remove duplicates
 }
 
-export function computePositiveDelta(currentSubmodules, dreamSongDependencies) {
+function computePositiveDelta(currentSubmodules, dreamSongDependencies) {
   return dreamSongDependencies.filter(dep => !currentSubmodules.includes(dep));
 }
 
-export async function identifyFriendsToNotify(newSubmodules, friendsList) {
+async function identifyFriendsToNotify(newSubmodules, friendsList) {
   // TODO: Implement logic to identify friends who should be notified
   // This will require additional backend functionality to check which friends have which repositories
   return [];
 }
+
+module.exports = {
+  parseGitModules,
+  getDreamSongDependencies,
+  computePositiveDelta,
+  identifyFriendsToNotify
+};

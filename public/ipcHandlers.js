@@ -449,7 +449,7 @@ function setupHandlers(ipcMain, store) {
     const repoPath = path.join(dreamVaultPath, repoName);
 
     try {
-      const { parseGitModules, getDreamSongDependencies, computePositiveDelta, identifyFriendsToNotify } = require('../src/utils/coherence_beacon_utils');
+      const { parseGitModules, getDreamSongDependencies, computePositiveDelta, identifyFriendsToNotify } = require('../src/utils/coherence_beacon_utils.js');
 
       // Parse current .gitmodules file
       const currentSubmodules = await parseGitModules(repoName);
