@@ -1,4 +1,4 @@
-const { dialog, shell } = require('electron');
+const { dialog, shell, app } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
 const { exec, execSync } = require('child_process');
@@ -483,11 +483,15 @@ function setupHandlers(ipcMain, store) {
       throw new Error('Dream Vault path not set');
     }
 
-    const sourcePath = path.join(app.getPath('desktop'), repoName); // Assuming the source is on the desktop
+    const desktopPath = app.getPath('desktop');
+    const sourcePath = path.join(desktopPath, repoName);
     const destinationPath = path.join(dreamVaultPath, repoName);
 
     try {
-      // Check if a repository with the same name already exists
+      // Check if the source repository exists
+      await fs.access(sourcePath);
+
+      // Check if a repository with the same name already exists in DreamVault
       if (await fs.access(destinationPath).then(() => true).catch(() => false)) {
         return { success: false, error: 'A repository with the same name already exists in DreamVault' };
       }
