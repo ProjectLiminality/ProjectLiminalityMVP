@@ -389,55 +389,92 @@ function setupHandlers(ipcMain, store) {
   });
 
   ipcMain.handle('add-submodule', async (event, parentRepoName, submoduleRepoName) => {
-  console.log(`Received request to add submodule ${submoduleRepoName} to ${parentRepoName}`);
-  const dreamVaultPath = store.get('dreamVaultPath', '');
-  if (!dreamVaultPath) {
-    throw new Error('Dream Vault path not set');
-  }
+    console.log(`Received request to add submodule ${submoduleRepoName} to ${parentRepoName}`);
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
 
-  const parentRepoPath = path.join(dreamVaultPath, parentRepoName);
-  const submoduleRepoPath = path.join(dreamVaultPath, submoduleRepoName);
+    const parentRepoPath = path.join(dreamVaultPath, parentRepoName);
+    const submoduleRepoPath = path.join(dreamVaultPath, submoduleRepoName);
 
-  console.log(`Parent repo path: ${parentRepoPath}`);
-  console.log(`Submodule repo path: ${submoduleRepoPath}`);
+    console.log(`Parent repo path: ${parentRepoPath}`);
+    console.log(`Submodule repo path: ${submoduleRepoPath}`);
 
-  try {
-    console.log(`Checking if parent repo exists: ${parentRepoPath}`);
-    await fs.access(parentRepoPath);
-    console.log('Parent repo exists');
+    try {
+      console.log(`Checking if parent repo exists: ${parentRepoPath}`);
+      await fs.access(parentRepoPath);
+      console.log('Parent repo exists');
 
-    console.log(`Checking if submodule repo exists: ${submoduleRepoPath}`);
-    await fs.access(submoduleRepoPath);
-    console.log('Submodule repo exists');
+      console.log(`Checking if submodule repo exists: ${submoduleRepoPath}`);
+      await fs.access(submoduleRepoPath);
+      console.log('Submodule repo exists');
 
-    // Ensure submodule is a git repository
-    await fs.access(path.join(submoduleRepoPath, '.git'));
-    console.log('Submodule is a valid git repository');
+      // Ensure submodule is a git repository
+      await fs.access(path.join(submoduleRepoPath, '.git'));
+      console.log('Submodule is a valid git repository');
 
-    // Escape paths
-    const escapedSubmoduleRepoPath = submoduleRepoPath.replace(/"/g, '\\"');
-    const escapedSubmoduleRepoName = submoduleRepoName.replace(/"/g, '\\"');
+      // Escape paths
+      const escapedSubmoduleRepoPath = submoduleRepoPath.replace(/"/g, '\\"');
+      const escapedSubmoduleRepoName = submoduleRepoName.replace(/"/g, '\\"');
 
-    // Add the submodule using an absolute path
-    console.log('Adding submodule...');
-    await execAsync(`git submodule add "${escapedSubmoduleRepoPath}" "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath });
+      // Add the submodule using an absolute path
+      console.log('Adding submodule...');
+      await execAsync(`git submodule add "${escapedSubmoduleRepoPath}" "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath });
 
-    // Initialize the submodule
-    console.log('Initializing submodule...');
-    await execAsync('git submodule update --init --recursive', { cwd: parentRepoPath });
+      // Initialize the submodule
+      console.log('Initializing submodule...');
+      await execAsync('git submodule update --init --recursive', { cwd: parentRepoPath });
 
-    // Commit the changes
-    console.log('Committing changes...');
-    await execAsync('git add .', { cwd: parentRepoPath });
-    await execAsync(`git commit -m "Add submodule ${submoduleRepoName}"`, { cwd: parentRepoPath });
+      // Commit the changes
+      console.log('Committing changes...');
+      await execAsync('git add .', { cwd: parentRepoPath });
+      await execAsync(`git commit -m "Add submodule ${submoduleRepoName}"`, { cwd: parentRepoPath });
 
-    console.log(`Successfully added submodule ${submoduleRepoName} to ${parentRepoName}`);
-    return true;
-  } catch (error) {
-    console.error(`Error adding submodule ${submoduleRepoName} to ${parentRepoName}:`, error);
-    throw error;
-  }
-});
+      console.log(`Successfully added submodule ${submoduleRepoName} to ${parentRepoName}`);
+      return true;
+    } catch (error) {
+      console.error(`Error adding submodule ${submoduleRepoName} to ${parentRepoName}:`, error);
+      throw error;
+    }
+  });
+
+  ipcMain.handle('update-submodules', async (event, repoName) => {
+    console.log(`Received request to update submodules for ${repoName}`);
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const repoPath = path.join(dreamVaultPath, repoName);
+
+    try {
+      const { parseGitModules, getDreamSongDependencies, computePositiveDelta, identifyFriendsToNotify } = require('../src/utils/coherence_beacon_utils');
+
+      // Parse current .gitmodules file
+      const currentSubmodules = await parseGitModules(repoName);
+
+      // Get dependencies from DreamSong.canvas
+      const dreamSongDependencies = await getDreamSongDependencies(repoName);
+
+      // Compute positive delta
+      const newSubmodules = computePositiveDelta(currentSubmodules, dreamSongDependencies);
+
+      // Identify friends to notify
+      const friendsToNotify = await identifyFriendsToNotify(newSubmodules, []); // TODO: Pass actual friends list
+
+      // For now, we're not performing any Git operations, just returning the computed data
+      return {
+        currentSubmodules,
+        dreamSongDependencies,
+        newSubmodules,
+        friendsToNotify
+      };
+    } catch (error) {
+      console.error(`Error updating submodules for ${repoName}:`, error);
+      throw error;
+    }
+  });
 
   // Helper function to promisify exec
   function execAsync(command, options) {

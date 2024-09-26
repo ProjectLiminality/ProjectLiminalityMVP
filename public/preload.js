@@ -17,6 +17,7 @@ contextBridge.exposeInMainWorld('electron', {
     commitChanges: (nodeName, commitMessage) => ipcRenderer.invoke('commit-changes', nodeName, commitMessage),
     getAllRepoNamesAndTypes: () => ipcRenderer.invoke('get-all-repo-names-and-types'),
     addSubmodule: (parentRepoName, submoduleRepoName) => ipcRenderer.invoke('add-submodule', parentRepoName, submoduleRepoName),
+    updateSubmodules: (repoName) => ipcRenderer.invoke('update-submodules', repoName),
   },
   getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
   setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),

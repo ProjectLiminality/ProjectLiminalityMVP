@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BLACK, BLUE, WHITE, RED } from '../constants/colors';
-import { getAllRepoNamesAndTypes, addSubmodule } from '../services/electronService';
+import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules } from '../services/electronService';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
   const [showSubmoduleMenu, setShowSubmoduleMenu] = useState(false);
@@ -206,9 +206,32 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
             </ul>
           )}
         </li>
+        <li 
+          onClick={() => handleUpdateSubmodules(repoName)}
+          style={{ 
+            padding: '6px 10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Update Submodules
+        </li>
       </ul>
     </div>
   );
+};
+
+const handleUpdateSubmodules = async (repoName) => {
+  try {
+    const result = await updateSubmodules(repoName);
+    console.log('Submodules update result:', result);
+    // TODO: Handle the result, possibly showing a notification to the user
+  } catch (error) {
+    console.error('Error updating submodules:', error);
+    // TODO: Show error message to the user
+  }
 };
 
 export default ContextMenu;
