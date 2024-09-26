@@ -1,10 +1,12 @@
 const fs = require('fs').promises;
 const path = require('path');
+const Store = require('electron-store');
+const store = new Store();
 
 async function readDreamSongCanvas(repoName) {
-  const dreamVaultPath = process.env.DREAM_VAULT_PATH;
+  const dreamVaultPath = store.get('dreamVaultPath');
   if (!dreamVaultPath) {
-    throw new Error('DREAM_VAULT_PATH environment variable is not set');
+    throw new Error('Dream Vault path is not set in the application settings');
   }
   const canvasPath = path.join(dreamVaultPath, repoName, 'DreamSong.canvas');
   try {
@@ -17,11 +19,30 @@ async function readDreamSongCanvas(repoName) {
 }
 
 async function parseGitModules(repoName) {
-  // TODO: Implement parsing of .gitmodules file
-  return [];
+  const dreamVaultPath = store.get('dreamVaultPath');
+  if (!dreamVaultPath) {
+    throw new Error('Dream Vault path is not set in the application settings');
+  }
+  const gitmodulesPath = path.join(dreamVaultPath, repoName, '.gitmodules');
+  try {
+    const data = await fs.readFile(gitmodulesPath, 'utf8');
+    // Simple parsing of .gitmodules file
+    const submodules = data.match(/path = .+/g);
+    return submodules ? submodules.map(line => line.split(' = ')[1].trim()) : [];
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      // .gitmodules file doesn't exist, which is fine
+      return [];
+    }
+    throw error;
+  }
 }
 
 async function getDreamSongDependencies(repoName) {
+  const dreamVaultPath = store.get('dreamVaultPath');
+  if (!dreamVaultPath) {
+    throw new Error('Dream Vault path is not set in the application settings');
+  }
   const canvasData = await readDreamSongCanvas(repoName);
   if (!canvasData || !canvasData.nodes) {
     return [];
