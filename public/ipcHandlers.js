@@ -481,6 +481,14 @@ function setupHandlers(ipcMain, store) {
       // Update DreamSong.canvas file
       await updateDreamSongCanvas(repoName, dreamSongDependencies);
 
+      // Stage all changes
+      await execAsync('git add .', { cwd: repoPath });
+
+      // Commit all changes
+      await execAsync('git commit -m "Update submodules and DreamSong.canvas"', { cwd: repoPath });
+
+      console.log(`Successfully updated and committed submodules for ${repoName}`);
+
       return {
         currentSubmodules,
         dreamSongDependencies,
@@ -496,20 +504,28 @@ function setupHandlers(ipcMain, store) {
   async function updateDreamSongCanvas(repoName, dependencies) {
     const dreamVaultPath = store.get('dreamVaultPath', '');
     const canvasPath = path.join(dreamVaultPath, repoName, 'DreamSong.canvas');
-    
+  
     try {
       let canvasData = JSON.parse(await fs.readFile(canvasPath, 'utf8'));
-      
+    
       for (const node of canvasData.nodes) {
         if (node.type === 'file' && node.file) {
           const dependency = dependencies.find(dep => node.file.startsWith(dep + '/'));
           if (dependency) {
-            node.file = node.file.replace(dependency + '/', '');
+            // Prepend the repoName to the file path for submodules
+            node.file = `${repoName}/${node.file}`;
           }
+          // If the file is not from a submodule, leave it unchanged
         }
       }
 
       await fs.writeFile(canvasPath, JSON.stringify(canvasData, null, 2), 'utf8');
+    
+      // Stage and commit the changes
+      await execAsync('git add .', { cwd: path.join(dreamVaultPath, repoName) });
+      await execAsync('git commit -m "Update DreamSong.canvas with submodule changes"', { cwd: path.join(dreamVaultPath, repoName) });
+    
+      console.log(`Successfully updated and committed DreamSong.canvas for ${repoName}`);
     } catch (error) {
       console.error(`Error updating DreamSong.canvas for ${repoName}:`, error);
       throw error;
