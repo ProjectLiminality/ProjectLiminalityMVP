@@ -7,24 +7,6 @@ const { updateBidirectionalRelationships } = require('../src/utils/metadataUtils
 const { createEmailDraft } = require('../src/utils/emailUtils.js');
 
 function setupHandlers(ipcMain, store) {
-  ipcMain.handle('create-bundle', async (event, repoName) => {
-    const dreamVaultPath = store.get('dreamVaultPath', '');
-    if (!dreamVaultPath) {
-      throw new Error('Dream Vault path not set');
-    }
-
-    const repoPath = path.join(dreamVaultPath, repoName);
-    const bundlePath = path.join(repoPath, `${repoName}.bundle`);
-
-    try {
-      await execAsync(`git bundle create "${bundlePath}" --all`, { cwd: repoPath });
-      return bundlePath;
-    } catch (error) {
-      console.error(`Error creating bundle for ${repoName}:`, error);
-      throw error;
-    }
-  });
-
   ipcMain.handle('get-person-nodes', async () => {
     try {
       const dreamVaultPath = store.get('dreamVaultPath', '');
