@@ -52,7 +52,15 @@ function setupHandlers(ipcMain, store) {
       }
 
       // Create the bundle
-      const bundlePath = await ipcMain.handle('create-bundle', event, repoName);
+      const repoPath = path.join(dreamVaultPath, repoName);
+      const bundlePath = path.join(repoPath, `${repoName}.bundle`);
+
+      try {
+        await execAsync(`git bundle create "${bundlePath}" --all`, { cwd: repoPath });
+      } catch (error) {
+        console.error(`Error creating bundle for ${repoName}:`, error);
+        throw error;
+      }
 
       const subject = `Updates to ${repoName}`;
       const body = `Hello ${personName},
