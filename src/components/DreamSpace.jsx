@@ -75,9 +75,6 @@ const DreamSpace = ({ onNodeRightClick, dreamGraphRef }) => {
           Loading...
         </div>
       )}
-      <div style={{ position: 'absolute', bottom: 10, left: 10, color: 'white' }}>
-        Node count: {dreamNodes.length}
-      </div>
     </div>
   );
 };
