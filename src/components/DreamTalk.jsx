@@ -1,5 +1,5 @@
 import React from 'react';
-import { BLUE, BLACK, WHITE } from '../constants/colors';
+import { BLACK, WHITE } from '../constants/colors';
 
 const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, isHovered, borderColor, onFlip }) => {
   const renderMedia = () => {
@@ -7,17 +7,30 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
       return null;
     }
 
+    const commonStyle = {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      position: 'absolute',
+      top: '0',
+      left: '0',
+    };
+
     switch (dreamTalkMedia.type) {
       case 'image/jpeg':
       case 'image/png':
       case 'image/gif':
-        return <img src={dreamTalkMedia.data} alt={repoName} style={{ width: '75%', height: '75%', objectFit: dreamTalkMedia.type === 'image/gif' ? 'cover' : 'contain', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />;
+        return <img src={dreamTalkMedia.data} alt={repoName} style={commonStyle} />;
       case 'audio/mpeg':
       case 'audio/wav':
-        return <audio controls src={dreamTalkMedia.data} style={{ width: '90%', maxWidth: '250px' }} />;
+        return (
+          <div style={{ ...commonStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: BLACK }}>
+            <audio controls src={dreamTalkMedia.data} style={{ width: '90%', maxWidth: '250px' }} />
+          </div>
+        );
       case 'video/mp4':
       case 'video/webm':
-        return <video controls src={dreamTalkMedia.data} style={{ width: '75%', height: '75%', objectFit: 'contain', borderRadius: '50%', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />;
+        return <video controls src={dreamTalkMedia.data} style={commonStyle} />;
       default:
         return null;
     }
@@ -36,25 +49,22 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         overflow: 'hidden',
         width: '100%',
         height: '100%',
-        backgroundColor: BLACK,
         borderRadius: '50%',
         border: `5px solid ${borderColor}`,
         color: WHITE,
         boxSizing: 'border-box',
       }}
     >
-      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-        {renderMedia()}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          background: 'radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 100%)',
-          pointerEvents: 'none',
-        }} />
-      </div>
+      {renderMedia()}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.7) 100%)',
+        pointerEvents: 'none',
+      }} />
       <div style={{
         position: 'absolute',
         top: 0,
