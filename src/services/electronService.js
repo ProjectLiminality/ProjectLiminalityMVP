@@ -168,6 +168,12 @@ export async function updateSubmodules(repoName) {
     try {
       const result = await window.electron.fileSystem.updateSubmodules(repoName);
       console.log(`Submodules update result:`, result);
+      
+      // Refresh the DreamSpace after updating submodules
+      if (window.refreshDreamSpace) {
+        window.refreshDreamSpace();
+      }
+      
       return result;
     } catch (error) {
       console.error(`Error updating submodules:`, error);

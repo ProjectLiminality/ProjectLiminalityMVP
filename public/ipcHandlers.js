@@ -473,7 +473,14 @@ function setupHandlers(ipcMain, store) {
       // Identify friends to notify
       const friendsToNotify = await identifyFriendsToNotify(newSubmodules);
 
-      // For now, we're not performing any Git operations, just returning the computed data
+      // Add new submodules
+      for (const submodule of newSubmodules) {
+        await execAsync(`git submodule add --force "${path.join(dreamVaultPath, submodule)}" "${submodule}"`, { cwd: repoPath });
+      }
+
+      // Update DreamSong.canvas file
+      await updateDreamSongCanvas(repoName, dreamSongDependencies);
+
       return {
         currentSubmodules,
         dreamSongDependencies,
@@ -485,6 +492,29 @@ function setupHandlers(ipcMain, store) {
       throw error;
     }
   });
+
+  async function updateDreamSongCanvas(repoName, dependencies) {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    const canvasPath = path.join(dreamVaultPath, repoName, 'DreamSong.canvas');
+    
+    try {
+      let canvasData = JSON.parse(await fs.readFile(canvasPath, 'utf8'));
+      
+      for (const node of canvasData.nodes) {
+        if (node.type === 'file' && node.file) {
+          const dependency = dependencies.find(dep => node.file.startsWith(dep + '/'));
+          if (dependency) {
+            node.file = node.file.replace(dependency + '/', '');
+          }
+        }
+      }
+
+      await fs.writeFile(canvasPath, JSON.stringify(canvasData, null, 2), 'utf8');
+    } catch (error) {
+      console.error(`Error updating DreamSong.canvas for ${repoName}:`, error);
+      throw error;
+    }
+  }
 
   ipcMain.handle('copy-repository-to-dreamvault', async (event, sourcePath, repoName) => {
     console.log(`Received request to copy repository ${repoName} from ${sourcePath} to DreamVault`);
