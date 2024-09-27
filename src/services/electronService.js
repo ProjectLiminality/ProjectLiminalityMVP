@@ -196,3 +196,10 @@ export async function unbundleRepositoryToDreamVault(bundlePath, repoName) {
   }
   throw new Error('Electron is not available');
 }
+
+export async function createEmailDraft(repoName) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.createEmailDraft(repoName);
+  }
+  throw new Error('Electron is not available');
+}

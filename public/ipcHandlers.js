@@ -4,8 +4,28 @@ const path = require('path');
 const { exec, execSync } = require('child_process');
 const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate.js');
 const { updateBidirectionalRelationships } = require('../src/utils/metadataUtils.js');
+const { createEmailDraft } = require('../src/utils/emailUtils.js');
 
 function setupHandlers(ipcMain, store) {
+
+  ipcMain.handle('create-email-draft', async (event, repoName) => {
+    try {
+      const result = await updateSubmodules(repoName);
+      if (result.friendsToNotify && result.friendsToNotify.length > 0) {
+        const recipients = result.friendsToNotify.map(friend => friend.email);
+        const subject = `Updates to ${repoName}`;
+        const body = `Hello,\n\nI've made updates to the ${repoName} repository. Here are the details:\n\nNew submodules: ${result.newSubmodules.join(', ')}\n\nPlease review these changes when you have a moment.\n\nBest regards,\n[Your Name]`;
+
+        await createEmailDraft(recipients, subject, body);
+        return { success: true, message: 'Email draft created successfully' };
+      } else {
+        return { success: false, message: 'No friends to notify' };
+      }
+    } catch (error) {
+      console.error('Error creating email draft:', error);
+      return { success: false, error: error.message };
+    }
+  });
 
   ipcMain.handle('read-file', async (event, filePath) => {
     if (!filePath) {

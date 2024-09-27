@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BLACK, BLUE, WHITE, RED } from '../constants/colors';
-import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules } from '../services/electronService';
+import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft } from '../services/electronService';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
   const [showSubmoduleMenu, setShowSubmoduleMenu] = useState(false);
@@ -218,9 +218,35 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
         >
           Update Submodules
         </li>
+        <li 
+          onClick={() => handleShareViaEmail(repoName)}
+          style={{ 
+            padding: '6px 10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Share via Email
+        </li>
       </ul>
     </div>
   );
+};
+
+const handleShareViaEmail = async (repoName) => {
+  try {
+    const result = await createEmailDraft(repoName);
+    if (result.success) {
+      alert(result.message);
+    } else {
+      alert(result.message || 'Failed to create email draft');
+    }
+  } catch (error) {
+    console.error('Error sharing via email:', error);
+    alert(`Error sharing via email: ${error.message}`);
+  }
 };
 
 const handleUpdateSubmodules = async (repoName) => {
