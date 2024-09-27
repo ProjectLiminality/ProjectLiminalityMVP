@@ -66,8 +66,8 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
           position: 'absolute',
           top: '50%',
           left: '50%',
-          width: '80%',
-          height: '80%',
+          width: '100%',
+          height: '100%',
           transform: 'translate(-50%, -50%)',
         }}>
           {renderMedia()}
@@ -79,8 +79,9 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         left: 0,
         width: '100%',
         height: '100%',
-        background: 'radial-gradient(circle, rgba(0,0,0,0) 20%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,1) 80%)',
+        background: 'radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,1) 70%)',
         pointerEvents: 'none',
+        borderRadius: '100%',
       }} />
       <div style={{
         position: 'absolute',
