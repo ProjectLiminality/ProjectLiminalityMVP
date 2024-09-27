@@ -53,7 +53,12 @@ function setupHandlers(ipcMain, store) {
       }
 
       const subject = `Updates to ${repoName}`;
-      const body = `Hello ${personName},\n\nI've made updates to the ${repoName} repository. Please review these changes when you have a moment.\n\nBest regards,\n[Your Name]`;
+      const body = `Hello ${personName},
+
+I've made updates to the ${repoName} repository. Please review these changes when you have a moment.
+
+Best regards,
+[Your Name]`;
 
       await createEmailDraft([recipientEmail], subject, body);
       return { success: true, message: 'Email draft created successfully' };
