@@ -117,6 +117,17 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           gap: '20px',
         }}
       >
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            pointerEvents: 'none',
+            background: 'radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 100%)',
+          }}
+        />
         <style>
           {`
             .dream-song-content::-webkit-scrollbar {
