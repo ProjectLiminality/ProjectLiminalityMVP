@@ -101,12 +101,11 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
         className="dream-song-content"
         style={{
           position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%) scale(0.8)',
+          top: 0,
+          left: 0,
           width: '100%',
           height: '100%',
-          overflowY: 'scroll',
+          overflowY: 'auto',
           overflowX: 'hidden',
           scrollbarWidth: 'none',  // Firefox
           msOverflowStyle: 'none',  // Internet Explorer 10+
