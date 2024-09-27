@@ -418,9 +418,9 @@ function setupHandlers(ipcMain, store) {
       const escapedSubmoduleRepoPath = submoduleRepoPath.replace(/"/g, '\\"');
       const escapedSubmoduleRepoName = submoduleRepoName.replace(/"/g, '\\"');
 
-      // Add the submodule using an absolute path
-      console.log('Adding submodule...');
-      await execAsync(`git submodule add "${escapedSubmoduleRepoPath}" "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath });
+      // Add the submodule using an absolute path with --force flag
+      console.log('Adding submodule with --force flag...');
+      await execAsync(`git submodule add --force "${escapedSubmoduleRepoPath}" "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath });
 
       // Initialize the submodule
       console.log('Initializing submodule...');
