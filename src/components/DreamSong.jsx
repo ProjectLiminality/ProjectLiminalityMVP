@@ -125,7 +125,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
             right: 0,
             bottom: 0,
             pointerEvents: 'none',
-            background: 'radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,1) 90%)',
+            background: 'radial-gradient(circle, rgba(0,0,0,0) 20%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,1) 80%)',
           }}
         />
         <style>
