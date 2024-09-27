@@ -8,19 +8,55 @@ const { createEmailDraft } = require('../src/utils/emailUtils.js');
 
 function setupHandlers(ipcMain, store) {
 
-  ipcMain.handle('create-email-draft', async (event, repoName) => {
+  ipcMain.handle('get-person-nodes', async () => {
     try {
-      const result = await updateSubmodules(repoName);
-      if (result.friendsToNotify && result.friendsToNotify.length > 0) {
-        const recipients = result.friendsToNotify.map(friend => friend.email);
-        const subject = `Updates to ${repoName}`;
-        const body = `Hello,\n\nI've made updates to the ${repoName} repository. Here are the details:\n\nNew submodules: ${result.newSubmodules.join(', ')}\n\nPlease review these changes when you have a moment.\n\nBest regards,\n[Your Name]`;
-
-        await createEmailDraft(recipients, subject, body);
-        return { success: true, message: 'Email draft created successfully' };
-      } else {
-        return { success: false, message: 'No friends to notify' };
+      const dreamVaultPath = store.get('dreamVaultPath', '');
+      if (!dreamVaultPath) {
+        throw new Error('Dream Vault path not set');
       }
+
+      const repos = await fs.readdir(dreamVaultPath);
+      const personNodes = [];
+
+      for (const repo of repos) {
+        const metadataPath = path.join(dreamVaultPath, repo, '.pl');
+        try {
+          const metadata = JSON.parse(await fs.readFile(metadataPath, 'utf8'));
+          if (metadata.type === 'person') {
+            personNodes.push({ name: repo, email: metadata.email });
+          }
+        } catch (error) {
+          // Ignore errors for repos without metadata
+        }
+      }
+
+      return personNodes;
+    } catch (error) {
+      console.error('Error getting person nodes:', error);
+      return [];
+    }
+  });
+
+  ipcMain.handle('create-email-draft', async (event, repoName, personName) => {
+    try {
+      const dreamVaultPath = store.get('dreamVaultPath', '');
+      if (!dreamVaultPath) {
+        throw new Error('Dream Vault path not set');
+      }
+
+      const personMetadataPath = path.join(dreamVaultPath, personName, '.pl');
+      const personMetadata = JSON.parse(await fs.readFile(personMetadataPath, 'utf8'));
+      const recipientEmail = personMetadata.email;
+
+      if (!recipientEmail) {
+        return { success: false, message: 'No email address found for the selected person' };
+      }
+
+      const subject = `Updates to ${repoName}`;
+      const body = `Hello ${personName},\n\nI've made updates to the ${repoName} repository. Please review these changes when you have a moment.\n\nBest regards,\n[Your Name]`;
+
+      await createEmailDraft([recipientEmail], subject, body);
+      return { success: true, message: 'Email draft created successfully' };
     } catch (error) {
       console.error('Error creating email draft:', error);
       return { success: false, error: error.message };

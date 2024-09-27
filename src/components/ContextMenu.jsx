@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BLACK, BLUE, WHITE, RED } from '../constants/colors';
-import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft } from '../services/electronService';
+import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft, getPersonNodes } from '../services/electronService';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
   const [showSubmoduleMenu, setShowSubmoduleMenu] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
   const [availableRepos, setAvailableRepos] = useState([]);
+  const [personNodes, setPersonNodes] = useState([]);
   const submenuRef = useRef(null);
+  const shareMenuRef = useRef(null);
 
   useEffect(() => {
     const fetchRepos = async () => {
@@ -14,22 +17,33 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
       console.log('Available repos for submodules:', filteredRepos);
       setAvailableRepos(filteredRepos);
     };
+    const fetchPersonNodes = async () => {
+      const persons = await getPersonNodes();
+      console.log('Available person nodes for sharing:', persons);
+      setPersonNodes(persons);
+    };
     fetchRepos();
+    fetchPersonNodes();
   }, [repoName]);
 
   useEffect(() => {
-    if (showSubmoduleMenu && submenuRef.current) {
-      const submenu = submenuRef.current;
-      const viewportHeight = window.innerHeight;
-      const submenuHeight = submenu.offsetHeight;
-      
-      // Calculate the vertical center position
-      const topPosition = Math.max(0, (viewportHeight - submenuHeight) / 2);
-      
-      submenu.style.top = `${topPosition}px`;
-      submenu.style.maxHeight = `${viewportHeight * 0.8}px`; // Limit to 80% of viewport height
-    }
-  }, [showSubmoduleMenu]);
+    const positionSubmenu = (menuRef, showMenu) => {
+      if (showMenu && menuRef.current) {
+        const menu = menuRef.current;
+        const viewportHeight = window.innerHeight;
+        const menuHeight = menu.offsetHeight;
+        
+        // Calculate the vertical center position
+        const topPosition = Math.max(0, (viewportHeight - menuHeight) / 2);
+        
+        menu.style.top = `${topPosition}px`;
+        menu.style.maxHeight = `${viewportHeight * 0.8}px`; // Limit to 80% of viewport height
+      }
+    };
+
+    positionSubmenu(submenuRef, showSubmoduleMenu);
+    positionSubmenu(shareMenuRef, showShareMenu);
+  }, [showSubmoduleMenu, showShareMenu]);
   const handleEditMetadata = () => {
     onEditMetadata(repoName);
     onClose();
@@ -219,25 +233,72 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
           Update Submodules
         </li>
         <li 
-          onClick={() => handleShareViaEmail(repoName)}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = BLUE;
+            setShowShareMenu(true);
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = 'transparent';
+            setShowShareMenu(false);
+          }}
           style={{ 
             padding: '6px 10px',
             cursor: 'pointer',
             transition: 'background-color 0.2s ease',
+            position: 'relative',
           }}
-          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
-          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
         >
-          Share via Email
+          Share via Email ▶
+          {showShareMenu && (
+            <ul 
+              ref={shareMenuRef}
+              style={{
+                position: 'fixed',
+                left: `${position.x + 150}px`, // Adjust this value as needed
+                backgroundColor: BLACK,
+                border: `1px solid ${BLUE}`,
+                borderRadius: '4px',
+                padding: 0,
+                margin: 0,
+                listStyle: 'none',
+                zIndex: 1001,
+                minWidth: '150px',
+                maxHeight: '80vh',
+                overflowY: 'auto',
+                scrollbarWidth: 'thin',
+                scrollbarColor: `${BLUE} ${BLACK}`,
+              }}
+            >
+              {personNodes.map((person) => (
+                <li
+                  key={person.name}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShareViaEmail(repoName, person.name);
+                  }}
+                  style={{
+                    padding: '6px 10px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                >
+                  {person.name}
+                </li>
+              ))}
+            </ul>
+          )}
         </li>
       </ul>
     </div>
   );
 };
 
-const handleShareViaEmail = async (repoName) => {
+const handleShareViaEmail = async (repoName, personName) => {
   try {
-    const result = await createEmailDraft(repoName);
+    const result = await createEmailDraft(repoName, personName);
     if (result.success) {
       alert(result.message);
     } else {
