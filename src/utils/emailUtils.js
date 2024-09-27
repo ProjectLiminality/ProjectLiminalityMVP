@@ -1,11 +1,12 @@
 const { exec } = require('child_process');
+const fs = require('fs').promises;
 
-function createEmailDraft(recipients, subject, body) {
+async function createEmailDraft(recipients, subject, body, attachmentPath) {
   const recipientString = recipients.join(',');
   const escapedSubject = subject.replace(/[\\"]/g, '\\$&');
   const escapedBody = body.replace(/[\\"]/g, '\\$&').replace(/\n/g, '\\n');
   
-  const applescript = `
+  let applescript = `
     tell application "Mail"
       set newMessage to make new outgoing message
       tell newMessage
@@ -15,6 +16,16 @@ function createEmailDraft(recipients, subject, body) {
         repeat with recipientEmail in {"${recipientString}"}
           make new to recipient at end of to recipients with properties {address:recipientEmail}
         end repeat
+  `;
+
+  if (attachmentPath) {
+    const escapedAttachmentPath = attachmentPath.replace(/[\\"]/g, '\\$&');
+    applescript += `
+        make new attachment with properties {file name:"${escapedAttachmentPath}"} at after the last paragraph
+    `;
+  }
+
+  applescript += `
       end tell
     end tell
   `;

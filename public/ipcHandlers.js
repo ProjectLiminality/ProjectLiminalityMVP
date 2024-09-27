@@ -7,6 +7,23 @@ const { updateBidirectionalRelationships } = require('../src/utils/metadataUtils
 const { createEmailDraft } = require('../src/utils/emailUtils.js');
 
 function setupHandlers(ipcMain, store) {
+  ipcMain.handle('create-bundle', async (event, repoName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    const repoPath = path.join(dreamVaultPath, repoName);
+    const bundlePath = path.join(repoPath, `${repoName}.bundle`);
+
+    try {
+      await execAsync(`git bundle create "${bundlePath}" --all`, { cwd: repoPath });
+      return bundlePath;
+    } catch (error) {
+      console.error(`Error creating bundle for ${repoName}:`, error);
+      throw error;
+    }
+  });
 
   ipcMain.handle('get-person-nodes', async () => {
     try {
@@ -52,16 +69,20 @@ function setupHandlers(ipcMain, store) {
         return { success: false, message: 'No email address found for the selected person' };
       }
 
+      // Create the bundle
+      const bundlePath = await ipcMain.handle('create-bundle', event, repoName);
+
       const subject = `Updates to ${repoName}`;
       const body = `Hello ${personName},
 
 I've made updates to the "${repoName}" repository. Please review these changes when you have a moment.
+I've attached a bundle of the repository for your convenience.
 
 Best regards,
 [Your Name]`;
 
-      await createEmailDraft([recipientEmail], subject, body);
-      return { success: true, message: 'Email draft created successfully' };
+      await createEmailDraft([recipientEmail], subject, body, bundlePath);
+      return { success: true, message: 'Email draft created successfully with bundle attached' };
     } catch (error) {
       console.error('Error creating email draft:', error);
       return { success: false, error: error.message };

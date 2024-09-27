@@ -210,3 +210,10 @@ export async function createEmailDraft(repoName, personName) {
   }
   throw new Error('Electron is not available');
 }
+
+export async function createBundle(repoName) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.createBundle(repoName);
+  }
+  throw new Error('Electron is not available');
+}
