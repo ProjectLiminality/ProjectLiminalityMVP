@@ -2,8 +2,8 @@ const { exec } = require('child_process');
 
 function createEmailDraft(recipients, subject, body) {
   const recipientString = recipients.join(',');
-  const escapedSubject = subject.replace(/"/g, '\\"');
-  const escapedBody = body.replace(/"/g, '\\"').replace(/\n/g, '\\n');
+  const escapedSubject = subject.replace(/'/g, "'\"'\"'");
+  const escapedBody = body.replace(/'/g, "'\"'\"'").replace(/\n/g, '\\n');
   
   const applescript = `
     tell application "Mail"
@@ -20,7 +20,7 @@ function createEmailDraft(recipients, subject, body) {
   `;
 
   return new Promise((resolve, reject) => {
-    exec(`osascript -e "${applescript}"`, (error, stdout, stderr) => {
+    exec(`osascript -e '${applescript}'`, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error creating email draft: ${error}`);
         reject(error);
