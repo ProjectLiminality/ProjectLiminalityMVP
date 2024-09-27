@@ -2,6 +2,7 @@ const metadataTemplate = {
   type: 'idea', // Default type
   interactions: 0,
   relatedNodes: [],
+  email: '', // New email field
   // Add any other fields you want to ensure are present in all metadata files
 };
 

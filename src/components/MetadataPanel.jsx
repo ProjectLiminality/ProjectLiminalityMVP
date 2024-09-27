@@ -30,9 +30,7 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
       const data = await readMetadata(repoName);
       // Ensure all fields have a default value
       const defaultMetadata = {
-        type: 'idea',
-        interactions: 0,
-        relatedNodes: [],
+        ...metadataTemplate,
         ...data
       };
       setMetadata(defaultMetadata);
@@ -147,6 +145,29 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
                 color: WHITE,
               },
             }),
+          }}
+        />
+      );
+    } else if (key === 'email') {
+      return (
+        <input
+          type="email"
+          value={value || ''}
+          onChange={(e) => handleInputChange(key, e.target.value)}
+          style={{ 
+            width: '60%',
+            padding: '5px',
+            backgroundColor: BLACK,
+            color: WHITE,
+            border: `1px solid ${BLUE}`,
+            borderRadius: '4px',
+            outline: 'none',
+          }}
+          onFocus={(e) => {
+            e.target.style.border = `1px solid ${RED}`;
+          }}
+          onBlur={(e) => {
+            e.target.style.border = `1px solid ${BLUE}`;
           }}
         />
       );
