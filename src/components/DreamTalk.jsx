@@ -58,10 +58,10 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
     >
       <div style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
+        top: '10%',
+        left: '10%',
+        width: '80%',
+        height: '80%',
         borderRadius: '50%',
         overflow: 'hidden',
       }}>

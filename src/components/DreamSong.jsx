@@ -103,18 +103,18 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '90%',
-          height: '90%',
+          width: '70%',
+          height: '70%',
           overflowY: 'scroll',
           overflowX: 'hidden',
           scrollbarWidth: 'none',  // Firefox
           msOverflowStyle: 'none',  // Internet Explorer 10+
-          padding: '20px',
+          padding: '16px',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '20px',
+          gap: '16px',
         }}
       >
         <div
