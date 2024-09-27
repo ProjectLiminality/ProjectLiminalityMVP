@@ -93,7 +93,7 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         height: `${dimensions.height * 0.8}px`,
         background: 'radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,1) 70%)',
         pointerEvents: 'none',
-        borderRadius: '50%',
+        borderRadius: '49%',
       }} />
       <div style={{
         position: 'absolute',
