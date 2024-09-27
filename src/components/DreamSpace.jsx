@@ -68,7 +68,6 @@ const DreamSpace = ({ onNodeRightClick, dreamGraphRef }) => {
           />
         )}
         <IntersectionChecker />
-        <axesHelper args={[5]} />
       </Canvas>
       {dreamNodes.length === 0 && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
