@@ -55,7 +55,7 @@ function setupHandlers(ipcMain, store) {
       const subject = `Updates to ${repoName}`;
       const body = `Hello ${personName},
 
-I've made updates to the ${repoName} repository. Please review these changes when you have a moment.
+I've made updates to the "${repoName}" repository. Please review these changes when you have a moment.
 
 Best regards,
 [Your Name]`;
