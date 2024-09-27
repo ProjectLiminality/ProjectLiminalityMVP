@@ -27,22 +27,26 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
   }, [repoName]);
 
   useEffect(() => {
-    const positionSubmenu = (menuRef, showMenu) => {
-      if (showMenu && menuRef.current) {
+    const positionSubmenu = (menuRef, showMenu, parentElement) => {
+      if (showMenu && menuRef.current && parentElement) {
         const menu = menuRef.current;
+        const parentRect = parentElement.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
         const menuHeight = menu.offsetHeight;
-        
-        // Calculate the vertical center position
-        const topPosition = Math.max(0, (viewportHeight - menuHeight) / 2);
-        
+
+        let topPosition = parentRect.top;
+        if (topPosition + menuHeight > viewportHeight) {
+          topPosition = Math.max(0, viewportHeight - menuHeight);
+        }
+
         menu.style.top = `${topPosition}px`;
+        menu.style.left = `${parentRect.right}px`;
         menu.style.maxHeight = `${viewportHeight * 0.8}px`; // Limit to 80% of viewport height
       }
     };
 
-    positionSubmenu(submenuRef, showSubmoduleMenu);
-    positionSubmenu(shareMenuRef, showShareMenu);
+    positionSubmenu(submenuRef, showSubmoduleMenu, submenuRef.current?.parentElement);
+    positionSubmenu(shareMenuRef, showShareMenu, shareMenuRef.current?.parentElement);
   }, [showSubmoduleMenu, showShareMenu]);
   const handleEditMetadata = () => {
     onEditMetadata(repoName);
@@ -165,10 +169,6 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
             e.target.style.backgroundColor = BLUE;
             setShowSubmoduleMenu(true);
           }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = 'transparent';
-            setShowSubmoduleMenu(false);
-          }}
           style={{ 
             padding: '6px 10px',
             cursor: 'pointer',
@@ -180,9 +180,10 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
           {showSubmoduleMenu && (
             <ul 
               ref={submenuRef}
+              onMouseEnter={() => setShowSubmoduleMenu(true)}
+              onMouseLeave={() => setShowSubmoduleMenu(false)}
               style={{
                 position: 'fixed',
-                left: `${position.x + 150}px`, // Adjust this value as needed
                 backgroundColor: BLACK,
                 border: `1px solid ${BLUE}`,
                 borderRadius: '4px',
@@ -237,10 +238,6 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
             e.target.style.backgroundColor = BLUE;
             setShowShareMenu(true);
           }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = 'transparent';
-            setShowShareMenu(false);
-          }}
           style={{ 
             padding: '6px 10px',
             cursor: 'pointer',
@@ -252,9 +249,10 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
           {showShareMenu && (
             <ul 
               ref={shareMenuRef}
+              onMouseEnter={() => setShowShareMenu(true)}
+              onMouseLeave={() => setShowShareMenu(false)}
               style={{
                 position: 'fixed',
-                left: `${position.x + 150}px`, // Adjust this value as needed
                 backgroundColor: BLACK,
                 border: `1px solid ${BLUE}`,
                 borderRadius: '4px',
