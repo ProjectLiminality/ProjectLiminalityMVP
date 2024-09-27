@@ -11,9 +11,6 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
       width: '100%',
       height: '100%',
       objectFit: 'cover',
-      position: 'absolute',
-      top: '0',
-      left: '0',
     };
 
     switch (dreamTalkMedia.type) {
@@ -58,14 +55,23 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
     >
       <div style={{
         position: 'absolute',
-        top: '10%',
-        left: '10%',
-        width: '80%',
-        height: '80%',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         borderRadius: '50%',
         overflow: 'hidden',
       }}>
-        {renderMedia()}
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: '80%',
+          height: '80%',
+          transform: 'translate(-50%, -50%)',
+        }}>
+          {renderMedia()}
+        </div>
       </div>
       <div style={{
         position: 'absolute',

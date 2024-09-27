@@ -103,8 +103,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '70%',
-          height: '70%',
+          width: '80%',
+          height: '80%',
           overflowY: 'scroll',
           overflowX: 'hidden',
           scrollbarWidth: 'none',  // Firefox
