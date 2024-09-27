@@ -10,7 +10,9 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
     const commonStyle = {
       width: '100%',
       height: '100%',
-      objectFit: 'cover',
+      objectFit: 'contain',
+      maxWidth: '100%',
+      maxHeight: '100%',
     };
 
     switch (dreamTalkMedia.type) {
@@ -22,7 +24,7 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
       case 'audio/wav':
         return (
           <div style={{ ...commonStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: BLACK }}>
-            <audio controls src={dreamTalkMedia.data} style={{ width: '90%', maxWidth: '250px' }} />
+            <audio controls src={dreamTalkMedia.data} style={{ width: '90%', maxWidth: '200px' }} />
           </div>
         );
       case 'video/mp4':
@@ -93,38 +95,48 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '20px',
+        padding: '10px',
         boxSizing: 'border-box',
         background: !dreamTalkMedia ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
         opacity: !dreamTalkMedia ? 1 : 0,
         transition: 'opacity 0.3s ease, background 0.3s ease',
+        overflow: 'hidden',
       }}>
-        <h2 style={{ 
-          fontSize: '18px', 
-          margin: '10px 0', 
-          padding: '5px', 
-          textAlign: 'center',
-          wordWrap: 'break-word',
-          overflowWrap: 'break-word',
-          maxWidth: '100%',
+        <div style={{
+          maxHeight: '100%',
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '100%',
         }}>
-          {repoName}
-        </h2>
-        {metadata && metadata.description && (
-          <p style={{
-            fontSize: '14px',
-            margin: '5px 0',
+          <h2 style={{ 
+            fontSize: '16px', 
+            margin: '5px 0', 
+            padding: '3px', 
             textAlign: 'center',
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word',
             maxWidth: '100%',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
           }}>
-            {metadata.description}
-          </p>
-        )}
+            {repoName}
+          </h2>
+          {metadata && metadata.description && (
+            <p style={{
+              fontSize: '12px',
+              margin: '3px 0',
+              textAlign: 'center',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+            }}>
+              {metadata.description}
+            </p>
+          )}
+        </div>
       </div>
       <div
         style={{
