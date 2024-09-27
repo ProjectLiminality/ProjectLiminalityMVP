@@ -102,8 +102,9 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
         style={{
           position: 'absolute',
           top: 0,
-          left: 0,
-          width: '100%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '80%',
           height: '100%',
           overflowY: 'auto',
           overflowX: 'hidden',
