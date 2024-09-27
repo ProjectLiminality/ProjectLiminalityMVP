@@ -230,7 +230,10 @@ const handleUpdateSubmodules = async (repoName) => {
     if (result.message === "Everything is up to date") {
       alert("Everything is up to date. No new submodules to add.");
     } else if (result.message === "Submodules updated successfully") {
-      alert(`Submodules updated successfully. New submodules: ${result.newSubmodules.join(', ')}`);
+      const friendsInfo = result.friendsToNotify.map(friend => `${friend.name} (${friend.email})`).join(', ');
+      alert(`Submodules updated successfully. 
+New submodules: ${result.newSubmodules.join(', ')}
+Friends to notify: ${friendsInfo}`);
     } else {
       alert(result.message);
     }

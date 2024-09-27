@@ -67,7 +67,7 @@ async function identifyFriendsToNotify(newSubmodules) {
     throw new Error('Dream Vault path is not set in the application settings');
   }
 
-  const friendsToNotify = new Set();
+  const friendsToNotify = new Map();
 
   for (const submodule of newSubmodules) {
     const metadataPath = path.join(dreamVaultPath, submodule, '.pl');
@@ -76,7 +76,19 @@ async function identifyFriendsToNotify(newSubmodules) {
       const metadata = JSON.parse(data);
       
       if (metadata.relatedNodes && Array.isArray(metadata.relatedNodes)) {
-        metadata.relatedNodes.forEach(friend => friendsToNotify.add(friend));
+        for (const friend of metadata.relatedNodes) {
+          if (!friendsToNotify.has(friend)) {
+            const friendMetadataPath = path.join(dreamVaultPath, friend, '.pl');
+            try {
+              const friendData = await fs.readFile(friendMetadataPath, 'utf8');
+              const friendMetadata = JSON.parse(friendData);
+              friendsToNotify.set(friend, friendMetadata.email || '');
+            } catch (error) {
+              console.error(`Error reading metadata for friend ${friend}:`, error);
+              friendsToNotify.set(friend, '');
+            }
+          }
+        }
       }
     } catch (error) {
       console.error(`Error reading metadata for ${submodule}:`, error);
@@ -84,7 +96,7 @@ async function identifyFriendsToNotify(newSubmodules) {
     }
   }
 
-  return Array.from(friendsToNotify);
+  return Array.from(friendsToNotify.entries()).map(([name, email]) => ({ name, email }));
 }
 
 module.exports = {
