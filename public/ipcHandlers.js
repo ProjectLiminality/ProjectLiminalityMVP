@@ -56,7 +56,11 @@ function setupHandlers(ipcMain, store) {
       const bundlePath = path.join(repoPath, `${repoName}.bundle`);
 
       try {
-        await execAsync(`git bundle create "${bundlePath}" --all`, { cwd: repoPath });
+        // First, ensure all submodules are initialized and updated
+        await execAsync('git submodule update --init --recursive', { cwd: repoPath });
+        
+        // Create the bundle with all branches and tags, including submodules
+        await execAsync(`git bundle create "${bundlePath}" --all --recurse-submodules=on-demand`, { cwd: repoPath });
       } catch (error) {
         console.error(`Error creating bundle for ${repoName}:`, error);
         throw error;
@@ -683,6 +687,10 @@ Best regards,
       const cloneCommand = `git clone "${bundlePath}" "${destinationPath}"`;
       console.log(`Executing command: ${cloneCommand}`);
       await execAsync(cloneCommand);
+
+      // Initialize and update submodules
+      console.log('Initializing and updating submodules...');
+      await execAsync('git submodule update --init --recursive', { cwd: destinationPath });
 
       console.log(`Successfully unbundled repository ${repoName} to DreamVault`);
       return { success: true };
