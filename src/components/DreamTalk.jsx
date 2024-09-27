@@ -1,7 +1,23 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { BLACK, WHITE, BLUE } from '../constants/colors';
 
 const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, isHovered, borderColor, onFlip }) => {
+  const containerRef = useRef(null);
+  const mediaRef = useRef(null);
+
+  useEffect(() => {
+    if (containerRef.current && mediaRef.current) {
+      const container = containerRef.current;
+      const media = mediaRef.current;
+      const size = Math.min(container.offsetWidth, container.offsetHeight);
+      const scale = 0.8;
+      
+      media.style.width = `${size}px`;
+      media.style.height = `${size}px`;
+      media.style.transform = `scale(${scale})`;
+    }
+  }, [dreamTalkMedia]);
+
   const renderMedia = () => {
     if (!dreamTalkMedia || !dreamTalkMedia.data) {
       return null;
@@ -10,26 +26,24 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
     const commonStyle = {
       width: '100%',
       height: '100%',
-      objectFit: 'contain',
-      maxWidth: '100%',
-      maxHeight: '100%',
+      objectFit: 'cover',
     };
 
     switch (dreamTalkMedia.type) {
       case 'image/jpeg':
       case 'image/png':
       case 'image/gif':
-        return <img src={dreamTalkMedia.data} alt={repoName} style={commonStyle} />;
+        return <img ref={mediaRef} src={dreamTalkMedia.data} alt={repoName} style={commonStyle} />;
       case 'audio/mpeg':
       case 'audio/wav':
         return (
-          <div style={{ ...commonStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: BLACK }}>
+          <div ref={mediaRef} style={{ ...commonStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: BLACK }}>
             <audio controls src={dreamTalkMedia.data} style={{ width: '90%', maxWidth: '200px' }} />
           </div>
         );
       case 'video/mp4':
       case 'video/webm':
-        return <video controls src={dreamTalkMedia.data} style={commonStyle} />;
+        return <video ref={mediaRef} controls src={dreamTalkMedia.data} style={commonStyle} />;
       default:
         return null;
     }
@@ -37,6 +51,7 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
 
   return (
     <div 
+      ref={containerRef}
       className="dream-talk" 
       onClick={() => onClick(repoName)}
       onContextMenu={(e) => {
@@ -57,33 +72,26 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
     >
       <div style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
         width: '100%',
         height: '100%',
         borderRadius: '50%',
         overflow: 'hidden',
       }}>
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          width: '100%',
-          height: '100%',
-          transform: 'translate(-50%, -50%)',
-        }}>
-          {renderMedia()}
-        </div>
+        {renderMedia()}
       </div>
       <div style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%) scale(0.8)',
         width: '100%',
         height: '100%',
         background: 'radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,1) 70%)',
         pointerEvents: 'none',
-        borderRadius: '100%',
+        borderRadius: '50%',
       }} />
       <div style={{
         position: 'absolute',
