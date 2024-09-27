@@ -53,9 +53,20 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         border: `5px solid ${borderColor}`,
         color: WHITE,
         boxSizing: 'border-box',
+        background: BLACK,
       }}
     >
-      {renderMedia()}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        overflow: 'hidden',
+      }}>
+        {renderMedia()}
+      </div>
       <div style={{
         position: 'absolute',
         top: 0,
