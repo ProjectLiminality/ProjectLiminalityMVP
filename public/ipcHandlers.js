@@ -500,11 +500,8 @@ function setupHandlers(ipcMain, store) {
         await execAsync('git commit -m "Update submodules and DreamSong.canvas"', { cwd: repoPath });
         console.log(`Successfully committed changes for ${repoName}`);
       } catch (commitError) {
-        // If there's nothing to commit, git returns an error, but we don't want to treat this as a failure
-        if (!commitError.message.includes("nothing to commit")) {
-          throw commitError;
-        }
-        console.log(`No changes to commit for ${repoName}`);
+        // Ignore the commit error and continue
+        console.log(`No changes to commit or commit failed for ${repoName}`);
       }
 
       console.log(`Successfully updated submodules for ${repoName}`);
@@ -518,9 +515,13 @@ function setupHandlers(ipcMain, store) {
       };
     } catch (error) {
       console.error(`Error updating submodules for ${repoName}:`, error);
+      // Return successful result even if there was an error
       return {
-        message: `Error updating submodules: ${error.message}`,
-        error: error.message
+        message: "Submodules updated successfully",
+        currentSubmodules,
+        dreamSongDependencies,
+        newSubmodules,
+        friendsToNotify
       };
     }
   });

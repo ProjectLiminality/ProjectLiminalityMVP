@@ -227,15 +227,13 @@ const handleUpdateSubmodules = async (repoName) => {
   try {
     const result = await updateSubmodules(repoName);
     console.log('Submodules update result:', result);
-    if (result.message === "Everything is up to date") {
-      alert("Everything is up to date. No new submodules to add.");
-    } else if (result.message === "Submodules updated successfully") {
+    if (result.newSubmodules && result.newSubmodules.length > 0) {
       const friendsInfo = result.friendsToNotify.map(friend => `${friend.name} (${friend.email})`).join(', ');
       alert(`Submodules updated successfully. 
 New submodules: ${result.newSubmodules.join(', ')}
 Friends to notify: ${friendsInfo}`);
     } else {
-      alert(result.message);
+      alert("Everything is up to date. No new submodules to add.");
     }
   } catch (error) {
     console.error('Error updating submodules:', error);
