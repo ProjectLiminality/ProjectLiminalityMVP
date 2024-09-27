@@ -485,9 +485,18 @@ function setupHandlers(ipcMain, store) {
       await execAsync('git add .', { cwd: repoPath });
 
       // Commit all changes
-      await execAsync('git commit -m "Update submodules and DreamSong.canvas"', { cwd: repoPath });
+      try {
+        await execAsync('git commit -m "Update submodules and DreamSong.canvas"', { cwd: repoPath });
+        console.log(`Successfully committed changes for ${repoName}`);
+      } catch (commitError) {
+        // If there's nothing to commit, git returns an error, but we don't want to treat this as a failure
+        if (!commitError.message.includes("nothing to commit")) {
+          throw commitError;
+        }
+        console.log(`No changes to commit for ${repoName}`);
+      }
 
-      console.log(`Successfully updated and committed submodules for ${repoName}`);
+      console.log(`Successfully updated submodules for ${repoName}`);
 
       return {
         currentSubmodules,
