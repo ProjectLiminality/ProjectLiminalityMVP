@@ -470,6 +470,17 @@ function setupHandlers(ipcMain, store) {
       // Compute positive delta
       const newSubmodules = computePositiveDelta(currentSubmodules, dreamSongDependencies);
 
+      if (newSubmodules.length === 0) {
+        console.log(`No new submodules to add for ${repoName}`);
+        return {
+          message: "Everything is up to date",
+          currentSubmodules,
+          dreamSongDependencies,
+          newSubmodules: [],
+          friendsToNotify: []
+        };
+      }
+
       // Identify friends to notify
       const friendsToNotify = await identifyFriendsToNotify(newSubmodules);
 
@@ -499,6 +510,7 @@ function setupHandlers(ipcMain, store) {
       console.log(`Successfully updated submodules for ${repoName}`);
 
       return {
+        message: "Submodules updated successfully",
         currentSubmodules,
         dreamSongDependencies,
         newSubmodules,
@@ -506,7 +518,10 @@ function setupHandlers(ipcMain, store) {
       };
     } catch (error) {
       console.error(`Error updating submodules for ${repoName}:`, error);
-      throw error;
+      return {
+        message: `Error updating submodules: ${error.message}`,
+        error: error.message
+      };
     }
   });
 

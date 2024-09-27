@@ -177,12 +177,7 @@ export async function updateSubmodules(repoName) {
       return result;
     } catch (error) {
       console.error(`Error updating submodules:`, error);
-      // Check if the error message indicates that there were no changes to commit
-      if (error.message.includes("nothing to commit")) {
-        console.log("No changes to commit, considering this a success");
-        return { message: "No changes to commit" };
-      }
-      throw error;
+      return { message: `Error updating submodules: ${error.message}`, error: error.message };
     }
   }
   throw new Error('Electron is not available');
