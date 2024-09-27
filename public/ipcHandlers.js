@@ -418,9 +418,15 @@ function setupHandlers(ipcMain, store) {
       const escapedSubmoduleRepoPath = submoduleRepoPath.replace(/"/g, '\\"');
       const escapedSubmoduleRepoName = submoduleRepoName.replace(/"/g, '\\"');
 
-      // Add the submodule using an absolute path
+      // Clean up existing submodule if it exists
+      console.log('Cleaning up existing submodule...');
+      await execAsync(`git submodule deinit -f "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath }).catch(() => {});
+      await execAsync(`rm -rf "${path.join(parentRepoPath, '.git/modules', escapedSubmoduleRepoName)}"`, { cwd: parentRepoPath }).catch(() => {});
+      await execAsync(`git rm -f "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath }).catch(() => {});
+
+      // Add the submodule using an absolute path and force option
       console.log('Adding submodule...');
-      await execAsync(`git submodule add "${escapedSubmoduleRepoPath}" "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath });
+      await execAsync(`git submodule add --force "${escapedSubmoduleRepoPath}" "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath });
 
       // Initialize and update the submodule
       console.log('Initializing and updating submodule...');
