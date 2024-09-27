@@ -1,22 +1,24 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { BLACK, WHITE, BLUE } from '../constants/colors';
 
 const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, isHovered, borderColor, onFlip }) => {
   const containerRef = useRef(null);
   const mediaRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    if (containerRef.current && mediaRef.current) {
-      const container = containerRef.current;
-      const media = mediaRef.current;
-      const size = Math.min(container.offsetWidth, container.offsetHeight);
-      const scale = 0.8;
-      
-      media.style.width = `${size}px`;
-      media.style.height = `${size}px`;
-      media.style.transform = `scale(${scale})`;
+    if (containerRef.current) {
+      const updateDimensions = () => {
+        const container = containerRef.current;
+        const size = Math.min(container.offsetWidth, container.offsetHeight);
+        setDimensions({ width: size, height: size });
+      };
+
+      updateDimensions();
+      window.addEventListener('resize', updateDimensions);
+      return () => window.removeEventListener('resize', updateDimensions);
     }
-  }, [dreamTalkMedia]);
+  }, []);
 
   const renderMedia = () => {
     if (!dreamTalkMedia || !dreamTalkMedia.data) {
@@ -75,8 +77,8 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '100%',
-        height: '100%',
+        width: `${dimensions.width}px`,
+        height: `${dimensions.height}px`,
         borderRadius: '50%',
         overflow: 'hidden',
       }}>
@@ -86,9 +88,9 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         position: 'absolute',
         top: '50%',
         left: '50%',
-        transform: 'translate(-50%, -50%) scale(0.8)',
-        width: '100%',
-        height: '100%',
+        transform: 'translate(-50%, -50%)',
+        width: `${dimensions.width}px`,
+        height: `${dimensions.height}px`,
         background: 'radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,1) 70%)',
         pointerEvents: 'none',
         borderRadius: '50%',
