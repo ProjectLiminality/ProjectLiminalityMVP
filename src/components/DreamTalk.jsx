@@ -1,5 +1,5 @@
 import React from 'react';
-import { BLACK, WHITE } from '../constants/colors';
+import { BLACK, WHITE, BLUE } from '../constants/colors';
 
 const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, isHovered, borderColor, onFlip }) => {
   const renderMedia = () => {
