@@ -1,10 +1,40 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { BLACK, WHITE, BLUE } from '../constants/colors';
 
+const CenterOverlay = ({ repoName, isVisible }) => (
+  <div style={{
+    position: 'absolute',
+    top: '25%',
+    left: '25%',
+    width: '50%',
+    height: '50%',
+    borderRadius: '50%',
+    backgroundColor: isVisible ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: isVisible ? 1 : 0,
+    transition: 'opacity 0.3s ease',
+    pointerEvents: 'none',
+  }}>
+    {isVisible && (
+      <div style={{
+        color: WHITE,
+        fontSize: '14px',
+        textAlign: 'center',
+        padding: '5px',
+      }}>
+        {repoName}
+      </div>
+    )}
+  </div>
+);
+
 const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, isHovered, borderColor, onFlip }) => {
   const containerRef = useRef(null);
   const mediaRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [isCenterHovered, setIsCenterHovered] = useState(false);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -95,6 +125,20 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         pointerEvents: 'none',
         borderRadius: '49%',
       }} />
+      <div
+        style={{
+          position: 'absolute',
+          top: '25%',
+          left: '25%',
+          width: '50%',
+          height: '50%',
+          borderRadius: '50%',
+          cursor: 'pointer',
+        }}
+        onMouseEnter={() => setIsCenterHovered(true)}
+        onMouseLeave={() => setIsCenterHovered(false)}
+      />
+      <CenterOverlay repoName={repoName} isVisible={isCenterHovered} />
       <div style={{
         position: 'absolute',
         top: 0,
