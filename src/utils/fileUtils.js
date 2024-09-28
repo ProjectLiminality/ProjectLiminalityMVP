@@ -5,13 +5,13 @@ const preferredExtensions = ['.gif', '.mp4', '.png', '.jpg', '.jpeg'];
 export async function getRepoData(repoName) {
   try {
     const metadata = await electronService.readMetadata(repoName);
-    const dreamTalkMedia = await getPreferredMediaFile(repoName);
+    const dreamTalkMedia = await getAllMediaFiles(repoName);
     const dreamSongCanvas = await readDreamSongCanvas(repoName);
     const dreamSongMedia = await getDreamSongMedia(repoName);
     return { metadata, dreamTalkMedia, dreamSongCanvas, dreamSongMedia };
   } catch (error) {
     console.error('Error getting repo data:', error);
-    return { metadata: {}, dreamTalkMedia: null, dreamSongCanvas: null, dreamSongMedia: [] };
+    return { metadata: {}, dreamTalkMedia: [], dreamSongCanvas: null, dreamSongMedia: [] };
   }
 }
 
@@ -65,21 +65,15 @@ function getMimeType(fileExtension) {
   return mimeTypes[fileExtension] || 'application/octet-stream';
 }
 
-async function getPreferredMediaFile(repoName) {
+async function getAllMediaFiles(repoName) {
   try {
     const files = await electronService.listFiles(repoName);
-    const mediaFiles = files.filter(file => 
-      file.startsWith(repoName) && preferredExtensions.some(ext => file.toLowerCase().endsWith(ext))
+    const rootMediaFiles = files.filter(file => 
+      !file.includes('/') && preferredExtensions.some(ext => file.toLowerCase().endsWith(ext))
     );
 
-    if (mediaFiles.length > 0) {
-      const selectedFile = mediaFiles.sort((a, b) => {
-        const extA = preferredExtensions.findIndex(ext => a.toLowerCase().endsWith(ext));
-        const extB = preferredExtensions.findIndex(ext => b.toLowerCase().endsWith(ext));
-        return extA - extB;
-      })[0];
-
-      const mediaPath = await electronService.getMediaFilePath(repoName, selectedFile);
+    const mediaPromises = rootMediaFiles.map(async file => {
+      const mediaPath = await electronService.getMediaFilePath(repoName, file);
       if (!mediaPath) {
         return null;
       }
@@ -89,25 +83,34 @@ async function getPreferredMediaFile(repoName) {
         return null;
       }
 
-      const fileExtension = selectedFile.split('.').pop().toLowerCase();
-      const mimeTypes = {
-        'mp4': 'video/mp4',
-        'gif': 'image/gif',
-        'png': 'image/png',
-        'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg'
-      };
-      const mimeType = mimeTypes[fileExtension] || 'application/octet-stream';
+      const fileExtension = file.split('.').pop().toLowerCase();
+      const mimeType = getMimeType(fileExtension);
 
       return {
         type: mimeType,
         path: mediaPath,
-        data: `data:${mimeType};base64,${mediaData}`
+        data: `data:${mimeType};base64,${mediaData}`,
+        filename: file
       };
-    }
-    return null;
+    });
+
+    const mediaFiles = (await Promise.all(mediaPromises)).filter(media => media !== null);
+
+    // Sort media files
+    mediaFiles.sort((a, b) => {
+      const aNameMatch = a.filename.toLowerCase() === repoName.toLowerCase();
+      const bNameMatch = b.filename.toLowerCase() === repoName.toLowerCase();
+      if (aNameMatch && !bNameMatch) return -1;
+      if (!aNameMatch && bNameMatch) return 1;
+      const aIndex = preferredExtensions.findIndex(ext => a.filename.toLowerCase().endsWith(ext));
+      const bIndex = preferredExtensions.findIndex(ext => b.filename.toLowerCase().endsWith(ext));
+      return aIndex - bIndex;
+    });
+
+    return mediaFiles;
   } catch (error) {
-    return null;
+    console.error('Error getting all media files:', error);
+    return [];
   }
 }
 
