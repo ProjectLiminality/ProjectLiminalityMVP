@@ -121,7 +121,7 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         transform: 'translate(-50%, -50%)',
         width: `${dimensions.width * 0.8}px`,
         height: `${dimensions.height * 0.8}px`,
-        background: 'radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,1) 70%)',
+        background: 'radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,1) 70%)',
         pointerEvents: 'none',
         borderRadius: '49%',
       }} />
