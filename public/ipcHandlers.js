@@ -543,7 +543,7 @@ Best regards,
 
       // Add new submodules
       for (const submodule of newSubmodules) {
-        await execAsync(`git submodule add --force "${path.join(dreamVaultPath, submodule)}" "${submodule}"`, { cwd: repoPath });
+        await execAsync(`git submodule add --force "../${submodule}" "${submodule}"`, { cwd: repoPath });
       }
 
       // Update DreamSong.canvas file
