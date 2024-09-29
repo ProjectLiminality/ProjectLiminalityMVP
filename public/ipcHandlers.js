@@ -549,8 +549,8 @@ Best regards,
       // Update DreamSong.canvas file
       await updateDreamSongCanvas(repoName, dreamSongDependencies);
 
-      // Update metadata with new friends to notify
-      await updateMetadataWithFriendsToNotify(repoName, newSubmodules);
+      // Update metadata with novel submodules
+      await updateMetadataWithNovelSubmodules(repoName, newSubmodules);
 
       // Stage all changes
       await execAsync('git add .', { cwd: repoPath });
@@ -587,16 +587,19 @@ Best regards,
 
     try {
       const metadata = await readMetadata(dreamVaultPath, repoName);
-      const friendsToNotify = metadata.friendsToNotify || [];
+      const novelSubmodules = metadata.novelSubmodules || [];
 
-      if (friendsToNotify.length === 0) {
-        console.log("No friends to notify at this time.");
+      if (novelSubmodules.length === 0) {
+        console.log("No novel submodules to notify about at this time.");
         return {
-          message: "No friends to notify at this time.",
-          friendsToNotify: []
+          message: "No novel submodules to notify about at this time.",
+          novelSubmodules: []
         };
       }
 
+      console.log(`Novel submodules:`, novelSubmodules);
+
+      const friendsToNotify = await identifyFriendsToNotify(novelSubmodules);
       console.log(`Friends to notify:`, friendsToNotify);
 
       // Group friends by common submodules
@@ -638,13 +641,13 @@ Best regards,
         console.log(`Created email draft for recipients:`, recipients);
       }
 
-      // After successfully sending out the information, reset the friendsToNotify list
-      metadata.friendsToNotify = [];
+      // After successfully sending out the information, clear the novelSubmodules list
+      metadata.novelSubmodules = [];
       await writeMetadata(dreamVaultPath, repoName, metadata);
 
       return {
         message: "Coherence Beacon triggered successfully",
-        friendsToNotify
+        friendsNotified: friendsToNotify
       };
     } catch (error) {
       console.error(`Error triggering Coherence Beacon for ${repoName}:`, error);
@@ -757,10 +760,7 @@ Best regards,
     }
   }
 
-  async function updateMetadataWithFriendsToNotify(repoName, newSubmodules) {
-    const { identifyFriendsToNotify } = require('../src/utils/coherence_beacon_utils.js');
-    const friendsToNotify = await identifyFriendsToNotify(newSubmodules);
-
+  async function updateMetadataWithNovelSubmodules(repoName, newSubmodules) {
     const metadataPath = path.join(store.get('dreamVaultPath', ''), repoName, '.pl');
     let metadata;
     try {
@@ -774,11 +774,7 @@ Best regards,
       }
     }
 
-    metadata.friendsToNotify = friendsToNotify.map(friend => ({
-      name: friend.name,
-      email: friend.email,
-      commonSubmodules: friend.commonSubmodules
-    }));
+    metadata.novelSubmodules = [...new Set([...(metadata.novelSubmodules || []), ...newSubmodules])];
     await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
   }
 

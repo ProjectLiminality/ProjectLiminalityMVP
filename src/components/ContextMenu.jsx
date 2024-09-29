@@ -339,8 +339,8 @@ const handleTriggerCoherenceBeacon = async (repoName) => {
   try {
     const result = await triggerCoherenceBeacon(repoName);
     console.log('Coherence Beacon result:', result);
-    if (result.friendsToNotify && result.friendsToNotify.length > 0) {
-      const groupedFriends = groupFriendsBySubmodules(result.friendsToNotify);
+    if (result.friendsNotified && result.friendsNotified.length > 0) {
+      const groupedFriends = groupFriendsBySubmodules(result.friendsNotified);
       let message = 'Coherence Beacon triggered successfully. Email drafts created for:\n\n';
       
       for (const [submodules, friends] of Object.entries(groupedFriends)) {
@@ -353,7 +353,7 @@ const handleTriggerCoherenceBeacon = async (repoName) => {
       
       alert(message);
     } else {
-      alert("No friends to notify at this time.");
+      alert("No novel submodules to notify about at this time.");
     }
   } catch (error) {
     console.error('Error triggering Coherence Beacon:', error);

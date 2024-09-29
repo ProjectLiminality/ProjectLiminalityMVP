@@ -61,7 +61,7 @@ function computePositiveDelta(currentSubmodules, dreamSongDependencies) {
   return dreamSongDependencies.filter(dep => !currentSubmodules.includes(dep));
 }
 
-async function identifyFriendsToNotify(newSubmodules) {
+async function identifyFriendsToNotify(novelSubmodules) {
   const dreamVaultPath = store.get('dreamVaultPath');
   if (!dreamVaultPath) {
     throw new Error('Dream Vault path is not set in the application settings');
@@ -69,7 +69,7 @@ async function identifyFriendsToNotify(newSubmodules) {
 
   const friendsToNotify = new Map();
 
-  for (const submodule of newSubmodules) {
+  for (const submodule of novelSubmodules) {
     const metadataPath = path.join(dreamVaultPath, submodule, '.pl');
     try {
       const data = await fs.readFile(metadataPath, 'utf8');
