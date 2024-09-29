@@ -73,12 +73,12 @@
     },
     "mac": {
       "category": "public.app-category.graphics-design",
-      "icon": "assets/icon.icns",
+      "icon": "assets/icon.png",
       "target": ["dmg", "zip"]
     },
     "win": {
       "target": ["nsis", "portable"],
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.png"
     },
     "linux": {
       "target": ["AppImage", "deb"],
