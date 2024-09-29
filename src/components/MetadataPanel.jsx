@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
 import { readMetadata, writeMetadata, getAllRepoNamesAndTypes } from '../services/electronService';
 import { BLACK, BLUE, RED, WHITE } from '../constants/colors';
 import CustomNumberInput from './CustomNumberInput';
