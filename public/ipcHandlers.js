@@ -611,8 +611,13 @@ Best regards,
         };
       }
 
-      // Here, implement the logic to bundle and zip the relevant repositories
-      // and create email drafts for each friend to notify
+      // Bundle the repository
+      const bundlePath = await bundleRepository(repoName);
+
+      // Create email drafts for each friend to notify
+      for (const friend of friendsToNotify) {
+        await createEmailDraft(repoName, friend, bundlePath);
+      }
 
       // After successfully sending out the information, reset the friendsToNotify list
       metadata.friendsToNotify = [];
@@ -627,6 +632,25 @@ Best regards,
       throw error;
     }
   });
+
+  async function bundleRepository(repoName) {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    const repoPath = path.join(dreamVaultPath, repoName);
+    const bundlePath = path.join(repoPath, `${repoName}.bundle`);
+
+    try {
+      // Ensure all submodules are initialized and updated
+      await execAsync('git submodule update --init --recursive', { cwd: repoPath });
+      
+      // Create the bundle with all branches and tags, including submodules
+      await execAsync(`git bundle create "${bundlePath}" --all --recurse-submodules=on-demand`, { cwd: repoPath });
+
+      return bundlePath;
+    } catch (error) {
+      console.error(`Error creating bundle for ${repoName}:`, error);
+      throw error;
+    }
+  }
 
   async function updateMetadataWithFriendsToNotify(repoName, newSubmodules) {
     const { identifyFriendsToNotify } = require('../src/utils/coherence_beacon_utils.js');
