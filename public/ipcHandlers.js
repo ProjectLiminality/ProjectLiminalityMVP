@@ -899,7 +899,7 @@ Best regards,
       const submoduleBundles = [];
       let parentBundle = null;
 
-      // First, extract all bundles
+      // Extract all bundles
       for (const entry of zipEntries) {
         if (entry.entryName.endsWith('.bundle')) {
           const bundlePath = path.join(dreamVaultPath, entry.entryName);
@@ -913,22 +913,19 @@ Best regards,
         }
       }
 
-      // Then, unbundle submodules
+      // Clone submodules
       for (const submodule of submoduleBundles) {
-        const result = await unbundleRepository(submodule.path, submodule.name);
-        if (!result.success) {
-          console.error(`Failed to unbundle submodule ${submodule.name}: ${result.error}`);
-        }
+        await cloneBundle(submodule.path, submodule.name, dreamVaultPath);
         await fs.unlink(submodule.path);
       }
 
-      // Finally, unbundle the parent repository
+      // Clone parent repository
       if (parentBundle) {
-        const result = await unbundleRepository(parentBundle.path, parentBundle.name);
-        if (!result.success) {
-          console.error(`Failed to unbundle parent repository ${parentBundle.name}: ${result.error}`);
-        }
+        await cloneBundle(parentBundle.path, parentBundle.name, dreamVaultPath);
         await fs.unlink(parentBundle.path);
+
+        // Initialize submodules of the parent repository
+        await initializeSubmodules(parentBundle.name, dreamVaultPath);
       }
 
       console.log(`Successfully processed zip archive ${zipPath}`);
@@ -938,6 +935,29 @@ Best regards,
       return { success: false, error: error.message };
     }
   });
+
+async function cloneBundle(bundlePath, repoName, dreamVaultPath) {
+  const destinationPath = path.join(dreamVaultPath, repoName);
+  try {
+    await fs.mkdir(destinationPath, { recursive: true });
+    await execAsync(`git clone "${bundlePath}" "${destinationPath}"`);
+    console.log(`Successfully cloned ${repoName} from bundle`);
+  } catch (error) {
+    console.error(`Error cloning bundle for ${repoName}:`, error);
+    throw error;
+  }
+}
+
+async function initializeSubmodules(repoName, dreamVaultPath) {
+  const repoPath = path.join(dreamVaultPath, repoName);
+  try {
+    await execAsync('git submodule update --init --recursive', { cwd: repoPath });
+    console.log(`Successfully initialized submodules for ${repoName}`);
+  } catch (error) {
+    console.error(`Error initializing submodules for ${repoName}:`, error);
+    throw error;
+  }
+}
 
   async function unbundleRepository(bundlePath, repoName) {
     const dreamVaultPath = store.get('dreamVaultPath', '');

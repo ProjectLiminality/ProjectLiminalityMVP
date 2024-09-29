@@ -219,6 +219,29 @@ export async function unbundleRepositoryToDreamVault(bundlePath, repoName) {
   throw new Error('Electron is not available');
 }
 
+export async function handleZipArchive(zipPath) {
+  if (isElectronAvailable()) {
+    try {
+      const result = await window.electron.fileSystem.handleZipArchive(zipPath);
+      if (result.success) {
+        console.log('Zip archive processed successfully');
+        // You might want to trigger a refresh of the DreamSpace here
+        if (window.refreshDreamSpace) {
+          window.refreshDreamSpace();
+        }
+      } else {
+        console.error('Error processing zip archive:', result.error);
+        throw new Error(result.error);
+      }
+      return result;
+    } catch (error) {
+      console.error('Error handling zip archive:', error);
+      throw error;
+    }
+  }
+  throw new Error('Electron is not available');
+}
+
 export async function getPersonNodes() {
   if (isElectronAvailable()) {
     return window.electron.fileSystem.getPersonNodes();
