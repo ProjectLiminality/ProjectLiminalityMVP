@@ -915,7 +915,7 @@ Best regards,
 
       // Clone submodules
       for (const submodule of submoduleBundles) {
-        await cloneBundle(submodule.path, submodule.name, dreamVaultPath);
+        await cloneBundle(submodule.path, submodule.name.pop(), dreamVaultPath);
         await fs.unlink(submodule.path);
       }
 
