@@ -599,6 +599,9 @@ Best regards,
 
       console.log(`Novel submodules:`, novelSubmodules);
 
+      const identifyFriendsToNotify = require('../src/utils/coherence_beacon_utils.js');
+
+
       const friendsToNotify = await identifyFriendsToNotify(novelSubmodules);
       console.log(`Friends to notify:`, friendsToNotify);
 
