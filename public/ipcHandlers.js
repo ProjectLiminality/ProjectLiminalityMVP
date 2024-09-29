@@ -626,6 +626,31 @@ Best regards,
     }
   });
 
+  function groupFriendsBySubmodules(friends) {
+    const groups = {};
+    for (const friend of friends) {
+      const key = friend.commonSubmodules.sort().join(',');
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(friend);
+    }
+    return groups;
+  }
+
+  async function createBundles(repoName, submodules) {
+    const bundlePaths = [];
+    // Implementation for creating bundles
+    // This is a placeholder and should be replaced with actual bundle creation logic
+    return bundlePaths;
+  }
+
+  async function createZipArchive(bundlePaths) {
+    // Implementation for creating zip archive
+    // This is a placeholder and should be replaced with actual zip creation logic
+    return 'path/to/zip/archive.zip';
+  }
+
   ipcMain.handle('create-zip-archive', async (event, files) => {
     const archiver = require('archiver');
     const fs = require('fs');
