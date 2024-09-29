@@ -915,8 +915,9 @@ Best regards,
 
       // Clone submodules
       for (const submodule of submoduleBundles) {
-        console.log(`Cloning submodule: path=${submodule.path}, name=${submodule.name}, dreamVaultPath=${dreamVaultPath}`);
-        await cloneBundle(submodule.path, submodule.name, dreamVaultPath);
+        const correctedPath = submodule.path.replace(/\/submodules\//, '/');
+        console.log(`Cloning submodule: path=${correctedPath}, name=${submodule.name}, dreamVaultPath=${dreamVaultPath}`);
+        await cloneBundle(correctedPath, submodule.name, dreamVaultPath);
         await fs.unlink(submodule.path);
       }
 
