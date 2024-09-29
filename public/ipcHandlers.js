@@ -520,7 +520,8 @@ Best regards,
     const repoPath = path.join(dreamVaultPath, repoName);
 
     try {
-      const { parseGitModules, getDreamSongDependencies, computePositiveDelta, identifyFriendsToNotify } = require('../src/utils/coherence_beacon_utils.js');
+      const coherenceBeaconUtils = require('../src/utils/coherence_beacon_utils.js');
+      const { parseGitModules, getDreamSongDependencies, computePositiveDelta, identifyFriendsToNotify } = coherenceBeaconUtils;
 
       // Parse current .gitmodules file
       const currentSubmodules = await parseGitModules(repoName);
@@ -599,10 +600,7 @@ Best regards,
 
       console.log(`Novel submodules:`, novelSubmodules);
 
-      const identifyFriendsToNotify = require('../src/utils/coherence_beacon_utils.js');
-
-
-      const friendsToNotify = await identifyFriendsToNotify(novelSubmodules);
+      const friendsToNotify = await coherenceBeaconUtils.identifyFriendsToNotify(novelSubmodules);
       console.log(`Friends to notify:`, friendsToNotify);
 
       // Group friends by common submodules
