@@ -148,6 +148,18 @@ const MetadataPanel = ({ isOpen, onClose, repoName }) => {
           }}
         />
       );
+    } else if (key === 'friendsToNotify') {
+      return (
+        <div style={{ maxHeight: '200px', overflowY: 'auto', border: `1px solid ${BLUE}`, padding: '5px' }}>
+          {Array.isArray(value) && value.map((friend, index) => (
+            <div key={index} style={{ marginBottom: '10px', padding: '5px', border: `1px solid ${RED}` }}>
+              <div>Name: {friend.name}</div>
+              <div>Email: {friend.email}</div>
+              <div>Common Submodules: {friend.commonSubmodules.join(', ')}</div>
+            </div>
+          ))}
+        </div>
+      );
     } else if (key === 'email') {
       return (
         <input
