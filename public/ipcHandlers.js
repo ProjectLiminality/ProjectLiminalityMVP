@@ -612,27 +612,24 @@ Best regards,
       const parentBundlePath = await createBundle(repoName);
       console.log(`Created parent bundle: ${parentBundlePath}`);
 
+      // Create bundles for all novel submodules
+      const novelSubmoduleBundlePaths = await Promise.all(
+        novelSubmodules.map(submodule => createBundle(submodule))
+      );
+      console.log(`Created novel submodule bundles:`, novelSubmoduleBundlePaths);
+
       for (const [submodules, friends] of Object.entries(groupedFriends)) {
-        const submoduleList = submodules.split(',');
+        const commonSubmodules = submodules.split(',');
         const recipients = friends.map(friend => friend.email);
         const subject = `Updates to ${repoName}${submodules ? ` and related submodules` : ''}`;
         let body = `Hello,\n\nThere are updates to ${repoName}`;
-        let attachmentPath;
-
-        // Create bundles for all novel submodules
-        const novelSubmoduleBundlePaths = await Promise.all(
-          novelSubmodules
-            .filter(submodule => !submoduleList.includes(submodule))
-            .map(submodule => createBundle(submodule))
-        );
-        console.log(`Created novel submodule bundles:`, novelSubmoduleBundlePaths);
 
         // Create zip archive with parent and novel submodule bundles
-        attachmentPath = await createZipArchive(parentBundlePath, novelSubmoduleBundlePaths);
+        const attachmentPath = await createZipArchive(parentBundlePath, novelSubmoduleBundlePaths, commonSubmodules);
         console.log(`Created zip archive: ${attachmentPath}`);
 
-        if (novelSubmoduleBundlePaths.length > 0) {
-          const novelSubmoduleNames = novelSubmodules.filter(submodule => !submoduleList.includes(submodule));
+        const novelSubmoduleNames = novelSubmodules.filter(submodule => !commonSubmodules.includes(submodule));
+        if (novelSubmoduleNames.length > 0) {
           body += ` and the following new submodules: ${novelSubmoduleNames.join(', ')}.\nPlease find the attached zip archive containing the necessary bundles.`;
         } else {
           body += `.\nPlease find the attached bundle for the repository.`;
@@ -692,7 +689,7 @@ Best regards,
     }
   }
 
-  async function createZipArchive(parentBundlePath, submoduleBundlePaths) {
+  async function createZipArchive(parentBundlePath, submoduleBundlePaths, commonSubmodules) {
     const archiver = require('archiver');
     const fs = require('fs');
     const os = require('os');
@@ -724,9 +721,13 @@ Best regards,
       // Always add parent bundle to the root of the archive
       archive.file(parentBundlePath, { name: path.basename(parentBundlePath) });
 
-      // Add submodule bundles to the 'submodules' folder if there are any
-      if (submoduleBundlePaths.length > 0) {
-        submoduleBundlePaths.forEach(bundlePath => {
+      // Add submodule bundles to the 'submodules' folder if there are any non-common submodules
+      const nonCommonSubmodules = submoduleBundlePaths.filter(bundlePath => 
+        !commonSubmodules.includes(path.basename(bundlePath, '.bundle'))
+      );
+
+      if (nonCommonSubmodules.length > 0) {
+        nonCommonSubmodules.forEach(bundlePath => {
           archive.file(bundlePath, { name: `submodules/${path.basename(bundlePath)}` });
         });
       }
