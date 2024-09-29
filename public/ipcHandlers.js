@@ -669,7 +669,11 @@ Best regards,
       }
     }
 
-    metadata.friendsToNotify = [...new Set([...(metadata.friendsToNotify || []), ...friendsToNotify])];
+    metadata.friendsToNotify = friendsToNotify.map(friend => ({
+      name: friend.name,
+      email: friend.email,
+      commonSubmodules: friend.commonSubmodules
+    }));
     await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
   }
 

@@ -82,11 +82,16 @@ async function identifyFriendsToNotify(newSubmodules) {
             try {
               const friendData = await fs.readFile(friendMetadataPath, 'utf8');
               const friendMetadata = JSON.parse(friendData);
-              friendsToNotify.set(friend, friendMetadata.email || '');
+              friendsToNotify.set(friend, {
+                email: friendMetadata.email || '',
+                commonSubmodules: [submodule]
+              });
             } catch (error) {
               console.error(`Error reading metadata for friend ${friend}:`, error);
-              friendsToNotify.set(friend, '');
+              friendsToNotify.set(friend, { email: '', commonSubmodules: [submodule] });
             }
+          } else {
+            friendsToNotify.get(friend).commonSubmodules.push(submodule);
           }
         }
       }
@@ -96,7 +101,11 @@ async function identifyFriendsToNotify(newSubmodules) {
     }
   }
 
-  return Array.from(friendsToNotify.entries()).map(([name, email]) => ({ name, email }));
+  return Array.from(friendsToNotify.entries()).map(([name, data]) => ({
+    name,
+    email: data.email,
+    commonSubmodules: data.commonSubmodules
+  }));
 }
 
 module.exports = {

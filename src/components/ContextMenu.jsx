@@ -340,8 +340,10 @@ const handleTriggerCoherenceBeacon = async (repoName) => {
     const result = await triggerCoherenceBeacon(repoName);
     console.log('Coherence Beacon result:', result);
     if (result.friendsToNotify && result.friendsToNotify.length > 0) {
-      const friendsInfo = result.friendsToNotify.map(friend => `${friend.name} (${friend.email})`).join(', ');
-      alert(`Coherence Beacon triggered successfully. Friends to notify: ${friendsInfo}`);
+      const friendsInfo = result.friendsToNotify.map(friend => 
+        `${friend.name} (${friend.email})\nCommon Submodules: ${friend.commonSubmodules.join(', ')}`
+      ).join('\n\n');
+      alert(`Coherence Beacon triggered successfully. Friends to notify:\n\n${friendsInfo}`);
     } else {
       alert("No friends to notify at this time.");
     }
