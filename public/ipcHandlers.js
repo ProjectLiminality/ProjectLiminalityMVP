@@ -552,13 +552,9 @@ Best regards,
           message: "Everything is up to date",
           currentSubmodules,
           dreamSongDependencies,
-          newSubmodules: [],
-          friendsToNotify: []
+          newSubmodules: []
         };
       }
-
-      // Identify friends to notify
-      const friendsToNotify = await identifyFriendsToNotify(newSubmodules);
 
       // Add new submodules
       for (const submodule of newSubmodules) {
@@ -567,6 +563,9 @@ Best regards,
 
       // Update DreamSong.canvas file
       await updateDreamSongCanvas(repoName, dreamSongDependencies);
+
+      // Update metadata with new friends to notify
+      await updateMetadataWithFriendsToNotify(repoName, newSubmodules);
 
       // Stage all changes
       await execAsync('git add .', { cwd: repoPath });
@@ -586,21 +585,57 @@ Best regards,
         message: "Submodules updated successfully",
         currentSubmodules,
         dreamSongDependencies,
-        newSubmodules,
-        friendsToNotify
+        newSubmodules
       };
     } catch (error) {
       console.error(`Error updating submodules for ${repoName}:`, error);
-      // Return successful result even if there was an error
-      return {
-        message: "Submodules updated successfully",
-        currentSubmodules,
-        dreamSongDependencies,
-        newSubmodules,
-        friendsToNotify
-      };
+      throw error;
     }
   });
+
+  ipcMain.handle('trigger-coherence-beacon', async (event, repoName) => {
+    console.log(`Received request to trigger Coherence Beacon for ${repoName}`);
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    try {
+      const metadata = await readMetadata(repoName);
+      const friendsToNotify = metadata.friendsToNotify || [];
+
+      if (friendsToNotify.length === 0) {
+        return {
+          message: "No friends to notify at this time.",
+          friendsToNotify: []
+        };
+      }
+
+      // Here, implement the logic to bundle and zip the relevant repositories
+      // and create email drafts for each friend to notify
+
+      // After successfully sending out the information, reset the friendsToNotify list
+      metadata.friendsToNotify = [];
+      await writeMetadata(repoName, metadata);
+
+      return {
+        message: "Coherence Beacon triggered successfully",
+        friendsToNotify
+      };
+    } catch (error) {
+      console.error(`Error triggering Coherence Beacon for ${repoName}:`, error);
+      throw error;
+    }
+  });
+
+  async function updateMetadataWithFriendsToNotify(repoName, newSubmodules) {
+    const { identifyFriendsToNotify } = require('../src/utils/coherence_beacon_utils.js');
+    const friendsToNotify = await identifyFriendsToNotify(newSubmodules);
+    
+    const metadata = await readMetadata(repoName);
+    metadata.friendsToNotify = [...new Set([...(metadata.friendsToNotify || []), ...friendsToNotify])];
+    await writeMetadata(repoName, metadata);
+  }
 
   async function updateDreamSongCanvas(repoName, dependencies) {
     const dreamVaultPath = store.get('dreamVaultPath', '');
