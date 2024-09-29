@@ -689,7 +689,7 @@ Best regards,
     const fs = require('fs');
     const os = require('os');
 
-    const zipPath = path.join(os.tmpdir(), 'DreamNotes.zip');
+    const zipPath = path.join(os.tmpdir(), 'DreamNodes.zip');
     const output = fs.createWriteStream(zipPath);
     const archive = archiver('zip', {
       zlib: { level: 9 } // Sets the compression level.
