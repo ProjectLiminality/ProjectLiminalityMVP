@@ -3,6 +3,7 @@ const metadataTemplate = {
   interactions: 0,
   relatedNodes: [],
   email: '', // New email field
+  friendsToNotify: [], // New field for Coherence Beacon
   // Add any other fields you want to ensure are present in all metadata files
 };
 

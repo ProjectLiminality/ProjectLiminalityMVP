@@ -234,6 +234,18 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
           Update Submodules
         </li>
         <li 
+          onClick={() => handleTriggerCoherenceBeacon(repoName)}
+          style={{ 
+            padding: '6px 10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Trigger Coherence Beacon
+        </li>
+        <li 
           onMouseEnter={(e) => {
             e.target.style.backgroundColor = BLUE;
             setShowShareMenu(true);
@@ -313,16 +325,29 @@ const handleUpdateSubmodules = async (repoName) => {
     const result = await updateSubmodules(repoName);
     console.log('Submodules update result:', result);
     if (result.newSubmodules && result.newSubmodules.length > 0) {
-      const friendsInfo = result.friendsToNotify.map(friend => `${friend.name} (${friend.email})`).join(', ');
-      alert(`Submodules updated successfully. 
-New submodules: ${result.newSubmodules.join(', ')}
-Friends to notify: ${friendsInfo}`);
+      alert(`Submodules updated successfully. New submodules: ${result.newSubmodules.join(', ')}`);
     } else {
       alert("Everything is up to date. No new submodules to add.");
     }
   } catch (error) {
     console.error('Error updating submodules:', error);
     alert(`Error updating submodules: ${error.message}`);
+  }
+};
+
+const handleTriggerCoherenceBeacon = async (repoName) => {
+  try {
+    const result = await triggerCoherenceBeacon(repoName);
+    console.log('Coherence Beacon result:', result);
+    if (result.friendsToNotify && result.friendsToNotify.length > 0) {
+      const friendsInfo = result.friendsToNotify.map(friend => `${friend.name} (${friend.email})`).join(', ');
+      alert(`Coherence Beacon triggered successfully. Friends to notify: ${friendsInfo}`);
+    } else {
+      alert("No friends to notify at this time.");
+    }
+  } catch (error) {
+    console.error('Error triggering Coherence Beacon:', error);
+    alert(`Error triggering Coherence Beacon: ${error.message}`);
   }
 };
 

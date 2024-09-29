@@ -183,6 +183,21 @@ export async function updateSubmodules(repoName) {
   throw new Error('Electron is not available');
 }
 
+export async function triggerCoherenceBeacon(repoName) {
+  if (isElectronAvailable()) {
+    console.log(`Triggering Coherence Beacon for ${repoName}`);
+    try {
+      const result = await window.electron.fileSystem.triggerCoherenceBeacon(repoName);
+      console.log(`Coherence Beacon result:`, result);
+      return result;
+    } catch (error) {
+      console.error(`Error triggering Coherence Beacon:`, error);
+      return { message: `Error triggering Coherence Beacon: ${error.message}`, error: error.message };
+    }
+  }
+  throw new Error('Electron is not available');
+}
+
 export async function copyRepositoryToDreamVault(sourcePath, repoName) {
   if (isElectronAvailable()) {
     return window.electron.fileSystem.copyRepositoryToDreamVault(sourcePath, repoName);
