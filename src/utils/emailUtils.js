@@ -2,6 +2,10 @@ const { exec } = require('child_process');
 const fs = require('fs').promises;
 
 async function createEmailDraft(recipients, subject, body, attachmentPath) {
+  console.log(`Creating email draft for recipients: ${recipients.join(', ')}`);
+  console.log(`Subject: ${subject}`);
+  console.log(`Attachment path: ${attachmentPath}`);
+
   const recipientString = recipients.join(',');
   const escapedSubject = subject.replace(/[\\"]/g, '\\$&');
   const escapedBody = body.replace(/[\\"]/g, '\\$&').replace(/\n/g, '\\n');
@@ -34,9 +38,11 @@ async function createEmailDraft(recipients, subject, body, attachmentPath) {
     exec(`osascript -e '${applescript.replace(/'/g, "'\"'\"'")}'`, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error creating email draft: ${error}`);
+        console.error(`Stderr: ${stderr}`);
         reject(error);
       } else {
         console.log('Email draft created successfully');
+        console.log(`Stdout: ${stdout}`);
         resolve();
       }
     });

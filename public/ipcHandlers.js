@@ -590,26 +590,52 @@ Best regards,
       const friendsToNotify = metadata.friendsToNotify || [];
 
       if (friendsToNotify.length === 0) {
+        console.log("No friends to notify at this time.");
         return {
           message: "No friends to notify at this time.",
           friendsToNotify: []
         };
       }
 
+      console.log(`Friends to notify:`, friendsToNotify);
+
       // Group friends by common submodules
       const groupedFriends = groupFriendsBySubmodules(friendsToNotify);
+      console.log(`Grouped friends:`, groupedFriends);
 
-      // Create bundles and zip archives for each group
+      // Create bundle for the parent repository
+      const parentBundlePath = await createBundle(repoName);
+      console.log(`Created parent bundle: ${parentBundlePath}`);
+
       for (const [submodules, friends] of Object.entries(groupedFriends)) {
-        const bundlePaths = await createBundles(repoName, submodules.split(','));
-        const zipPath = await createZipArchive(bundlePaths);
+        const submoduleList = submodules.split(',');
+        const recipients = friends.map(friend => friend.email);
+        const subject = `Updates to ${repoName}${submodules ? ` and related submodules` : ''}`;
+        let body = `Hello,\n\nThere are updates to ${repoName}`;
+        let attachmentPath;
+
+        if (submodules) {
+          // Create bundles for submodules
+          const submoduleBundlePaths = await Promise.all(submoduleList.map(submodule => createBundle(submodule)));
+          console.log(`Created submodule bundles:`, submoduleBundlePaths);
+
+          // Create zip archive with parent and submodule bundles
+          const allBundlePaths = [parentBundlePath, ...submoduleBundlePaths];
+          attachmentPath = await createZipArchive(allBundlePaths);
+          console.log(`Created zip archive: ${attachmentPath}`);
+
+          body += ` and the following submodules: ${submodules}.\nPlease find the attached zip archive containing the necessary bundles.`;
+        } else {
+          // Only parent repository bundle
+          attachmentPath = parentBundlePath;
+          body += `.\nPlease find the attached bundle for the repository.`;
+        }
+
+        body += `\n\nBest regards,\n[Your Name]`;
         
         // Create email draft for the group
-        const recipients = friends.map(friend => friend.email);
-        const subject = `Updates to ${repoName} and related submodules`;
-        const body = `Hello,\n\nThere are updates to ${repoName} and the following submodules: ${submodules}.\nPlease find the attached zip archive containing the necessary bundles.\n\nBest regards,\n[Your Name]`;
-        
-        await createEmailDraft(recipients, subject, body, zipPath);
+        await createEmailDraft(recipients, subject, body, attachmentPath);
+        console.log(`Created email draft for recipients:`, recipients);
       }
 
       // After successfully sending out the information, reset the friendsToNotify list
@@ -638,17 +664,52 @@ Best regards,
     return groups;
   }
 
-  async function createBundles(repoName, submodules) {
-    const bundlePaths = [];
-    // Implementation for creating bundles
-    // This is a placeholder and should be replaced with actual bundle creation logic
-    return bundlePaths;
+  async function createBundle(repoName) {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    const repoPath = path.join(dreamVaultPath, repoName);
+    const bundlePath = path.join(repoPath, `${repoName}.bundle`);
+
+    try {
+      // Ensure all submodules are initialized and updated
+      await execAsync('git submodule update --init --recursive', { cwd: repoPath });
+      
+      // Create the bundle with all branches and tags, including submodules
+      await execAsync(`git bundle create "${bundlePath}" --all --recurse-submodules=on-demand`, { cwd: repoPath });
+
+      console.log(`Created bundle for ${repoName} at ${bundlePath}`);
+      return bundlePath;
+    } catch (error) {
+      console.error(`Error creating bundle for ${repoName}:`, error);
+      throw error;
+    }
   }
 
-  async function createZipArchive(bundlePaths) {
-    // Implementation for creating zip archive
-    // This is a placeholder and should be replaced with actual zip creation logic
-    return 'path/to/zip/archive.zip';
+  async function createZipArchive(filePaths) {
+    const archiver = require('archiver');
+    const fs = require('fs');
+    const os = require('os');
+
+    const zipPath = path.join(os.tmpdir(), `archive-${Date.now()}.zip`);
+    const output = fs.createWriteStream(zipPath);
+    const archive = archiver('zip', {
+      zlib: { level: 9 } // Sets the compression level.
+    });
+
+    return new Promise((resolve, reject) => {
+      output.on('close', () => {
+        console.log(`Created zip archive at ${zipPath}`);
+        resolve(zipPath);
+      });
+      archive.on('error', reject);
+
+      archive.pipe(output);
+
+      filePaths.forEach(filePath => {
+        archive.file(filePath, { name: path.basename(filePath) });
+      });
+
+      archive.finalize();
+    });
   }
 
   ipcMain.handle('create-zip-archive', async (event, files) => {
