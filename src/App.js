@@ -56,20 +56,20 @@ function App() {
         } catch (error) {
           console.error('Error in drag and drop process:', error);
         }
-      } else if (entry.name.endsWith('.zip')) {
-        // Zip archive dropped
-        try {
-          const file = event.dataTransfer.files[0];
-          const result = await handleZipArchive(file.path);
-          if (result.success) {
-            console.log(`Zip archive ${file.name} successfully processed`);
-            // The DreamSpace should automatically refresh due to the changes in handleZipArchive
-          } else {
-            console.error(`Failed to process zip archive: ${result.error}`);
-          }
-        } catch (error) {
-          console.error('Error in drag and drop process:', error);
-        }
+      } else if (entry.name.endsWith('.zip')) {                                                                                                   
+         // Zip archive dropped                                                                                                                    
+         try {                                                                                                                                     
+           const file = event.dataTransfer.files[0];                                                                                               
+           const result = await window.electron.fileSystem.handleZipArchive(file.path);                                                            
+           if (result.success) {                                                                                                                   
+             console.log(`Zip archive ${file.name} successfully processed`);                                                                       
+             // You might want to refresh the DreamSpace or update the state here                                                                  
+           } else {                                                                                                                                
+             console.error(`Failed to process zip archive: ${result.error}`);                                                                      
+           }                                                                                                                                       
+         } catch (error) {                                                                                                                         
+           console.error('Error in drag and drop process:', error);                                                                                
+         }
       } else {
         // File dropped
         const file = event.dataTransfer.files[0];

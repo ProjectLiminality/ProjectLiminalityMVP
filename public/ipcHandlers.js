@@ -703,15 +703,6 @@ Best regards,
     return new Promise((resolve, reject) => {
       output.on('close', () => {
         console.log(`Created zip archive at ${zipPath}`);
-        // Clean up bundle files after creating the zip
-        fs.unlink(parentBundlePath, (err) => {
-          if (err) console.error(`Error deleting parent bundle file ${parentBundlePath}:`, err);
-        });
-        submoduleBundlePaths.forEach(bundlePath => {
-          fs.unlink(bundlePath, (err) => {
-            if (err) console.error(`Error deleting submodule bundle file ${bundlePath}:`, err);
-          });
-        });
         resolve(zipPath);
       });
       archive.on('error', reject);
