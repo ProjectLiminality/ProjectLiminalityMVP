@@ -192,7 +192,7 @@ export async function triggerCoherenceBeacon(repoName) {
       return result;
     } catch (error) {
       console.error(`Error triggering Coherence Beacon:`, error);
-      return { message: `Error triggering Coherence Beacon: ${error.message}`, error: error.message };
+      throw error;
     }
   }
   throw new Error('Electron is not available');

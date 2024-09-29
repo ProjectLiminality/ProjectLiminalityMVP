@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('electron', {
     unbundleRepositoryToDreamVault: (bundlePath, repoName) => ipcRenderer.invoke('unbundle-repository-to-dreamvault', bundlePath, repoName),
     getPersonNodes: () => ipcRenderer.invoke('get-person-nodes'),
     createEmailDraft: (repoName, personName) => ipcRenderer.invoke('create-email-draft', repoName, personName),
+    triggerCoherenceBeacon: (repoName) => ipcRenderer.invoke('trigger-coherence-beacon', repoName),
   },
   getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
   setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),
