@@ -877,6 +877,75 @@ Best regards,
     }
   });
 
+  ipcMain.handle('handle-zip-archive', async (event, zipPath) => {
+    console.log(`Received request to handle zip archive ${zipPath}`);
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+
+    try {
+      const AdmZip = require('adm-zip');
+      const zip = new AdmZip(zipPath);
+      const zipEntries = zip.getEntries();
+
+      for (const entry of zipEntries) {
+        if (entry.entryName.endsWith('.bundle')) {
+          const bundlePath = path.join(dreamVaultPath, entry.entryName);
+          const repoName = entry.entryName.replace('.bundle', '');
+
+          // Extract the bundle file
+          zip.extractEntryTo(entry, dreamVaultPath, false, true);
+
+          // Unbundle the repository
+          const result = await unbundleRepository(bundlePath, repoName);
+          if (!result.success) {
+            console.error(`Failed to unbundle ${repoName}: ${result.error}`);
+          }
+
+          // Remove the extracted bundle file
+          await fs.unlink(bundlePath);
+        }
+      }
+
+      console.log(`Successfully processed zip archive ${zipPath}`);
+      return { success: true };
+    } catch (error) {
+      console.error(`Error handling zip archive ${zipPath}:`, error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  async function unbundleRepository(bundlePath, repoName) {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    const destinationPath = path.join(dreamVaultPath, repoName);
+
+    try {
+      // Check if a repository with the same name already exists in DreamVault
+      if (await fs.access(destinationPath).then(() => true).catch(() => false)) {
+        return { success: false, error: 'A repository with the same name already exists in DreamVault' };
+      }
+
+      // Create the destination directory
+      await fs.mkdir(destinationPath);
+
+      // Clone the bundle
+      const cloneCommand = `git clone "${bundlePath}" "${destinationPath}"`;
+      console.log(`Executing command: ${cloneCommand}`);
+      await execAsync(cloneCommand);
+
+      // Initialize and update submodules
+      console.log('Initializing and updating submodules...');
+      await execAsync('git submodule update --init --recursive', { cwd: destinationPath });
+
+      console.log(`Successfully unbundled repository ${repoName} to DreamVault`);
+      return { success: true };
+    } catch (error) {
+      console.error(`Error unbundling repository ${repoName} to DreamVault:`, error);
+      return { success: false, error: error.message };
+    }
+  }
+
   // Helper function to promisify exec
   function execAsync(command, options) {
     return new Promise((resolve, reject) => {

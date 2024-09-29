@@ -20,6 +20,7 @@ contextBridge.exposeInMainWorld('electron', {
     updateSubmodules: (repoName) => ipcRenderer.invoke('update-submodules', repoName),
     copyRepositoryToDreamVault: (sourcePath, repoName) => ipcRenderer.invoke('copy-repository-to-dreamvault', sourcePath, repoName),
     unbundleRepositoryToDreamVault: (bundlePath, repoName) => ipcRenderer.invoke('unbundle-repository-to-dreamvault', bundlePath, repoName),
+    handleZipArchive: (zipPath) => ipcRenderer.invoke('handle-zip-archive', zipPath),
     getPersonNodes: () => ipcRenderer.invoke('get-person-nodes'),
     createEmailDraft: (repoName, personName) => ipcRenderer.invoke('create-email-draft', repoName, personName),
     triggerCoherenceBeacon: (repoName) => ipcRenderer.invoke('trigger-coherence-beacon', repoName),
