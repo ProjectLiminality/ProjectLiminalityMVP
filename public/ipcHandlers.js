@@ -628,8 +628,7 @@ Best regards,
         console.log(`Created novel submodule bundles:`, novelSubmoduleBundlePaths);
 
         // Create zip archive with parent and novel submodule bundles
-        const allBundlePaths = [parentBundlePath, ...novelSubmoduleBundlePaths];
-        attachmentPath = await createZipArchive(allBundlePaths);
+        attachmentPath = await createZipArchive(parentBundlePath, novelSubmoduleBundlePaths);
         console.log(`Created zip archive: ${attachmentPath}`);
 
         if (novelSubmoduleBundlePaths.length > 0) {
@@ -693,7 +692,7 @@ Best regards,
     }
   }
 
-  async function createZipArchive(bundlePaths) {
+  async function createZipArchive(parentBundlePath, submoduleBundlePaths) {
     const archiver = require('archiver');
     const fs = require('fs');
     const os = require('os');
@@ -708,9 +707,12 @@ Best regards,
       output.on('close', () => {
         console.log(`Created zip archive at ${zipPath}`);
         // Clean up bundle files after creating the zip
-        bundlePaths.forEach(bundlePath => {
+        fs.unlink(parentBundlePath, (err) => {
+          if (err) console.error(`Error deleting parent bundle file ${parentBundlePath}:`, err);
+        });
+        submoduleBundlePaths.forEach(bundlePath => {
           fs.unlink(bundlePath, (err) => {
-            if (err) console.error(`Error deleting bundle file ${bundlePath}:`, err);
+            if (err) console.error(`Error deleting submodule bundle file ${bundlePath}:`, err);
           });
         });
         resolve(zipPath);
@@ -719,12 +721,14 @@ Best regards,
 
       archive.pipe(output);
 
-      // Add parent bundle to the root of the archive
-      archive.file(bundlePaths[0], { name: path.basename(bundlePaths[0]) });
+      // Always add parent bundle to the root of the archive
+      archive.file(parentBundlePath, { name: path.basename(parentBundlePath) });
 
-      // Add submodule bundles to the 'submodules' folder
-      for (let i = 1; i < bundlePaths.length; i++) {
-        archive.file(bundlePaths[i], { name: `submodules/${path.basename(bundlePaths[i])}` });
+      // Add submodule bundles to the 'submodules' folder if there are any
+      if (submoduleBundlePaths.length > 0) {
+        submoduleBundlePaths.forEach(bundlePath => {
+          archive.file(bundlePath, { name: `submodules/${path.basename(bundlePath)}` });
+        });
       }
 
       archive.finalize();
