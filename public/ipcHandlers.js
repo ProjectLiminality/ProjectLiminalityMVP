@@ -918,12 +918,13 @@ Best regards,
         const correctedPath = submodule.path.replace(/\/submodules\//, '/');
         console.log(`Cloning submodule: path=${correctedPath}, name=${submodule.name}, dreamVaultPath=${dreamVaultPath}`);
         await cloneBundle(correctedPath, submodule.name, dreamVaultPath);
-        await fs.unlink(submodule.path);
+        await fs.unlink(correctedPath);
       }
 
       // Clone parent repository
       if (parentBundle) {
         await cloneBundle(parentBundle.path, parentBundle.name, dreamVaultPath);
+        console.log(`Parent bundle path: ${parentBundle.path}`, `Parent bundle name: ${parentBundle.name}`);
         await fs.unlink(parentBundle.path);
 
         // Initialize submodules of the parent repository
