@@ -6,8 +6,10 @@ const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemp
 const metadataUtils = require('../src/utils/metadataUtils.js');
 const { readMetadata, writeMetadata, updateBidirectionalRelationships } = metadataUtils;
 const { createEmailDraft } = require('../src/utils/emailUtils.js');
+const Store = require('electron-store');
 
-function setupHandlers(ipcMain, store) {
+function setupHandlers(ipcMain) {
+  const store = new Store();
   ipcMain.handle('get-person-nodes', async () => {
     try {
       const dreamVaultPath = store.get('dreamVaultPath', '');
