@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const { exec, execSync } = require('child_process');
 const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate.js');
-const metadataUtils = require('../src/utils/metadataUtils.js');
+const { readMetadata, writeMetadata, updateBidirectionalRelationships } = require('../src/utils/metadataUtils.js');
 const { createEmailDraft } = require('../src/utils/emailUtils.js');
 
 function setupHandlers(ipcMain, store) {
