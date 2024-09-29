@@ -673,8 +673,8 @@ Best regards,
       // Ensure all submodules are initialized and updated
       await execAsync('git submodule update --init --recursive', { cwd: repoPath });
       
-      // Create the bundle with all branches and tags, including submodules
-      await execAsync(`git bundle create "${bundlePath}" --all --recurse-submodules=on-demand`, { cwd: repoPath });
+      // Create the bundle with all branches and tags
+      await execAsync(`git bundle create "${bundlePath}" --all`, { cwd: repoPath });
 
       console.log(`Created bundle for ${repoName} at ${bundlePath}`);
       return bundlePath;
