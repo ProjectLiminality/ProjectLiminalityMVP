@@ -691,7 +691,7 @@ Best regards,
     }
   }
 
-  async function createZipArchive(parentBundlePath, submoduleBundlePaths) {
+  async function createZipArchive(bundlePaths) {
     const archiver = require('archiver');
     const fs = require('fs');
     const os = require('os');
@@ -712,12 +712,12 @@ Best regards,
       archive.pipe(output);
 
       // Add parent bundle to the root of the archive
-      archive.file(parentBundlePath, { name: path.basename(parentBundlePath) });
+      archive.file(bundlePaths[0], { name: path.basename(bundlePaths[0]) });
 
       // Add submodule bundles to the 'submodules' folder
-      submoduleBundlePaths.forEach(submodulePath => {
-        archive.file(submodulePath, { name: `submodules/${path.basename(submodulePath)}` });
-      });
+      for (let i = 1; i < bundlePaths.length; i++) {
+        archive.file(bundlePaths[i], { name: `submodules/${path.basename(bundlePaths[i])}` });
+      }
 
       archive.finalize();
     });
