@@ -60,5 +60,7 @@ async function updateRelatedNode(dreamVaultPath, nodeName, currentRepoName, isAd
 }
 
 module.exports = {
-  updateBidirectionalRelationships
+  updateBidirectionalRelationships,
+  readMetadata,
+  writeMetadata
 };

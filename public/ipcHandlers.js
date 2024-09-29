@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const { exec, execSync } = require('child_process');
 const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate.js');
-const { updateBidirectionalRelationships, readMetadata, writeMetadata } = require('../src/utils/metadataUtils.js');
+const metadataUtils = require('../src/utils/metadataUtils.js');
 const { createEmailDraft } = require('../src/utils/emailUtils.js');
 
 function setupHandlers(ipcMain, store) {
@@ -179,7 +179,7 @@ Best regards,
     }
 
     try {
-      let metadata = await readMetadata(dreamVaultPath, repoName);
+      let metadata = await metadataUtils.readMetadata(dreamVaultPath, repoName);
 
       // Ensure all template fields are present
       for (const [key, defaultValue] of Object.entries(metadataTemplate)) {
@@ -189,7 +189,7 @@ Best regards,
       }
 
       // Write back the updated metadata
-      await writeMetadata(dreamVaultPath, repoName, metadata);
+      await metadataUtils.writeMetadata(dreamVaultPath, repoName, metadata);
 
       return metadata;
     } catch (error) {
@@ -206,13 +206,13 @@ Best regards,
 
     try {
       // Read the existing metadata
-      const oldMetadata = await readMetadata(dreamVaultPath, repoName);
+      const oldMetadata = await metadataUtils.readMetadata(dreamVaultPath, repoName);
 
       // Update bidirectional relationships
-      await updateBidirectionalRelationships(dreamVaultPath, repoName, oldMetadata, newMetadata);
+      await metadataUtils.updateBidirectionalRelationships(dreamVaultPath, repoName, oldMetadata, newMetadata);
 
       // Write the new metadata
-      await writeMetadata(dreamVaultPath, repoName, newMetadata);
+      await metadataUtils.writeMetadata(dreamVaultPath, repoName, newMetadata);
       return true;
     } catch (error) {
       console.error(`Error writing metadata for ${repoName}:`, error);
