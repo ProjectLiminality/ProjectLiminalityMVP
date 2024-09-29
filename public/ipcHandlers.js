@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const { exec, execSync } = require('child_process');
 const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate.js');
-const { updateBidirectionalRelationships } = require('../src/utils/metadataUtils.js');
+const { updateBidirectionalRelationships, readMetadata, writeMetadata } = require('../src/utils/metadataUtils.js');
 const { createEmailDraft } = require('../src/utils/emailUtils.js');
 
 function setupHandlers(ipcMain, store) {
@@ -631,7 +631,7 @@ Best regards,
   async function updateMetadataWithFriendsToNotify(repoName, newSubmodules) {
     const { identifyFriendsToNotify } = require('../src/utils/coherence_beacon_utils.js');
     const friendsToNotify = await identifyFriendsToNotify(newSubmodules);
-    
+  
     const metadata = await readMetadata(repoName);
     metadata.friendsToNotify = [...new Set([...(metadata.friendsToNotify || []), ...friendsToNotify])];
     await writeMetadata(repoName, metadata);
