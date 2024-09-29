@@ -1,6 +1,25 @@
 const fs = require('fs').promises;
 const path = require('path');
 
+async function readMetadata(dreamVaultPath, repoName) {
+  const metadataPath = path.join(dreamVaultPath, repoName, '.pl');
+  try {
+    const data = await fs.readFile(metadataPath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      // If the file doesn't exist, return an empty object
+      return {};
+    }
+    throw error;
+  }
+}
+
+async function writeMetadata(dreamVaultPath, repoName, metadata) {
+  const metadataPath = path.join(dreamVaultPath, repoName, '.pl');
+  await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
+}
+
 async function updateBidirectionalRelationships(dreamVaultPath, currentRepoName, oldMetadata, newMetadata) {
   const oldRelatedNodes = oldMetadata.relatedNodes || [];
   const newRelatedNodes = newMetadata.relatedNodes || [];

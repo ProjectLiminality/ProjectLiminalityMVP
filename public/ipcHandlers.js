@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const { exec, execSync } = require('child_process');
 const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate.js');
-const { updateBidirectionalRelationships } = require('../src/utils/metadataUtils.js');
+const { updateBidirectionalRelationships, readMetadata, writeMetadata } = require('../src/utils/metadataUtils.js');
 const { createEmailDraft } = require('../src/utils/emailUtils.js');
 
 function setupHandlers(ipcMain, store) {
@@ -178,10 +178,8 @@ Best regards,
       throw new Error('Dream Vault path not set');
     }
 
-    const metadataPath = path.join(dreamVaultPath, repoName, '.pl');
     try {
-      const data = await fs.readFile(metadataPath, 'utf8');
-      let metadata = JSON.parse(data);
+      let metadata = await readMetadata(dreamVaultPath, repoName);
 
       // Ensure all template fields are present
       for (const [key, defaultValue] of Object.entries(metadataTemplate)) {
@@ -191,16 +189,10 @@ Best regards,
       }
 
       // Write back the updated metadata
-      await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
+      await writeMetadata(dreamVaultPath, repoName, metadata);
 
       return metadata;
     } catch (error) {
-      if (error.code === 'ENOENT') {
-        // If the file doesn't exist, create it with the template
-        const newMetadata = { ...metadataTemplate };
-        await fs.writeFile(metadataPath, JSON.stringify(newMetadata, null, 2), 'utf8');
-        return newMetadata;
-      }
       console.error(`Error reading metadata for ${repoName}:`, error);
       throw error;
     }
@@ -212,25 +204,15 @@ Best regards,
       throw new Error('Dream Vault path not set');
     }
 
-    const metadataPath = path.join(dreamVaultPath, repoName, '.pl');
     try {
       // Read the existing metadata
-      let oldMetadata = {};
-      try {
-        const oldData = await fs.readFile(metadataPath, 'utf8');
-        oldMetadata = JSON.parse(oldData);
-      } catch (readError) {
-        if (readError.code !== 'ENOENT') {
-          throw readError;
-        }
-        // If the file doesn't exist, oldMetadata remains an empty object
-      }
+      const oldMetadata = await readMetadata(dreamVaultPath, repoName);
 
       // Update bidirectional relationships
       await updateBidirectionalRelationships(dreamVaultPath, repoName, oldMetadata, newMetadata);
 
       // Write the new metadata
-      await fs.writeFile(metadataPath, JSON.stringify(newMetadata, null, 2), 'utf8');
+      await writeMetadata(dreamVaultPath, repoName, newMetadata);
       return true;
     } catch (error) {
       console.error(`Error writing metadata for ${repoName}:`, error);
@@ -601,7 +583,7 @@ Best regards,
     }
 
     try {
-      const metadata = await readMetadata(repoName);
+      const metadata = await readMetadata(dreamVaultPath, repoName);
       const friendsToNotify = metadata.friendsToNotify || [];
 
       if (friendsToNotify.length === 0) {
@@ -629,7 +611,7 @@ Best regards,
 
       // After successfully sending out the information, reset the friendsToNotify list
       metadata.friendsToNotify = [];
-      await writeMetadata(repoName, metadata);
+      await writeMetadata(dreamVaultPath, repoName, metadata);
 
       return {
         message: "Coherence Beacon triggered successfully",
