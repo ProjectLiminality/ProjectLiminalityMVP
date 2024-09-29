@@ -618,20 +618,23 @@ Best regards,
         let body = `Hello,\n\nThere are updates to ${repoName}`;
         let attachmentPath;
 
-        if (submodules) {
-          // Create bundles for submodules
-          const submoduleBundlePaths = await Promise.all(submoduleList.map(submodule => createBundle(submodule)));
-          console.log(`Created submodule bundles:`, submoduleBundlePaths);
+        // Create bundles for all novel submodules
+        const novelSubmoduleBundlePaths = await Promise.all(
+          novelSubmodules
+            .filter(submodule => !submoduleList.includes(submodule))
+            .map(submodule => createBundle(submodule))
+        );
+        console.log(`Created novel submodule bundles:`, novelSubmoduleBundlePaths);
 
-          // Create zip archive with parent and submodule bundles
-          const allBundlePaths = [parentBundlePath, ...submoduleBundlePaths];
-          attachmentPath = await createZipArchive(allBundlePaths);
-          console.log(`Created zip archive: ${attachmentPath}`);
+        // Create zip archive with parent and novel submodule bundles
+        const allBundlePaths = [parentBundlePath, ...novelSubmoduleBundlePaths];
+        attachmentPath = await createZipArchive(allBundlePaths);
+        console.log(`Created zip archive: ${attachmentPath}`);
 
-          body += ` and the following submodules: ${submodules}.\nPlease find the attached zip archive containing the necessary bundles.`;
+        if (novelSubmoduleBundlePaths.length > 0) {
+          const novelSubmoduleNames = novelSubmodules.filter(submodule => !submoduleList.includes(submodule));
+          body += ` and the following new submodules: ${novelSubmoduleNames.join(', ')}.\nPlease find the attached zip archive containing the necessary bundles.`;
         } else {
-          // Only parent repository bundle
-          attachmentPath = parentBundlePath;
           body += `.\nPlease find the attached bundle for the repository.`;
         }
 
