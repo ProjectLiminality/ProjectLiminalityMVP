@@ -691,7 +691,7 @@ Best regards,
     }
   }
 
-  async function createZipArchive(filePaths) {
+  async function createZipArchive(parentBundlePath, submoduleBundlePaths) {
     const archiver = require('archiver');
     const fs = require('fs');
     const os = require('os');
@@ -711,8 +711,12 @@ Best regards,
 
       archive.pipe(output);
 
-      filePaths.forEach(filePath => {
-        archive.file(filePath, { name: path.basename(filePath) });
+      // Add parent bundle to the root of the archive
+      archive.file(parentBundlePath, { name: path.basename(parentBundlePath) });
+
+      // Add submodule bundles to the 'submodules' folder
+      submoduleBundlePaths.forEach(submodulePath => {
+        archive.file(submodulePath, { name: `submodules/${path.basename(submodulePath)}` });
       });
 
       archive.finalize();
@@ -892,23 +896,39 @@ Best regards,
       const zip = new AdmZip(zipPath);
       const zipEntries = zip.getEntries();
 
+      const submoduleBundles = [];
+      let parentBundle = null;
+
+      // First, extract all bundles
       for (const entry of zipEntries) {
         if (entry.entryName.endsWith('.bundle')) {
           const bundlePath = path.join(dreamVaultPath, entry.entryName);
-          const repoName = entry.entryName.replace('.bundle', '');
-
-          // Extract the bundle file
           zip.extractEntryTo(entry, dreamVaultPath, false, true);
 
-          // Unbundle the repository
-          const result = await unbundleRepository(bundlePath, repoName);
-          if (!result.success) {
-            console.error(`Failed to unbundle ${repoName}: ${result.error}`);
+          if (entry.entryName.startsWith('submodules/')) {
+            submoduleBundles.push({ path: bundlePath, name: path.basename(entry.entryName, '.bundle') });
+          } else {
+            parentBundle = { path: bundlePath, name: path.basename(entry.entryName, '.bundle') };
           }
-
-          // Remove the extracted bundle file
-          await fs.unlink(bundlePath);
         }
+      }
+
+      // Then, unbundle submodules
+      for (const submodule of submoduleBundles) {
+        const result = await unbundleRepository(submodule.path, submodule.name);
+        if (!result.success) {
+          console.error(`Failed to unbundle submodule ${submodule.name}: ${result.error}`);
+        }
+        await fs.unlink(submodule.path);
+      }
+
+      // Finally, unbundle the parent repository
+      if (parentBundle) {
+        const result = await unbundleRepository(parentBundle.path, parentBundle.name);
+        if (!result.success) {
+          console.error(`Failed to unbundle parent repository ${parentBundle.name}: ${result.error}`);
+        }
+        await fs.unlink(parentBundle.path);
       }
 
       console.log(`Successfully processed zip archive ${zipPath}`);
@@ -926,25 +946,33 @@ Best regards,
     try {
       // Check if a repository with the same name already exists in DreamVault
       if (await fs.access(destinationPath).then(() => true).catch(() => false)) {
-        return { success: false, error: 'A repository with the same name already exists in DreamVault' };
+        // If it exists, we'll update it instead of creating a new one
+        console.log(`Repository ${repoName} already exists. Updating...`);
+      
+        // Fetch the latest changes
+        await execAsync('git fetch origin', { cwd: destinationPath });
+      
+        // Reset to the fetched state
+        await execAsync('git reset --hard FETCH_HEAD', { cwd: destinationPath });
+      } else {
+        // Create the destination directory and clone the bundle
+        await fs.mkdir(destinationPath);
+        const cloneCommand = `git clone "${bundlePath}" "${destinationPath}"`;
+        console.log(`Executing command: ${cloneCommand}`);
+        await execAsync(cloneCommand);
       }
-
-      // Create the destination directory
-      await fs.mkdir(destinationPath);
-
-      // Clone the bundle
-      const cloneCommand = `git clone "${bundlePath}" "${destinationPath}"`;
-      console.log(`Executing command: ${cloneCommand}`);
-      await execAsync(cloneCommand);
 
       // Initialize and update submodules
       console.log('Initializing and updating submodules...');
       await execAsync('git submodule update --init --recursive', { cwd: destinationPath });
 
-      console.log(`Successfully unbundled repository ${repoName} to DreamVault`);
+      // Ensure all submodules are on the correct commit
+      await execAsync('git submodule foreach git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo HEAD)', { cwd: destinationPath });
+
+      console.log(`Successfully unbundled/updated repository ${repoName} in DreamVault`);
       return { success: true };
     } catch (error) {
-      console.error(`Error unbundling repository ${repoName} to DreamVault:`, error);
+      console.error(`Error unbundling/updating repository ${repoName} in DreamVault:`, error);
       return { success: false, error: error.message };
     }
   }
