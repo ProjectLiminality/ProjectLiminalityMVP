@@ -1,6 +1,7 @@
 const { dialog, shell, app } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
+const os = require('os');
 const { exec, execSync } = require('child_process');
 const { metadataTemplate, getDefaultValue } = require('../src/utils/metadataTemplate.js');
 const metadataUtils = require('../src/utils/metadataUtils.js');
@@ -674,12 +675,13 @@ Best regards,
   async function createBundle(repoName) {
     const dreamVaultPath = store.get('dreamVaultPath', '');
     const repoPath = path.join(dreamVaultPath, repoName);
-    const bundlePath = path.join(repoPath, `${repoName}.bundle`);
+    const tempDir = os.tmpdir();
+    const bundlePath = path.join(tempDir, `${repoName}.bundle`);
 
     try {
       // Ensure all submodules are initialized and updated
       await execAsync('git submodule update --init --recursive', { cwd: repoPath });
-      
+    
       // Create the bundle with all branches and tags
       await execAsync(`git bundle create "${bundlePath}" --all`, { cwd: repoPath });
 
@@ -705,6 +707,12 @@ Best regards,
     return new Promise((resolve, reject) => {
       output.on('close', () => {
         console.log(`Created zip archive at ${zipPath}`);
+        // Clean up bundle files after creating the zip
+        bundlePaths.forEach(bundlePath => {
+          fs.unlink(bundlePath, (err) => {
+            if (err) console.error(`Error deleting bundle file ${bundlePath}:`, err);
+          });
+        });
         resolve(zipPath);
       });
       archive.on('error', reject);
