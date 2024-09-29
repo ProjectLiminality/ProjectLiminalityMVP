@@ -60,10 +60,10 @@ function App() {
         // Zip archive dropped
         try {
           const file = event.dataTransfer.files[0];
-          const result = await window.electron.fileSystem.handleZipArchive(file.path);
+          const result = await handleZipArchive(file.path);
           if (result.success) {
             console.log(`Zip archive ${file.name} successfully processed`);
-            // You might want to refresh the DreamSpace or update the state here
+            // The DreamSpace should automatically refresh due to the changes in handleZipArchive
           } else {
             console.error(`Failed to process zip archive: ${result.error}`);
           }
