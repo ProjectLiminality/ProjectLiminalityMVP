@@ -611,12 +611,20 @@ Best regards,
         };
       }
 
-      // Bundle the repository
-      const bundlePath = await bundleRepository(repoName);
+      // Group friends by common submodules
+      const groupedFriends = groupFriendsBySubmodules(friendsToNotify);
 
-      // Create email drafts for each friend to notify
-      for (const friend of friendsToNotify) {
-        await createEmailDraft(repoName, friend, bundlePath);
+      // Create bundles and zip archives for each group
+      for (const [submodules, friends] of Object.entries(groupedFriends)) {
+        const bundlePaths = await createBundles(repoName, submodules.split(','));
+        const zipPath = await createZipArchive(bundlePaths);
+        
+        // Create email draft for the group
+        const recipients = friends.map(friend => friend.email);
+        const subject = `Updates to ${repoName} and related submodules`;
+        const body = `Hello,\n\nThere are updates to ${repoName} and the following submodules: ${submodules}.\nPlease find the attached zip archive containing the necessary bundles.\n\nBest regards,\n[Your Name]`;
+        
+        await createEmailDraft(recipients, subject, body, zipPath);
       }
 
       // After successfully sending out the information, reset the friendsToNotify list
@@ -631,6 +639,32 @@ Best regards,
       console.error(`Error triggering Coherence Beacon for ${repoName}:`, error);
       throw error;
     }
+  });
+
+  ipcMain.handle('create-zip-archive', async (event, files) => {
+    const archiver = require('archiver');
+    const fs = require('fs');
+    const path = require('path');
+    const os = require('os');
+
+    const zipPath = path.join(os.tmpdir(), `archive-${Date.now()}.zip`);
+    const output = fs.createWriteStream(zipPath);
+    const archive = archiver('zip', {
+      zlib: { level: 9 } // Sets the compression level.
+    });
+
+    return new Promise((resolve, reject) => {
+      output.on('close', () => resolve(zipPath));
+      archive.on('error', reject);
+
+      archive.pipe(output);
+
+      files.forEach(file => {
+        archive.file(file, { name: path.basename(file) });
+      });
+
+      archive.finalize();
+    });
   });
 
   async function bundleRepository(repoName) {
@@ -804,3 +838,32 @@ Best regards,
 }
 
 module.exports = { setupHandlers };
+function groupFriendsBySubmodules(friends) {
+  const groups = {};
+  for (const friend of friends) {
+    const key = friend.commonSubmodules.sort().join(',');
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+    groups[key].push(friend);
+  }
+  return groups;
+}
+
+async function createBundles(repoName, submodules) {
+  const dreamVaultPath = store.get('dreamVaultPath', '');
+  const bundlePaths = [];
+
+  // Create bundle for the main repository
+  const mainBundlePath = await bundleRepository(repoName);
+  bundlePaths.push(mainBundlePath);
+
+  // Create bundles for submodules
+  for (const submodule of submodules) {
+    const submodulePath = path.join(dreamVaultPath, submodule);
+    const submoduleBundlePath = await bundleRepository(submodule, submodulePath);
+    bundlePaths.push(submoduleBundlePath);
+  }
+
+  return bundlePaths;
+}

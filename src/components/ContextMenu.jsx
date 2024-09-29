@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BLACK, BLUE, WHITE, RED } from '../constants/colors';
-import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft, getPersonNodes } from '../services/electronService';
+import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft, getPersonNodes, triggerCoherenceBeacon } from '../services/electronService';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
   const [showSubmoduleMenu, setShowSubmoduleMenu] = useState(false);
@@ -340,10 +340,18 @@ const handleTriggerCoherenceBeacon = async (repoName) => {
     const result = await triggerCoherenceBeacon(repoName);
     console.log('Coherence Beacon result:', result);
     if (result.friendsToNotify && result.friendsToNotify.length > 0) {
-      const friendsInfo = result.friendsToNotify.map(friend => 
-        `${friend.name} (${friend.email})\nCommon Submodules: ${friend.commonSubmodules.join(', ')}`
-      ).join('\n\n');
-      alert(`Coherence Beacon triggered successfully. Friends to notify:\n\n${friendsInfo}`);
+      const groupedFriends = groupFriendsBySubmodules(result.friendsToNotify);
+      let message = 'Coherence Beacon triggered successfully. Email drafts created for:\n\n';
+      
+      for (const [submodules, friends] of Object.entries(groupedFriends)) {
+        message += `Group with common submodules (${submodules}):\n`;
+        friends.forEach(friend => {
+          message += `- ${friend.name} (${friend.email})\n`;
+        });
+        message += '\n';
+      }
+      
+      alert(message);
     } else {
       alert("No friends to notify at this time.");
     }
@@ -351,6 +359,18 @@ const handleTriggerCoherenceBeacon = async (repoName) => {
     console.error('Error triggering Coherence Beacon:', error);
     alert(`Error triggering Coherence Beacon: ${error.message}`);
   }
+};
+
+const groupFriendsBySubmodules = (friends) => {
+  const groups = {};
+  for (const friend of friends) {
+    const key = friend.commonSubmodules.sort().join(',');
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+    groups[key].push(friend);
+  }
+  return groups;
 };
 
 export default ContextMenu;

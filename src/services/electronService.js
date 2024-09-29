@@ -198,6 +198,13 @@ export async function triggerCoherenceBeacon(repoName) {
   throw new Error('Electron is not available');
 }
 
+export async function createZipArchive(files) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.createZipArchive(files);
+  }
+  throw new Error('Electron is not available');
+}
+
 export async function copyRepositoryToDreamVault(sourcePath, repoName) {
   if (isElectronAvailable()) {
     return window.electron.fileSystem.copyRepositoryToDreamVault(sourcePath, repoName);
