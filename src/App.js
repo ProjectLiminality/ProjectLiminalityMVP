@@ -216,10 +216,12 @@ function App() {
 
   const handleFileRightClick = (event, file) => {
     event.preventDefault();
+    event.stopPropagation(); // Prevent the event from bubbling up
     setFileContextMenu({
       file,
       position: { x: event.clientX, y: event.clientY }
     });
+    setContextMenu(null); // Close the regular context menu if it's open
   };
 
   const handleSearch = (searchTerm) => {

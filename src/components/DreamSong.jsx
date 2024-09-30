@@ -173,7 +173,11 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
                     e.stopPropagation();
                     window.electron.fileSystem.openFile(repoName, file);
                   }}
-                  onContextMenu={(e) => handleFileRightClick(e, file)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleFileRightClick(e, file);
+                  }}
                 >
                   {file}
                 </li>
