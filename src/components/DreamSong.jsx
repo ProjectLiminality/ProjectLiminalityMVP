@@ -4,7 +4,7 @@ import { readDreamSongCanvas, listFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 import FileContextMenu from './FileContextMenu';
 
-const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRightClick, borderColor, onFlip }) => {
+const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColor, onFlip, onFileRightClick }) => {
   const [processedNodes, setProcessedNodes] = useState([]);
   const [files, setFiles] = useState([]);
   const [showDreamSong, setShowDreamSong] = useState(true);
@@ -167,7 +167,11 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
                     e.stopPropagation();
                     window.electron.fileSystem.openFile(repoName, file);
                   }}
-                  onContextMenu={(e) => handleFileRightClick(e, file)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onFileRightClick(e, file);
+                  }}
                 >
                   {file}
                 </li>
