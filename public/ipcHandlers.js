@@ -1060,7 +1060,7 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
       console.log(`Output path: ${outputPath}`);
 
       // Path to the processor_meme repository
-      const processorRepoPath = path.join(dreamVaultPath, 'processor_meme');
+      const processorRepoPath = path.join(dreamVaultPath, 'ProcessorMeme');
       const scriptPath = path.join(processorRepoPath, 'process.py');
 
       // Execute the Python script
