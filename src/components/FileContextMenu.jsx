@@ -17,9 +17,20 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
     };
   }, [onClose]);
 
-  const handleProcess = (event) => {
+  const handleProcess = async (event) => {
     console.log(`Processing file: ${file} in repo: ${repoName}`);
-    onProcessFile(repoName, file);
+    try {
+      const result = await window.electron.fileSystem.processFile(repoName, file);
+      console.log('File processing result:', result);
+      if (result.success) {
+        alert('File processed successfully!');
+      } else {
+        alert(`Error processing file: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Error processing file:', error);
+      alert(`Error processing file: ${error.message}`);
+    }
     onClose();
   };
 
