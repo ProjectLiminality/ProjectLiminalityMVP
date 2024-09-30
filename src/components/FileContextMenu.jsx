@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BLACK, WHITE, BLUE } from '../constants/colors';
+import { BLACK, BLUE, WHITE } from '../constants/colors';
 import { getAllRepoNamesAndTypes } from '../services/electronService';
 
 const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
@@ -75,7 +75,7 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
   };
 
   return (
-    <div
+    <div 
       ref={menuRef}
       style={{
         position: 'fixed',
@@ -95,7 +95,10 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
           File: {file}
         </li>
         <li 
-          onMouseEnter={() => setShowProcessMenu(true)}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = BLUE;
+            setShowProcessMenu(true);
+          }}
           style={{ 
             padding: '6px 10px',
             cursor: 'pointer',
@@ -128,7 +131,10 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
               {ideaRepos.map((repo) => (
                 <li
                   key={repo.name}
-                  onClick={() => handleProcess(repo.name)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleProcess(repo.name);
+                  }}
                   style={{
                     padding: '6px 10px',
                     cursor: 'pointer',
