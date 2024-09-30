@@ -17,7 +17,7 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
     };
   }, [onClose]);
 
-  const handleProcess = async (event) => {
+  const handleProcess = async () => {
     console.log(`Processing file: ${file} in repo: ${repoName}`);
     try {
       console.log('Calling processFile in electron...');
