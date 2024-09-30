@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BLACK, WHITE, BLUE } from '../constants/colors';
 import { readDreamSongCanvas, listFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
+import FileContextMenu from './FileContextMenu';
 
 const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColor, onFlip }) => {
   const [processedNodes, setProcessedNodes] = useState([]);
   const [files, setFiles] = useState([]);
   const [showDreamSong, setShowDreamSong] = useState(true);
+  const [contextMenu, setContextMenu] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,6 +89,20 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
     setShowDreamSong(!showDreamSong);
   };
 
+  const handleFileRightClick = useCallback((event, file) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setContextMenu({
+      x: event.clientX,
+      y: event.clientY,
+      file: file,
+    });
+  }, []);
+
+  const handleCloseContextMenu = useCallback(() => {
+    setContextMenu(null);
+  }, []);
+
   return (
     <div 
       className="dream-song" 
@@ -154,6 +170,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
                     e.stopPropagation();
                     window.electron.fileSystem.openFile(repoName, file);
                   }}
+                  onContextMenu={(e) => handleFileRightClick(e, file)}
                 >
                   {file}
                 </li>
@@ -261,6 +278,14 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           }
         `}
       </style>
+      {contextMenu && (
+        <FileContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          file={contextMenu.file}
+          onClose={handleCloseContextMenu}
+        />
+      )}
     </div>
   );
 };
