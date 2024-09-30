@@ -5,10 +5,8 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
   const menuRef = useRef(null);
 
   useEffect(() => {
-    console.log('FileContextMenu rendered with props:', { x, y, file });
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
-        console.log('Click outside detected, closing menu');
         onClose();
       }
     };
@@ -17,7 +15,7 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [x, y, file, onClose]);
+  }, [onClose]);
 
   const handleProcess = () => {
     console.log(`Processing file: ${file}`);
@@ -32,29 +30,31 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
         top: y,
         left: x,
         backgroundColor: BLACK,
-        border: `1px solid ${BLUE}`,
+        color: WHITE,
         borderRadius: '4px',
-        padding: '8px',
-        zIndex: 10000,
-        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-        pointerEvents: 'auto', // Ensure the menu can receive mouse events
+        overflow: 'hidden',
+        zIndex: 1000,
+        border: `1px solid ${BLUE}`,
       }}
       onClick={(e) => e.stopPropagation()}
     >
-      <div style={{ color: WHITE, marginBottom: '4px', fontWeight: 'bold' }}>File: {file}</div>
-      <div
-        style={{
-          color: WHITE,
-          cursor: 'pointer',
-          padding: '4px 8px',
-          transition: 'background-color 0.2s ease',
-        }}
-        onClick={handleProcess}
-        onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
-        onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-      >
-        Process with
-      </div>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.9em' }}>
+        <li style={{ padding: '6px 10px', borderBottom: `1px solid ${BLUE}` }}>
+          File: {file}
+        </li>
+        <li 
+          onClick={handleProcess}
+          style={{ 
+            padding: '6px 10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Process with
+        </li>
+      </ul>
     </div>
   );
 };
