@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('electron', {
     renameRepo: (oldName, newName) => ipcRenderer.invoke('rename-repo', oldName, newName),
     createNewNode: (nodeName) => ipcRenderer.invoke('create-new-node', nodeName),
     addFileToNode: (nodeName, file) => ipcRenderer.invoke('add-file-to-node', nodeName, file),
+    processFile: (repoName, file) => ipcRenderer.invoke('process-file', repoName, file),
     stageFile: (nodeName, fileName) => ipcRenderer.invoke('stage-file', nodeName, fileName),
     commitChanges: (nodeName, commitMessage) => ipcRenderer.invoke('commit-changes', nodeName, commitMessage),
     getAllRepoNamesAndTypes: () => ipcRenderer.invoke('get-all-repo-names-and-types'),
