@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BLACK, BLUE, WHITE, RED } from '../constants/colors';
-import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft, getPersonNodes, triggerCoherenceBeacon } from '../services/electronService';
+import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft, getPersonNodes, triggerCoherenceBeacon, runAider } from '../services/electronService';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
   const [showSubmoduleMenu, setShowSubmoduleMenu] = useState(false);
@@ -246,6 +246,18 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
           Trigger Coherence Beacon
         </li>
         <li 
+          onClick={() => handleRunAider(repoName)}
+          style={{ 
+            padding: '6px 10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Run Aider
+        </li>
+        <li 
           onMouseEnter={(e) => {
             e.target.style.backgroundColor = BLUE;
             setShowShareMenu(true);
@@ -358,6 +370,20 @@ const handleTriggerCoherenceBeacon = async (repoName) => {
   } catch (error) {
     console.error('Error triggering Coherence Beacon:', error);
     alert(`Error triggering Coherence Beacon: ${error.message}`);
+  }
+};
+
+const handleRunAider = async (repoName) => {
+  try {
+    const result = await runAider(repoName);
+    if (result.success) {
+      alert(`Aider started successfully for ${repoName}`);
+    } else {
+      alert(`Failed to start Aider: ${result.error}`);
+    }
+  } catch (error) {
+    console.error('Error running Aider:', error);
+    alert(`Error running Aider: ${error.message}`);
   }
 };
 

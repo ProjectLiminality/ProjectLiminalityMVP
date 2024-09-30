@@ -1091,6 +1091,43 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
       return { success: false, error: error.message };
     }
   });
+
+  ipcMain.handle('run-aider', async (event, repoName) => {
+    console.log(`Running Aider for repo: ${repoName}`);
+    try {
+      const dreamVaultPath = store.get('dreamVaultPath', '');
+      if (!dreamVaultPath) {
+        throw new Error('Dream Vault path not set');
+      }
+      const repoPath = path.join(dreamVaultPath, repoName);
+      const envFilePath = path.join(dreamVaultPath, '..', '.env');
+      const repoEnvPath = path.join(repoPath, '.env');
+
+      // Copy .env file if it doesn't exist in the repo
+      if (!await fs.access(repoEnvPath).then(() => true).catch(() => false)) {
+        await fs.copyFile(envFilePath, repoEnvPath);
+      }
+
+      // Run the Aider command
+      const { spawn } = require('child_process');
+      const aiderProcess = spawn('osascript', ['-e', `
+        tell application "Terminal"
+          do script "cd '${repoPath}' && codad && aider"
+          activate
+        end tell
+      `]);
+
+      aiderProcess.on('error', (error) => {
+        console.error(`Error spawning Aider process: ${error}`);
+        throw error;
+      });
+
+      return { success: true, message: 'Aider started successfully' };
+    } catch (error) {
+      console.error(`Error running Aider for repo ${repoName}:`, error);
+      return { success: false, error: error.message };
+    }
+  });
 }
 
 module.exports = { setupHandlers };

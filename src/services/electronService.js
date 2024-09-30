@@ -280,3 +280,10 @@ export async function processFile(repoName, file) {
   }
   throw new Error('Electron is not available');
 }
+
+export async function runAider(repoName) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.runAider(repoName);
+  }
+  throw new Error('Electron is not available');
+}
