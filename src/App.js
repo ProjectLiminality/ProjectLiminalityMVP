@@ -240,13 +240,6 @@ function App() {
           dreamGraphRef={dreamGraphRef}
           onDrop={handleDrop}
         />
-        {fileContextMenu && (
-          <FileContextMenu
-            x={fileContextMenu.position.x}
-            y={fileContextMenu.position.y}
-            file={fileContextMenu.file}
-            onClose={handleCloseContextMenu}
-          />
         )}
       </div>
       {isSettingsOpen && (
@@ -292,8 +285,8 @@ function App() {
       )}
       {fileContextMenu && (
         <FileContextMenu
-          x={fileContextMenu.position.x}
-          y={fileContextMenu.position.y}
+          x={fileContextMenu.position.x*0}
+          y={fileContextMenu.position.y*0}
           file={fileContextMenu.file}
           onClose={handleCloseContextMenu}
         />

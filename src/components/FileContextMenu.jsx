@@ -27,8 +27,6 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
       ref={menuRef}
       style={{
         position: 'fixed',
-        top: y,
-        left: x,
         backgroundColor: BLACK,
         color: WHITE,
         borderRadius: '4px',
@@ -36,6 +34,7 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
         zIndex: 1000,
         border: `1px solid ${BLUE}`,
       }}
+      position={{ x, y }}
       onClick={(e) => e.stopPropagation()}
     >
       <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.9em' }}>
