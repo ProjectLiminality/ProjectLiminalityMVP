@@ -13,15 +13,15 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
       try {
         const repos = await getAllRepoNamesAndTypes();
         console.log('All repos:', repos); // Debug log
-        const filteredRepos = repos.filter(repo => repo.type === 'IDEA');
-        console.log('Filtered IDEA repos:', filteredRepos); // Debug log
+        const filteredRepos = repos.filter(repo => repo.name !== repoName);
+        console.log('Filtered repos:', filteredRepos); // Debug log
         setIdeaRepos(filteredRepos);
       } catch (error) {
-        console.error('Error fetching IDEA repos:', error);
+        console.error('Error fetching repos:', error);
       }
     };
     fetchIdeaRepos();
-  }, []);
+  }, [repoName]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -172,7 +172,7 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
                 ))
               ) : (
                 <li style={{ padding: '8px 12px', color: 'gray' }}>
-                  {ideaRepos.length === 0 ? 'Loading IDEA repos...' : 'No IDEA repos available'}
+                  {ideaRepos.length === 0 ? 'Loading repos...' : 'No repos available'}
                 </li>
               )}
             </ul>
