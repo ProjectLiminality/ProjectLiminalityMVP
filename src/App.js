@@ -247,7 +247,6 @@ function App() {
           dreamGraphRef={dreamGraphRef}
           onDrop={handleDrop}
         />
-        )}
       </div>
       {isSettingsOpen && (
         <SettingsPanel 
