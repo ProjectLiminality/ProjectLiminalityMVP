@@ -93,8 +93,12 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
     event.preventDefault();
     event.stopPropagation();
     console.log('Right-click detected on file:', file);
-    onFileRightClick(event, file);
-  }, [onFileRightClick]);
+    setContextMenu({
+      x: event.clientX,
+      y: event.clientY,
+      file: file
+    });
+  }, []);
 
   const handleCloseContextMenu = useCallback(() => {
     setContextMenu(null);
@@ -116,8 +120,10 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
       }}
       onClick={onClick}
       onContextMenu={(e) => {
-        e.preventDefault();
-        onRightClick(e);
+        if (!e.defaultPrevented) {
+          e.preventDefault();
+          onRightClick(e);
+        }
       }}
     >
       <div
@@ -167,11 +173,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
                     e.stopPropagation();
                     window.electron.fileSystem.openFile(repoName, file);
                   }}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onRightClick(e);
-                  }}
+                  onContextMenu={(e) => handleFileRightClick(e, file)}
                 >
                   {file}
                 </li>
