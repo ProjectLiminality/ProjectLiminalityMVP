@@ -10,9 +10,15 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
 
   useEffect(() => {
     const fetchIdeaRepos = async () => {
-      const repos = await getAllRepoNamesAndTypes();
-      const filteredRepos = repos.filter(repo => repo.type === 'IDEA');
-      setIdeaRepos(filteredRepos);
+      try {
+        const repos = await getAllRepoNamesAndTypes();
+        console.log('All repos:', repos); // Debug log
+        const filteredRepos = repos.filter(repo => repo.type === 'IDEA');
+        console.log('Filtered IDEA repos:', filteredRepos); // Debug log
+        setIdeaRepos(filteredRepos);
+      } catch (error) {
+        console.error('Error fetching IDEA repos:', error);
+      }
     };
     fetchIdeaRepos();
   }, []);
@@ -165,7 +171,9 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
                   </li>
                 ))
               ) : (
-                <li style={{ padding: '8px 12px', color: 'gray' }}>No IDEA repos available</li>
+                <li style={{ padding: '8px 12px', color: 'gray' }}>
+                  {ideaRepos.length === 0 ? 'Loading IDEA repos...' : 'No IDEA repos available'}
+                </li>
               )}
             </ul>
           )}

@@ -147,10 +147,17 @@ export async function commitChanges(nodeName, commitMessage) {
 
 export async function getAllRepoNamesAndTypes() {
   if (isElectronAvailable()) {
-    const repos = await window.electron.fileSystem.getAllRepoNamesAndTypes();
-    return Array.isArray(repos) ? repos : [];
+    try {
+      const repos = await window.electron.fileSystem.getAllRepoNamesAndTypes();
+      console.log('Repos received from electron:', repos); // Debug log
+      return Array.isArray(repos) ? repos : [];
+    } catch (error) {
+      console.error('Error in getAllRepoNamesAndTypes:', error);
+      return [];
+    }
   }
-  throw new Error('Electron is not available');
+  console.warn('Electron is not available');
+  return [];
 }
 
 export async function addSubmodule(parentRepoName, submoduleRepoName) {
