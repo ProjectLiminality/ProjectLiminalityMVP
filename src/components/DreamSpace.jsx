@@ -28,7 +28,7 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop 
   };
 
   const handleNodeRightClick = (event, repoName) => {
-    onNodeRightClick(event, repoName, handleOpenInFinder);
+    onNodeRightClick(repoName, event);
   };
 
   const onResetCamera = useCallback((resetFunc) => {

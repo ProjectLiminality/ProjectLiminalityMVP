@@ -17,8 +17,8 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
     };
   }, [onClose]);
 
-  const handleProcess = () => {
-    onProcessFile(repoName, file);
+  const handleProcess = (event) => {
+    onProcessFile(event, repoName, file);
     onClose();
   };
 

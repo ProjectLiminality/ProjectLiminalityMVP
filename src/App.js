@@ -201,8 +201,10 @@ function App() {
     setContextMenu(null); // Close context menu when opening rename panel
   };
 
-  const handleNodeRightClick = (repoName, event) => {
-    event.preventDefault(); // Prevent default context menu
+  const handleNodeRightClick = (event, repoName) => {
+    if (event && event.preventDefault) {
+      event.preventDefault(); // Prevent default context menu
+    }
     setContextMenu({ 
       repoName, 
       position: { x: event.clientX, y: event.clientY } 
