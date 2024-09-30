@@ -6,17 +6,20 @@ import { processDreamSongData } from '../utils/dreamSongUtils';
 const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColor, onFlip }) => {
   const [processedNodes, setProcessedNodes] = useState([]);
   const [files, setFiles] = useState([]);
+  const [showDreamSong, setShowDreamSong] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       const canvasData = await readDreamSongCanvas(repoName);
+      const fileList = await listFiles(repoName);
+      setFiles(fileList);
+      
       if (canvasData) {
         const processed = processDreamSongData(canvasData);
         setProcessedNodes(processed);
       } else {
         setProcessedNodes([]);
-        const fileList = await listFiles(repoName);
-        setFiles(fileList);
+        setShowDreamSong(false);
       }
     };
 
@@ -80,6 +83,10 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
     return null;
   };
 
+  const toggleView = () => {
+    setShowDreamSong(!showDreamSong);
+  };
+
   return (
     <div 
       className="dream-song" 
@@ -130,9 +137,9 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
         </style>
         <h2>{repoName}</h2>
         <div style={{ width: '100%', maxWidth: '800px', overflowY: 'auto', maxHeight: '80%' }}>
-          {processedNodes.length > 0 ? (
+          {showDreamSong && processedNodes.length > 0 ? (
             processedNodes.map((node, index) => renderNode(node, index))
-          ) : files.length > 0 ? (
+          ) : (
             <ul style={{ listStyleType: 'none', padding: 0 }}>
               {files.map((file, index) => (
                 <li key={index} style={{ marginBottom: '8px' }}>
@@ -140,8 +147,6 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
                 </li>
               ))}
             </ul>
-          ) : (
-            <p>No files or DreamSong data available</p>
           )}
         </div>
       </div>
@@ -183,6 +188,40 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           Flip
         </button>
       </div>
+      {processedNodes.length > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '10px',
+            transform: 'translateY(-50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+          }}
+        >
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleView();
+            }}
+            style={{
+              background: BLUE,
+              color: WHITE,
+              border: 'none',
+              borderRadius: '50%',
+              width: '30px',
+              height: '30px',
+              cursor: 'pointer',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {showDreamSong ? '←' : '→'}
+          </button>
+        </div>
+      )}
       <style>
         {`
           .dream-song:hover .flip-button-container {
