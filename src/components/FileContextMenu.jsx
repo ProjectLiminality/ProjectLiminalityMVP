@@ -5,8 +5,10 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
   const menuRef = useRef(null);
 
   useEffect(() => {
+    console.log('FileContextMenu rendered with props:', { x, y, file });
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
+        console.log('Click outside detected, closing menu');
         onClose();
       }
     };
@@ -15,7 +17,7 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [onClose]);
+  }, [x, y, file, onClose]);
 
   const handleProcess = () => {
     console.log(`Processing file: ${file}`);
@@ -36,6 +38,7 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
         zIndex: 1000,
       }}
     >
+      <div style={{ color: WHITE, marginBottom: '4px' }}>Context Menu for: {file}</div>
       <div
         style={{
           color: WHITE,

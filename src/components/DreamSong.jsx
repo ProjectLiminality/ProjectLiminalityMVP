@@ -92,6 +92,12 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
   const handleFileRightClick = useCallback((event, file) => {
     event.preventDefault();
     event.stopPropagation();
+    console.log('Right-click detected on file:', file);
+    const menuPosition = {
+      x: event.clientX,
+      y: event.clientY,
+    };
+    console.log('Setting context menu position:', menuPosition);
     setContextMenu({
       x: event.clientX,
       y: event.clientY,
