@@ -4,6 +4,7 @@ import SettingsPanel from './components/SettingsPanel';
 import MetadataPanel from './components/MetadataPanel';
 import DreamGraph from './components/DreamGraph';
 import ContextMenu from './components/ContextMenu';
+import FileContextMenu from './components/FileContextMenu';
 import RenamePanel from './components/RenamePanel';
 import NodeCreationPanel from './components/NodeCreationPanel';
 import SearchPanel from './components/SearchPanel';
@@ -17,6 +18,7 @@ function App() {
   const [isSearchPanelOpen, setIsSearchPanelOpen] = useState(false);
   const [selectedRepoName, setSelectedRepoName] = useState('');
   const [contextMenu, setContextMenu] = useState(null);
+  const [fileContextMenu, setFileContextMenu] = useState(null);
   const dreamGraphRef = useRef(null);
 
   const handleDragOver = useCallback((event) => {
@@ -209,6 +211,15 @@ function App() {
 
   const handleCloseContextMenu = () => {
     setContextMenu(null);
+    setFileContextMenu(null);
+  };
+
+  const handleFileRightClick = (event, file) => {
+    event.preventDefault();
+    setFileContextMenu({
+      file,
+      position: { x: event.clientX, y: event.clientY }
+    });
   };
 
   const handleSearch = (searchTerm) => {
@@ -222,6 +233,7 @@ function App() {
       <div className="App" onClick={handleCloseContextMenu}>
         <DreamSpace 
           onNodeRightClick={handleNodeRightClick}
+          onFileRightClick={handleFileRightClick}
           dreamGraphRef={dreamGraphRef}
           onDrop={handleDrop}
         />
@@ -265,6 +277,14 @@ function App() {
           onEditMetadata={handleOpenMetadataPanel}
           onRename={handleOpenRenamePanel}
           onOpenInGitFox={() => openInGitFox(contextMenu.repoName)}
+        />
+      )}
+      {fileContextMenu && (
+        <FileContextMenu
+          x={fileContextMenu.position.x}
+          y={fileContextMenu.position.y}
+          file={fileContextMenu.file}
+          onClose={handleCloseContextMenu}
         />
       )}
     </>

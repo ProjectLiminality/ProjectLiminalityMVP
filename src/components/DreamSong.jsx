@@ -4,7 +4,7 @@ import { readDreamSongCanvas, listFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 import FileContextMenu from './FileContextMenu';
 
-const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColor, onFlip }) => {
+const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRightClick, borderColor, onFlip }) => {
   const [processedNodes, setProcessedNodes] = useState([]);
   const [files, setFiles] = useState([]);
   const [showDreamSong, setShowDreamSong] = useState(true);
@@ -93,17 +93,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
     event.preventDefault();
     event.stopPropagation();
     console.log('Right-click detected on file:', file);
-    const menuPosition = {
-      x: event.clientX,
-      y: event.clientY,
-    };
-    console.log('Setting context menu position:', menuPosition);
-    setContextMenu({
-      x: event.clientX,
-      y: event.clientY,
-      file: file,
-    });
-  }, []);
+    onFileRightClick(event, file);
+  }, [onFileRightClick]);
 
   const handleCloseContextMenu = useCallback(() => {
     setContextMenu(null);

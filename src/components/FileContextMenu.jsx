@@ -35,7 +35,7 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
         border: `1px solid ${BLUE}`,
         borderRadius: '4px',
         padding: '8px',
-        zIndex: 1000,
+        zIndex: 9999,
       }}
     >
       <div style={{ color: WHITE, marginBottom: '4px' }}>Context Menu for: {file}</div>
