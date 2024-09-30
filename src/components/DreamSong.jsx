@@ -176,6 +176,11 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
                   onContextMenu={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    onFileRightClick(e, file);
+                  }}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     handleFileRightClick(e, file);
                   }}
                 >

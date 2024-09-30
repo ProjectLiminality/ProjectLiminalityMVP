@@ -239,6 +239,14 @@ function App() {
           dreamGraphRef={dreamGraphRef}
           onDrop={handleDrop}
         />
+        {fileContextMenu && (
+          <FileContextMenu
+            x={fileContextMenu.position.x}
+            y={fileContextMenu.position.y}
+            file={fileContextMenu.file}
+            onClose={handleCloseContextMenu}
+          />
+        )}
       </div>
       {isSettingsOpen && (
         <SettingsPanel 

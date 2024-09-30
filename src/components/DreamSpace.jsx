@@ -64,6 +64,7 @@ const DreamSpace = ({ onNodeRightClick, dreamGraphRef, onDrop }) => {
             ref={dreamGraphRef}
             initialNodes={initialNodes} 
             onNodeRightClick={handleNodeRightClick}
+            onFileRightClick={onFileRightClick}
             resetCamera={resetCamera}
             onDrop={onDrop}
           />
