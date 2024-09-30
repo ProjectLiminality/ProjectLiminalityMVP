@@ -1,4 +1,4 @@
-const { dialog, shell, app } = require('electron');
+const { dialog, shell, app, ipcMain } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
 const os = require('os');
@@ -10,6 +10,20 @@ const { createEmailDraft } = require('../src/utils/emailUtils.js');
 const Store = require('electron-store');
 
 function setupHandlers(ipcMain) {
+  ipcMain.handle('open-file', async (event, repoName, fileName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+    const filePath = path.join(dreamVaultPath, repoName, fileName);
+    try {
+      await shell.openPath(filePath);
+      return { success: true };
+    } catch (error) {
+      console.error(`Error opening file ${filePath}:`, error);
+      return { success: false, error: error.message };
+    }
+  });
   const store = new Store();
   ipcMain.handle('get-person-nodes', async () => {
     try {

@@ -142,7 +142,19 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           ) : (
             <ul style={{ listStyleType: 'none', padding: 0 }}>
               {files.map((file, index) => (
-                <li key={index} style={{ marginBottom: '8px' }}>
+                <li 
+                  key={index} 
+                  style={{ 
+                    marginBottom: '8px', 
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                    color: BLUE
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.electron.fileSystem.openFile(repoName, file);
+                  }}
+                >
                   {file}
                 </li>
               ))}
