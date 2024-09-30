@@ -265,6 +265,7 @@ export async function createEmailDraft(repoName, personName) {
 export async function processFile(repoName, file) {
   if (isElectronAvailable()) {
     try {
+      console.log(`Calling processFile in electron for repo: ${repoName}, file: ${file}`);
       const result = await window.electron.fileSystem.processFile(repoName, file);
       console.log('File processing result:', result);
       return result;
