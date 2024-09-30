@@ -214,15 +214,16 @@ function App() {
     setFileContextMenu(null);
   };
 
-  const handleFileRightClick = (event, file) => {
+  const handleFileRightClick = useCallback((event, file) => {
     event.preventDefault();
     event.stopPropagation(); // Prevent the event from bubbling up
+    console.log('Right-click detected on file:', file);
     setFileContextMenu({
       file,
       position: { x: event.clientX, y: event.clientY }
     });
     setContextMenu(null); // Close the regular context menu if it's open
-  };
+  }, []);
 
   const handleSearch = (searchTerm) => {
     if (dreamGraphRef.current) {
