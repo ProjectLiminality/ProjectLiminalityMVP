@@ -1048,9 +1048,32 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
   ipcMain.handle('process-file', async (event, repoName, file) => {
     console.log(`Processing file: ${file} in repo: ${repoName}`);
     try {
-      // Implement your file processing logic here
-      // For now, we'll just return a success message
-      return { success: true, message: `File ${file} processed successfully` };
+      const dreamVaultPath = store.get('dreamVaultPath', '');
+      if (!dreamVaultPath) {
+        throw new Error('Dream Vault path not set');
+      }
+      const repoPath = path.join(dreamVaultPath, repoName);
+      const filePath = path.join(repoPath, file);
+      const outputPath = path.join(repoPath, 'output.gif');
+
+      console.log(`Full file path: ${filePath}`);
+      console.log(`Output path: ${outputPath}`);
+
+      // Here, you would implement the actual file processing logic
+      // For demonstration, we'll just create an empty output.gif file
+      await fs.writeFile(outputPath, '');
+
+      console.log(`Created output file at: ${outputPath}`);
+
+      // Check if the output file was created
+      const outputExists = await fs.access(outputPath).then(() => true).catch(() => false);
+      console.log(`Output file exists: ${outputExists}`);
+
+      if (outputExists) {
+        return { success: true, message: `File ${file} processed successfully. Output saved to ${outputPath}` };
+      } else {
+        throw new Error('Output file was not created');
+      }
     } catch (error) {
       console.error(`Error processing file ${file} in repo ${repoName}:`, error);
       return { success: false, error: error.message };

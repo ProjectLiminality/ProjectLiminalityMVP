@@ -20,17 +20,19 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
   const handleProcess = async (event) => {
     console.log(`Processing file: ${file} in repo: ${repoName}`);
     try {
+      console.log('Calling processFile in electron...');
       const result = await window.electron.fileSystem.processFile(repoName, file);
       console.log('File processing result:', result);
       if (result && result.success) {
-        alert('File processed successfully!');
+        console.log('File processed successfully');
+        alert(`File processed successfully! ${result.message}`);
       } else {
         const errorMessage = result && result.error ? result.error : 'Unknown error occurred';
         console.error('Error processing file:', errorMessage);
         alert(`Error processing file: ${errorMessage}`);
       }
     } catch (error) {
-      console.error('Error processing file:', error);
+      console.error('Error in handleProcess:', error);
       alert(`Error processing file: ${error.message || 'Unknown error occurred'}`);
     }
     onClose();
