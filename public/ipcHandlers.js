@@ -1045,8 +1045,8 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
     }
   });
 
-  ipcMain.handle('process-file', async (event, repoName, file) => {
-    console.log(`Processing file: ${file} in repo: ${repoName}`);
+  ipcMain.handle('process-file', async (event, repoName, file, processorRepo) => {
+    console.log(`Processing file: ${file} in repo: ${repoName} with processor: ${processorRepo}`);
     try {
       const dreamVaultPath = store.get('dreamVaultPath', '');
       if (!dreamVaultPath) {
@@ -1059,8 +1059,8 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
       console.log(`Full input file path: ${inputPath}`);
       console.log(`Output path: ${outputPath}`);
 
-      // Path to the processor_meme repository
-      const processorRepoPath = path.join(dreamVaultPath, 'ProcessorMeme');
+      // Path to the processor repository
+      const processorRepoPath = path.join(dreamVaultPath, processorRepo);
       const scriptPath = path.join(processorRepoPath, 'process.py');
 
       // Execute the Python script
@@ -1082,12 +1082,12 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
       console.log(`Output file exists: ${outputExists}`);
 
       if (outputExists) {
-        return { success: true, message: `File ${file} processed successfully. Output saved to ${outputPath}` };
+        return { success: true, message: `File ${file} processed successfully with ${processorRepo}. Output saved to ${outputPath}` };
       } else {
         throw new Error('Output file was not created');
       }
     } catch (error) {
-      console.error(`Error processing file ${file} in repo ${repoName}:`, error);
+      console.error(`Error processing file ${file} in repo ${repoName} with processor ${processorRepo}:`, error);
       return { success: false, error: error.message };
     }
   });

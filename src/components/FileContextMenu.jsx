@@ -1,8 +1,21 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BLACK, WHITE, BLUE } from '../constants/colors';
+import { getAllRepoNamesAndTypes } from '../services/electronService';
 
 const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
+  const [showProcessMenu, setShowProcessMenu] = useState(false);
+  const [ideaRepos, setIdeaRepos] = useState([]);
   const menuRef = useRef(null);
+  const processMenuRef = useRef(null);
+
+  useEffect(() => {
+    const fetchIdeaRepos = async () => {
+      const repos = await getAllRepoNamesAndTypes();
+      const filteredRepos = repos.filter(repo => repo.type === 'IDEA');
+      setIdeaRepos(filteredRepos);
+    };
+    fetchIdeaRepos();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -17,16 +30,35 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
     };
   }, [onClose]);
 
-  const handleProcess = async () => {
-    console.log(`Processing file: ${file} in repo: ${repoName}`);
+  useEffect(() => {
+    const positionProcessMenu = () => {
+      if (showProcessMenu && processMenuRef.current && menuRef.current) {
+        const menu = processMenuRef.current;
+        const parentRect = menuRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const menuHeight = menu.offsetHeight;
+
+        let topPosition = parentRect.top;
+        if (topPosition + menuHeight > viewportHeight) {
+          topPosition = Math.max(0, viewportHeight - menuHeight);
+        }
+
+        menu.style.top = `${topPosition}px`;
+        menu.style.left = `${parentRect.right}px`;
+        menu.style.maxHeight = `${viewportHeight * 0.8}px`;
+      }
+    };
+
+    positionProcessMenu();
+  }, [showProcessMenu]);
+
+  const handleProcess = async (processorRepo) => {
+    console.log(`Processing file: ${file} in repo: ${repoName} with processor: ${processorRepo}`);
     try {
-      console.log('Calling processFile in electron...');
-      const result = await window.electron.fileSystem.processFile(repoName, file);
-      console.log('File processing result:', result);
+      const result = await window.electron.fileSystem.processFile(repoName, file, processorRepo);
       if (result && result.success) {
         console.log('File processed successfully');
         alert(`File processed successfully! ${result.message}`);
-        // Trigger a refresh of the file list or UI update here
         if (onProcessFile) {
           onProcessFile();
         }
@@ -47,14 +79,15 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
       ref={menuRef}
       style={{
         position: 'fixed',
+        top: y,
+        left: x,
         backgroundColor: BLACK,
         color: WHITE,
         borderRadius: '4px',
-        overflow: 'hidden',
+        overflow: 'visible',
         zIndex: 1000,
         border: `1px solid ${BLUE}`,
       }}
-      position={{ x, y }}
       onClick={(e) => e.stopPropagation()}
     >
       <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.9em' }}>
@@ -62,16 +95,54 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
           File: {file}
         </li>
         <li 
-          onClick={handleProcess}
+          onMouseEnter={() => setShowProcessMenu(true)}
           style={{ 
             padding: '6px 10px',
             cursor: 'pointer',
             transition: 'background-color 0.2s ease',
+            position: 'relative',
           }}
-          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
-          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
         >
-          Process with
+          Process with ▶
+          {showProcessMenu && (
+            <ul 
+              ref={processMenuRef}
+              onMouseEnter={() => setShowProcessMenu(true)}
+              onMouseLeave={() => setShowProcessMenu(false)}
+              style={{
+                position: 'fixed',
+                backgroundColor: BLACK,
+                border: `1px solid ${BLUE}`,
+                borderRadius: '4px',
+                padding: 0,
+                margin: 0,
+                listStyle: 'none',
+                zIndex: 1001,
+                minWidth: '150px',
+                maxHeight: '80vh',
+                overflowY: 'auto',
+                scrollbarWidth: 'thin',
+                scrollbarColor: `${BLUE} ${BLACK}`,
+              }}
+            >
+              {ideaRepos.map((repo) => (
+                <li
+                  key={repo.name}
+                  onClick={() => handleProcess(repo.name)}
+                  style={{
+                    padding: '6px 10px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                >
+                  {repo.name}
+                </li>
+              ))}
+            </ul>
+          )}
         </li>
       </ul>
     </div>

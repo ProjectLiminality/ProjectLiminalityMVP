@@ -13,9 +13,9 @@ contextBridge.exposeInMainWorld('electron', {
     renameRepo: (oldName, newName) => ipcRenderer.invoke('rename-repo', oldName, newName),
     createNewNode: (nodeName) => ipcRenderer.invoke('create-new-node', nodeName),
     addFileToNode: (nodeName, file) => ipcRenderer.invoke('add-file-to-node', nodeName, file),
-    processFile: (repoName, file) => {
-      console.log(`Invoking process-file from preload.js for repo: ${repoName}, file: ${file}`);
-      return ipcRenderer.invoke('process-file', repoName, file);
+    processFile: (repoName, file, processorRepo) => {
+      console.log(`Invoking process-file from preload.js for repo: ${repoName}, file: ${file}, processor: ${processorRepo}`);
+      return ipcRenderer.invoke('process-file', repoName, file, processorRepo);
     },
     stageFile: (nodeName, fileName) => ipcRenderer.invoke('stage-file', nodeName, fileName),
     commitChanges: (nodeName, commitMessage) => ipcRenderer.invoke('commit-changes', nodeName, commitMessage),
