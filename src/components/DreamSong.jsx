@@ -286,12 +286,14 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
         `}
       </style>
       {contextMenu && (
-        <FileContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          file={contextMenu.file}
-          onClose={handleCloseContextMenu}
-        />
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none' }}>
+          <FileContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            file={contextMenu.file}
+            onClose={handleCloseContextMenu}
+          />
+        </div>
       )}
     </div>
   );

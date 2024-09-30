@@ -35,10 +35,11 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
         border: `1px solid ${BLUE}`,
         borderRadius: '4px',
         padding: '8px',
-        zIndex: 10000, // Increased z-index to ensure it's on top
-        boxShadow: '0 2px 10px rgba(0,0,0,0.2)', // Added shadow for better visibility
+        zIndex: 10000,
+        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+        pointerEvents: 'auto', // Ensure the menu can receive mouse events
       }}
-      onClick={(e) => e.stopPropagation()} // Prevent click from propagating
+      onClick={(e) => e.stopPropagation()}
     >
       <div style={{ color: WHITE, marginBottom: '4px', fontWeight: 'bold' }}>File: {file}</div>
       <div
