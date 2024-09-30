@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { BLACK, WHITE, BLUE } from '../constants/colors';
-import { readDreamSongCanvas } from '../utils/fileUtils';
+import { readDreamSongCanvas, listFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 
 const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColor, onFlip }) => {
   const [processedNodes, setProcessedNodes] = useState([]);
+  const [files, setFiles] = useState([]);
 
   useEffect(() => {
-    const fetchAndProcessCanvas = async () => {
+    const fetchData = async () => {
       const canvasData = await readDreamSongCanvas(repoName);
       if (canvasData) {
         const processed = processDreamSongData(canvasData);
         setProcessedNodes(processed);
       } else {
         setProcessedNodes([]);
+        const fileList = await listFiles(repoName);
+        setFiles(fileList);
       }
     };
 
-    fetchAndProcessCanvas();
+    fetchData();
   }, [repoName]);
 
   const handleMediaClick = (event) => {
@@ -126,11 +129,19 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
           `}
         </style>
         <h2>{repoName}</h2>
-        <div style={{ width: '100%', maxWidth: '800px' }}>
+        <div style={{ width: '100%', maxWidth: '800px', overflowY: 'auto', maxHeight: '80%' }}>
           {processedNodes.length > 0 ? (
             processedNodes.map((node, index) => renderNode(node, index))
+          ) : files.length > 0 ? (
+            <ul style={{ listStyleType: 'none', padding: 0 }}>
+              {files.map((file, index) => (
+                <li key={index} style={{ marginBottom: '8px' }}>
+                  {file}
+                </li>
+              ))}
+            </ul>
           ) : (
-            <p>No DreamSong data available</p>
+            <p>No files or DreamSong data available</p>
           )}
         </div>
       </div>

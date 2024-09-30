@@ -53,7 +53,13 @@ export async function listFiles(repoName) {
     console.error('listFiles function is not available in the electron context');
     throw new Error('listFiles function is not available');
   }
-  return window.electron.fileSystem.listFiles(repoName);
+  try {
+    const files = await window.electron.fileSystem.listFiles(repoName);
+    return files.filter(file => !file.startsWith('.') && file !== 'DreamSong.canvas');
+  } catch (error) {
+    console.error(`Error listing files for ${repoName}:`, error);
+    return [];
+  }
 }
 
 export async function renameRepo(oldName, newName) {

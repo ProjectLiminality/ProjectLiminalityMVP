@@ -118,12 +118,16 @@ export async function readDreamSongCanvas(repoName) {
   try {
     const canvasContent = await electronService.readDreamSongCanvas(repoName);
     if (!canvasContent || canvasContent.trim() === '') {
-      return { nodes: [], edges: [] };
+      return null;
     }
     return JSON.parse(canvasContent);
   } catch (error) {
-    return { nodes: [], edges: [] };
+    return null;
   }
+}
+
+export async function listFiles(repoName) {
+  return electronService.listFiles(repoName);
 }
 
 export async function listMediaFiles(repoName) {
