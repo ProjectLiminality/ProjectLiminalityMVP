@@ -1044,6 +1044,18 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
       return null;
     }
   });
+
+  ipcMain.handle('process-file', async (event, repoName, file) => {
+    console.log(`Processing file: ${file} in repo: ${repoName}`);
+    try {
+      // Implement your file processing logic here
+      // For now, we'll just return a success message
+      return { success: true, message: `File ${file} processed successfully` };
+    } catch (error) {
+      console.error(`Error processing file ${file} in repo ${repoName}:`, error);
+      return { success: false, error: error.message };
+    }
+  });
 }
 
 module.exports = { setupHandlers };

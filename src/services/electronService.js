@@ -268,7 +268,11 @@ export async function processFile(repoName, file) {
       console.log(`Calling processFile in electron for repo: ${repoName}, file: ${file}`);
       const result = await window.electron.fileSystem.processFile(repoName, file);
       console.log('File processing result:', result);
-      return result;
+      if (result && result.success) {
+        return result;
+      } else {
+        throw new Error(result.error || 'Unknown error occurred');
+      }
     } catch (error) {
       console.error('Error processing file:', error);
       throw error;
