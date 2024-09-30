@@ -1053,17 +1053,29 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
         throw new Error('Dream Vault path not set');
       }
       const repoPath = path.join(dreamVaultPath, repoName);
-      const filePath = path.join(repoPath, file);
-      const outputPath = path.join(repoPath, 'output.gif');
+      const inputPath = path.join(repoPath, file);
+      const outputPath = path.join(repoPath, path.basename(file, path.extname(file)) + '.gif');
 
-      console.log(`Full file path: ${filePath}`);
+      console.log(`Full input file path: ${inputPath}`);
       console.log(`Output path: ${outputPath}`);
 
-      // Here, you would implement the actual file processing logic
-      // For demonstration, we'll just create an empty output.gif file
-      await fs.writeFile(outputPath, '');
+      // Path to the processor_meme repository
+      const processorRepoPath = path.join(dreamVaultPath, 'processor_meme');
+      const scriptPath = path.join(processorRepoPath, 'process.py');
 
-      console.log(`Created output file at: ${outputPath}`);
+      // Execute the Python script
+      const { execFile } = require('child_process');
+      await new Promise((resolve, reject) => {
+        execFile('python', [scriptPath, inputPath, outputPath], (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error executing Python script: ${error}`);
+            reject(error);
+          } else {
+            console.log(`Python script output: ${stdout}`);
+            resolve();
+          }
+        });
+      });
 
       // Check if the output file was created
       const outputExists = await fs.access(outputPath).then(() => true).catch(() => false);

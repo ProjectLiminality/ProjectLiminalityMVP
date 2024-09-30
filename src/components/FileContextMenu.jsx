@@ -26,6 +26,10 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
       if (result && result.success) {
         console.log('File processed successfully');
         alert(`File processed successfully! ${result.message}`);
+        // Trigger a refresh of the file list or UI update here
+        if (onProcessFile) {
+          onProcessFile();
+        }
       } else {
         const errorMessage = result && result.error ? result.error : 'Unknown error occurred';
         console.error('Error processing file:', errorMessage);
