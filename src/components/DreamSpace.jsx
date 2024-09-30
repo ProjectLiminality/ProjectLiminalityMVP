@@ -6,7 +6,7 @@ import CameraController from './CameraController';
 import IntersectionChecker from './IntersectionChecker';
 import useDreamNodes from '../hooks/useDreamNodes';
 
-const DreamSpace = ({ onNodeRightClick, dreamGraphRef, onDrop }) => {
+const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop }) => {
   const { dreamNodes, error } = useDreamNodes();
   const [initialNodes, setInitialNodes] = useState([]);
   const [resetCamera, setResetCamera] = useState(null);
