@@ -4,7 +4,7 @@ import { readDreamSongCanvas, listFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 import FileContextMenu from './FileContextMenu';
 
-const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColor, onFlip, onFileRightClick }) => {
+const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColor, onFlip }) => {
   const [processedNodes, setProcessedNodes] = useState([]);
   const [files, setFiles] = useState([]);
   const [showDreamSong, setShowDreamSong] = useState(true);
@@ -170,7 +170,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
                   onContextMenu={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    onFileRightClick(e, file);
+                    onRightClick(e);
                   }}
                 >
                   {file}
