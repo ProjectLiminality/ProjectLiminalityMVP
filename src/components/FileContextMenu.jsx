@@ -22,14 +22,16 @@ const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
     try {
       const result = await window.electron.fileSystem.processFile(repoName, file);
       console.log('File processing result:', result);
-      if (result.success) {
+      if (result && result.success) {
         alert('File processed successfully!');
       } else {
-        alert(`Error processing file: ${result.error}`);
+        const errorMessage = result && result.error ? result.error : 'Unknown error occurred';
+        console.error('Error processing file:', errorMessage);
+        alert(`Error processing file: ${errorMessage}`);
       }
     } catch (error) {
       console.error('Error processing file:', error);
-      alert(`Error processing file: ${error.message}`);
+      alert(`Error processing file: ${error.message || 'Unknown error occurred'}`);
     }
     onClose();
   };
