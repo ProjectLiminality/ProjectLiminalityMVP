@@ -262,3 +262,16 @@ export async function createEmailDraft(repoName, personName) {
   throw new Error('Electron is not available');
 }
 
+export async function processFile(repoName, file) {
+  if (isElectronAvailable()) {
+    try {
+      const result = await window.electron.fileSystem.processFile(repoName, file);
+      console.log('File processing result:', result);
+      return result;
+    } catch (error) {
+      console.error('Error processing file:', error);
+      throw error;
+    }
+  }
+  throw new Error('Electron is not available');
+}

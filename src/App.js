@@ -8,7 +8,7 @@ import FileContextMenu from './components/FileContextMenu';
 import RenamePanel from './components/RenamePanel';
 import NodeCreationPanel from './components/NodeCreationPanel';
 import SearchPanel from './components/SearchPanel';
-import { openInGitFox } from './services/electronService';
+import { openInGitFox, processFile } from './services/electronService';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -225,6 +225,11 @@ function App() {
     setContextMenu(null); // Close the regular context menu if it's open
   }, []);
 
+  const handleProcessFile = useCallback((repoName, file) => {
+    console.log(`Processing file: ${file} in repo: ${repoName}`);
+    processFile(repoName, file);
+  }, []);
+
   const handleSearch = (searchTerm) => {
     if (dreamGraphRef.current) {
       dreamGraphRef.current.performSearch(searchTerm);
@@ -285,10 +290,12 @@ function App() {
       )}
       {fileContextMenu && (
         <FileContextMenu
-          x={fileContextMenu.position.x*0}
-          y={fileContextMenu.position.y*0}
+          x={fileContextMenu.position.x}
+          y={fileContextMenu.position.y}
           file={fileContextMenu.file}
+          repoName={selectedRepoName}
           onClose={handleCloseContextMenu}
+          onProcessFile={handleProcessFile}
         />
       )}
     </>

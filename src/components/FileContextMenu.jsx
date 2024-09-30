@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { BLACK, WHITE, BLUE } from '../constants/colors';
 
-const FileContextMenu = ({ x, y, file, onClose }) => {
+const FileContextMenu = ({ x, y, file, repoName, onClose, onProcessFile }) => {
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const FileContextMenu = ({ x, y, file, onClose }) => {
   }, [onClose]);
 
   const handleProcess = () => {
-    console.log(`Processing file: ${file}`);
+    onProcessFile(repoName, file);
     onClose();
   };
 

@@ -295,7 +295,9 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
           x={contextMenu.x}
           y={contextMenu.y}
           file={contextMenu.file}
+          repoName={repoName}
           onClose={handleCloseContextMenu}
+          onProcessFile={onFileRightClick}
         />
       )}
     </div>
