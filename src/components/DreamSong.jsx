@@ -189,38 +189,58 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, borderColo
         </button>
       </div>
       {processedNodes.length > 0 && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '10px',
-            transform: 'translateY(-50%)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-          }}
-        >
+        <>
           <button
             onClick={(e) => {
               e.stopPropagation();
               toggleView();
             }}
             style={{
-              background: BLUE,
+              position: 'absolute',
+              left: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(0, 0, 0, 0.5)',
               color: WHITE,
               border: 'none',
               borderRadius: '50%',
               width: '30px',
               height: '30px',
+              fontSize: '20px',
               cursor: 'pointer',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
             }}
           >
-            {showDreamSong ? '←' : '→'}
+            &#8249;
           </button>
-        </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleView();
+            }}
+            style={{
+              position: 'absolute',
+              right: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(0, 0, 0, 0.5)',
+              color: WHITE,
+              border: 'none',
+              borderRadius: '50%',
+              width: '30px',
+              height: '30px',
+              fontSize: '20px',
+              cursor: 'pointer',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            &#8250;
+          </button>
+        </>
       )}
       <style>
         {`
