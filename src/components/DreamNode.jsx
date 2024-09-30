@@ -153,6 +153,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             metadata={metadata}
             onClick={handleClick}
             onRightClick={handleRightClick}
+            onFileRightClick={handleRightClick}
             isHovered={hovered}
             borderColor={borderColor}
             onFlip={handleFlip}
