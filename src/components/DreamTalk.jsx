@@ -73,17 +73,17 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
       case 'image/png':
       case 'image/gif':
       case 'image/webp':
-        return <img key={currentMediaIndex} ref={mediaRef} src={currentMedia.data} alt={repoName} style={commonStyle} />;
+        return <img key={`img-${currentMediaIndex}`} ref={mediaRef} src={currentMedia.data} alt={repoName} style={commonStyle} />;
       case 'audio/mpeg':
       case 'audio/wav':
         return (
-          <div key={currentMediaIndex} ref={mediaRef} style={{ ...commonStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: BLACK }}>
+          <div key={`audio-${currentMediaIndex}`} ref={mediaRef} style={{ ...commonStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: BLACK }}>
             <audio controls src={currentMedia.data} style={{ width: '90%', maxWidth: '200px' }} />
           </div>
         );
       case 'video/mp4':
       case 'video/webm':
-        return <video key={currentMediaIndex} ref={mediaRef} controls src={currentMedia.data} style={commonStyle} />;
+        return <video key={`video-${currentMediaIndex}`} ref={mediaRef} controls src={currentMedia.data} style={commonStyle} />;
       default:
         return null;
     }
@@ -106,6 +106,11 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
       return newIndex;
     });
   };
+
+  useEffect(() => {
+    console.log('Current media index changed:', currentMediaIndex);
+    console.log('Current media:', dreamTalkMedia[currentMediaIndex]);
+  }, [currentMediaIndex, dreamTalkMedia]);
 
   return (
     <div 

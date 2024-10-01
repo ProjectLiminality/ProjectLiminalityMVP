@@ -8,6 +8,7 @@ export async function getRepoData(repoName) {
     const dreamTalkMedia = await getAllMediaFiles(repoName);
     const dreamSongCanvas = await readDreamSongCanvas(repoName);
     const dreamSongMedia = await getDreamSongMedia(repoName);
+    console.log(`DreamTalk media for ${repoName}:`, dreamTalkMedia);
     return { metadata, dreamTalkMedia, dreamSongCanvas, dreamSongMedia };
   } catch (error) {
     console.error('Error getting repo data:', error);
@@ -76,16 +77,20 @@ async function getAllMediaFiles(repoName) {
     const mediaPromises = rootMediaFiles.map(async file => {
       const mediaPath = await electronService.getMediaFilePath(repoName, file);
       if (!mediaPath) {
+        console.log(`No media path found for file: ${file}`);
         return null;
       }
 
       const mediaData = await electronService.readFile(mediaPath);
       if (!mediaData) {
+        console.log(`No media data found for file: ${file}`);
         return null;
       }
 
       const fileExtension = file.split('.').pop().toLowerCase();
       const mimeType = getMimeType(fileExtension);
+
+      console.log(`Processed media file: ${file}, type: ${mimeType}`);
 
       return {
         type: mimeType,
@@ -106,6 +111,7 @@ async function getAllMediaFiles(repoName) {
       return a.filename.localeCompare(b.filename);
     });
 
+    console.log(`Total media files found for ${repoName}:`, mediaFiles.length);
     return mediaFiles;
   } catch (error) {
     console.error('Error getting all media files:', error);
