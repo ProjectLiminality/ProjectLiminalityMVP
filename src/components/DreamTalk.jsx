@@ -38,6 +38,10 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
 
   useEffect(() => {
+    console.log('Current media index:', currentMediaIndex);
+  }, [currentMediaIndex]);
+
+  useEffect(() => {
     if (containerRef.current) {
       const updateDimensions = () => {
         const container = containerRef.current;
@@ -69,17 +73,17 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
       case 'image/png':
       case 'image/gif':
       case 'image/webp':
-        return <img ref={mediaRef} src={currentMedia.data} alt={repoName} style={commonStyle} />;
+        return <img key={currentMediaIndex} ref={mediaRef} src={currentMedia.data} alt={repoName} style={commonStyle} />;
       case 'audio/mpeg':
       case 'audio/wav':
         return (
-          <div ref={mediaRef} style={{ ...commonStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: BLACK }}>
+          <div key={currentMediaIndex} ref={mediaRef} style={{ ...commonStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', background: BLACK }}>
             <audio controls src={currentMedia.data} style={{ width: '90%', maxWidth: '200px' }} />
           </div>
         );
       case 'video/mp4':
       case 'video/webm':
-        return <video ref={mediaRef} controls src={currentMedia.data} style={commonStyle} />;
+        return <video key={currentMediaIndex} ref={mediaRef} controls src={currentMedia.data} style={commonStyle} />;
       default:
         return null;
     }
@@ -87,12 +91,20 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
 
   const handlePrevMedia = (e) => {
     e.stopPropagation();
-    setCurrentMediaIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : dreamTalkMedia.length - 1));
+    setCurrentMediaIndex((prevIndex) => {
+      const newIndex = prevIndex > 0 ? prevIndex - 1 : dreamTalkMedia.length - 1;
+      console.log('Previous media index:', newIndex);
+      return newIndex;
+    });
   };
 
   const handleNextMedia = (e) => {
     e.stopPropagation();
-    setCurrentMediaIndex((prevIndex) => (prevIndex < dreamTalkMedia.length - 1 ? prevIndex + 1 : 0));
+    setCurrentMediaIndex((prevIndex) => {
+      const newIndex = prevIndex < dreamTalkMedia.length - 1 ? prevIndex + 1 : 0;
+      console.log('Next media index:', newIndex);
+      return newIndex;
+    });
   };
 
   return (
