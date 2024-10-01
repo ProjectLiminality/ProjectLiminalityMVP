@@ -490,27 +490,13 @@ Best regards,
       await fs.access(path.join(submoduleRepoPath, '.git'));
       console.log('Submodule is a valid git repository');
 
-      // Escape paths
-      const escapedSubmoduleRepoPath = submoduleRepoPath.replace(/"/g, '\\"');
-      const escapedSubmoduleRepoName = submoduleRepoName.replace(/"/g, '\\"');
-
-      // Clean up existing submodule if it exists
-      console.log('Cleaning up existing submodule...');
-      await execAsync(`git submodule deinit -f "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath }).catch(() => {});
-      await execAsync(`rm -rf "${path.join(parentRepoPath, '.git/modules', escapedSubmoduleRepoName)}"`, { cwd: parentRepoPath }).catch(() => {});
-      await execAsync(`git rm -f "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath }).catch(() => {});
-
-      // Add the submodule using a relative path and force option
+      // Add the submodule using a relative path
       console.log('Adding submodule...');
-      await execAsync(`git submodule add --force "../${escapedSubmoduleRepoName}" "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath });
+      await execAsync(`git submodule add --force "../${submoduleRepoName}" "${submoduleRepoName}"`, { cwd: parentRepoPath });
 
       // Initialize and update the submodule
       console.log('Initializing and updating submodule...');
       await execAsync('git submodule update --init --recursive', { cwd: parentRepoPath });
-
-      // Force update to ensure latest commit
-      console.log('Forcing update to ensure latest commit...');
-      await execAsync(`git submodule update --init --recursive --force "${escapedSubmoduleRepoName}"`, { cwd: parentRepoPath });
 
       // Commit the changes
       console.log('Committing changes...');
