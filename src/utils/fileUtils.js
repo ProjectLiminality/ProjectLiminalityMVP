@@ -76,6 +76,7 @@ async function getAllMediaFiles(repoName) {
 
     const mediaPromises = rootMediaFiles.map(async file => {
       const mediaPath = await electronService.getMediaFilePath(repoName, file);
+      console.log("mediaPath", mediaPath)
       if (!mediaPath) {
         console.log(`No media path found for file: ${file}`);
         return null;

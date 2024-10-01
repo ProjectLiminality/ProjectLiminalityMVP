@@ -238,14 +238,14 @@ Best regards,
     }
   });
 
-  ipcMain.handle('get-media-file-path', async (event, repoName) => {
+  ipcMain.handle('get-media-file-path', async (event, repoName, fileName) => {
     const dreamVaultPath = store.get('dreamVaultPath');
     const repoPath = path.join(dreamVaultPath, repoName);
     const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp3', '.wav', '.ogg'];
     
     try {
       for (const ext of supportedExtensions) {
-        const filePath = path.join(repoPath, `${repoName}${ext}`);
+        const filePath = path.join(repoPath, fileName);
         try {
           await fs.access(filePath);
           return filePath;

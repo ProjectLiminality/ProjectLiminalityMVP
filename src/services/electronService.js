@@ -36,8 +36,8 @@ export async function writeMetadata(repoName, metadata) {
   return window.electron.fileSystem.writeMetadata(repoName, metadata);
 }
 
-export async function getMediaFilePath(repoName) {
-  return window.electron.fileSystem.getMediaFilePath(repoName);
+export async function getMediaFilePath(repoName, fileName) {
+  return window.electron.fileSystem.getMediaFilePath(repoName, fileName);
 }
 
 export async function getDreamSongMediaFilePath(repoName, fileName) {
