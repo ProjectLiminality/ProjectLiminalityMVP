@@ -492,7 +492,7 @@ Best regards,
 
       // Add the submodule using a relative path
       console.log('Adding submodule...');
-      await execAsync(`git submodule add --force "../${submoduleRepoName}" "${submoduleRepoName}"`, { cwd: parentRepoPath });
+      await execAsync(`git submodule add --force --local "../${submoduleRepoName}" "${submoduleRepoName}"`, { cwd: parentRepoPath });
 
       // Initialize and update the submodule
       console.log('Initializing and updating submodule...');
@@ -507,7 +507,11 @@ Best regards,
       return true;
     } catch (error) {
       console.error(`Error adding submodule ${submoduleRepoName} to ${parentRepoName}:`, error);
-      throw error;
+      console.error('Error details:', error.message);
+      if (error.stderr) {
+        console.error('Error stderr:', error.stderr);
+      }
+      throw new Error(`Failed to add submodule: ${error.message}`);
     }
   });
 
