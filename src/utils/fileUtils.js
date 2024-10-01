@@ -1,6 +1,6 @@
 import * as electronService from '../services/electronService';
 
-const preferredExtensions = ['.gif', '.mp4', '.png', '.jpg', '.jpeg'];
+const preferredExtensions = ['.gif', '.mp4', '.png', '.jpg', '.jpeg', '.webp'];
 
 export async function getRepoData(repoName) {
   try {
@@ -60,7 +60,8 @@ function getMimeType(fileExtension) {
     'gif': 'image/gif',
     'png': 'image/png',
     'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg'
+    'jpeg': 'image/jpeg',
+    'webp': 'image/webp'
   };
   return mimeTypes[fileExtension] || 'application/octet-stream';
 }

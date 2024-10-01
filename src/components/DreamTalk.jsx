@@ -68,6 +68,7 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
       case 'image/jpeg':
       case 'image/png':
       case 'image/gif':
+      case 'image/webp':
         return <img ref={mediaRef} src={currentMedia.data} alt={repoName} style={commonStyle} />;
       case 'audio/mpeg':
       case 'audio/wav':

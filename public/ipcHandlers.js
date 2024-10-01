@@ -241,7 +241,7 @@ Best regards,
   ipcMain.handle('get-media-file-path', async (event, repoName) => {
     const dreamVaultPath = store.get('dreamVaultPath');
     const repoPath = path.join(dreamVaultPath, repoName);
-    const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp3', '.wav', '.ogg'];
+    const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp3', '.wav', '.ogg'];
     
     try {
       for (const ext of supportedExtensions) {
