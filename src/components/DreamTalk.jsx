@@ -282,6 +282,21 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
           Flip
         </button>
       </div>
+      {dreamTalkMedia && dreamTalkMedia.length > 0 && (
+        <div style={{
+          position: 'absolute',
+          bottom: '5px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          color: WHITE,
+          fontSize: '12px',
+          background: 'rgba(0, 0, 0, 0.5)',
+          padding: '2px 5px',
+          borderRadius: '10px',
+        }}>
+          {currentMediaIndex + 1} / {dreamTalkMedia.length}
+        </div>
+      )}
       <style>
         {`
           .dream-talk:hover .flip-button-container {

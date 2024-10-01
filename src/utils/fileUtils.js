@@ -103,9 +103,7 @@ async function getAllMediaFiles(repoName) {
       const bNameMatch = b.filename.toLowerCase() === repoName.toLowerCase();
       if (aNameMatch && !bNameMatch) return -1;
       if (!aNameMatch && bNameMatch) return 1;
-      const aIndex = preferredExtensions.findIndex(ext => a.filename.toLowerCase().endsWith(ext));
-      const bIndex = preferredExtensions.findIndex(ext => b.filename.toLowerCase().endsWith(ext));
-      return aIndex - bIndex;
+      return a.filename.localeCompare(b.filename);
     });
 
     return mediaFiles;
