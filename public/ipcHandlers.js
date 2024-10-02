@@ -1054,7 +1054,7 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
 
       // Path to the processor repository
       const processorRepoPath = path.join(dreamVaultPath, processorRepo);
-      const scriptPath = path.join(processorRepoPath, 'process.py');
+      const scriptPath = path.join(processorRepoPath, 'main.py');
 
       // Execute the Python script
       const { execFile } = require('child_process');
