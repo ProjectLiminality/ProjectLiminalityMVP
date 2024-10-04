@@ -1,12 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const IntersectionChecker = () => {
+const IntersectionChecker = ({ onIntersection }) => {
   const { raycaster, camera, scene } = useThree();
   const mouse = useRef(new THREE.Vector2());
+  const frameCount = useRef(0);
 
-  useFrame(() => {
+  const checkIntersection = useCallback(() => {
     raycaster.setFromCamera(mouse.current, camera);
     const intersects = raycaster.intersectObjects(scene.children, true);
     
@@ -15,6 +16,18 @@ const IntersectionChecker = () => {
       if (intersectedNode && intersectedNode.userData && intersectedNode.userData.onHover) {
         intersectedNode.userData.onHover(true);
       }
+      if (intersectedNode && intersectedNode.userData && intersectedNode.userData.repoName) {
+        onIntersection(intersectedNode.userData.repoName);
+      }
+    } else {
+      onIntersection(null);
+    }
+  }, [raycaster, camera, scene, onIntersection]);
+
+  useFrame(() => {
+    frameCount.current += 1;
+    if (frameCount.current % 30 === 0) {  // Check every 30th frame
+      checkIntersection();
     }
   });
 

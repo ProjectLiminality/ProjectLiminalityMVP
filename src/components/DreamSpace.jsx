@@ -10,6 +10,7 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop 
   const { dreamNodes, error } = useDreamNodes();
   const [initialNodes, setInitialNodes] = useState([]);
   const [resetCamera, setResetCamera] = useState(null);
+  const [hoveredNode, setHoveredNode] = useState(null);
 
   useEffect(() => {
     if (dreamNodes.length > 0) {
@@ -49,6 +50,11 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop 
     };
   }, [resetCamera]);
 
+  const handleIntersection = useCallback((repoName) => {
+    setHoveredNode(repoName);
+    console.log(`Hovering over: ${repoName || 'none'}`);
+  }, []);
+
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -69,7 +75,7 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop 
             onDrop={onDrop}
           />
         )}
-        <IntersectionChecker />
+        <IntersectionChecker onIntersection={handleIntersection} />
       </Canvas>
       {dreamNodes.length === 0 && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
