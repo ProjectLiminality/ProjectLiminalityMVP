@@ -3,7 +3,6 @@ import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 import DreamGraph from './DreamGraph';
 import CameraController from './CameraController';
-import IntersectionChecker from './IntersectionChecker';
 import useDreamNodes from '../hooks/useDreamNodes';
 
 const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop }) => {
@@ -50,9 +49,8 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop 
     };
   }, [resetCamera]);
 
-  const handleIntersection = useCallback((repoName) => {
+  const handleHover = useCallback((repoName) => {
     setHoveredNode(repoName);
-    console.log(`Hovering over: ${repoName || 'none'}`);
   }, []);
 
   if (error) {
@@ -75,7 +73,6 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop 
             onDrop={onDrop}
           />
         )}
-        <IntersectionChecker onIntersection={handleIntersection} />
       </Canvas>
       {dreamNodes.length === 0 && (
         <div style={{ color: 'white', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

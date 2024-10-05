@@ -56,10 +56,9 @@ const applyRotationToPosition = (position, rotation) => {
   return position.applyQuaternion(rotation).normalize().multiplyScalar(SPHERE_RADIUS);
 };
 
-const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, ref) => {
+const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, onHover }, ref) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [nodes, setNodes] = useState([]);
-  const [hoveredNode, setHoveredNode] = useState(null);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
   const [centeredNode, setCenteredNode] = useState(null);
   const [interactionHistory, setInteractionHistory] = useState([]);
@@ -383,8 +382,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera }, 
         scale={node.baseScale * (node.isInLiminalView ? node.liminalScaleFactor : node.viewScaleFactor)}
         onNodeClick={handleNodeClick}
         onNodeRightClick={onNodeRightClick}
-        isHovered={hoveredNode === node.repoName}
-        setHoveredNode={setHoveredNode}
+        setHoveredNode={onHover}
         index={index}
         isCentered={centeredNode === node.repoName}
       />
