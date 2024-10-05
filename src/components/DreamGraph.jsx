@@ -62,6 +62,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
   const [centeredNode, setCenteredNode] = useState(null);
   const [interactionHistory, setInteractionHistory] = useState([]);
+  const [hoveredNode, setHoveredNode] = useState(null);
   const { size } = useThree();
 
   const { camera } = useThree();
@@ -382,12 +383,13 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
         scale={node.baseScale * (node.isInLiminalView ? node.liminalScaleFactor : node.viewScaleFactor)}
         onNodeClick={handleNodeClick}
         onNodeRightClick={onNodeRightClick}
-        setHoveredNode={onHover}
+        setHoveredNode={handleHover}
         index={index}
         isCentered={centeredNode === node.repoName}
+        isHovered={hoveredNode === node.repoName}
       />
     ));
-  }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, setHoveredNode, centeredNode]);
+  }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, handleHover, centeredNode]);
 
   const [redoStack, setRedoStack] = useState([]);
 
