@@ -51,7 +51,9 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
 
   const handleHover = useCallback((repoName) => {
     setHoveredNode(repoName);
-    onHover(repoName);
+    if (onHover) {
+      onHover(repoName);
+    }
   }, [onHover]);
 
   if (error) {
