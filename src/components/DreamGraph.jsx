@@ -56,7 +56,7 @@ const applyRotationToPosition = (position, rotation) => {
   return position.applyQuaternion(rotation).normalize().multiplyScalar(SPHERE_RADIUS);
 };
 
-const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, onHover }, ref) => {
+const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, onHover, onFileRightClick }, ref) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [nodes, setNodes] = useState([]);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
@@ -390,13 +390,14 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
         scale={node.baseScale * (node.isInLiminalView ? node.liminalScaleFactor : node.viewScaleFactor)}
         onNodeClick={handleNodeClick}
         onNodeRightClick={onNodeRightClick}
-        setHoveredNode={handleHover}
+        onFileRightClick={onFileRightClick}
+        onHover={onHover}
         index={index}
         isCentered={centeredNode === node.repoName}
         isHovered={hoveredNode === node.repoName}
       />
     ));
-  }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, handleHover, centeredNode]);
+  }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, onFileRightClick, onHover, centeredNode]);
 
   const [redoStack, setRedoStack] = useState([]);
 
