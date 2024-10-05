@@ -125,8 +125,6 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             alignItems: 'center',
             cursor: 'pointer',
           }}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         >
           <DreamTalk 
             repoName={repoName}
@@ -134,6 +132,8 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             metadata={metadata}
             onClick={handleClick}
             onRightClick={handleRightClick}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             isHovered={hovered}
             borderColor={borderColor}
             onFlip={handleFlip}
@@ -152,8 +152,6 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             alignItems: 'center',
             cursor: 'pointer',
           }}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         >
           <DreamSong 
             repoName={repoName}
@@ -162,6 +160,8 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             onClick={handleClick}
             onRightClick={handleRightClick}
             onFileRightClick={onNodeRightClick}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             isHovered={hovered}
             borderColor={borderColor}
             onFlip={handleFlip}

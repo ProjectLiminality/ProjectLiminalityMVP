@@ -30,7 +30,7 @@ const CenterOverlay = ({ repoName, isVisible }) => (
   </div>
 );
 
-const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, isHovered, borderColor, onFlip }) => {
+const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, onMouseEnter, onMouseLeave, isHovered, borderColor, onFlip }) => {
   const containerRef = useRef(null);
   const mediaRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -121,6 +121,8 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         e.preventDefault();
         onRightClick(e);
       }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       style={{
         position: 'relative',
         overflow: 'hidden',
