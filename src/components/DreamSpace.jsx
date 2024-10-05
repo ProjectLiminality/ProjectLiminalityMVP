@@ -19,14 +19,6 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
     }
   }, [dreamNodes]);
 
-  const handleOpenInFinder = (repoName) => {
-    if (window.electron && window.electron.openInFinder) {
-      window.electron.openInFinder(repoName);
-    } else {
-      // openInFinder is not available
-    }
-  };
-
   const handleNodeRightClick = (event, repoName) => {
     onNodeRightClick(repoName, event);
   };
@@ -34,6 +26,22 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
   const onResetCamera = useCallback((resetFunc) => {
     setResetCamera(() => resetFunc);
   }, []);
+
+  const handleDrop = useCallback((event) => {
+    event.preventDefault();
+    if (hoveredNode) {
+      console.log(`Item dropped on ${hoveredNode}`);
+    } else {
+      onDrop(event);
+    }
+  }, [hoveredNode, onDrop]);
+
+  const handleHover = useCallback((repoName) => {
+    setHoveredNode(repoName);
+    if (onHover) {
+      onHover(repoName);
+    }
+  }, [onHover]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -43,18 +51,15 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
     };
 
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('dragover', (e) => e.preventDefault());
+    window.addEventListener('drop', handleDrop);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('dragover', (e) => e.preventDefault());
+      window.removeEventListener('drop', handleDrop);
     };
-  }, [resetCamera]);
-
-  const handleHover = useCallback((repoName) => {
-    setHoveredNode(repoName);
-    if (onHover) {
-      onHover(repoName);
-    }
-  }, [onHover]);
+  }, [resetCamera, handleDrop]);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -73,7 +78,7 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
             onNodeRightClick={handleNodeRightClick}
             onFileRightClick={onFileRightClick}
             resetCamera={resetCamera}
-            onDrop={onDrop}
+            onHover={handleHover}
           />
         )}
       </Canvas>
