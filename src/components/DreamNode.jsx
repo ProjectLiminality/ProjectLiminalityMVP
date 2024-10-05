@@ -6,7 +6,7 @@ import DreamSong from './DreamSong';
 import { BLUE, RED } from '../constants/colors';
 import { useThree } from '@react-three/fiber';
 
-const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, onFileRightClick, onHover, isCentered }) => {
+const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, onFileRightClick, onHover, isCentered, onDrop }) => {
   const { camera } = useThree();
   const firstDreamSongMedia = dreamSongMedia && dreamSongMedia.length > 0 ? dreamSongMedia[0] : null;
   const [hovered, setHovered] = useState(false);
@@ -98,7 +98,9 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
   const handleDrop = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    onDrop(event, repoName);
+    if (onDrop) {
+      onDrop(event, repoName);
+    }
   };
 
   return (
