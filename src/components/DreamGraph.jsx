@@ -375,6 +375,13 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     };
   }, [handleEscape]);
 
+  const handleHover = useCallback((repoName) => {
+    setHoveredNode(repoName);
+    if (onHover) {
+      onHover(repoName);
+    }
+  }, [onHover]);
+
   const renderedNodes = useMemo(() => {
     return nodes.map((node, index) => (
       <DreamNode
