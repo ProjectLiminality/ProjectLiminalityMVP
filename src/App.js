@@ -246,6 +246,7 @@ function App() {
           onFileRightClick={handleFileRightClick}
           dreamGraphRef={dreamGraphRef}
           onDrop={handleDrop}
+          onHover={(repoName) => console.log('Hovered node:', repoName)}
         />
       </div>
       {isSettingsOpen && (

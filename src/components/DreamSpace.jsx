@@ -5,7 +5,7 @@ import DreamGraph from './DreamGraph';
 import CameraController from './CameraController';
 import useDreamNodes from '../hooks/useDreamNodes';
 
-const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop }) => {
+const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop, onHover }) => {
   const { dreamNodes, error } = useDreamNodes();
   const [initialNodes, setInitialNodes] = useState([]);
   const [resetCamera, setResetCamera] = useState(null);
