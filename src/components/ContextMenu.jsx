@@ -399,6 +399,20 @@ const handleRunAider = async (repoName) => {
   }
 };
 
+const handleOpenCanvas = async (repoName) => {
+  try {
+    const result = await openCanvas(repoName);
+    if (result.success) {
+      console.log(result.message);
+    } else {
+      alert(`Failed to open canvas: ${result.error}`);
+    }
+  } catch (error) {
+    console.error('Error opening canvas:', error);
+    alert(`Error opening canvas: ${error.message}`);
+  }
+};
+
 const groupFriendsBySubmodules = (friends) => {
   const groups = {};
   for (const friend of friends) {
