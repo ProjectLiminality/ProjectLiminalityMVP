@@ -1130,11 +1130,11 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
         throw new Error('Dream Vault path not set');
       }
       const repoPath = path.join(dreamVaultPath, repoName);
-      
+
       // Search for .canvas files
       const files = await fs.readdir(repoPath);
       const canvasFiles = files.filter(file => file.endsWith('.canvas'));
-      
+
       let canvasFile;
       if (canvasFiles.length > 0) {
         canvasFile = canvasFiles[0];
@@ -1143,12 +1143,12 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
         canvasFile = 'dreamsong.canvas';
         await fs.writeFile(path.join(repoPath, canvasFile), '{}');
       }
-      
-      // Get the name of the Obsidian vault (assuming it's the parent directory of dreamVaultPath)
-      const vaultName = path.basename(path.dirname(dreamVaultPath));
-      
-      // Open the canvas file in Obsidian
-      const obsidianUrl = `obsidian://open?vault=${encodeURIComponent(vaultName)}&file=${encodeURIComponent(dreamVaultPath)}/${encodeURIComponent(repoName + '/' + canvasFile)}`;
+
+      // Construct the full file path
+      const fullFilePath = path.join(repoPath, canvasFile);
+
+      // Open the canvas file in Obsidian using the 'path' parameter
+      const obsidianUrl = `obsidian://open?path=${encodeURIComponent(fullFilePath)}`;
       await shell.openExternal(obsidianUrl);
 
       return { success: true, message: `Opened ${canvasFile} in Obsidian` };
