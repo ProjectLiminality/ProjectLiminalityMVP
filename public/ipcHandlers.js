@@ -1144,8 +1144,11 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
         await fs.writeFile(path.join(repoPath, canvasFile), '{}');
       }
       
+      // Get the name of the Obsidian vault (assuming it's the last directory in the path)
+      const vaultName = path.basename(dreamVaultPath);
+      
       // Open the canvas file in Obsidian
-      const obsidianUrl = `obsidian://open?vault=DreamVault&file=${encodeURIComponent(repoName + '/' + canvasFile)}`;
+      const obsidianUrl = `obsidian://open?vault=${encodeURIComponent(vaultName)}&file=${encodeURIComponent(repoName + '/' + canvasFile)}`;
       await shell.openExternal(obsidianUrl);
 
       return { success: true, message: `Opened ${canvasFile} in Obsidian` };
