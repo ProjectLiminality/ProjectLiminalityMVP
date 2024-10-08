@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BLACK, BLUE, WHITE, RED } from '../constants/colors';
-import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft, getPersonNodes, triggerCoherenceBeacon, runAider } from '../services/electronService';
+import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft, getPersonNodes, triggerCoherenceBeacon, runAider, openCanvas } from '../services/electronService';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
   const [showSubmoduleMenu, setShowSubmoduleMenu] = useState(false);
@@ -256,6 +256,18 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
           onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
         >
           Run Aider
+        </li>
+        <li 
+          onClick={() => handleOpenCanvas(repoName)}
+          style={{ 
+            padding: '6px 10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Open Canvas
         </li>
         <li 
           onMouseEnter={(e) => {

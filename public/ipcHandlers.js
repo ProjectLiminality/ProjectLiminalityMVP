@@ -1121,6 +1121,39 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
       return { success: false, error: error.message };
     }
   });
+
+  ipcMain.handle('open-canvas', async (event, repoName) => {
+    console.log(`Opening canvas for repo: ${repoName}`);
+    try {
+      const dreamVaultPath = store.get('dreamVaultPath', '');
+      if (!dreamVaultPath) {
+        throw new Error('Dream Vault path not set');
+      }
+      const repoPath = path.join(dreamVaultPath, repoName);
+      
+      // Search for .canvas files
+      const files = await fs.readdir(repoPath);
+      const canvasFiles = files.filter(file => file.endsWith('.canvas'));
+      
+      let canvasFile;
+      if (canvasFiles.length > 0) {
+        canvasFile = canvasFiles[0];
+      } else {
+        // Create dreamsong.canvas if no .canvas file exists
+        canvasFile = 'dreamsong.canvas';
+        await fs.writeFile(path.join(repoPath, canvasFile), '{}');
+      }
+      
+      // Open the canvas file in Obsidian
+      const obsidianUrl = `obsidian://open?vault=DreamVault&file=${encodeURIComponent(repoName + '/' + canvasFile)}`;
+      await shell.openExternal(obsidianUrl);
+
+      return { success: true, message: `Opened ${canvasFile} in Obsidian` };
+    } catch (error) {
+      console.error(`Error opening canvas for repo ${repoName}:`, error);
+      return { success: false, error: error.message };
+    }
+  });
 }
 
 module.exports = { setupHandlers };

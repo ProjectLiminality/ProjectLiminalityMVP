@@ -294,3 +294,10 @@ export async function runAider(repoName) {
   }
   throw new Error('Electron is not available');
 }
+
+export async function openCanvas(repoName) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.openCanvas(repoName);
+  }
+  throw new Error('Electron is not available');
+}
