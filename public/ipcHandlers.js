@@ -1093,7 +1093,7 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
         throw new Error('Dream Vault path not set');
       }
       const repoPath = path.join(dreamVaultPath, repoName);
-      const envFilePath = path.join(dreamVaultPath, 'ProjectLiminalityReactThreeJS/.env';
+      const envFilePath = path.join(dreamVaultPath, 'ProjectLiminalityReactThreeJS/.env');
       const repoEnvPath = path.join(repoPath, '.env');
 
       // Copy .env file if it doesn't exist in the repo
