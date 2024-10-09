@@ -71,13 +71,11 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
   const handleMouseEnter = useCallback(() => {
     setHovered(true);
     onHover(repoName);
-    console.log(`Mouse entered DreamNode: ${repoName}`);
   }, [repoName, onHover]);
 
   const handleMouseLeave = useCallback(() => {
     setHovered(false);
     onHover(null);
-    console.log(`Mouse left DreamNode: ${repoName}`);
   }, [repoName, onHover]);
 
   const handleClick = (clickedRepoName) => {
