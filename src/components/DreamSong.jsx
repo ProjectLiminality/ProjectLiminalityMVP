@@ -3,12 +3,14 @@ import { BLACK, WHITE, BLUE } from '../constants/colors';
 import { readDreamSongCanvas, listFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 import FileContextMenu from './FileContextMenu';
+import DisplayContent from './DisplayContent';
 
 const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRightClick, onMouseEnter, onMouseLeave, borderColor, onFlip }) => {
   const [processedNodes, setProcessedNodes] = useState([]);
   const [files, setFiles] = useState([]);
   const [showDreamSong, setShowDreamSong] = useState(true);
   const [contextMenu, setContextMenu] = useState(null);
+  const [circlePackingData, setCirclePackingData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +29,20 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
 
     fetchData();
   }, [repoName]);
+
+  useEffect(() => {
+    // Prepare data for circle packing
+    const prepareCirclePackingData = () => {
+      return {
+        name: "root",
+        children: files.map(file => ({ name: file, value: 1 }))
+      };
+    };
+
+    if (files.length > 0) {
+      setCirclePackingData(prepareCirclePackingData());
+    }
+  }, [files]);
 
   const handleMediaClick = (event) => {
     event.stopPropagation();
@@ -159,36 +175,13 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
         <div style={{ width: '100%', maxWidth: '800px', overflowY: 'auto', maxHeight: '100%' }}>
           {showDreamSong && processedNodes.length > 0 ? (
             processedNodes.map((node, index) => renderNode(node, index))
+          ) : circlePackingData ? (
+            <DisplayContent
+              data={circlePackingData}
+              onCircleClick={(file) => window.electron.fileSystem.openFile(repoName, file)}
+            />
           ) : (
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
-              {files.map((file, index) => (
-                <li 
-                  key={index} 
-                  style={{ 
-                    marginBottom: '8px', 
-                    cursor: 'pointer',
-                    textDecoration: 'underline',
-                    color: BLUE
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.electron.fileSystem.openFile(repoName, file);
-                  }}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onFileRightClick(e, file);
-                  }}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleFileRightClick(e, file);
-                  }}
-                >
-                  {file}
-                </li>
-              ))}
-            </ul>
+            <p>Loading...</p>
           )}
         </div>
       </div>
