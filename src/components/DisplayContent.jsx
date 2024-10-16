@@ -41,7 +41,10 @@ const DisplayContent = ({ data, onCircleClick }) => {
         .on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
         .on("mouseout", function() { d3.select(this).attr("stroke", null); })
         .on("click", (event, d) => {
-          focus !== d && (zoom(event, d), event.stopPropagation());
+          if (focus !== d) {
+            zoom(event, d);
+            event.stopPropagation();
+          }
           if (!d.children) {
             onCircleClick(d.data.name);
           }
