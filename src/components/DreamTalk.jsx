@@ -36,6 +36,7 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [isCenterHovered, setIsCenterHovered] = useState(false);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [isComponentHovered, setIsComponentHovered] = useState(false);
 
   useEffect(() => {
     console.log('Current media index:', currentMediaIndex);
@@ -112,6 +113,16 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
     console.log('Current media:', dreamTalkMedia[currentMediaIndex]);
   }, [currentMediaIndex, dreamTalkMedia]);
 
+  const handleMouseEnter = () => {
+    setIsComponentHovered(true);
+    onMouseEnter();
+  };
+
+  const handleMouseLeave = () => {
+    setIsComponentHovered(false);
+    onMouseLeave();
+  };
+
   return (
     <div 
       ref={containerRef}
@@ -121,8 +132,8 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         e.preventDefault();
         onRightClick(e);
       }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       style={{
         position: 'relative',
         overflow: 'hidden',
@@ -158,6 +169,27 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         pointerEvents: 'none',
         borderRadius: '49%',
       }} />
+      {dreamTalkMedia && dreamTalkMedia.length > 0 && isComponentHovered && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: `${dimensions.width * 0.8}px`,
+          height: `${dimensions.height * 0.8}px`,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background: 'rgba(0, 0, 0, 0.7)',
+          color: WHITE,
+          fontSize: '16px',
+          fontWeight: 'bold',
+          borderRadius: '50%',
+          transition: 'opacity 0.3s ease',
+        }}>
+          {repoName}
+        </div>
+      )}
       <div
         style={{
           position: 'absolute',
