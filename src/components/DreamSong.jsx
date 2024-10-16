@@ -156,8 +156,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
             }
           `}
         </style>
-        <h2>{repoName}</h2>
-        <div style={{ width: '100%', maxWidth: '800px', overflowY: 'auto', maxHeight: '80%' }}>
+        <div style={{ width: '100%', maxWidth: '800px', overflowY: 'auto', maxHeight: '100%' }}>
           {showDreamSong && processedNodes.length > 0 ? (
             processedNodes.map((node, index) => renderNode(node, index))
           ) : (
