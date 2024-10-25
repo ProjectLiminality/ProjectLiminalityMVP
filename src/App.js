@@ -20,6 +20,11 @@ function App() {
   const [contextMenu, setContextMenu] = useState(null);
   const [fileContextMenu, setFileContextMenu] = useState(null);
   const dreamGraphRef = useRef(null);
+  const [nodeNames, setNodeNames] = useState([]);
+
+  const handleNodesChange = useCallback((newNodeNames) => {
+    setNodeNames(newNodeNames);
+  }, []);
 
   const handleDragOver = useCallback((event) => {
     event.preventDefault();
@@ -247,6 +252,7 @@ function App() {
           dreamGraphRef={dreamGraphRef}
           onDrop={handleDrop}
           onHover={(repoName) => console.log('Hovered node:', repoName)}
+          onNodesChange={handleNodesChange}
         />
       </div>
       {isSettingsOpen && (
@@ -279,7 +285,7 @@ function App() {
         isOpen={isSearchPanelOpen}
         onSearch={handleSearchComplete}
         onClose={() => setIsSearchPanelOpen(false)}
-        repoNames={nodes.map(node => node.repoName)}
+        repoNames={nodeNames}
       />
       {contextMenu && (
         <ContextMenu
