@@ -1,26 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
+import SearchComponent from './semanticsearch/src/SearchComponent';
 
 const SearchPanel = ({ isOpen, onSearch, onClose }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const inputRef = useRef(null);
-
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (searchTerm !== '') {
-      onSearch(searchTerm);
-    }
-  }, [searchTerm, onSearch]);
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
-        setSearchTerm('');
         onClose();
         onSearch(''); // Reset search results
       }
@@ -34,17 +21,13 @@ const SearchPanel = ({ isOpen, onSearch, onClose }) => {
 
   if (!isOpen) return null;
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      onClose();
-    }
+  const handleSearchStart = () => {
+    // You can add any logic needed when search starts
   };
 
-  const handleChange = (e) => {
-    setSearchTerm(e.target.value);
-    if (e.target.value === '') {
-      onSearch(''); // Reset search results when search term is empty
-    }
+  const handleSearchComplete = (results) => {
+    setSearchResults(results);
+    onSearch(results); // Pass the semantic search results to the main app
   };
 
   return (
@@ -60,29 +43,20 @@ const SearchPanel = ({ isOpen, onSearch, onClose }) => {
       zIndex: 1000,
       boxShadow: `0 0 0 2px ${BLUE}`,
     }}>
-      <input
-        ref={inputRef}
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Search..."
-        style={{
-          width: '300px',
-          padding: '5px',
-          backgroundColor: BLACK,
-          color: WHITE,
-          border: `1px solid ${BLUE}`,
-          borderRadius: '4px',
-          outline: 'none',
-        }}
-        onFocus={(e) => {
-          e.target.style.border = `1px solid ${BLUE}`;
-        }}
-        onBlur={(e) => {
-          e.target.style.border = `1px solid ${BLUE}`;
-        }}
+      <SearchComponent
+        maxResults={5} // You can adjust this or make it a prop
+        targets={[]} // You need to provide the targets for semantic search
+        onSearchStart={handleSearchStart}
+        onSearchComplete={handleSearchComplete}
       />
+      {/* Display search results */}
+      <div style={{ marginTop: '10px', maxHeight: '300px', overflowY: 'auto' }}>
+        {searchResults.map(([name, similarity]) => (
+          <div key={name} style={{ marginBottom: '5px' }}>
+            {name}: {similarity.toFixed(4)}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
