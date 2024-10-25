@@ -31,15 +31,7 @@ function createWindow() {
     },
   });
 
-  // Set a more permissive Content Security Policy for development
-  win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    callback({
-      responseHeaders: {
-        ...details.responseHeaders,
-        'Content-Security-Policy': ["default-src 'self'; connect-src 'self' https: wss:; img-src 'self' data: https:; media-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' https:;"]
-      }
-    })
-  });
+  // Content Security Policy has been completely disabled for development
 
   // Load the index.html from a url
   win.loadURL(
