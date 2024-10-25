@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
-import SearchComponent from './semanticsearch/src/SearchComponent';
+import SearchComponent from './SemanticSearch/src/SearchComponent';
 
 const SearchPanel = ({ isOpen, onSearch, onClose }) => {
   const [searchResults, setSearchResults] = useState([]);
