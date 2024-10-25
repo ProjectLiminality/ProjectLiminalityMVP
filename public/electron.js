@@ -28,10 +28,19 @@ function createWindow() {
       sandbox: true,
       enableRemoteModule: false,
       worldSafeExecuteJavaScript: true,
+      webSecurity: false,  // Disable web security
     },
   });
 
-  // Content Security Policy has been completely disabled for development
+  // Set a permissive Content Security Policy
+  win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': ["default-src * 'unsafe-inline' 'unsafe-eval' data: blob:"]
+      }
+    })
+  });
 
   // Load the index.html from a url
   win.loadURL(
