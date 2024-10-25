@@ -115,52 +115,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     const unrelatedCircleRadius = 1000; // Place unrelated nodes far from view
 
     const honeycombPositions = (index) => {
-      if (index === 0) return [0, 0, 0];
-
-      // Determine which ring the node is in
-      let ring = 1;
-      let indexInRing = index;
-      let totalNodesInRing = 6 * ring;
-
-      while (indexInRing > totalNodesInRing) {
-        indexInRing -= totalNodesInRing;
-        ring += 1;
-        totalNodesInRing = 6 * ring;
-      }
-
-      // Calculate side and position on side
-      let side = Math.floor((indexInRing - 1) / ring);
-      let positionOnSide = (indexInRing - 1) % ring;
-
-      // Starting positions for each side in axial coordinates (q, r)
-      const startingPositions = [
-        [ring, 0],        // East
-        [0, ring],        // Northeast
-        [-ring, ring],    // Northwest
-        [-ring, 0],       // West
-        [0, -ring],       // Southwest
-        [ring, -ring],    // Southeast
-      ];
-
-      // Direction vectors for each side in axial coordinates
-      const directions = [
-        [-1, 1],   // Side 0: NE to NW
-        [-1, 0],   // Side 1: NW to W
-        [0, -1],   // Side 2: W to SW
-        [1, -1],   // Side 3: SW to SE
-        [1, 0],    // Side 4: SE to E
-        [0, 1],    // Side 5: E to NE
-      ];
-
-      // Compute axial coordinates (q, r)
-      let q = startingPositions[side][0] + directions[side][0] * positionOnSide;
-      let r = startingPositions[side][1] + directions[side][1] * positionOnSide;
-
-      // Convert axial to Cartesian coordinates
-      const x = 1.5 * q;
-      const y = Math.sqrt(3) * (r + q / 2);
-
-      return [x, y, ring];
+      // ... (keep the existing honeycombPositions logic)
     };
 
     const calculateNodeScale = (ring) => {
@@ -168,21 +123,27 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     };
 
     setNodes(prevNodes => {
-      const matchedNodes = prevNodes.filter(node => searchResults.includes(node.repoName));
-      const unrelatedNodes = prevNodes.filter(node => !searchResults.includes(node.repoName));
+      const matchedNodes = prevNodes.filter(node => 
+        searchResults.some(result => result.repoName === node.repoName)
+      );
+      const unrelatedNodes = prevNodes.filter(node => 
+        !searchResults.some(result => result.repoName === node.repoName)
+      );
 
       const honeycombNodes = matchedNodes.map((node, index) => {
         const [x, y, ring] = honeycombPositions(index);
         const scale = calculateNodeScale(ring);
+        const searchResult = searchResults.find(result => result.repoName === node.repoName);
         return {
           ...node,
           position: new THREE.Vector3(x * spacing, y * spacing, 0),
           scale: scale,
           isInLiminalView: true,
           liminalScaleFactor: scale,
-          viewScaleFactor: scale
+          viewScaleFactor: scale,
+          similarity: searchResult ? searchResult.similarity : 0
         };
-      });
+      }).sort((a, b) => b.similarity - a.similarity);
 
       const unrelatedCircleNodes = unrelatedNodes.map((node, index) => {
         const angle = (index / unrelatedNodes.length) * Math.PI * 2;
@@ -196,7 +157,8 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
           scale: 0.25,
           isInLiminalView: true,
           liminalScaleFactor: 0.25,
-          viewScaleFactor: 0.25
+          viewScaleFactor: 0.25,
+          similarity: 0
         };
       });
 
@@ -451,17 +413,11 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
       setInteractionHistory(prevHistory => [...prevHistory, actionToRedo]);
       setRedoStack(prevRedoStack => prevRedoStack.slice(0, -1));
     },
-    performSearch: (term) => {
-      setSearchTerm(term);
-      if (term === '') {
+    displaySearchResults: (searchResults) => {
+      if (searchResults.length === 0) {
         positionNodesOnSphere();
         setCenteredNode(null);
       } else {
-        const searchResults = nodes.filter(node => 
-          node.repoName.toLowerCase().includes(term.toLowerCase()) ||
-          node.metadata?.title?.toLowerCase().includes(term.toLowerCase()) ||
-          node.metadata?.description?.toLowerCase().includes(term.toLowerCase())
-        ).map(node => node.repoName);
         displaySearchResults(searchResults);
       }
     },

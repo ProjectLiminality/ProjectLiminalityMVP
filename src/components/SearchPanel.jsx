@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { BLACK, BLUE, WHITE } from '../constants/colors';
 import SearchComponent from './SemanticSearch/src/SearchComponent';
 
-const SearchPanel = ({ isOpen, onSearch, onClose }) => {
+const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {
   const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
         onClose();
-        onSearch(''); // Reset search results
+        onSearch([]); // Reset search results
       }
     };
 
@@ -26,8 +26,12 @@ const SearchPanel = ({ isOpen, onSearch, onClose }) => {
   };
 
   const handleSearchComplete = (results) => {
-    setSearchResults(results);
-    onSearch(results); // Pass the semantic search results to the main app
+    const formattedResults = results.map(([name, similarity]) => ({
+      repoName: name,
+      similarity: similarity
+    }));
+    setSearchResults(formattedResults);
+    onSearch(formattedResults); // Pass the semantic search results to the main app
   };
 
   return (
@@ -45,15 +49,15 @@ const SearchPanel = ({ isOpen, onSearch, onClose }) => {
     }}>
       <SearchComponent
         maxResults={5} // You can adjust this or make it a prop
-        targets={[]} // You need to provide the targets for semantic search
+        targets={repoNames} // Provide the repo names as targets for semantic search
         onSearchStart={handleSearchStart}
         onSearchComplete={handleSearchComplete}
       />
       {/* Display search results */}
       <div style={{ marginTop: '10px', maxHeight: '300px', overflowY: 'auto' }}>
-        {searchResults.map(([name, similarity]) => (
-          <div key={name} style={{ marginBottom: '5px' }}>
-            {name}: {similarity.toFixed(4)}
+        {searchResults.map(({ repoName, similarity }) => (
+          <div key={repoName} style={{ marginBottom: '5px' }}>
+            {repoName}: {similarity.toFixed(4)}
           </div>
         ))}
       </div>

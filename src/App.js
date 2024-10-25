@@ -232,9 +232,9 @@ function App() {
     processFile(repoName, file);
   }, []);
 
-  const handleSearch = (searchTerm) => {
+  const handleSearchComplete = (searchResults) => {
     if (dreamGraphRef.current) {
-      dreamGraphRef.current.performSearch(searchTerm);
+      dreamGraphRef.current.displaySearchResults(searchResults);
     }
   };
 
@@ -277,8 +277,9 @@ function App() {
       )}
       <SearchPanel
         isOpen={isSearchPanelOpen}
-        onSearch={handleSearch}
+        onSearch={handleSearchComplete}
         onClose={() => setIsSearchPanelOpen(false)}
+        repoNames={nodes.map(node => node.repoName)}
       />
       {contextMenu && (
         <ContextMenu
