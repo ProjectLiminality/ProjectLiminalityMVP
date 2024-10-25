@@ -30,6 +30,7 @@ const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {
       repoName: name,
       similarity: similarity
     }));
+    console.log('Formatted search results in SearchPanel:', formattedResults);
     setSearchResults(formattedResults);
     onSearch(formattedResults); // Pass the semantic search results to the main app
   };

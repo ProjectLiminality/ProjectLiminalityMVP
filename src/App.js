@@ -238,6 +238,7 @@ function App() {
   }, []);
 
   const handleSearchComplete = (searchResults) => {
+    console.log('Search results received in App:', searchResults);
     if (dreamGraphRef.current) {
       dreamGraphRef.current.displaySearchResults(searchResults);
     }

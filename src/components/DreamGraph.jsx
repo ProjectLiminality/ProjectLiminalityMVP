@@ -61,8 +61,14 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   const [nodes, setNodes] = useState([]);
 
   useEffect(() => {
+    console.log('Initial nodes received in DreamGraph:', initialNodes);
+  }, [initialNodes]);
+
+  useEffect(() => {
     if (onNodesChange) {
-      onNodesChange(nodes.map(node => node.repoName));
+      const nodeNames = nodes.map(node => node.repoName);
+      console.log('Node names being sent to App:', nodeNames);
+      onNodesChange(nodeNames);
     }
   }, [nodes, onNodesChange]);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
@@ -117,6 +123,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   }, [initialNodes]);
 
   const displaySearchResults = useCallback((searchResults) => {
+    console.log('Search results received in DreamGraph:', searchResults);
     const spacing = 10;
     const unrelatedCircleRadius = 1000; // Place unrelated nodes far from view
 
