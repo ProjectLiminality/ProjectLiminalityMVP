@@ -31,12 +31,12 @@ function createWindow() {
     },
   });
 
-  // Set Content Security Policy
+  // Set a more permissive Content Security Policy for development
   win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        'Content-Security-Policy': ["default-src 'self'; img-src 'self' data:; media-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval';"]
+        'Content-Security-Policy': ["default-src 'self'; connect-src 'self' https: wss:; img-src 'self' data: https:; media-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' https:;"]
       }
     })
   });
