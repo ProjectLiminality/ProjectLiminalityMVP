@@ -60,12 +60,16 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       })
       .on("click", (event, d) => {
         event.stopPropagation();
+        console.log("DreamContent: Node clicked", d.data);
         if (onNodeInteraction) {
+          console.log("DreamContent: Calling onNodeInteraction");
           onNodeInteraction({
             type: "click",
             node: d.data,
             event: event,
           });
+        } else {
+          console.log("DreamContent: onNodeInteraction is not defined");
         }
         if (focus !== d) zoom(event, d);
       });

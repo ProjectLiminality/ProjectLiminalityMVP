@@ -66,13 +66,18 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
 
   const handleNodeInteraction = useCallback((interaction) => {
     const { type, node, event } = interaction;
+    console.log("DreamSong: handleNodeInteraction called", { type, node });
     
     switch (type) {
       case 'click':
         if (event.metaKey || event.ctrlKey) {
+          console.log("DreamSong: Multi-select not implemented yet");
           // Toggle selection (to be implemented in future phases)
         } else {
-          window.electron.fileSystem.openFile(repoName, node.name);
+          console.log("DreamSong: Attempting to open file", repoName, node.name);
+          window.electron.fileSystem.openFile(repoName, node.name)
+            .then(() => console.log("DreamSong: File opened successfully"))
+            .catch(error => console.error("DreamSong: Error opening file", error));
         }
         break;
       // Future cases: 'rightClick', 'select', 'deselect', etc.
