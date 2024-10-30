@@ -1,70 +1,54 @@
-# Getting Started with Create React App
+# Project Liminality: Transcending Knowledge Management
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Introduction
 
-## Available Scripts
+Project Liminality is an innovative knowledge management system that aims to revolutionize the way we structure and interact with information. It transcends the traditional "second brain" paradigm by introducing the concept of an "interbrain" - a dynamic, relational approach to organizing knowledge.
 
-In the project directory, you can run:
+## Core Concepts
 
-### `npm start`
+### Dream Nodes
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The fundamental unit of Project Liminality is the "Dream Node," which is represented by a Git repository. Dream Nodes can embody two primary concepts:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. **Dreams**: Abstract ideas, concepts, or any form of knowledge.
+2. **Dreamers**: Representations of people or peers.
 
-### `npm test`
+This dual nature allows for a flexible and interconnected knowledge structure.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Dream Talk and Dream Song
 
-### `npm run build`
+Each Dream Node consists of two main components:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Dream Talk**: A concise, symbolic representation of the idea (like a thumbnail).
+- **Dream Song**: A more elaborate explanation or exploration of the idea, containing multiple references to other Dream Talks.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### The Interbrain
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Project Liminality structures knowledge based on social relationships and interactions, creating an "interbrain." This approach allows users to organize information along the lines of their actual relational fields, transcending static, top-down categorization.
 
-### `npm run eject`
+## Key Features
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **Git-Based Structure**: Utilizes Git repositories as the foundation for Dream Nodes, allowing for version control and collaborative evolution of ideas.
+- **Relational Organization**: Knowledge is structured based on connections between ideas (Dreams) and people (Dreamers).
+- **Holonic Organization**: Facilitates the self-organization of knowledge into a coherent holarchy of ideas.
+- **Conversational Copilot**: Designed to enhance and enrich conversations by providing relevant contextual information.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Vision
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Project Liminality aims to create a dynamic, interconnected knowledge ecosystem that mirrors the complexity of human thought and social interactions. By breaking down the barriers between personal knowledge management and social discourse, it offers a new paradigm for understanding and evolving ideas in a collaborative, organic manner.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Getting Started
 
-## Learn More
+(Include information on how to set up and start using Project Liminality once it's available)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Contributing
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+(Add guidelines for contributing to the project when ready)
 
-### Code Splitting
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+(Specify the license under which Project Liminality is released)
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+For more detailed information on the system's architecture, please refer to the `ArchitectureOverview.md` file in this repository.
