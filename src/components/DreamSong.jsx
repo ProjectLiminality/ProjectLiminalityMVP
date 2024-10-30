@@ -235,15 +235,14 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center',
-          overflow: 'hidden',
-          borderRadius: '50%'
+          overflow: 'hidden'
         }}>
           {showDreamSong && processedNodes.length > 0 ? (
             <div style={{ width: '100%', maxWidth: '800px', overflowY: 'auto', maxHeight: '100%' }}>
               {processedNodes.map((node, index) => renderNode(node, index))}
             </div>
           ) : circlePackingData ? (
-            <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
               <DreamContent
                 data={circlePackingData}
                 onNodeInteraction={handleNodeInteraction}
