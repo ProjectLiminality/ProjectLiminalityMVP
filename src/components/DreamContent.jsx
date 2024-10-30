@@ -53,7 +53,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       .attr("stroke-width", (d) => strokeWidth(d.depth))
       .attr("pointer-events", "all")
       .on("mouseover", function (event, d) {
-        d3.select(this).attr("stroke", "#000");
+        d3.select(this).attr("stroke", WHITE);
         console.log("DreamContent: Node mouseover", d.data.name);
         if (onNodeInteraction) {
           onNodeInteraction({
@@ -64,7 +64,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
         }
       })
       .on("mouseout", function (event, d) {
-        d3.select(this).attr("stroke", null);
+        d3.select(this).attr("stroke", RED);
         console.log("DreamContent: Node mouseout", d.data.name);
         if (onNodeInteraction) {
           onNodeInteraction({
