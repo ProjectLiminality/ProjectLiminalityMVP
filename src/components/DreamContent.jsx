@@ -1,6 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
-import { BLACK, WHITE, RED } from '../constants/colors';
+import { BLACK, WHITE, RED, BLUE } from '../constants/colors';
 
 const DreamContent = ({ data, onNodeInteraction }) => {
   const ref = React.useRef();
