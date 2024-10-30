@@ -31,6 +31,7 @@ contextBridge.exposeInMainWorld('electron', {
     openFile: (repoName, fileName) => ipcRenderer.invoke('open-file', repoName, fileName),
     runAider: (repoName) => ipcRenderer.invoke('run-aider', repoName),
     openCanvas: (repoName) => ipcRenderer.invoke('open-canvas', repoName),
+    getDirectoryStructure: (repoName) => ipcRenderer.invoke('get-directory-structure', repoName),
   },
   getDreamVaultPath: () => ipcRenderer.invoke('get-dream-vault-path'),
   setDreamVaultPath: (path) => ipcRenderer.invoke('set-dream-vault-path', path),
