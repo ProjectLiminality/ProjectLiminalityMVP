@@ -39,7 +39,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       .attr("height", "100%")
       .attr(
         "style",
-        `max-width: 100%; height: auto; display: block; background: #000000; cursor: pointer;`
+        `width: 100%; height: 100%; display: block; background: #000000; cursor: pointer;`
       );
 
     // Append the nodes.
@@ -165,7 +165,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
     }
   }, [data, onNodeInteraction]);
 
-  return <div ref={ref} />;
+  return <div ref={ref} style={{ width: '100%', height: '100%' }} />;
 };
 
 export default DreamContent;
