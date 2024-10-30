@@ -1,5 +1,6 @@
 import React from 'react';
 import * as d3 from 'd3';
+import { BLACK, WHITE, RED } from '../constants/colors';
 
 const DreamContent = ({ data, onNodeInteraction }) => {
   const ref = React.useRef();
@@ -14,11 +15,10 @@ const DreamContent = ({ data, onNodeInteraction }) => {
     const width = 928;
     const height = width;
 
-    // Create the color scale.
-    const color = d3.scaleLinear()
+    // Create the color scale (we'll use this for the stroke width instead of color).
+    const strokeWidth = d3.scaleLinear()
       .domain([0, 5])
-      .range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
-      .interpolate(d3.interpolateHcl);
+      .range([1, 3]);
 
     // Compute the layout.
     const pack = (data) => d3.pack()
@@ -48,7 +48,9 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       .selectAll("circle")
       .data(root.descendants().slice(1))
       .join("circle")
-      .attr("fill", (d) => (d.children ? color(d.depth) : "white"))
+      .attr("fill", BLACK)
+      .attr("stroke", RED)
+      .attr("stroke-width", (d) => strokeWidth(d.depth))
       .attr("pointer-events", "all")
       .on("mouseover", function (event, d) {
         d3.select(this).attr("stroke", "#000");
@@ -110,6 +112,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       .selectAll("text")
       .data(root.descendants())
       .join("text")
+      .style("fill", WHITE)
       .style("fill-opacity", (d) => (d.parent === root ? 1 : 0))
       .style("display", (d) => (d.parent === root ? "inline" : "none"))
       .text((d) => d.data.name);
