@@ -35,13 +35,11 @@ const DreamContent = ({ data, onNodeInteraction }) => {
     const svg = d3.select(ref.current)
       .append("svg")
       .attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
-      .attr("width", width)
-      .attr("height", height)
+      .attr("width", "100%")
+      .attr("height", "100%")
       .attr(
         "style",
-        `max-width: 100%; height: auto; display: block; margin: 0 -14px; background: ${color(
-          0
-        )}; cursor: pointer;`
+        `max-width: 100%; height: auto; display: block; background: #000000; cursor: pointer;`
       );
 
     // Append the nodes.

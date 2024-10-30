@@ -229,14 +229,26 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
             }
           `}
         </style>
-        <div style={{ width: '100%', maxWidth: '800px', overflowY: 'auto', maxHeight: '100%' }}>
+        <div style={{ 
+          width: '100%', 
+          height: '100%', 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center',
+          overflow: 'hidden',
+          borderRadius: '50%'
+        }}>
           {showDreamSong && processedNodes.length > 0 ? (
-            processedNodes.map((node, index) => renderNode(node, index))
+            <div style={{ width: '100%', maxWidth: '800px', overflowY: 'auto', maxHeight: '100%' }}>
+              {processedNodes.map((node, index) => renderNode(node, index))}
+            </div>
           ) : circlePackingData ? (
-            <DreamContent
-              data={circlePackingData}
-              onNodeInteraction={handleNodeInteraction}
-            />
+            <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden' }}>
+              <DreamContent
+                data={circlePackingData}
+                onNodeInteraction={handleNodeInteraction}
+              />
+            </div>
           ) : (
             <p>Loading...</p>
           )}
