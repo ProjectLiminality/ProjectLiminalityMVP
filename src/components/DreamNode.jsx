@@ -5,8 +5,10 @@ import DreamTalk from './DreamTalk';
 import DreamSong from './DreamSong';
 import { BLUE, RED } from '../constants/colors';
 import { useThree } from '@react-three/fiber';
+import { getDirectoryStructure } from '../utils/fileUtils';
 
 const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, onFileRightClick, onHover, isCentered, onDrop }) => {
+  const [directoryStructure, setDirectoryStructure] = useState(null);
   const { camera } = useThree();
   const firstDreamSongMedia = dreamSongMedia && dreamSongMedia.length > 0 ? dreamSongMedia[0] : null;
   const [hovered, setHovered] = useState(false);
@@ -31,6 +33,20 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
       handleFlip();
     }
   }, [isCentered, isFlipped, handleFlip]);
+
+  useEffect(() => {
+    const fetchDirectoryStructure = async () => {
+      try {
+        const structure = await getDirectoryStructure(repoName);
+        setDirectoryStructure(structure);
+        console.log('Directory structure for', repoName, ':', structure);
+      } catch (error) {
+        console.error('Error fetching directory structure:', error);
+      }
+    };
+
+    fetchDirectoryStructure();
+  }, [repoName]);
 
   useEffect(() => {
     if (!isCentered) {

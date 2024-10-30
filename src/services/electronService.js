@@ -62,6 +62,19 @@ export async function listFiles(repoName) {
   }
 }
 
+export async function getDirectoryStructure(repoName) {
+  if (!window.electron || !window.electron.fileSystem || typeof window.electron.fileSystem.getDirectoryStructure !== 'function') {
+    console.error('getDirectoryStructure function is not available in the electron context');
+    throw new Error('getDirectoryStructure function is not available');
+  }
+  try {
+    return await window.electron.fileSystem.getDirectoryStructure(repoName);
+  } catch (error) {
+    console.error(`Error getting directory structure for ${repoName}:`, error);
+    throw error;
+  }
+}
+
 export async function renameRepo(oldName, newName) {
   if (!window.electron || !window.electron.fileSystem || typeof window.electron.fileSystem.renameRepo !== 'function') {
     console.error('renameRepo function is not available in the electron context');

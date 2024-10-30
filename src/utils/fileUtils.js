@@ -136,6 +136,10 @@ export async function listFiles(repoName) {
   return electronService.listFiles(repoName);
 }
 
+export async function getDirectoryStructure(repoName) {
+  return electronService.getDirectoryStructure(repoName);
+}
+
 export async function listMediaFiles(repoName) {
   try {
     const files = await electronService.listFiles(repoName);

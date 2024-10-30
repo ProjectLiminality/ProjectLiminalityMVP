@@ -24,6 +24,40 @@ function setupHandlers(ipcMain) {
       return { success: false, error: error.message };
     }
   });
+
+  ipcMain.handle('get-directory-structure', async (event, repoName) => {
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    if (!dreamVaultPath) {
+      throw new Error('Dream Vault path not set');
+    }
+    const repoPath = path.join(dreamVaultPath, repoName);
+    
+    const getStructure = async (dir) => {
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+      const structure = {};
+      
+      for (const entry of entries) {
+        if (entry.name.startsWith('.') || entry.name === 'DreamSong.canvas') continue;
+        
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          structure[entry.name] = await getStructure(fullPath);
+        } else {
+          structure[entry.name] = 'file';
+        }
+      }
+      
+      return structure;
+    };
+
+    try {
+      const structure = await getStructure(repoPath);
+      return { [repoName]: structure };
+    } catch (error) {
+      console.error(`Error getting directory structure for ${repoName}:`, error);
+      throw error;
+    }
+  });
   const store = new Store();
   ipcMain.handle('get-person-nodes', async () => {
     try {
