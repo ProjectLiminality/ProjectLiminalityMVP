@@ -18,7 +18,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
     // Create the color scale (we'll use this for the stroke width instead of color).
     const strokeWidth = d3.scaleLinear()
       .domain([0, 5])
-      .range([1, 3]);
+      .range([2, 6]);
 
     // Compute the layout.
     const pack = (data) => d3.pack()
