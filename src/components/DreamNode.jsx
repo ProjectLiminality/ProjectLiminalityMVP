@@ -101,8 +101,6 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
     }
   };
 
-  console.log("DreamNode: Rendering", { repoName });
-
   return (
     <Billboard
       ref={nodeRef}
