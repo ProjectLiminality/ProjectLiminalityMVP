@@ -54,12 +54,15 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       .attr("pointer-events", (d) => (!d.children ? "none" : null))
       .on("mouseover", function () {
         d3.select(this).attr("stroke", "#000");
+        console.log("DreamContent: Node mouseover");
       })
       .on("mouseout", function () {
         d3.select(this).attr("stroke", null);
+        console.log("DreamContent: Node mouseout");
       })
       .on("click", (event, d) => {
         event.stopPropagation();
+        event.preventDefault();
         console.log("DreamContent: Node clicked", d.data);
         if (onNodeInteraction) {
           console.log("DreamContent: Calling onNodeInteraction");
@@ -73,6 +76,12 @@ const DreamContent = ({ data, onNodeInteraction }) => {
         }
         if (focus !== d) zoom(event, d);
       });
+
+    // Add a click event listener to the entire SVG
+    svg.on("click", (event) => {
+      console.log("DreamContent: SVG clicked");
+      event.stopPropagation();
+    });
 
     // Append the text labels.
     const label = svg

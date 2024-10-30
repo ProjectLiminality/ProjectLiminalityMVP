@@ -101,6 +101,8 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
     }
   };
 
+  console.log("DreamNode: Rendering", { repoName });
+
   return (
     <Billboard
       ref={nodeRef}
@@ -108,9 +110,18 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
       lockX={false}
       lockY={false}
       lockZ={false}
-      onContextMenu={handleRightClick}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      onContextMenu={(e) => {
+        console.log("DreamNode: Right-click detected");
+        handleRightClick(e);
+      }}
+      onDragOver={(e) => {
+        console.log("DreamNode: Drag over detected");
+        handleDragOver(e);
+      }}
+      onDrop={(e) => {
+        console.log("DreamNode: Drop detected");
+        handleDrop(e);
+      }}
     >
       <group ref={groupRef}>
         <Html

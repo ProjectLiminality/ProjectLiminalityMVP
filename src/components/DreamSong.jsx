@@ -75,14 +75,25 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
           // Toggle selection (to be implemented in future phases)
         } else {
           console.log("DreamSong: Attempting to open file", repoName, node.name);
-          window.electron.fileSystem.openFile(repoName, node.name)
-            .then(() => console.log("DreamSong: File opened successfully"))
-            .catch(error => console.error("DreamSong: Error opening file", error));
+          if (window.electron && window.electron.fileSystem) {
+            window.electron.fileSystem.openFile(repoName, node.name)
+              .then(() => console.log("DreamSong: File opened successfully"))
+              .catch(error => console.error("DreamSong: Error opening file", error));
+          } else {
+            console.error("DreamSong: window.electron.fileSystem is not available");
+          }
         }
         break;
       // Future cases: 'rightClick', 'select', 'deselect', etc.
     }
   }, [repoName]);
+
+  useEffect(() => {
+    console.log("DreamSong: Component mounted");
+    return () => {
+      console.log("DreamSong: Component unmounted");
+    };
+  }, []);
 
   const renderMediaElement = (file, index) => {
     const mediaItem = dreamSongMedia.find(item => item.filePath === file);
@@ -140,6 +151,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
     setContextMenu(null);
   }, []);
 
+  console.log("DreamSong: Rendering");
+
   return (
     <div 
       className="dream-song" 
@@ -154,15 +167,25 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
         color: WHITE,
         boxSizing: 'border-box',
       }}
-      onClick={onClick}
-      onContextMenu={(e) => {
-        if (!e.defaultPrevented) {
-          e.preventDefault();
-          onRightClick(e);
-        }
+      onClick={(e) => {
+        console.log("DreamSong: Clicked");
+        e.stopPropagation();
+        onClick(e);
       }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      onContextMenu={(e) => {
+        console.log("DreamSong: Right-clicked");
+        e.preventDefault();
+        e.stopPropagation();
+        onRightClick(e);
+      }}
+      onMouseEnter={(e) => {
+        console.log("DreamSong: Mouse enter");
+        onMouseEnter(e);
+      }}
+      onMouseLeave={(e) => {
+        console.log("DreamSong: Mouse leave");
+        onMouseLeave(e);
+      }}
     >
       <div
         className="dream-song-content"
