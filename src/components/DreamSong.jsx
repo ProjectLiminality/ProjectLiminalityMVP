@@ -151,8 +151,6 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
     setContextMenu(null);
   }, []);
 
-  console.log("DreamSong: Rendering");
-
   return (
     <div 
       className="dream-song" 
