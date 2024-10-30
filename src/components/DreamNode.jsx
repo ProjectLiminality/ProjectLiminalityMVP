@@ -48,6 +48,8 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
     fetchDirectoryStructure();
   }, [repoName]);
 
+  const directoryStructureData = directoryStructure ? directoryStructure[repoName] : null;
+
   useEffect(() => {
     if (!isCentered) {
       setIsFlipped(false);
@@ -190,6 +192,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             isHovered={hovered}
             borderColor={borderColor}
             onFlip={handleFlip}
+            directoryStructureData={directoryStructureData}
           />
         </Html>
       </group>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BLACK, WHITE, BLUE } from '../constants/colors';
+import { BLACK, WHITE, BLUE, RED } from '../constants/colors';
 import { readDreamSongCanvas, listFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 import FileContextMenu from './FileContextMenu';
@@ -32,17 +32,26 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
 
   useEffect(() => {
     // Prepare data for circle packing
-    const prepareCirclePackingData = () => {
-      return {
-        name: "root",
-        children: files.map(file => ({ name: file, value: 1 }))
+    const prepareCirclePackingData = (structure) => {
+      const processNode = (node, name) => {
+        if (typeof node === 'object') {
+          return {
+            name: name,
+            children: Object.entries(node).map(([key, value]) => processNode(value, key)),
+            isFolder: true
+          };
+        } else {
+          return { name: name, value: 1, isFolder: false };
+        }
       };
+
+      return processNode(structure, "root");
     };
 
-    if (files.length > 0) {
-      setCirclePackingData(prepareCirclePackingData());
+    if (directoryStructureData) {
+      setCirclePackingData(prepareCirclePackingData(directoryStructureData));
     }
-  }, [files]);
+  }, [directoryStructureData]);
 
   const handleMediaClick = (event) => {
     event.stopPropagation();

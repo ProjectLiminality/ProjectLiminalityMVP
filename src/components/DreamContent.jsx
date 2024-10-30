@@ -49,7 +49,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       .data(root.descendants().slice(1))
       .join("circle")
       .attr("fill", BLACK)
-      .attr("stroke", RED)
+      .attr("stroke", d => d.data.isFolder ? BLUE : RED)
       .attr("stroke-width", (d) => strokeWidth(d.depth))
       .attr("pointer-events", "all")
       .on("mouseover", function (event, d) {
