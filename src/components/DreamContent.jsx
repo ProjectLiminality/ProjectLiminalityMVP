@@ -51,19 +51,33 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       .data(root.descendants().slice(1))
       .join("circle")
       .attr("fill", (d) => (d.children ? color(d.depth) : "white"))
-      .attr("pointer-events", (d) => (!d.children ? "none" : null))
-      .on("mouseover", function () {
+      .attr("pointer-events", "all")
+      .on("mouseover", function (event, d) {
         d3.select(this).attr("stroke", "#000");
-        console.log("DreamContent: Node mouseover");
+        console.log("DreamContent: Node mouseover", d.data.name);
+        if (onNodeInteraction) {
+          onNodeInteraction({
+            type: "mouseover",
+            node: d.data,
+            event: event,
+          });
+        }
       })
-      .on("mouseout", function () {
+      .on("mouseout", function (event, d) {
         d3.select(this).attr("stroke", null);
-        console.log("DreamContent: Node mouseout");
+        console.log("DreamContent: Node mouseout", d.data.name);
+        if (onNodeInteraction) {
+          onNodeInteraction({
+            type: "mouseout",
+            node: d.data,
+            event: event,
+          });
+        }
       })
       .on("click", (event, d) => {
         event.stopPropagation();
         event.preventDefault();
-        console.log("DreamContent: Node clicked", d.data);
+        console.log("DreamContent: Node clicked", d.data.name);
         if (onNodeInteraction) {
           console.log("DreamContent: Calling onNodeInteraction");
           onNodeInteraction({

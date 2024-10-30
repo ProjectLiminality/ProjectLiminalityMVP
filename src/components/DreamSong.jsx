@@ -89,6 +89,14 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
           }
         }
         break;
+      case 'mouseover':
+        console.log(`DreamSong: Mouse over ${node.children ? 'folder' : 'file'}: ${node.name}`);
+        // Implement hover effect or tooltip here
+        break;
+      case 'mouseout':
+        console.log(`DreamSong: Mouse out ${node.children ? 'folder' : 'file'}: ${node.name}`);
+        // Remove hover effect or hide tooltip here
+        break;
       // Future cases: 'rightClick', 'select', 'deselect', etc.
     }
   }, [repoName]);
