@@ -3,7 +3,7 @@ import { BLACK, WHITE, BLUE } from '../constants/colors';
 import { readDreamSongCanvas, listFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
 import FileContextMenu from './FileContextMenu';
-import DisplayContent from './DisplayContent';
+import DreamContent from './DreamContent';
 
 const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRightClick, onMouseEnter, onMouseLeave, borderColor, onFlip }) => {
   const [processedNodes, setProcessedNodes] = useState([]);
@@ -63,6 +63,21 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
       }
     }
   };
+
+  const handleNodeInteraction = useCallback((interaction) => {
+    const { type, node, event } = interaction;
+    
+    switch (type) {
+      case 'click':
+        if (event.metaKey || event.ctrlKey) {
+          // Toggle selection (to be implemented in future phases)
+        } else {
+          window.electron.fileSystem.openFile(repoName, node.name);
+        }
+        break;
+      // Future cases: 'rightClick', 'select', 'deselect', etc.
+    }
+  }, [repoName]);
 
   const renderMediaElement = (file, index) => {
     const mediaItem = dreamSongMedia.find(item => item.filePath === file);
@@ -176,9 +191,9 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
           {showDreamSong && processedNodes.length > 0 ? (
             processedNodes.map((node, index) => renderNode(node, index))
           ) : circlePackingData ? (
-            <DisplayContent
+            <DreamContent
               data={circlePackingData}
-              onCircleClick={(file) => window.electron.fileSystem.openFile(repoName, file)}
+              onNodeInteraction={handleNodeInteraction}
             />
           ) : (
             <p>Loading...</p>
