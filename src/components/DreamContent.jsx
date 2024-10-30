@@ -79,6 +79,12 @@ const DreamContent = ({ data, onNodeInteraction }) => {
 
     // Add a click event listener to the entire SVG
     svg.on("click", (event) => {
+      event.stopPropagation();
+      console.log("DreamContent: SVG background clicked");
+    });
+
+    // Add a click event listener to the entire SVG
+    svg.on("click", (event) => {
       console.log("DreamContent: SVG clicked");
       event.stopPropagation();
     });

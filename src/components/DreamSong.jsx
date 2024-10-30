@@ -74,13 +74,18 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
           console.log("DreamSong: Multi-select not implemented yet");
           // Toggle selection (to be implemented in future phases)
         } else {
-          console.log("DreamSong: Attempting to open file", repoName, node.name);
-          if (window.electron && window.electron.fileSystem) {
-            window.electron.fileSystem.openFile(repoName, node.name)
-              .then(() => console.log("DreamSong: File opened successfully"))
-              .catch(error => console.error("DreamSong: Error opening file", error));
+          console.log(`DreamSong: Clicked on ${node.children ? 'folder' : 'file'}: ${node.name}`);
+          if (node.children) {
+            console.log("DreamSong: This is a folder, implement folder opening logic here");
           } else {
-            console.error("DreamSong: window.electron.fileSystem is not available");
+            console.log("DreamSong: Attempting to open file", repoName, node.name);
+            if (window.electron && window.electron.fileSystem) {
+              window.electron.fileSystem.openFile(repoName, node.name)
+                .then(() => console.log("DreamSong: File opened successfully"))
+                .catch(error => console.error("DreamSong: Error opening file", error));
+            } else {
+              console.error("DreamSong: window.electron.fileSystem is not available");
+            }
           }
         }
         break;
@@ -166,9 +171,12 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
         boxSizing: 'border-box',
       }}
       onClick={(e) => {
-        console.log("DreamSong: Clicked");
-        e.stopPropagation();
-        onClick(e);
+        // Only handle the click if it's directly on the DreamSong div
+        if (e.target === e.currentTarget) {
+          console.log("DreamSong: Clicked");
+          e.stopPropagation();
+          onClick(e);
+        }
       }}
       onContextMenu={(e) => {
         console.log("DreamSong: Right-clicked");
