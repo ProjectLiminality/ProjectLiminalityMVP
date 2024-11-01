@@ -287,6 +287,7 @@ function App() {
         onSearch={handleSearchComplete}
         onClose={() => setIsSearchPanelOpen(false)}
         repoNames={nodeNames}
+        threshold={0.5} // Add this line to set the threshold
         style={{
           position: 'fixed',
           top: '0%',
