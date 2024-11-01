@@ -22,17 +22,19 @@ const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {
   if (!isOpen) return null;
 
   const handleSearchStart = () => {
-    // You can add any logic needed when search starts
+    console.log('Search started');
+    setSearchResults([]);
   };
 
   const handleSearchComplete = (results) => {
+    console.log('Raw search results:', results);
     const formattedResults = results.map(([name, similarity]) => ({
       repoName: name,
       similarity: similarity
     }));
-    console.log('Formatted search results in SearchPanel:', formattedResults);
+    console.log('Formatted search results:', formattedResults);
     setSearchResults(formattedResults);
-    onSearch(formattedResults); // Pass the semantic search results to the main app
+    onSearch(formattedResults);
   };
 
   return (
@@ -49,8 +51,8 @@ const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {
       boxShadow: `0 0 0 2px ${BLUE}`,
     }}>
       <SearchComponent
-        maxResults={5} // You can adjust this or make it a prop
-        targets={repoNames} // Provide the repo names as targets for semantic search
+        maxResults={5}
+        targets={repoNames}
         onSearchStart={handleSearchStart}
         onSearchComplete={handleSearchComplete}
       />
