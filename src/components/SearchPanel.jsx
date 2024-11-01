@@ -5,9 +5,24 @@ import SearchComponent from './SemanticSearch/src/SearchComponent';
 const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {                                                                  
   const [searchResults, setSearchResults] = useState([]);                                                                            
                                                                                                                                      
+  // Hard-coded dummy list of repo names
+  const dummyRepoNames = [
+    'awesome-project',
+    'cool-app',
+    'super-tool',
+    'amazing-library',
+    'fantastic-framework',
+    'incredible-utility',
+    'brilliant-solution',
+    'stellar-application',
+    'magnificent-system',
+    'extraordinary-platform'
+  ];
+
   useEffect(() => {                                                                                                                  
     console.log('SearchPanel mounted or updated. isOpen:', isOpen);                                                                  
     console.log('repoNames:', repoNames);                                                                                            
+    console.log('dummyRepoNames:', dummyRepoNames);
   }, [isOpen, repoNames]);                                                                                                           
                                                                                                                                      
   useEffect(() => {                                                                                                                  
@@ -56,7 +71,7 @@ const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {
     >
       <SearchComponent
         maxResults={5}
-        targets={repoNames}
+        targets={dummyRepoNames} // Use the dummy repo names here
         onSearchStart={handleSearchStart}
         onSearchComplete={handleSearchComplete}
       />
