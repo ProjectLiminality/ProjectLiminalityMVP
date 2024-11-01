@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import * as d3 from 'd3';
-import { BLACK, WHITE, RED, BLUE, YELLOW } from '../constants/colors';
+import { BLACK, WHITE, RED, BLUE } from '../constants/colors';
 
 const DreamContent = ({ data, onNodeInteraction }) => {
   const [selectedNodes, setSelectedNodes] = useState(new Set());
@@ -80,7 +80,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       .data(root.descendants().slice(1))
       .join("circle")
       .attr("fill", BLACK)
-      .attr("stroke", d => selectedNodes.has(d.data.name) ? YELLOW : (d.data.isFolder ? BLUE : RED))
+      .attr("stroke", d => selectedNodes.has(d.data.name) ? WHITE : (d.data.isFolder ? BLUE : RED))
       .attr("stroke-width", (d) => strokeWidth(d.depth))
       .attr("pointer-events", "all")
       .on("mouseover", function (event, d) {
@@ -95,7 +95,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
         }
       })
       .on("mouseout", function (event, d) {
-        d3.select(this).attr("stroke", selectedNodes.has(d.data.name) ? YELLOW : (d.data.isFolder ? BLUE : RED));
+        d3.select(this).attr("stroke", selectedNodes.has(d.data.name) ? WHITE : (d.data.isFolder ? BLUE : RED));
         console.log("DreamContent: Node mouseout", d.data.name);
         if (onNodeInteraction) {
           onNodeInteraction({
