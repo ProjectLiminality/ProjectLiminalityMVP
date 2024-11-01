@@ -3,7 +3,7 @@ import { BLACK, BLUE, WHITE } from '../constants/colors';
 import SearchComponent from './SemanticSearch/src/SearchComponent';
 import { scanDreamVault } from '../services/electronService';
 
-const SearchPanel = ({ isOpen, onSearch, onClose }) => {
+const SearchPanel = ({ isOpen, onSearch, onClose, style }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [repoNames, setRepoNames] = useState([]);
 
@@ -68,9 +68,12 @@ const SearchPanel = ({ isOpen, onSearch, onClose }) => {
   return (
     <div
       style={{
-        position: 'fixed',
+        ...style,
         backgroundColor: BLACK,
         borderColor: BLUE,
+        padding: '20px',
+        borderRadius: '10px',
+        boxShadow: '0 0 10px rgba(0,0,0,0.5)'
       }}
     >
       <SearchComponent
