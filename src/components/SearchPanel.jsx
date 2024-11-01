@@ -69,8 +69,11 @@ const SearchPanel = ({ isOpen, onSearch, onClose, style }) => {
     <div
       style={{
         ...style,
-        backgroundColor: WHITE,
+        backgroundColor: BLACK,
+        opacity: 1,
         borderRadius: '10px',
+        height: '5%',
+        width: '50%',
       }}
     >
       <SearchComponent
