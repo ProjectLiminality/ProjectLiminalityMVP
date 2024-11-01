@@ -73,6 +73,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
     }
   };
 
+  const [selectedNodes, setSelectedNodes] = useState(new Set());
+
   const handleNodeInteraction = useCallback((interaction) => {
     const { type, node, event } = interaction;
     console.log("DreamSong: handleNodeInteraction called", { type, node });
@@ -80,8 +82,16 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
     switch (type) {
       case 'click':
         if (event.metaKey || event.ctrlKey) {
-          console.log("DreamSong: Multi-select not implemented yet");
-          // Toggle selection (to be implemented in future phases)
+          setSelectedNodes(prevSelected => {
+            const newSelected = new Set(prevSelected);
+            if (newSelected.has(node.name)) {
+              newSelected.delete(node.name);
+            } else {
+              newSelected.add(node.name);
+            }
+            return newSelected;
+          });
+          console.log("DreamSong: Node selection toggled", node.name);
         } else {
           console.log(`DreamSong: Clicked on ${node.children ? 'folder' : 'file'}: ${node.name}`);
           if (node.children) {
@@ -108,7 +118,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
         break;
       // Future cases: 'rightClick', 'select', 'deselect', etc.
     }
-  }, [repoName]);
+  }, [repoName, setSelectedNodes]);
 
   useEffect(() => {
     console.log("DreamSong: Component mounted");

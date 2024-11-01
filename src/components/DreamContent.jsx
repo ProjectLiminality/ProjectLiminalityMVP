@@ -1,9 +1,40 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import * as d3 from 'd3';
-import { BLACK, WHITE, RED, BLUE } from '../constants/colors';
+import { BLACK, WHITE, RED, BLUE, YELLOW } from '../constants/colors';
 
 const DreamContent = ({ data, onNodeInteraction }) => {
+  const [selectedNodes, setSelectedNodes] = useState(new Set());
   const ref = React.useRef();
+
+  const handleNodeClick = useCallback((event, d) => {
+    event.stopPropagation();
+    event.preventDefault();
+    console.log("DreamContent: Node clicked", d.data.name);
+
+    if (event.metaKey || event.ctrlKey) {
+      setSelectedNodes(prevSelected => {
+        const newSelected = new Set(prevSelected);
+        if (newSelected.has(d.data.name)) {
+          newSelected.delete(d.data.name);
+        } else {
+          newSelected.add(d.data.name);
+        }
+        return newSelected;
+      });
+    } else {
+      if (onNodeInteraction) {
+        console.log("DreamContent: Calling onNodeInteraction");
+        onNodeInteraction({
+          type: "click",
+          node: d.data,
+          event: event,
+        });
+      } else {
+        console.log("DreamContent: onNodeInteraction is not defined");
+      }
+      if (focus !== d) zoom(event, d);
+    }
+  }, [onNodeInteraction]);
 
   React.useEffect(() => {
     // Clear previous content inside the ref
@@ -49,7 +80,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       .data(root.descendants().slice(1))
       .join("circle")
       .attr("fill", BLACK)
-      .attr("stroke", d => d.data.isFolder ? BLUE : RED)
+      .attr("stroke", d => selectedNodes.has(d.data.name) ? YELLOW : (d.data.isFolder ? BLUE : RED))
       .attr("stroke-width", (d) => strokeWidth(d.depth))
       .attr("pointer-events", "all")
       .on("mouseover", function (event, d) {
@@ -64,7 +95,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
         }
       })
       .on("mouseout", function (event, d) {
-        d3.select(this).attr("stroke", d => d.data.isFolder ? BLUE : RED);
+        d3.select(this).attr("stroke", selectedNodes.has(d.data.name) ? YELLOW : (d.data.isFolder ? BLUE : RED));
         console.log("DreamContent: Node mouseout", d.data.name);
         if (onNodeInteraction) {
           onNodeInteraction({
@@ -74,22 +105,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
           });
         }
       })
-      .on("click", (event, d) => {
-        event.stopPropagation();
-        event.preventDefault();
-        console.log("DreamContent: Node clicked", d.data.name);
-        if (onNodeInteraction) {
-          console.log("DreamContent: Calling onNodeInteraction");
-          onNodeInteraction({
-            type: "click",
-            node: d.data,
-            event: event,
-          });
-        } else {
-          console.log("DreamContent: onNodeInteraction is not defined");
-        }
-        if (focus !== d) zoom(event, d);
-      });
+      .on("click", handleNodeClick);
 
     // Add a click event listener to the entire SVG
     svg.on("click", (event) => {
