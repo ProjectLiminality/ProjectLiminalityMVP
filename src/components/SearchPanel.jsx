@@ -7,16 +7,16 @@ const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {
                                                                                                                                      
   // Hard-coded dummy list of repo names
   const dummyRepoNames = [
-    'awesome-project',
-    'cool-app',
-    'super-tool',
-    'amazing-library',
-    'fantastic-framework',
-    'incredible-utility',
-    'brilliant-solution',
-    'stellar-application',
-    'magnificent-system',
-    'extraordinary-platform'
+    'awesome project',
+    'cool app',
+    'super tool',
+    'amazing library',
+    'fantastic framework',
+    'incredible utility',
+    'brilliant solution',
+    'stellar application',
+    'magnificent system',
+    'extraordinary platform'
   ];
 
   useEffect(() => {                                                                                                                  
@@ -67,6 +67,7 @@ const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {
       style={{
         position: 'fixed',
         backgroundColor: BLACK,
+        borderColor: BLUE,
       }}
     >
       <SearchComponent
