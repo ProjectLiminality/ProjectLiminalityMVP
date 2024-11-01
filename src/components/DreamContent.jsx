@@ -32,7 +32,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       } else {
         console.log("DreamContent: onNodeInteraction is not defined");
       }
-      if (focus !== d) zoom(event, d);
+      zoom(event, d);
     }
   }, [onNodeInteraction]);
 
@@ -61,6 +61,50 @@ const DreamContent = ({ data, onNodeInteraction }) => {
       );
 
     const root = pack(data);
+    let focus = root;
+    let view;
+
+    const zoom = (event, d) => {
+      const focus0 = focus;
+      focus = d;
+
+      const transition = svg
+        .transition()
+        .duration(event.altKey ? 7500 : 750)
+        .tween("zoom", () => {
+          const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2]);
+          return (t) => zoomTo(i(t));
+        });
+
+      label
+        .filter(function (d) {
+          return d.parent === focus || this.style.display === "inline";
+        })
+        .transition(transition)
+        .style("fill-opacity", (d) => (d.parent === focus ? 1 : 0))
+        .on("start", function (d) {
+          if (d.parent === focus) this.style.display = "inline";
+        })
+        .on("end", function (d) {
+          if (d.parent !== focus) this.style.display = "none";
+        });
+    };
+
+    const zoomTo = (v) => {
+      const k = width / v[2];
+
+      view = v;
+
+      label.attr(
+        "transform",
+        (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`
+      );
+      node.attr(
+        "transform",
+        (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`
+      );
+      node.attr("r", (d) => d.r * k);
+    };
 
     // Create the SVG container and append it to the ref.
     const svg = d3.select(ref.current)
