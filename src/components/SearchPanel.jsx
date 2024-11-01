@@ -1,29 +1,32 @@
-import React, { useState, useEffect } from 'react';                                                                                  
-import { BLACK, BLUE, WHITE } from '../constants/colors';                                                                            
-import SearchComponent from './SemanticSearch/src/SearchComponent';                                                                  
-                                                                                                                                     
-const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {                                                                  
-  const [searchResults, setSearchResults] = useState([]);                                                                            
-                                                                                                                                     
-  // Hard-coded dummy list of repo names
-  const dummyRepoNames = [
-    'awesome project',
-    'cool app',
-    'super tool',
-    'amazing library',
-    'fantastic framework',
-    'incredible utility',
-    'brilliant solution',
-    'stellar application',
-    'magnificent system',
-    'extraordinary platform'
-  ];
+import React, { useState, useEffect } from 'react';
+import { BLACK, BLUE, WHITE } from '../constants/colors';
+import SearchComponent from './SemanticSearch/src/SearchComponent';
+import { scanDreamVault } from '../services/electronService';
 
-  useEffect(() => {                                                                                                                  
-    console.log('SearchPanel mounted or updated. isOpen:', isOpen);                                                                  
-    console.log('repoNames:', repoNames);                                                                                            
-    console.log('dummyRepoNames:', dummyRepoNames);
-  }, [isOpen, repoNames]);                                                                                                           
+const SearchPanel = ({ isOpen, onSearch, onClose }) => {
+  const [searchResults, setSearchResults] = useState([]);
+  const [repoNames, setRepoNames] = useState([]);
+
+  useEffect(() => {
+    const fetchRepoNames = async () => {
+      try {
+        const names = await scanDreamVault();
+        setRepoNames(names);
+        console.log('Fetched repo names:', names);
+      } catch (error) {
+        console.error('Error fetching repo names:', error);
+      }
+    };
+
+    if (isOpen) {
+      fetchRepoNames();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    console.log('SearchPanel mounted or updated. isOpen:', isOpen);
+    console.log('repoNames:', repoNames);
+  }, [isOpen, repoNames]);
                                                                                                                                      
   useEffect(() => {                                                                                                                  
     const handleEscape = (event) => {                                                                                                
@@ -60,7 +63,7 @@ const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {
     onSearch(formattedResults);                                                                                                      
   };                                                                                                                                 
                                                                                                                                      
-  console.log('Rendering SearchPanel');                                                                                                                                                                                                                                  
+  console.log('Rendering SearchPanel');
 
   return (
     <div
@@ -72,7 +75,7 @@ const SearchPanel = ({ isOpen, onSearch, onClose, repoNames }) => {
     >
       <SearchComponent
         maxResults={5}
-        targets={dummyRepoNames} // Use the dummy repo names here
+        targets={repoNames} // Use the fetched repo names here
         onSearchStart={handleSearchStart}
         onSearchComplete={handleSearchComplete}
       />
