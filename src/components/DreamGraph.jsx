@@ -117,17 +117,17 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     const unrelatedCircleRadius = 1000;
 
     setNodes(prevNodes => {
-      const matchedNodes = prevNodes.filter(node => 
-        searchResults.some(result => result.repoName === node.repoName)
-      );
-      const unrelatedNodes = prevNodes.filter(node => 
-        !searchResults.some(result => result.repoName === node.repoName)
-      );
+      // Create a map of repoName to node for quick lookup
+      const nodeMap = new Map(prevNodes.map(node => [node.repoName, node]));
 
-      const honeycombNodes = matchedNodes.map((node, index) => {
-        const [x, y, ring] = calculateHoneycombPosition(index, matchedNodes.length);
+      // Create honeycomb nodes in the order of search results
+      const honeycombNodes = searchResults.map((result, index) => {
+        const node = nodeMap.get(result.repoName);
+        if (!node) return null; // Skip if node not found
+
+        const [x, y, ring] = calculateHoneycombPosition(index, searchResults.length);
         const scale = calculateNodeScale(ring);
-        const searchResult = searchResults.find(result => result.repoName === node.repoName);
+        
         return {
           ...node,
           position: new THREE.Vector3(x * spacing, y * spacing, 0),
@@ -135,9 +135,14 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
           isInLiminalView: true,
           liminalScaleFactor: scale,
           viewScaleFactor: scale,
-          similarity: searchResult ? searchResult.similarity : 0
+          similarity: result.similarity
         };
-      }).sort((a, b) => b.similarity - a.similarity);
+      }).filter(Boolean); // Remove any null entries
+
+      // Create unrelated nodes
+      const unrelatedNodes = prevNodes.filter(node => 
+        !searchResults.some(result => result.repoName === node.repoName)
+      );
 
       const unrelatedCircleNodes = unrelatedNodes.map((node, index) => {
         const angle = (index / unrelatedNodes.length) * Math.PI * 2;
