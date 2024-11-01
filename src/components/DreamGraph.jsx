@@ -5,15 +5,14 @@ import DreamNode from './DreamNode';
 import { getRepoData } from '../utils/fileUtils';
 import { Quaternion, Vector3 } from 'three';
 
-// New constant for interaction types
 const INTERACTION_TYPES = {
   NODE_CLICK: 'NODE_CLICK',
   ESCAPE: 'ESCAPE',
 };
 
-const MAX_SCALE = 50; // Maximum scale for nodes
-const MIN_SCALE = 1; // Minimum scale for nodes
-const SPHERE_RADIUS = 1000; // Radius of the sphere for node positioning
+const MAX_SCALE = 50;
+const MIN_SCALE = 1;
+const SPHERE_RADIUS = 1000;
 const DEFAULT_NODE_STATE = {
   liminalScaleFactor: 1,
   viewScaleFactor: 1,
@@ -57,34 +56,25 @@ const applyRotationToPosition = (position, rotation) => {
 };
 
 const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, onHover, onFileRightClick, onNodesChange }, ref) => {
-  const [searchTerm, setSearchTerm] = useState('');
   const [nodes, setNodes] = useState([]);
-
-  useEffect(() => {
-    console.log('Initial nodes received in DreamGraph:', initialNodes);
-  }, [initialNodes]);
-
-  useEffect(() => {
-    if (onNodesChange) {
-      const nodeNames = nodes.map(node => node.repoName);
-      console.log('Node names being sent to App:', nodeNames);
-      onNodesChange(nodeNames);
-    }
-  }, [nodes, onNodesChange]);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
   const [centeredNode, setCenteredNode] = useState(null);
   const [interactionHistory, setInteractionHistory] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
-  const { size } = useThree();
+  const [redoStack, setRedoStack] = useState([]);
+  const { size, camera } = useThree();
 
-  const { camera } = useThree();
-  const tempV = useRef(new THREE.Vector3());
-
+  useEffect(() => {
+    if (onNodesChange) {
+      const nodeNames = nodes.map(node => node.repoName);
+      onNodesChange(nodeNames);
+    }
+  }, [nodes, onNodesChange]);
 
   const addInteraction = useCallback((type, data, addToHistory = true) => {
     if (addToHistory) {
       setInteractionHistory(prev => [...prev, { type, data, timestamp: Date.now() }]);
-      setRedoStack([]); // Clear the redo stack when a new action is performed
+      setRedoStack([]);
     }
   }, []);
 
@@ -123,62 +113,8 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   }, [initialNodes]);
 
   const displaySearchResults = useCallback((searchResults) => {
-    console.log('Search results received in DreamGraph:', searchResults);
     const spacing = 10;
-    const unrelatedCircleRadius = 1000; // Place unrelated nodes far from view
-
-    const honeycombPositions = (index) => {
-      if (index === 0) return [0, 0, 0];
-
-      // Determine which ring the node is in
-      let ring = 1;
-      let indexInRing = index;
-      let totalNodesInRing = 6 * ring;
-
-      while (indexInRing > totalNodesInRing) {
-        indexInRing -= totalNodesInRing;
-        ring += 1;
-        totalNodesInRing = 6 * ring;
-      }
-
-      // Calculate side and position on side
-      let side = Math.floor((indexInRing - 1) / ring);
-      let positionOnSide = (indexInRing - 1) % ring;
-
-      // Starting positions for each side in axial coordinates (q, r)
-      const startingPositions = [
-        [ring, 0],        // East
-        [0, ring],        // Northeast
-        [-ring, ring],    // Northwest
-        [-ring, 0],       // West
-        [0, -ring],       // Southwest
-        [ring, -ring],    // Southeast
-      ];
-
-      // Direction vectors for each side in axial coordinates
-      const directions = [
-        [-1, 1],   // Side 0: NE to NW
-        [-1, 0],   // Side 1: NW to W
-        [0, -1],   // Side 2: W to SW
-        [1, -1],   // Side 3: SW to SE
-        [1, 0],    // Side 4: SE to E
-        [0, 1],    // Side 5: E to NE
-      ];
-
-      // Compute axial coordinates (q, r)
-      let q = startingPositions[side][0] + directions[side][0] * positionOnSide;
-      let r = startingPositions[side][1] + directions[side][1] * positionOnSide;
-
-      // Convert axial to Cartesian coordinates
-      const x = 1.5 * q;
-      const y = Math.sqrt(3) * (r + q / 2);
-
-      return [x, y, ring];
-    };
-
-    const calculateNodeScale = (ring) => {
-      return Math.max(0.25, 2 / (2 ** ring));
-    };
+    const unrelatedCircleRadius = 1000;
 
     setNodes(prevNodes => {
       const matchedNodes = prevNodes.filter(node => 
@@ -189,7 +125,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
       );
 
       const honeycombNodes = matchedNodes.map((node, index) => {
-        const [x, y, ring] = honeycombPositions(index);
+        const [x, y, ring] = calculateHoneycombPosition(index, matchedNodes.length);
         const scale = calculateNodeScale(ring);
         const searchResult = searchResults.find(result => result.repoName === node.repoName);
         return {
@@ -243,7 +179,6 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
 
         const originalVector = new Vector3(x, y, z);
         rotation = calculateRotation(originalVector);
-
       }
 
       return prevNodes.map((node, index) => {
@@ -257,7 +192,6 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
 
         const originalPosition = new Vector3(x, y, z);
         const rotatedPosition = applyRotationToPosition(originalPosition, rotation);
-
 
         return {
           ...node,
@@ -280,7 +214,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
           resetCamera();
         }
       });
-    }, 100); // Short delay to ensure nodes are loaded
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [positionNodesOnSphere, resetCamera]);
@@ -349,7 +283,6 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   const handleNodeClick = useCallback((clickedRepoName, addToHistory = true) => {
     const clickedNodeIndex = nodes.findIndex(node => node.repoName === clickedRepoName);
     if (clickedNodeIndex !== -1) {
-      // Reset the flip state of the previously centered node
       if (centeredNode) {
         setNodes(prevNodes => prevNodes.map(node => 
           node.repoName === centeredNode ? { ...node, isFlipped: false } : node
@@ -419,8 +352,6 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     ));
   }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, onFileRightClick, onHover, centeredNode]);
 
-  const [redoStack, setRedoStack] = useState([]);
-
   useImperativeHandle(ref, () => ({
     handleUndo: () => {
       setInteractionHistory(prevHistory => {
@@ -432,7 +363,6 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
         const lastAction = newHistory[newHistory.length - 1];
         const undoneAction = prevHistory[prevHistory.length - 1];
 
-        // Execute the last action without adding to history
         switch (lastAction.type) {
           case INTERACTION_TYPES.NODE_CLICK:
             handleNodeClick(lastAction.data.repoName, false);
@@ -456,7 +386,6 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
 
       const actionToRedo = redoStack[redoStack.length - 1];
 
-      // Execute the redo action without adding to history
       switch (actionToRedo.type) {
         case INTERACTION_TYPES.NODE_CLICK:
           handleNodeClick(actionToRedo.data.repoName, false);
@@ -487,5 +416,44 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
 
   return <>{renderedNodes}</>;
 });
+
+const calculateHoneycombPosition = (index, totalNodes) => {
+  if (index === 0) return [0, 0, 0];
+
+  let ring = 1;
+  let indexInRing = index;
+  let totalNodesInRing = 6 * ring;
+
+  while (indexInRing > totalNodesInRing) {
+    indexInRing -= totalNodesInRing;
+    ring += 1;
+    totalNodesInRing = 6 * ring;
+  }
+
+  let side = Math.floor((indexInRing - 1) / ring);
+  let positionOnSide = (indexInRing - 1) % ring;
+
+  const startingPositions = [
+    [ring, 0], [0, ring], [-ring, ring],
+    [-ring, 0], [0, -ring], [ring, -ring],
+  ];
+
+  const directions = [
+    [-1, 1], [-1, 0], [0, -1],
+    [1, -1], [1, 0], [0, 1],
+  ];
+
+  let q = startingPositions[side][0] + directions[side][0] * positionOnSide;
+  let r = startingPositions[side][1] + directions[side][1] * positionOnSide;
+
+  const x = 1.5 * q;
+  const y = Math.sqrt(3) * (r + q / 2);
+
+  return [x, y, ring];
+};
+
+const calculateNodeScale = (ring) => {
+  return Math.max(0.25, 2 / (2 ** ring));
+};
 
 export default DreamGraph;
