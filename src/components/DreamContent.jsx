@@ -179,9 +179,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
 
     // Create the zoom behavior and set the initial focus.
     svg.on("click", (event) => zoom(event, root));
-    let focus = root;
-    let view;
-    zoomTo([focus.x, focus.y, focus.r * 2]);
+    zoomTo([root.x, root.y, root.r * 2]);
 
     // Zoom functions.
     function zoomTo(v) {
