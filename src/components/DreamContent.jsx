@@ -64,7 +64,7 @@ const DreamContent = ({ data, onNodeInteraction }) => {
         }
       })
       .on("mouseout", function (event, d) {
-        d3.select(this).attr("stroke", RED);
+        d3.select(this).attr("stroke", d => d.data.isFolder ? BLUE : RED);
         console.log("DreamContent: Node mouseout", d.data.name);
         if (onNodeInteraction) {
           onNodeInteraction({
