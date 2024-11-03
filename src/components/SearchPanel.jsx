@@ -77,6 +77,7 @@ const SearchPanel = ({ isOpen, onSearch, onClose, style }) => {
       }}
     >
       <SearchComponent
+        maxResults={19} // Set a default max results
         threshold={0.5} // Set a default threshold value
         targets={repoNames} // Use the fetched repo names here
         onSearchStart={handleSearchStart}
