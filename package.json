@@ -74,8 +74,7 @@
     "mac": {
       "category": "public.app-category.graphics-design",
       "icon": "assets/icon.png",
-      "target": ["dmg", "zip"],
-      "arch": ["x64", "arm64"]
+      "target": ["dmg", "zip"]
     },
     "win": {
       "target": ["nsis", "portable"],
