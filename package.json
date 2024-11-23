@@ -27,10 +27,9 @@
     "electron": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "dist:mac": "electron-builder --mac",
+    "dist:mac": "electron-builder --mac --universal",
     "dist:win": "electron-builder --win",
-    "dist:linux": "electron-builder --linux",
-    "dist:mac-arm64": "electron-builder --mac --arm64"
+    "dist:linux": "electron-builder --linux"
   },
   "eslintConfig": {
     "extends": [
@@ -75,7 +74,8 @@
     "mac": {
       "category": "public.app-category.graphics-design",
       "icon": "assets/icon.png",
-      "target": ["dmg", "zip"]
+      "target": ["dmg", "zip"],
+      "arch": ["x64", "arm64"]
     },
     "win": {
       "target": ["nsis", "portable"],
