@@ -59,7 +59,7 @@ We welcome contributions to the Dream Explorer project! Please refer to our [Con
 
 ## License
 
-Dream Explorer is released under the [MIT License](LICENSE).
+Dream Explorer is released under the [GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE).
 
 ---
 

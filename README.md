@@ -47,7 +47,7 @@ Project Liminality aims to create a dynamic, interconnected knowledge ecosystem 
 
 ## License
 
-(Specify the license under which Project Liminality is released)
+Project Liminality is released under the [GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE).
 
 ---
 
