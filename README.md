@@ -43,7 +43,7 @@ Project Liminality aims to create a dynamic, interconnected knowledge ecosystem 
 
 ## Contributing
 
-(Add guidelines for contributing to the project when ready)
+Contributing guidelines will be added in the future. Stay tuned for updates on how to get involved in the project.
 
 ## License
 
@@ -51,4 +51,4 @@ Project Liminality is released under the [GNU AFFERO GENERAL PUBLIC LICENSE](LIC
 
 ---
 
-For more detailed information on the system's architecture, please refer to the `ArchitectureOverview.md` file in this repository.
+Note: This project currently uses the APPL reader only.

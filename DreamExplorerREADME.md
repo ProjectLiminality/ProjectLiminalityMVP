@@ -49,7 +49,7 @@ Dream Explorer structures knowledge based on social relationships and interactio
 
 ## Contributing
 
-We welcome contributions to the Dream Explorer project! Please refer to our [Contributing Guidelines](CONTRIBUTING.md) for more information on how to get involved.
+We welcome contributions to the Dream Explorer project! Contributing guidelines will be added in the future. Stay tuned for updates on how to get involved.
 
 ## Future Enhancements
 
@@ -63,4 +63,4 @@ Dream Explorer is released under the [GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE
 
 ---
 
-For more detailed information on the system's architecture and technical implementation, please refer to the `ArchitectureOverview.md` file in this repository.
+Note: This project currently uses the APPL reader only.
