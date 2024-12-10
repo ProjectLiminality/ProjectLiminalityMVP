@@ -44,6 +44,13 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
     }
   }, [spawnNode, lastSearchResults]);
 
+  const handleSpawnRelatedNodes = useCallback(async (relatedNodeNames) => {
+    console.log(`Spawning related nodes: ${relatedNodeNames.join(', ')}`);
+    for (const nodeName of relatedNodeNames) {
+      await spawnNode(nodeName);
+    }
+  }, [spawnNode]);
+
   const handleDrop = useCallback((event) => {
     event.preventDefault();
     if (hoveredNode) {
@@ -100,6 +107,7 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
             resetCamera={resetCamera}
             onHover={handleHover}
             onSpawnSearchResults={handleSpawnSearchResults}
+            onSpawnRelatedNodes={handleSpawnRelatedNodes}
           />
         )}
       </Canvas>

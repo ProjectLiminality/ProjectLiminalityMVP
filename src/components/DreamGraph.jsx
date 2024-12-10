@@ -228,65 +228,76 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   }, [positionNodesOnSphere, resetCamera]);
 
   const updateNodePositions = useCallback((clickedNodeIndex) => {
-    setNodes(prevNodes => {
-      const clickedNode = prevNodes[clickedNodeIndex];
-      const otherNodes = prevNodes.filter((_, index) => index !== clickedNodeIndex);
-      
-      const relatedNodes = otherNodes.filter(node => 
-        clickedNode.metadata?.relatedNodes?.includes(node.repoName) && 
-        node.metadata?.type !== clickedNode.metadata?.type
-      );
-      const unrelatedNodes = otherNodes.filter(node => 
-        !clickedNode.metadata?.relatedNodes?.includes(node.repoName) || 
-        node.metadata?.type === clickedNode.metadata?.type
-      );
+    const clickedNode = nodes[clickedNodeIndex];
+    const relatedNodeNames = clickedNode.metadata?.relatedNodes || [];
+    
+    // Trigger spawning of related nodes
+    if (onSpawnRelatedNodes) {
+      onSpawnRelatedNodes(relatedNodeNames);
+    }
 
-      const relatedCircleRadius = 30;
-      const unrelatedCircleRadius = 200;
+    // Update node positions after a short delay to ensure spawning is complete
+    setTimeout(() => {
+      setNodes(prevNodes => {
+        const updatedClickedNode = prevNodes.find(node => node.repoName === clickedNode.repoName);
+        const otherNodes = prevNodes.filter(node => node.repoName !== clickedNode.repoName);
+        
+        const relatedNodes = otherNodes.filter(node => 
+          relatedNodeNames.includes(node.repoName) && 
+          node.metadata?.type !== updatedClickedNode.metadata?.type
+        );
+        const unrelatedNodes = otherNodes.filter(node => 
+          !relatedNodeNames.includes(node.repoName) || 
+          node.metadata?.type === updatedClickedNode.metadata?.type
+        );
 
-      const newNodes = [
-        { 
-          ...clickedNode, 
-          position: new THREE.Vector3(0, 0, 0), 
-          liminalScaleFactor: 5, 
-          viewScaleFactor: 5,
-          isInLiminalView: true 
-        },
-        ...relatedNodes.map((node, index) => {
-          const angle = (index / relatedNodes.length) * Math.PI * 2;
-          return {
-            ...node,
-            position: new THREE.Vector3(
-              Math.cos(angle) * relatedCircleRadius,
-              Math.sin(angle) * relatedCircleRadius,
-              0
-            ),
-            liminalScaleFactor: 1,
-            viewScaleFactor: 1,
-            isInLiminalView: true
-          };
-        }),
-        ...unrelatedNodes.map((node, index) => {
-          const angle = (index / unrelatedNodes.length) * Math.PI * 2;
-          return {
-            ...node,
-            position: new THREE.Vector3(
-              Math.cos(angle) * unrelatedCircleRadius,
-              Math.sin(angle) * unrelatedCircleRadius,
-              0
-            ),
-            liminalScaleFactor: 0.5,
-            viewScaleFactor: 0.5,
-            isInLiminalView: true
-          };
-        })
-      ];
+        const relatedCircleRadius = 30;
+        const unrelatedCircleRadius = 200;
 
-      setCenteredNode(clickedNode.repoName);
-      return newNodes;
-    });
-    setIsSphericalLayout(false);
-  }, []);
+        const newNodes = [
+          { 
+            ...updatedClickedNode, 
+            position: new THREE.Vector3(0, 0, 0), 
+            liminalScaleFactor: 5, 
+            viewScaleFactor: 5,
+            isInLiminalView: true 
+          },
+          ...relatedNodes.map((node, index) => {
+            const angle = (index / relatedNodes.length) * Math.PI * 2;
+            return {
+              ...node,
+              position: new THREE.Vector3(
+                Math.cos(angle) * relatedCircleRadius,
+                Math.sin(angle) * relatedCircleRadius,
+                0
+              ),
+              liminalScaleFactor: 1,
+              viewScaleFactor: 1,
+              isInLiminalView: true
+            };
+          }),
+          ...unrelatedNodes.map((node, index) => {
+            const angle = (index / unrelatedNodes.length) * Math.PI * 2;
+            return {
+              ...node,
+              position: new THREE.Vector3(
+                Math.cos(angle) * unrelatedCircleRadius,
+                Math.sin(angle) * unrelatedCircleRadius,
+                0
+              ),
+              liminalScaleFactor: 0.5,
+              viewScaleFactor: 0.5,
+              isInLiminalView: true
+            };
+          })
+        ];
+
+        setCenteredNode(updatedClickedNode.repoName);
+        return newNodes;
+      });
+      setIsSphericalLayout(false);
+    }, 100); // Adjust this delay if needed
+  }, [nodes, onSpawnRelatedNodes]);
 
   const handleNodeClick = useCallback((clickedRepoName, addToHistory = true) => {
     const clickedNodeIndex = nodes.findIndex(node => node.repoName === clickedRepoName);
