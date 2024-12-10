@@ -39,7 +39,7 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
         resetCamera();
       }
       if (event.ctrlKey && event.shiftKey && event.key === 'S') {
-        spawnNode('project-liminality');
+        spawnNode('LiminalConsulting');
       }
     };
 
