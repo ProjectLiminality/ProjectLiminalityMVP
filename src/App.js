@@ -9,6 +9,7 @@ import RenamePanel from './components/RenamePanel';
 import NodeCreationPanel from './components/NodeCreationPanel';
 import SearchPanel from './components/SearchPanel';
 import { openInGitFox, processFile } from './services/electronService';
+import useDreamNodes from './hooks/useDreamNodes';
 
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
