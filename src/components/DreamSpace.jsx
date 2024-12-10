@@ -1,23 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
-import * as THREE from 'three';
 import DreamGraph from './DreamGraph';
 import CameraController from './CameraController';
 import useDreamNodes from '../hooks/useDreamNodes';
 
 const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop, onHover }) => {
-  const { dreamNodes, error } = useDreamNodes();
-  const [initialNodes, setInitialNodes] = useState([]);
+  const { dreamNodes, error, spawnNode } = useDreamNodes(5); // Set initial count to 5
   const [resetCamera, setResetCamera] = useState(null);
   const [hoveredNode, setHoveredNode] = useState(null);
-
-  useEffect(() => {
-    if (dreamNodes.length > 0) {
-      setInitialNodes(dreamNodes.map(node => ({
-        ...node
-      })));
-    }
-  }, [dreamNodes]);
 
   const handleNodeRightClick = (event, repoName) => {
     onNodeRightClick(repoName, event);
@@ -48,6 +38,9 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
       if (event.key === 'Escape' && resetCamera) {
         resetCamera();
       }
+      if (event.ctrlKey && event.shiftKey && event.key === 'S') {
+        spawnNode('project-liminality');
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -59,7 +52,7 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
       window.removeEventListener('dragover', (e) => e.preventDefault());
       window.removeEventListener('drop', handleDrop);
     };
-  }, [resetCamera, handleDrop]);
+  }, [resetCamera, handleDrop, spawnNode]);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -71,10 +64,10 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
         <CameraController onResetCamera={onResetCamera} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
-        {initialNodes.length > 0 && (
+        {dreamNodes.length > 0 && (
           <DreamGraph 
             ref={dreamGraphRef}
-            initialNodes={initialNodes} 
+            initialNodes={dreamNodes} 
             onNodeRightClick={handleNodeRightClick}
             onFileRightClick={onFileRightClick}
             resetCamera={resetCamera}
