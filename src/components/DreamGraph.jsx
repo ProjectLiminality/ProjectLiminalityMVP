@@ -415,10 +415,16 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
       } else {
         displaySearchResults(searchResults);
       }
+      if (resetCamera) {
+        resetCamera();
+      }
     },
     resetLayout: () => {
       positionNodesOnSphere();
       setCenteredNode(null);
+      if (resetCamera) {
+        resetCamera();
+      }
     }
   }));
 
