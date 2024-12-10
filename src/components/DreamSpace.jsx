@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import DreamGraph from './DreamGraph';
 import CameraController from './CameraController';
@@ -8,6 +8,8 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
   const { dreamNodes, error, spawnNode } = useDreamNodes(5); // Set initial count to 5
   const [resetCamera, setResetCamera] = useState(null);
   const [hoveredNode, setHoveredNode] = useState(null);
+  const [lastSearchResults, setLastSearchResults] = useState([]);
+  const searchCountRef = useRef(0);
 
   const handleNodeRightClick = (event, repoName) => {
     onNodeRightClick(repoName, event);
@@ -18,14 +20,29 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
   }, []);
 
   const handleSpawnSearchResults = useCallback(async (searchResults) => {
-    for (const result of searchResults) {
-      await spawnNode(result.repoName);
+    searchCountRef.current += 1;
+    const currentSearchCount = searchCountRef.current;
+    console.log(`Search #${currentSearchCount} initiated with ${searchResults.length} results`);
+
+    // Check if the new search results are different from the last ones
+    const areResultsDifferent = JSON.stringify(searchResults) !== JSON.stringify(lastSearchResults);
+    
+    if (areResultsDifferent) {
+      console.log(`Search #${currentSearchCount}: New search results received, spawning nodes...`);
+      for (const result of searchResults) {
+        await spawnNode(result.repoName);
+      }
+      // After spawning all nodes, update the graph
+      if (dreamGraphRef.current) {
+        dreamGraphRef.current.displaySearchResults(searchResults);
+      }
+      // Update the last search results
+      setLastSearchResults(searchResults);
+      console.log(`Search #${currentSearchCount}: Processing complete`);
+    } else {
+      console.log(`Search #${currentSearchCount}: Search results unchanged, skipping node spawn`);
     }
-    // After spawning all nodes, update the graph
-    if (dreamGraphRef.current) {
-      dreamGraphRef.current.displaySearchResults(searchResults);
-    }
-  }, [spawnNode]);
+  }, [spawnNode, lastSearchResults]);
 
   const handleDrop = useCallback((event) => {
     event.preventDefault();
