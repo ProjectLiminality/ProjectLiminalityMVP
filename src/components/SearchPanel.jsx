@@ -21,6 +21,13 @@ const SearchPanel = ({ isOpen, onSearch, onClose, style }) => {
 
     if (isOpen) {
       fetchRepoNames();
+      // Focus the search input when the panel opens
+      setTimeout(() => {
+        const inputElement = document.querySelector('input[type="text"]');
+        if (inputElement) {
+          inputElement.focus();
+        }
+      }, 0);
     }
   }, [isOpen]);
 
