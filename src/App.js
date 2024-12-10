@@ -21,6 +21,7 @@ function App() {
   const [fileContextMenu, setFileContextMenu] = useState(null);
   const dreamGraphRef = useRef(null);
   const [nodeNames, setNodeNames] = useState([]);
+  const { spawnNode } = useDreamNodes();
 
   const handleNodesChange = useCallback((newNodeNames) => {
     setNodeNames(newNodeNames);
@@ -237,8 +238,12 @@ function App() {
     processFile(repoName, file);
   }, []);
 
-  const handleSearchComplete = (searchResults) => {
+  const handleSearchComplete = async (searchResults) => {
     console.log('Search results received in App:', searchResults);
+    
+    // Spawn nodes for all search results
+    await Promise.all(searchResults.map(result => spawnNode(result.repoName)));
+
     if (dreamGraphRef.current) {
       dreamGraphRef.current.displaySearchResults(searchResults);
     }
