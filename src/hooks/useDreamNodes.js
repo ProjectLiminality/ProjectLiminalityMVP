@@ -37,16 +37,22 @@ const useDreamNodes = (initialCount = 5) => {
 
   const spawnNode = useCallback(async (repoName) => {
     try {
-      console.log(`Spawning node: ${repoName}`);
+      console.log(`Attempting to spawn node: ${repoName}`);
       const repos = await scanDreamVault();
       const repo = repos.find(r => r === repoName);
       if (repo) {
-        const newNode = {
-          repoName: repo,
-          position: calculateNodePosition(dreamNodes.length, dreamNodes.length + 1),
-        };
-        setDreamNodes(prevNodes => [...prevNodes, newNode]);
-        console.log(`Node spawned: ${repoName}`);
+        setDreamNodes(prevNodes => {
+          if (prevNodes.some(node => node.repoName === repoName)) {
+            console.log(`Node ${repoName} already exists. No action taken.`);
+            return prevNodes;
+          }
+          const newNode = {
+            repoName: repo,
+            position: calculateNodePosition(prevNodes.length, prevNodes.length + 1),
+          };
+          console.log(`Node spawned: ${repoName}`);
+          return [...prevNodes, newNode];
+        });
       } else {
         console.error(`Repository not found: ${repoName}`);
       }
@@ -54,7 +60,7 @@ const useDreamNodes = (initialCount = 5) => {
       console.error('Error spawning node:', error);
       setError('Error spawning node: ' + error.message);
     }
-  }, [dreamNodes]);
+  }, []);
 
   useEffect(() => {
     fetchNodes(initialCount);
