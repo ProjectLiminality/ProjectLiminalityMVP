@@ -17,6 +17,16 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
     setResetCamera(() => resetFunc);
   }, []);
 
+  const handleSpawnSearchResults = useCallback(async (searchResults) => {
+    for (const result of searchResults) {
+      await spawnNode(result.repoName);
+    }
+    // After spawning all nodes, update the graph
+    if (dreamGraphRef.current) {
+      dreamGraphRef.current.displaySearchResults(searchResults);
+    }
+  }, [spawnNode]);
+
   const handleDrop = useCallback((event) => {
     event.preventDefault();
     if (hoveredNode) {
@@ -72,6 +82,7 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
             onFileRightClick={onFileRightClick}
             resetCamera={resetCamera}
             onHover={handleHover}
+            onSpawnSearchResults={handleSpawnSearchResults}
           />
         )}
       </Canvas>

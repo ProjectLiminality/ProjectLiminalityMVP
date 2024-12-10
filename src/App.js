@@ -239,12 +239,8 @@ function App() {
     processFile(repoName, file);
   }, []);
 
-  const handleSearchComplete = async (searchResults) => {
+  const handleSearchComplete = (searchResults) => {
     console.log('Search results received in App:', searchResults);
-    
-    // Spawn nodes for all search results
-    await Promise.all(searchResults.map(result => spawnNode(result.repoName)));
-
     if (dreamGraphRef.current) {
       dreamGraphRef.current.displaySearchResults(searchResults);
     }
