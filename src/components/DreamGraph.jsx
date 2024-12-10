@@ -113,6 +113,9 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   }, [initialNodes]);
 
   const displaySearchResults = useCallback((searchResults) => {
+    if (onSpawnSearchResults) {
+      onSpawnSearchResults(searchResults);
+    }
     const spacing = 10;
     const unrelatedCircleRadius = 1000;
 
@@ -165,7 +168,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     });
     setIsSphericalLayout(false);
     setCenteredNode(null);
-  }, []);
+  }, [onSpawnSearchResults]);
 
   const positionNodesOnSphere = useCallback((centeredNodeIndex = -1) => {
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
