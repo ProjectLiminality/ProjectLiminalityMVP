@@ -55,7 +55,7 @@ const applyRotationToPosition = (position, rotation) => {
   return position.applyQuaternion(rotation).normalize().multiplyScalar(SPHERE_RADIUS);
 };
 
-const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, onHover, onFileRightClick, onNodesChange, onSpawnSearchResults }, ref) => {
+const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, onHover, onFileRightClick, onNodesChange, onSpawnSearchResults, onSpawnRelatedNodes }, ref) => {
   const [nodes, setNodes] = useState([]);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
   const [centeredNode, setCenteredNode] = useState(null);
