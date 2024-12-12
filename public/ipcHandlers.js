@@ -1068,11 +1068,6 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
       const data = await fs.readFile(canvasPath, 'utf8');
       return data;
     } catch (error) {
-      if (error.code === 'ENOENT') {
-        console.log(`DreamSong.canvas not found for ${repoName}`);
-      } else {
-        console.error(`Error reading DreamSong.canvas for ${repoName}:`, error);
-      }
       return null;
     }
   });
