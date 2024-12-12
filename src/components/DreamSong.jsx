@@ -21,7 +21,9 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
       if (canvasData) {
         const processed = processDreamSongData(canvasData);
         setProcessedNodes(processed);
+        setShowDreamSong(true);
       } else {
+        console.log(`No valid DreamSong.canvas data for ${repoName}`);
         setProcessedNodes([]);
         setShowDreamSong(false);
       }
