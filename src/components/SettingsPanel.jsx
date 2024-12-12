@@ -6,6 +6,7 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   const [dreamVaultPath, setDreamVaultPathState] = useState('');
   const [isElectronAvailableState, setIsElectronAvailableState] = useState(false);
   const [isManualInput, setIsManualInput] = useState(false);
+  const [initialNodeCount, setInitialNodeCount] = useState(localStorage.getItem('initialNodeCount') || '5');
 
   useEffect(() => {
     const checkElectronAvailability = async () => {
@@ -53,8 +54,14 @@ const SettingsPanel = ({ isOpen, onClose }) => {
     if (isElectronAvailableState) {
       await setDreamVaultPathService(dreamVaultPath);
     }
+    localStorage.setItem('initialNodeCount', initialNodeCount);
     setIsManualInput(false);
     onClose();
+  };
+
+  const handleInitialNodeCountChange = (e) => {
+    const value = Math.max(1, parseInt(e.target.value) || 1);
+    setInitialNodeCount(value.toString());
   };
 
   if (!isOpen) return null;
@@ -113,6 +120,23 @@ const SettingsPanel = ({ isOpen, onClose }) => {
           Enter the DreamVault path manually and click Save.
         </p>
       )}
+      <div style={{ marginBottom: '15px' }}>
+        <label htmlFor="initialNodeCount" style={{ color: WHITE }}>Initial Node Count:</label>
+        <input
+          type="number"
+          id="initialNodeCount"
+          value={initialNodeCount}
+          onChange={handleInitialNodeCountChange}
+          min="1"
+          style={{ 
+            marginLeft: '10px',
+            padding: '5px', 
+            backgroundColor: BLACK, 
+            color: WHITE, 
+            border: `1px solid ${BLUE}` 
+          }}
+        />
+      </div>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <button 
           onClick={onClose} 

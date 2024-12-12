@@ -5,7 +5,8 @@ import CameraController from './CameraController';
 import useDreamNodes from '../hooks/useDreamNodes';
 
 const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop, onHover }) => {
-  const { dreamNodes, error, spawnNode } = useDreamNodes(5); // Set initial count to 5
+  const initialNodeCount = parseInt(localStorage.getItem('initialNodeCount') || '5');
+  const { dreamNodes, error, spawnNode } = useDreamNodes(initialNodeCount);
   const [resetCamera, setResetCamera] = useState(null);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [lastSearchResults, setLastSearchResults] = useState([]);
