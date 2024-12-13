@@ -1,6 +1,6 @@
 import * as electronService from '../services/electronService';
 
-const preferredExtensions = ['.gif', '.mp4', '.png', '.jpg', '.jpeg', '.webp'];
+const preferredExtensions = ['.gif', '.png', '.jpg', '.jpeg', '.webp'];
 
 export async function getRepoData(repoName) {
   try {
@@ -57,7 +57,6 @@ async function getDreamSongMedia(repoName) {
 
 function getMimeType(fileExtension) {
   const mimeTypes = {
-    'mp4': 'video/mp4',
     'gif': 'image/gif',
     'png': 'image/png',
     'jpg': 'image/jpeg',
@@ -82,14 +81,20 @@ async function getAllMediaFiles(repoName) {
         return null;
       }
 
+      const fileExtension = file.split('.').pop().toLowerCase();
+      const mimeType = getMimeType(fileExtension);
+
+      // Only process image files
+      if (!mimeType.startsWith('image/')) {
+        console.log(`Skipping non-image file: ${file}`);
+        return null;
+      }
+
       const mediaData = await electronService.readFile(mediaPath);
       if (!mediaData) {
         console.log(`No media data found for file: ${file}`);
         return null;
       }
-
-      const fileExtension = file.split('.').pop().toLowerCase();
-      const mimeType = getMimeType(fileExtension);
 
       console.log(`Processed media file: ${file}, type: ${mimeType}`);
 
