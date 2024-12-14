@@ -64,7 +64,43 @@ Dream Explorer is released under the [GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE
 ## Repository Structure
 
 ```
-# This section will be populated with the file structure and component descriptions
+DreamExplorer/
+│
+├── backend/
+│   ├── generate_structure.py  # Python script to generate JSON structure
+│   └── dreamvault_structure.json  # Generated JSON file describing DreamVault structure
+│
+├── src/
+│   ├── components/  # React components (to be populated in next step)
+│   ├── utils/  # Utility functions (to be populated in next step)
+│   ├── App.js  # Main React component
+│   └── index.js  # Entry point for React app
+│
+├── public/
+│   └── index.html  # HTML template for the React app
+│
+├── DreamVault/  # Folder containing submodules for each DreamNode
+│   ├── DreamNode1/  # Submodule
+│   ├── DreamNode2/  # Submodule
+│   └── ...
+│
+├── package.json  # Node.js dependencies and scripts
+├── README.md  # This file
+└── .github/
+    └── workflows/
+        └── update_structure.yml  # GitHub Actions workflow to update JSON file
 ```
+
+### Backend Components
+
+- `generate_structure.py`: Python script that scans the DreamVault folder and generates a JSON file describing the structure of all DreamNodes. It includes information about each node's Dreamtalk (GIF/PNG) and README file.
+
+- `dreamvault_structure.json`: The generated JSON file that serves as the primary data source for the frontend. It contains the structure of the DreamVault, including file paths to Dreamtalk media and README files for each DreamNode.
+
+### GitHub Actions
+
+- `update_structure.yml`: A GitHub Actions workflow that runs the `generate_structure.py` script periodically or on push events to update the `dreamvault_structure.json` file.
+
+The frontend components will be detailed in the next iteration.
 
 ---
