@@ -76,12 +76,6 @@ DreamExplorer/
 │   │   ├── DreamNode.js  # Component for individual DreamNodes
 │   │   ├── DreamTalk.js  # Component to display DreamTalk (PNG/GIF)
 │   │   ├── DreamSong.js  # Component to display DreamSong (README)
-│   │   └── Camera.js  # Camera component for 3D space
-│   ├── components/
-│   │   ├── DreamSpace.js  # 3D canvas component (fullscreen)
-│   │   ├── DreamNode.js  # Component for individual DreamNodes
-│   │   ├── DreamTalk.js  # Component to display DreamTalk (PNG/GIF)
-│   │   ├── DreamSong.js  # Component to display DreamSong (README)
 │   │   ├── Camera.js  # Camera component for 3D space
 │   │   └── SemanticSearch/  # Submodule for semantic search functionality
 │   ├── App.js  # Main React component
