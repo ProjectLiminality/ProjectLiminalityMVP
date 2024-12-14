@@ -1,4 +1,4 @@
-# Dream Explorer: Web-Based Knowledge Management System
+# Dream Explorer: Web-Based Knowledge Gardening System
 
 ## Introduction
 
