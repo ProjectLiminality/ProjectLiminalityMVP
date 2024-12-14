@@ -61,6 +61,12 @@ We welcome contributions to the Dream Explorer project! Contributing guidelines 
 
 Dream Explorer is released under the [GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE).
 
+## Repository Structure
+
+```
+# This section will be populated with the file structure and component descriptions
+```
+
 ---
 
 Note: This project currently uses the APPL reader only.
