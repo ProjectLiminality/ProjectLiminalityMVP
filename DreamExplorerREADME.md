@@ -71,8 +71,14 @@ DreamExplorer/
 │   └── dreamvault_structure.json  # Generated JSON file describing DreamVault structure
 │
 ├── src/
-│   ├── components/  # React components (to be populated in next step)
-│   ├── utils/  # Utility functions (to be populated in next step)
+│   ├── components/
+│   │   ├── DreamSpace.js  # 3D canvas component (fullscreen)
+│   │   ├── DreamNode.js  # Component for individual DreamNodes
+│   │   ├── DreamTalk.js  # Component to display DreamTalk (PNG/GIF)
+│   │   ├── DreamSong.js  # Component to display DreamSong (README)
+│   │   └── Camera.js  # Camera component for 3D space
+│   ├── utils/
+│   │   └── SemanticSearch.js  # Utility for semantic search functionality
 │   ├── App.js  # Main React component
 │   └── index.js  # Entry point for React app
 │
@@ -97,10 +103,30 @@ DreamExplorer/
 
 - `dreamvault_structure.json`: The generated JSON file that serves as the primary data source for the frontend. It contains the structure of the DreamVault, including file paths to Dreamtalk media and README files for each DreamNode.
 
+### Frontend Components
+
+- `DreamSpace.js`: The main 3D canvas component that fills the screen and contains all DreamNodes.
+
+- `DreamNode.js`: Component representing individual DreamNodes. It manages the node's position, rotation, and scale within the DreamSpace.
+
+- `DreamTalk.js`: Component to display the DreamTalk image (PNG or GIF) on the front of a DreamNode.
+
+- `DreamSong.js`: Component to display the DreamSong (README content) on the back of a DreamNode.
+
+- `Camera.js`: Component to manage the camera within the 3D space.
+
+- `SemanticSearch.js`: Utility for performing semantic search on the DreamVault structure JSON file.
+
+- `App.js`: The main React component that orchestrates the entire application.
+
+- `index.js`: Entry point for the React application.
+
+### Non-Visual Components
+
+- `DreamGraph.js`: A non-visual React component that manages the spatial relationships between DreamNodes. It updates node positions based on user interactions and search results.
+
 ### GitHub Actions
 
 - `update_structure.yml`: A GitHub Actions workflow that runs the `generate_structure.py` script periodically or on push events to update the `dreamvault_structure.json` file.
-
-The frontend components will be detailed in the next iteration.
 
 ---
