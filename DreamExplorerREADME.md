@@ -77,8 +77,13 @@ DreamExplorer/
 │   │   ├── DreamTalk.js  # Component to display DreamTalk (PNG/GIF)
 │   │   ├── DreamSong.js  # Component to display DreamSong (README)
 │   │   └── Camera.js  # Camera component for 3D space
-│   ├── utils/
-│   │   └── SemanticSearch.js  # Utility for semantic search functionality
+│   ├── components/
+│   │   ├── DreamSpace.js  # 3D canvas component (fullscreen)
+│   │   ├── DreamNode.js  # Component for individual DreamNodes
+│   │   ├── DreamTalk.js  # Component to display DreamTalk (PNG/GIF)
+│   │   ├── DreamSong.js  # Component to display DreamSong (README)
+│   │   ├── Camera.js  # Camera component for 3D space
+│   │   └── SemanticSearch/  # Submodule for semantic search functionality
 │   ├── App.js  # Main React component
 │   └── index.js  # Entry point for React app
 │
@@ -115,7 +120,7 @@ DreamExplorer/
 
 - `Camera.js`: Component to manage the camera within the 3D space.
 
-- `SemanticSearch.js`: Utility for performing semantic search on the DreamVault structure JSON file.
+- `SemanticSearch/`: A submodule containing both the frontend search bar component and the backend search functionality for the DreamVault structure.
 
 - `App.js`: The main React component that orchestrates the entire application.
 
