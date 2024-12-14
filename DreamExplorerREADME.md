@@ -68,5 +68,3 @@ Dream Explorer is released under the [GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE
 ```
 
 ---
-
-Note: This project currently uses the APPL reader only.
