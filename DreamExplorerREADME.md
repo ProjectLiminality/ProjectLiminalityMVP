@@ -104,25 +104,89 @@ DreamExplorer/
 
 ### Frontend Components
 
-- `DreamSpace.js`: The main 3D canvas component that fills the screen and contains all DreamNodes.
+- `DreamSpace`: The main 3D canvas component that fills the screen and contains all DreamNodes.
+  - Responsibilities:
+    - Render the 3D environment
+    - Manage the overall layout of DreamNodes
+    - Handle global interactions (e.g., camera movement, global events)
+  - Interactions:
+    - With DreamGraph: Receives node positioning information
+    - With Camera: Controls the viewpoint of the 3D space
+    - With DreamNodes: Renders and updates their positions
 
-- `DreamNode.js`: Component representing individual DreamNodes. It manages the node's position, rotation, and scale within the DreamSpace.
+- `DreamNode`: Component representing individual DreamNodes.
+  - Responsibilities:
+    - Manage its own position, rotation, and scale within the DreamSpace
+    - Handle interactions specific to the node (e.g., click, hover)
+    - Toggle between DreamTalk and DreamSong views
+  - Interactions:
+    - With DreamSpace: Receives positioning updates
+    - With DreamTalk and DreamSong: Manages which one is displayed
 
-- `DreamTalk.js`: Component to display the DreamTalk image (PNG or GIF) on the front of a DreamNode.
+- `DreamTalk`: Component to display the visual representation (PNG or GIF) on the front of a DreamNode.
+  - Responsibilities:
+    - Render the visual content
+    - Handle media-specific interactions
+  - Interactions:
+    - With DreamNode: Receives display toggle signals
 
-- `DreamSong.js`: Component to display the DreamSong (README content) on the back of a DreamNode.
+- `DreamSong`: Component to display the textual content (README) on the back of a DreamNode.
+  - Responsibilities:
+    - Render the textual content
+    - Handle text-specific interactions (e.g., scrolling)
+  - Interactions:
+    - With DreamNode: Receives display toggle signals
 
-- `Camera.js`: Component to manage the camera within the 3D space.
+- `Camera`: Component to manage the camera within the 3D space.
+  - Responsibilities:
+    - Control the viewpoint and movement in the 3D environment
+    - Handle camera-specific interactions (e.g., zoom, pan)
+  - Interactions:
+    - With DreamSpace: Provides viewpoint information
 
-- `SemanticSearch/`: A submodule containing both the frontend search bar component and the backend search functionality for the DreamVault structure.
+- `SemanticSearch`: A component containing both the search bar and search functionality.
+  - Responsibilities:
+    - Provide user interface for search input
+    - Process search queries
+    - Return search results
+  - Interactions:
+    - With DreamGraph: Sends search results for node positioning
+    - With App: Receives search queries, returns results
 
-- `App.js`: The main React component that orchestrates the entire application.
+- `App`: The main React component that orchestrates the entire application.
+  - Responsibilities:
+    - Manage overall application state
+    - Handle routing (if applicable)
+    - Coordinate interactions between high-level components
+  - Interactions:
+    - With all other components: Manages data flow and state changes
 
-- `index.js`: Entry point for the React application.
+- `DreamGraph`: A non-visual React component that manages spatial relationships between DreamNodes.
+  - Responsibilities:
+    - Calculate and update node positions based on interactions and search results
+    - Manage the overall structure of the node network
+  - Interactions:
+    - With DreamSpace: Provides node positioning information
+    - With SemanticSearch: Receives search results to update node positions
 
-### Non-Visual Components
+### Data Flow and State Management
 
-- `DreamGraph.js`: A non-visual React component that manages the spatial relationships between DreamNodes. It updates node positions based on user interactions and search results.
+- Consider using a state management solution (e.g., Redux, MobX, or React Context) for managing application-wide state.
+- Implement a clear data flow pattern, such as unidirectional data flow, to manage state changes and component interactions.
+
+### Component Communication
+
+- Use props for parent-to-child communication.
+- Implement callback functions for child-to-parent communication.
+- Consider using a pub/sub pattern or event emitter for communication between unrelated components.
+
+### Performance Considerations
+
+- Implement virtualization techniques for rendering large numbers of DreamNodes.
+- Use React.memo, useMemo, and useCallback hooks to optimize rendering performance.
+- Consider using Web Workers for computationally intensive tasks (e.g., complex calculations in DreamGraph).
+
+This structure provides a high-level overview of the components, their responsibilities, and interactions. It serves as a starting point for developing more detailed pseudocode and implementation plans for each component.
 
 ### GitHub Actions
 
