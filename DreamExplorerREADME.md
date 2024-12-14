@@ -109,19 +109,22 @@ DreamExplorer/
     - Render the 3D environment
     - Manage the overall layout of DreamNodes
     - Handle global interactions (e.g., camera movement, global events)
+    - Orchestrate the position, scale, and rotation of its children (DreamNodes)
+    - Spawn and position nodes
+    - Receive and handle events like clicking on nodes
+    - Pass interaction information to appropriate utility functions for calculations
   - Interactions:
-    - With DreamGraph: Receives node positioning information
     - With Camera: Controls the viewpoint of the 3D space
-    - With DreamNodes: Renders and updates their positions
+    - With DreamNodes: Renders, updates their positions, and manages their lifecycle
+    - With utility functions: Sends interaction data and receives updated positioning information
 
 - `DreamNode`: Component representing individual DreamNodes.
   - Responsibilities:
-    - Manage its own position, rotation, and scale within the DreamSpace
+    - Render its visual representation
     - Handle interactions specific to the node (e.g., click, hover)
     - Toggle between DreamTalk and DreamSong views
   - Interactions:
-    - With DreamSpace: Receives positioning updates
-    - With DreamTalk and DreamSong: Manages which one is displayed
+    - With DreamSpace: Receives positioning updates and interaction handlers
 
 - `DreamTalk`: Component to display the visual representation (PNG or GIF) on the front of a DreamNode.
   - Responsibilities:
@@ -150,7 +153,7 @@ DreamExplorer/
     - Process search queries
     - Return search results
   - Interactions:
-    - With DreamGraph: Sends search results for node positioning
+    - With DreamSpace: Sends search results for node positioning
     - With App: Receives search queries, returns results
 
 - `App`: The main React component that orchestrates the entire application.
@@ -161,32 +164,41 @@ DreamExplorer/
   - Interactions:
     - With all other components: Manages data flow and state changes
 
-- `DreamGraph`: A non-visual React component that manages spatial relationships between DreamNodes.
+### Utility Functions and Custom Hooks
+
+- `useDreamSpaceManager`: A custom hook to manage DreamSpace state and operations.
   - Responsibilities:
-    - Calculate and update node positions based on interactions and search results
-    - Manage the overall structure of the node network
+    - Manage the state of nodes (position, scale, rotation)
+    - Provide functions for node interactions (e.g., onClick, onHover)
+    - Calculate node positions for different layouts (e.g., spherical, search results)
   - Interactions:
-    - With DreamSpace: Provides node positioning information
-    - With SemanticSearch: Receives search results to update node positions
+    - With DreamSpace: Provides state and functions for managing nodes
+
+- Other utility functions (as needed):
+  - Spherical layout calculation
+  - Search result layout calculation
+  - Node interaction handlers
+  - etc.
 
 ### Data Flow and State Management
 
-- Consider using a state management solution (e.g., Redux, MobX, or React Context) for managing application-wide state.
-- Implement a clear data flow pattern, such as unidirectional data flow, to manage state changes and component interactions.
+- Use React Context or a state management library (e.g., Redux, MobX) for managing application-wide state.
+- Implement a unidirectional data flow pattern to manage state changes and component interactions.
+- Utilize custom hooks for encapsulating and sharing stateful logic between components.
 
 ### Component Communication
 
 - Use props for parent-to-child communication.
 - Implement callback functions for child-to-parent communication.
-- Consider using a pub/sub pattern or event emitter for communication between unrelated components.
+- Use context or a state management solution for communication between unrelated components.
 
 ### Performance Considerations
 
 - Implement virtualization techniques for rendering large numbers of DreamNodes.
 - Use React.memo, useMemo, and useCallback hooks to optimize rendering performance.
-- Consider using Web Workers for computationally intensive tasks (e.g., complex calculations in DreamGraph).
+- Consider using Web Workers for computationally intensive tasks (e.g., complex layout calculations).
 
-This structure provides a high-level overview of the components, their responsibilities, and interactions. It serves as a starting point for developing more detailed pseudocode and implementation plans for each component.
+This updated structure provides a high-level overview of the components, their responsibilities, and interactions, with the DreamSpace component taking on a more central role in managing the 3D environment and node interactions. The addition of custom hooks and utility functions helps to modularize the logic and keep the components focused on their primary responsibilities.
 
 ### GitHub Actions
 
