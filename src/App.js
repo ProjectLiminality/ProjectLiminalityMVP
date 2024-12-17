@@ -24,7 +24,7 @@ function App() {
   const dreamGraphRef = useRef(null);
   const [nodeNames, setNodeNames] = useState([]);
   const { spawnNode } = useDreamNodes();
-  const [fullscreenDreamTalk, setFullscreenDreamTalk] = useState(null);
+  const [isFullscreenDreamTalkOpen, setIsFullscreenDreamTalkOpen] = useState(false);
 
   const handleNodesChange = useCallback((newNodeNames) => {
     setNodeNames(newNodeNames);
@@ -175,11 +175,17 @@ function App() {
         event.preventDefault();
         setIsSearchPanelOpen(true);
       }
+      if (event.metaKey && event.key === '1') {
+        event.preventDefault();
+        setIsFullscreenDreamTalkOpen(prev => !prev);
+      }
       if (event.key === 'Escape') {
         if (isSearchPanelOpen) {
           setIsSearchPanelOpen(false);
+        } else if (isFullscreenDreamTalkOpen) {
+          setIsFullscreenDreamTalkOpen(false);
         } else {
-          // Only reset the graph layout if search panel is not open
+          // Only reset the graph layout if search panel and fullscreen DreamTalk are not open
           if (dreamGraphRef.current && dreamGraphRef.current.resetLayout) {
             dreamGraphRef.current.resetLayout();
           }
@@ -196,7 +202,7 @@ function App() {
       window.removeEventListener('dragover', handleDragOver);
       window.removeEventListener('drop', handleDrop);
     };
-  }, [handleDragOver, handleDrop, isSearchPanelOpen]);
+  }, [handleDragOver, handleDrop, isSearchPanelOpen, isFullscreenDreamTalkOpen]);
 
   const handleOpenMetadataPanel = (repoName) => {
     setSelectedRepoName(repoName);
@@ -325,18 +331,31 @@ function App() {
           onProcessFile={handleProcessFile}
         />
       )}
-      {fullscreenDreamTalk && (
-        <FullscreenDreamTalk
-          isOpen={!!fullscreenDreamTalk}
-          repoName={fullscreenDreamTalk}
-          dreamTalkMedia={dreamGraphRef.current?.getNodeMedia(fullscreenDreamTalk)}
-          metadata={dreamGraphRef.current?.getNodeMetadata(fullscreenDreamTalk)}
-          onClose={() => {
-            console.log('Closing fullscreen DreamTalk');
-            setFullscreenDreamTalk(null);
-          }}
-        />
-      )}
+      <FullscreenDreamTalk
+        isOpen={isFullscreenDreamTalkOpen}
+        repoName="Placeholder Repo"
+        dreamTalkMedia={[
+          {
+            type: 'image/jpeg',
+            data: 'https://placekitten.com/800/600'
+          },
+          {
+            type: 'video/mp4',
+            data: 'https://www.w3schools.com/html/mov_bbb.mp4'
+          },
+          {
+            type: 'audio/mpeg',
+            data: 'https://www.w3schools.com/html/horse.mp3'
+          }
+        ]}
+        metadata={{
+          description: "This is a placeholder description for testing the FullscreenDreamTalk component."
+        }}
+        onClose={() => {
+          console.log('Closing fullscreen DreamTalk');
+          setIsFullscreenDreamTalkOpen(false);
+        }}
+      />
     </>
   );
 }
