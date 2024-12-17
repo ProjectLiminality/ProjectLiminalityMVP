@@ -8,6 +8,7 @@ import FileContextMenu from './components/FileContextMenu';
 import RenamePanel from './components/RenamePanel';
 import NodeCreationPanel from './components/NodeCreationPanel';
 import SearchPanel from './components/SearchPanel';
+import FullscreenDreamTalk from './components/FullscreenDreamTalk';
 import { openInGitFox, processFile } from './services/electronService';
 import useDreamNodes from './hooks/useDreamNodes';
 
@@ -23,6 +24,7 @@ function App() {
   const dreamGraphRef = useRef(null);
   const [nodeNames, setNodeNames] = useState([]);
   const { spawnNode } = useDreamNodes();
+  const [fullscreenDreamTalk, setFullscreenDreamTalk] = useState(null);
 
   const handleNodesChange = useCallback((newNodeNames) => {
     setNodeNames(newNodeNames);
@@ -246,6 +248,10 @@ function App() {
     }
   };
 
+  const handleToggleFullscreen = useCallback((repoName) => {
+    setFullscreenDreamTalk(prevState => prevState === repoName ? null : repoName);
+  }, []);
+
   return (
     <>
       <div className="App" onClick={handleCloseContextMenu}>
@@ -256,6 +262,7 @@ function App() {
           onDrop={handleDrop}
           onHover={(repoName) => console.log('Hovered node:', repoName)}
           onNodesChange={handleNodesChange}
+          onToggleFullscreen={handleToggleFullscreen}
         />
       </div>
       {isSettingsOpen && (
@@ -316,6 +323,14 @@ function App() {
           repoName={selectedRepoName}
           onClose={handleCloseContextMenu}
           onProcessFile={handleProcessFile}
+        />
+      )}
+      {fullscreenDreamTalk && (
+        <FullscreenDreamTalk
+          repoName={fullscreenDreamTalk}
+          dreamTalkMedia={dreamGraphRef.current?.getNodeMedia(fullscreenDreamTalk)}
+          metadata={dreamGraphRef.current?.getNodeMetadata(fullscreenDreamTalk)}
+          onClose={() => setFullscreenDreamTalk(null)}
         />
       )}
     </>
