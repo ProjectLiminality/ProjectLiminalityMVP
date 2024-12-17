@@ -348,18 +348,26 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
           {currentMediaIndex + 1} / {dreamTalkMedia.length}
         </div>
       )}
-      {onToggleFullscreen && (
+      <div
+        style={{
+          position: 'absolute',
+          top: '10px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          opacity: 0,
+          transition: 'opacity 0.3s ease',
+        }}
+        className="fullscreen-button-container"
+      >
         <button
           onClick={(e) => {
             e.stopPropagation();
+            console.log('Fullscreen button clicked for repo:', repoName);
             onToggleFullscreen(repoName);
           }}
           style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            background: 'rgba(0, 0, 0, 0.5)',
-            color: 'white',
+            background: BLUE,
+            color: WHITE,
             border: 'none',
             borderRadius: '5px',
             padding: '5px 10px',
@@ -368,10 +376,11 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
         >
           Fullscreen
         </button>
-      )}
+      </div>
       <style>
         {`
-          .dream-talk:hover .flip-button-container {
+          .dream-talk:hover .flip-button-container,
+          .dream-talk:hover .fullscreen-button-container {
             opacity: 1;
           }
         `}
