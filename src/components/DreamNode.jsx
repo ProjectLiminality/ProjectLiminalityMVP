@@ -166,7 +166,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             onFlip={handleFlip}
           />
         </Html>
-        <Html
+{/*        <Html
           transform
           position={[0, 0, -0.01]}
           rotation={[0, Math.PI, 0]}
@@ -194,7 +194,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             onFlip={handleFlip}
             directoryStructureData={directoryStructureData}
           />
-        </Html>
+        </Html>*/}
       </group>
     </Billboard>
   );
