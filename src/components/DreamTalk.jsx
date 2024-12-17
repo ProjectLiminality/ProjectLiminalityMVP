@@ -363,7 +363,7 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
           onClick={(e) => {
             e.stopPropagation();
             console.log('Fullscreen button clicked for repo:', repoName);
-            onToggleFullscreen();
+            onFlip();
           }}
           style={{
             background: BLUE,
@@ -374,7 +374,7 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
             cursor: 'pointer',
           }}
         >
-          Fullscreen
+          Fullscreen (Flip)
         </button>
       </div>
       <style>
