@@ -4,7 +4,7 @@ import DreamGraph from './DreamGraph';
 import CameraController from './CameraController';
 import useDreamNodes from '../hooks/useDreamNodes';
 
-const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop, onHover }) => {
+const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop, onHover, onToggleFullscreen }) => {
   const initialNodeCount = parseInt(localStorage.getItem('initialNodeCount') || '5');
   const { dreamNodes, error, spawnNode } = useDreamNodes(initialNodeCount);
   const [resetCamera, setResetCamera] = useState(null);
@@ -109,7 +109,7 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
             onHover={handleHover}
             onSpawnSearchResults={handleSpawnSearchResults}
             onSpawnRelatedNodes={handleSpawnRelatedNodes}
-            onToggleFullscreen={onToggleFullscreen}
+            onToggleFullscreen={props.onToggleFullscreen}
           />
         )}
       </Canvas>
