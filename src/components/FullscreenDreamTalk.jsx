@@ -7,8 +7,8 @@ const FullscreenDreamTalk = ({ repoName, dreamTalkMedia, metadata, onClose }) =>
       position: 'fixed',
       top: 0,
       left: 0,
-      width: '100vw',
-      height: '100vh',
+      width: '100%',
+      height: '100%',
       backgroundColor: 'rgba(0, 0, 0, 0.9)',
       zIndex: 1000,
       display: 'flex',
@@ -16,8 +16,8 @@ const FullscreenDreamTalk = ({ repoName, dreamTalkMedia, metadata, onClose }) =>
       alignItems: 'center',
     }}>
       <div style={{
-        width: '80%',
-        height: '80%',
+        width: '90%',
+        height: '90%',
         position: 'relative',
       }}>
         <DreamTalk
@@ -45,6 +45,7 @@ const FullscreenDreamTalk = ({ repoName, dreamTalkMedia, metadata, onClose }) =>
             borderRadius: '5px',
             padding: '5px 10px',
             cursor: 'pointer',
+            zIndex: 1001,
           }}
         >
           Close

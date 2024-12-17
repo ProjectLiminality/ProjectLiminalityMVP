@@ -330,7 +330,10 @@ function App() {
           repoName={fullscreenDreamTalk}
           dreamTalkMedia={dreamGraphRef.current?.getNodeMedia(fullscreenDreamTalk)}
           metadata={dreamGraphRef.current?.getNodeMetadata(fullscreenDreamTalk)}
-          onClose={() => setFullscreenDreamTalk(null)}
+          onClose={() => {
+            console.log('Closing fullscreen DreamTalk');
+            setFullscreenDreamTalk(null);
+          }}
         />
       )}
     </>
