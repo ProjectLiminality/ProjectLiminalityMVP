@@ -30,7 +30,7 @@ const CenterOverlay = ({ repoName, isVisible }) => (
   </div>
 );
 
-const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, onMouseEnter, onMouseLeave, isHovered, borderColor, onFlip, onToggleFullscreen }) => {
+const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, onMouseEnter, onMouseLeave, isHovered, borderColor, onFlip, onToggleFullscreen = () => {} }) => {
   const containerRef = useRef(null);
   const mediaRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -348,25 +348,27 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
           {currentMediaIndex + 1} / {dreamTalkMedia.length}
         </div>
       )}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleFullscreen(repoName);
-        }}
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          background: 'rgba(0, 0, 0, 0.5)',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          padding: '5px 10px',
-          cursor: 'pointer',
-        }}
-      >
-        Fullscreen
-      </button>
+      {onToggleFullscreen && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFullscreen(repoName);
+          }}
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            background: 'rgba(0, 0, 0, 0.5)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            padding: '5px 10px',
+            cursor: 'pointer',
+          }}
+        >
+          Fullscreen
+        </button>
+      )}
       <style>
         {`
           .dream-talk:hover .flip-button-container {

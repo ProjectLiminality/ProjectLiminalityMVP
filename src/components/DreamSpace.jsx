@@ -109,6 +109,7 @@ const DreamSpace = ({ onNodeRightClick, onFileRightClick, dreamGraphRef, onDrop,
             onHover={handleHover}
             onSpawnSearchResults={handleSpawnSearchResults}
             onSpawnRelatedNodes={handleSpawnRelatedNodes}
+            onToggleFullscreen={onToggleFullscreen}
           />
         )}
       </Canvas>
