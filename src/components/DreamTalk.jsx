@@ -363,7 +363,7 @@ const DreamTalk = ({ repoName, dreamTalkMedia, metadata, onClick, onRightClick, 
           onClick={(e) => {
             e.stopPropagation();
             console.log('Fullscreen button clicked for repo:', repoName);
-            onToggleFullscreen(repoName);
+            onToggleFullscreen();
           }}
           style={{
             background: BLUE,

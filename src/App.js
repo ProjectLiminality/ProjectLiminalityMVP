@@ -254,7 +254,7 @@ function App() {
     }
   };
 
-  const handleToggleFullscreen = useCallback((repoName) => {
+  const handleToggleFullscreen = useCallback(() => {
     setIsFullscreenDreamTalkOpen(prevState => !prevState);
   }, []);
 
@@ -268,7 +268,7 @@ function App() {
           onDrop={handleDrop}
           onHover={(repoName) => console.log('Hovered node:', repoName)}
           onNodesChange={handleNodesChange}
-          onToggleFullscreen={handleToggleFullscreen}
+          onToggleFullscreen={() => handleToggleFullscreen()}
         />
       </div>
       {isSettingsOpen && (
