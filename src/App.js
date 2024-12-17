@@ -327,6 +327,7 @@ function App() {
       )}
       {fullscreenDreamTalk && (
         <FullscreenDreamTalk
+          isOpen={!!fullscreenDreamTalk}
           repoName={fullscreenDreamTalk}
           dreamTalkMedia={dreamGraphRef.current?.getNodeMedia(fullscreenDreamTalk)}
           metadata={dreamGraphRef.current?.getNodeMetadata(fullscreenDreamTalk)}
