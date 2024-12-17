@@ -164,6 +164,7 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
             isHovered={hovered}
             borderColor={borderColor}
             onFlip={handleFlip}
+            onToggleFullscreen={onToggleFullscreen}
           />
         </Html>
 {/*        <Html

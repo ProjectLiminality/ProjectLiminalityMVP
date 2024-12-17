@@ -268,7 +268,7 @@ function App() {
           onDrop={handleDrop}
           onHover={(repoName) => console.log('Hovered node:', repoName)}
           onNodesChange={handleNodesChange}
-          onToggleFullscreen={() => handleToggleFullscreen()}
+          onToggleFullscreen={handleToggleFullscreen}
         />
       </div>
       {isSettingsOpen && (
