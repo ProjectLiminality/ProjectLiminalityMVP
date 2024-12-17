@@ -19,20 +19,25 @@ const FullscreenDreamTalk = ({ repoName, dreamTalkMedia, metadata, onClose }) =>
         width: '90%',
         height: '90%',
         position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}>
-        <DreamTalk
-          repoName={repoName}
-          dreamTalkMedia={dreamTalkMedia}
-          metadata={metadata}
-          onClick={() => {}}
-          onRightClick={() => {}}
-          onMouseEnter={() => {}}
-          onMouseLeave={() => {}}
-          isHovered={false}
-          borderColor="transparent"
-          onFlip={() => {}}
-          onToggleFullscreen={() => {}}
-        />
+        <div style={{ width: '80%', height: '80%' }}>
+          <DreamTalk
+            repoName={repoName}
+            dreamTalkMedia={dreamTalkMedia}
+            metadata={metadata}
+            onClick={() => {}}
+            onRightClick={() => {}}
+            onMouseEnter={() => {}}
+            onMouseLeave={() => {}}
+            isHovered={false}
+            borderColor="transparent"
+            onFlip={() => {}}
+            onToggleFullscreen={() => {}}
+          />
+        </div>
         <button
           onClick={onClose}
           style={{
