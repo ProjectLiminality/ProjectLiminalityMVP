@@ -255,7 +255,7 @@ function App() {
   };
 
   const handleToggleFullscreen = useCallback((repoName) => {
-    setFullscreenDreamTalk(prevState => prevState === repoName ? null : repoName);
+    setIsFullscreenDreamTalkOpen(prevState => !prevState);
   }, []);
 
   return (
