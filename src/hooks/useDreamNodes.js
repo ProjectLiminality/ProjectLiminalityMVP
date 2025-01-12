@@ -4,7 +4,7 @@ import { scanDreamVault } from '../services/electronService';
 
 const SPHERE_RADIUS = 1000;
 
-const useDreamNodes = (initialCount = 5) => {
+const useDreamNodes = (initialCount = 50) => {
   const [dreamNodes, setDreamNodes] = useState([]);
   const [error, setError] = useState(null);
 

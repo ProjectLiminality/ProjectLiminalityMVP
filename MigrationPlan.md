@@ -44,7 +44,7 @@
 - [ ] Implement method to access media files (thumbnails, icons) from submodules
 
 ### 4.5 Remove Electron-Specific Features
-- [ ] Identify and remove desktop-only features (e.g., runator command, terminal operations)
+- [ ] Identify and remove desktop-only features (e.g., run aider command, terminal operations)
 - [ ] Adapt or remove any other Electron API calls
 
 ### 4.6 GitHub Pages Setup
@@ -63,16 +63,3 @@
 - [ ] Final review of the migrated application
 - [ ] Deploy to GitHub Pages
 - [ ] Verify functionality on the live site
-
-## 7. Future Enhancements
-
-- [ ] Implement search and filter functions
-- [ ] Develop AI-powered tools for knowledge synthesis
-- [ ] Create collaborative features for real-time interaction
-- [ ] Optimize for mobile devices
-
-## Notes and Questions
-
-- How will we handle user authentication and personalization without a backend server?
-- What's the best way to optimize the 3D visualizations for web performance?
-- Should we consider using WebAssembly for any computationally intensive tasks?

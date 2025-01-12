@@ -66,64 +66,61 @@ function getMimeType(fileExtension) {
   return mimeTypes[fileExtension] || 'application/octet-stream';
 }
 
-async function getAllMediaFiles(repoName) {
-  try {
-    const files = await electronService.listFiles(repoName);
-    const rootMediaFiles = files.filter(file => 
-      !file.includes('/') && preferredExtensions.some(ext => file.toLowerCase().endsWith(ext))
-    );
-
-    const mediaPromises = rootMediaFiles.map(async file => {
-      const mediaPath = await electronService.getMediaFilePath(repoName, file);
-      console.log("mediaPath", mediaPath)
-      if (!mediaPath) {
-        console.log(`No media path found for file: ${file}`);
-        return null;
-      }
-
-      const fileExtension = file.split('.').pop().toLowerCase();
-      const mimeType = getMimeType(fileExtension);
-
-      // Only process image files
-      if (!mimeType.startsWith('image/')) {
-        console.log(`Skipping non-image file: ${file}`);
-        return null;
-      }
-
-      const mediaData = await electronService.readFile(mediaPath);
-      if (!mediaData) {
-        console.log(`No media data found for file: ${file}`);
-        return null;
-      }
-
-      console.log(`Processed media file: ${file}, type: ${mimeType}`);
-
-      return {
-        type: mimeType,
-        path: mediaPath,
-        data: `data:${mimeType};base64,${mediaData}`,
-        filename: file
-      };
-    });
-
-    const mediaFiles = (await Promise.all(mediaPromises)).filter(media => media !== null);
-
-    // Sort media files
-    mediaFiles.sort((a, b) => {
-      const aNameMatch = a.filename.toLowerCase() === repoName.toLowerCase();
-      const bNameMatch = b.filename.toLowerCase() === repoName.toLowerCase();
-      if (aNameMatch && !bNameMatch) return -1;
-      if (!aNameMatch && bNameMatch) return 1;
-      return a.filename.localeCompare(b.filename);
-    });
-
-    console.log(`Total media files found for ${repoName}:`, mediaFiles.length);
-    return mediaFiles;
-  } catch (error) {
-    console.error('Error getting all media files:', error);
-    return [];
-  }
-}
+async function getAllMediaFiles(repoName) {                                                                                                                                                                                                                                   
+   try {                                                                                                                                                                                                                                                                       
+     const files = await electronService.listFiles(repoName);                                                                                                                                                                                                                  
+     const rootMediaFiles = files.filter(file =>                                                                                                                                                                                                                               
+       !file.includes('/') && preferredExtensions.some(ext => file.toLowerCase().endsWith(ext))                                                                                                                                                                                
+     );                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                               
+     const mediaFiles = [];                                                                                                                                                                                                                                                    
+     for (const file of rootMediaFiles) {                                                                                                                                                                                                                                      
+       const mediaPath = await electronService.getMediaFilePath(repoName, file);                                                                                                                                                                                               
+       if (!mediaPath) {                                                                                                                                                                                                                                                       
+         console.log(`No media path found for file: ${file}`);                                                                                                                                                                                                                 
+         continue;                                                                                                                                                                                                                                                             
+       }                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                                               
+       const fileExtension = file.split('.').pop().toLowerCase();                                                                                                                                                                                                              
+       const mimeType = getMimeType(fileExtension);                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                               
+       if (!mimeType.startsWith('image/')) {                                                                                                                                                                                                                                   
+         console.log(`Skipping non-image file: ${file}`);                                                                                                                                                                                                                      
+         continue;                                                                                                                                                                                                                                                             
+       }                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                                               
+       const mediaData = await electronService.readFile(mediaPath);                                                                                                                                                                                                            
+       if (!mediaData) {                                                                                                                                                                                                                                                       
+         console.log(`No media data found for file: ${file}`);                                                                                                                                                                                                                 
+         continue;                                                                                                                                                                                                                                                             
+       }                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                                               
+       console.log(`Processed media file: ${file}, type: ${mimeType}`);                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                               
+       mediaFiles.push({                                                                                                                                                                                                                                                       
+         type: mimeType,                                                                                                                                                                                                                                                       
+         path: mediaPath,                                                                                                                                                                                                                                                      
+         data: `data:${mimeType};base64,${mediaData}`,                                                                                                                                                                                                                         
+         filename: file                                                                                                                                                                                                                                                        
+       });                                                                                                                                                                                                                                                                     
+     }                                                                                                                                                                                                                                                                         
+                                                                                                                                                                                                                                                                               
+     // Sort media files                                                                                                                                                                                                                                                       
+     mediaFiles.sort((a, b) => {                                                                                                                                                                                                                                               
+       const aNameMatch = a.filename.toLowerCase() === repoName.toLowerCase();                                                                                                                                                                                                 
+       const bNameMatch = b.filename.toLowerCase() === repoName.toLowerCase();                                                                                                                                                                                                 
+       if (aNameMatch && !bNameMatch) return -1;                                                                                                                                                                                                                               
+       if (!aNameMatch && bNameMatch) return 1;                                                                                                                                                                                                                                
+       return a.filename.localeCompare(b.filename);                                                                                                                                                                                                                            
+     });                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                                               
+     console.log(`Total media files found for ${repoName}:`, mediaFiles.length);                                                                                                                                                                                               
+     return mediaFiles;                                                                                                                                                                                                                                                        
+   } catch (error) {                                                                                                                                                                                                                                                           
+     console.error('Error getting all media files:', error);                                                                                                                                                                                                                   
+     return [];                                                                                                                                                                                                                                                                
+   }                                                                                                                                                                                                                                                                           
+ }                                                   
 
 export async function readDreamSongCanvas(repoName) {
   try {

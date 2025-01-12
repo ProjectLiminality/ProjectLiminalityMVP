@@ -1,18 +1,27 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-async function readMetadata(dreamVaultPath, repoName) {
-  const metadataPath = path.join(dreamVaultPath, repoName, '.pl');
-  try {
-    const data = await fs.readFile(metadataPath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      // If the file doesn't exist, return an empty object
-      return {};
-    }
-    throw error;
-  }
+async function readMetadata(dreamVaultPath, repoName) {                                                                                                                                                                                                                       
+   const metadataPath = path.join(dreamVaultPath, repoName, '.pl');                                                                                                                                                                                                            
+   try {                                                                                                                                                                                                                                                                       
+     const data = await fs.readFile(metadataPath, 'utf8');                                                                                                                                                                                                                     
+     if (!data.trim()) {                                                                                                                                                                                                                                                       
+       console.warn(`Empty metadata file for ${repoName}`);                                                                                                                                                                                                                    
+       return {};                                                                                                                                                                                                                                                              
+     }                                                                                                                                                                                                                                                                         
+     return JSON.parse(data);                                                                                                                                                                                                                                                  
+   } catch (error) {                                                                                                                                                                                                                                                           
+     if (error.code === 'ENOENT') {                                                                                                                                                                                                                                            
+       console.warn(`Metadata file not found for ${repoName}`);                                                                                                                                                                                                                
+       return {};                                                                                                                                                                                                                                                              
+     }                                                                                                                                                                                                                                                                         
+     if (error instanceof SyntaxError) {                                                                                                                                                                                                                                       
+       console.error(`Invalid JSON in metadata file for ${repoName}: ${error.message}`);                                                                                                                                                                                       
+       return {};                                                                                                                                                                                                                                                              
+     }                                                                                                                                                                                                                                                                         
+     console.error(`Error reading metadata for ${repoName}: ${error.message}`);                                                                                                                                                                                                
+     return {};                                                                                                                                                                                                                                                                
+   }                                                                                                                                                                                                                                                                           
 }
 
 async function writeMetadata(dreamVaultPath, repoName, metadata) {
