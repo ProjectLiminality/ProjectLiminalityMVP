@@ -32,6 +32,7 @@ Project Liminality structures knowledge based on social relationships and intera
 - **Relational Organization**: Knowledge is structured based on connections between ideas (Dreams) and people (Dreamers).
 - **Holonic Organization**: Facilitates the self-organization of knowledge into a coherent holarchy of ideas.
 - **Conversational Copilot**: Designed to enhance and enrich conversations by providing relevant contextual information.
+- **Interactive Dream Connections**: Clickable connections between Dream Nodes with visual feedback, enhancing the exploration of relationships between ideas.
 
 ## Vision
 
