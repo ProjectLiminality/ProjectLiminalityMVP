@@ -67,24 +67,20 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   const { size, camera } = useThree();
 
   const createRandomConnection = useCallback(() => {
-    if (nodes.length >= 2) {
+    if (nodes.length >= 2 && !connection) {
       const index1 = Math.floor(Math.random() * nodes.length);
       let index2 = Math.floor(Math.random() * (nodes.length - 1));
       if (index2 >= index1) index2++;
-      return {
-        start: nodes[index1].position,
-        end: nodes[index2].position
-      };
+      setConnection({
+        startIndex: index1,
+        endIndex: index2
+      });
     }
-    return null;
-  }, [nodes]);
+  }, [nodes, connection]);
 
   useEffect(() => {
-    const newConnection = createRandomConnection();
-    if (newConnection) {
-      setConnection(newConnection);
-    }
-  }, [nodes, createRandomConnection]);
+    createRandomConnection();
+  }, [createRandomConnection]);
 
   useEffect(() => {
     if (onNodesChange) {
@@ -395,8 +391,16 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, onFileRightClick, onHover, centeredNode]);
 
   const renderedConnection = useMemo(() => {
-    return connection && <DreamConnection start={connection.start} end={connection.end} />;
-  }, [connection]);
+    if (connection && nodes[connection.startIndex] && nodes[connection.endIndex]) {
+      return (
+        <DreamConnection
+          start={nodes[connection.startIndex].position}
+          end={nodes[connection.endIndex].position}
+        />
+      );
+    }
+    return null;
+  }, [connection, nodes]);
 
   useImperativeHandle(ref, () => ({
     handleUndo: () => {
