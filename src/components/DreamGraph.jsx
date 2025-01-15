@@ -397,6 +397,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     if (connection && nodes[connection.startIndex] && nodes[connection.endIndex]) {
       return (
         <DreamConnection
+          key={`${connection.startIndex}-${connection.endIndex}`}
           start={nodes[connection.startIndex].position}
           end={nodes[connection.endIndex].position}
         />
