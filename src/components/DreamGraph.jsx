@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo, useRef, forwardRef, u
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import DreamNode from './DreamNode';
+import DreamConnection from './DreamConnection';
 import { getRepoData } from '../utils/fileUtils';
 import { Quaternion, Vector3 } from 'three';
 
@@ -62,7 +63,20 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   const [interactionHistory, setInteractionHistory] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [redoStack, setRedoStack] = useState([]);
+  const [connection, setConnection] = useState(null);
   const { size, camera } = useThree();
+
+  const createRandomConnection = useCallback(() => {
+    if (nodes.length >= 2) {
+      const index1 = Math.floor(Math.random() * nodes.length);
+      let index2 = Math.floor(Math.random() * (nodes.length - 1));
+      if (index2 >= index1) index2++;
+      setConnection({
+        start: nodes[index1].position,
+        end: nodes[index2].position
+      });
+    }
+  }, [nodes]);
 
   useEffect(() => {
     if (onNodesChange) {
@@ -108,9 +122,10 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
         };
       }));
       setNodes(nodesData);
+      createRandomConnection();
     };
     fetchNodesData();
-  }, [initialNodes]);
+  }, [initialNodes, createRandomConnection]);
 
   const displaySearchResults = useCallback((searchResults) => {
     if (onSpawnSearchResults) {
@@ -371,6 +386,10 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     ));
   }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, onFileRightClick, onHover, centeredNode]);
 
+  const renderedConnection = useMemo(() => {
+    return connection && <DreamConnection start={connection.start} end={connection.end} />;
+  }, [connection]);
+
   useImperativeHandle(ref, () => ({
     handleUndo: () => {
       setInteractionHistory(prevHistory => {
@@ -439,7 +458,12 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     }
   }));
 
-  return <>{renderedNodes}</>;
+  return (
+    <>
+      {renderedNodes}
+      {renderedConnection}
+    </>
+  );
 });
 
 const calculateHoneycombPosition = (index, totalNodes) => {
