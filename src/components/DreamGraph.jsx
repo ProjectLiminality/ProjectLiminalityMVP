@@ -113,23 +113,26 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   useEffect(() => {
     const fetchNodesData = async () => {
       const nodesData = await Promise.all(initialNodes.map(async (node) => {
-        const { metadata, dreamTalkMedia, dreamSongMedia } = await getRepoData(node.repoName);
-        return {
-          ...node,
-          metadata,
-          dreamTalkMedia,
-          dreamSongMedia,
-          baseScale: 1,
-          viewScaleFactor: 1,
-          liminalScaleFactor: 1,
-          isInLiminalView: false
-        };
+        if (!node.metadata || !node.dreamTalkMedia || !node.dreamSongMedia) {
+          const { metadata, dreamTalkMedia, dreamSongMedia } = await getRepoData(node.repoName);
+          return {
+            ...node,
+            metadata,
+            dreamTalkMedia,
+            dreamSongMedia,
+            baseScale: 1,
+            viewScaleFactor: 1,
+            liminalScaleFactor: 1,
+            isInLiminalView: false
+          };
+        }
+        return node;
       }));
       setNodes(nodesData);
       createRandomConnection();
     };
     fetchNodesData();
-  }, [initialNodes, createRandomConnection]);
+  }, [initialNodes]);
 
   const displaySearchResults = useCallback((searchResults) => {
     if (onSpawnSearchResults) {
