@@ -71,12 +71,20 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
       const index1 = Math.floor(Math.random() * nodes.length);
       let index2 = Math.floor(Math.random() * (nodes.length - 1));
       if (index2 >= index1) index2++;
-      setConnection({
+      return {
         start: nodes[index1].position,
         end: nodes[index2].position
-      });
+      };
     }
+    return null;
   }, [nodes]);
+
+  useEffect(() => {
+    const newConnection = createRandomConnection();
+    if (newConnection) {
+      setConnection(newConnection);
+    }
+  }, [nodes, createRandomConnection]);
 
   useEffect(() => {
     if (onNodesChange) {
