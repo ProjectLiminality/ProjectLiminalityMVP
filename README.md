@@ -33,11 +33,11 @@ Project Liminality structures knowledge based on social relationships and intera
 - **Holonic Organization**: Facilitates the self-organization of knowledge into a coherent holarchy of ideas.
 - **Conversational Copilot**: Designed to enhance and enrich conversations by providing relevant contextual information.
 - **Interactive Dream Connections**: Clickable connections between Dream Nodes with visual feedback, enhancing the exploration of relationships between ideas.
-- **Automatic Stream Connections**: Visualization of connections between Dream Nodes based on their relationships established through Dream Songs, providing an intuitive representation of knowledge flow.
+- **Constellations**: Visualization of connections between Dream Nodes based on their relationships established through Dream Songs, providing an intuitive representation of knowledge flow.
 
 ## Vision
 
-Project Liminality aims to create a dynamic, interconnected knowledge ecosystem that mirrors the complexity of human thought and social interactions. By breaking down the barriers between personal knowledge management and social discourse, it offers a new paradigm for understanding and evolving ideas in a collaborative, organic manner. The automatic creation of stream connections between Dream Nodes visualizes the flow of knowledge and ideas, making the interbrain concept more tangible and interactive.
+Project Liminality aims to create a dynamic, interconnected knowledge ecosystem that mirrors the complexity of human thought and social interactions. By breaking down the barriers between personal knowledge management and social discourse, it offers a new paradigm for understanding and evolving ideas in a collaborative, organic manner. The creation of constellations between Dream Nodes visualizes the flow of knowledge and ideas, making the interbrain concept more tangible and interactive.
 
 ## Getting Started
 
