@@ -5,6 +5,7 @@ import DreamNode from './DreamNode';
 import DreamConnection from './DreamConnection';
 import { getRepoData } from '../utils/fileUtils';
 import { Quaternion, Vector3 } from 'three';
+import { processNodesData } from '../utils/dreamNodeUtils';
 
 const INTERACTION_TYPES = {
   NODE_CLICK: 'NODE_CLICK',
@@ -64,7 +65,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   const [interactionHistory, setInteractionHistory] = useState([]);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [redoStack, setRedoStack] = useState([]);
-  const [connection, setConnection] = useState(null);
+  const [connections, setConnections] = useState([]);
   const { size, camera } = useThree();
   const nodeRefs = useRef({});
 
@@ -77,25 +78,17 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     return null;
   }, []);
 
-  const createRandomConnection = useCallback(() => {
-    if (nodes.length >= 2 && !connection) {
-      const index1 = Math.floor(Math.random() * nodes.length);
-      let index2 = Math.floor(Math.random() * (nodes.length - 1));
-      if (index2 >= index1) index2++;
-      const newConnection = {
-        startRepoName: nodes[index1].repoName,
-        endRepoName: nodes[index2].repoName
-      };
-      console.log('Creating random connection:', newConnection);
-      setConnection(newConnection);
-    } else {
-      //console.log('Not creating connection. Nodes:', nodes.length, 'Existing connection:', connection);
+  const createIntelligentConnections = useCallback(() => {
+    if (Object.keys(processedNodesData).length > 0) {
+      const allConnections = Object.values(processedNodesData).flatMap(processNodesData);
+      setConnections(allConnections);
+      console.log('Created intelligent connections:', allConnections);
     }
-  }, [nodes, connection]);
+  }, [processedNodesData]);
 
   useEffect(() => {
-    createRandomConnection();
-  }, [createRandomConnection]);
+    createIntelligentConnections();
+  }, [createIntelligentConnections]);
 
   useEffect(() => {
     if (onNodesChange) {
@@ -421,20 +414,17 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     ));
   }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, onFileRightClick, onHover, centeredNode]);
 
-  const renderedConnection = useMemo(() => {
-    console.log('Rendering connection:', connection);
-    if (connection) {
-      return (
-        <DreamConnection
-          key={`${connection.startRepoName}-${connection.endRepoName}`}
-          startNodeName={connection.startRepoName}
-          endNodeName={connection.endRepoName}
-          getNodePosition={getNodePosition}
-        />
-      );
-    }
-    return null;
-  }, [connection, getNodePosition]);
+  const renderedConnections = useMemo(() => {
+    console.log('Rendering connections:', connections);
+    return connections.map((connection, index) => (
+      <DreamConnection
+        key={`${connection.startRepoName}-${connection.endRepoName}-${index}`}
+        startNodeName={connection.startRepoName}
+        endNodeName={connection.endRepoName}
+        getNodePosition={getNodePosition}
+      />
+    ));
+  }, [connections, getNodePosition]);
 
   useImperativeHandle(ref, () => ({
     handleUndo: () => {
@@ -507,7 +497,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   return (
     <>
       {renderedNodes}
-      {renderedConnection}
+      {renderedConnections}
     </>
   );
 });
