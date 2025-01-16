@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, forwardRef } from 'react';
 import { Billboard, Html } from '@react-three/drei';
 import gsap from 'gsap';
 import DreamTalk from './DreamTalk';
