@@ -137,7 +137,6 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
         return node;
       }));
       setNodes(nodesData);
-      createRandomConnection();
     };
     fetchNodesData();
   }, [initialNodes]);
