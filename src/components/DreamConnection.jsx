@@ -22,6 +22,10 @@ const DreamConnection = ({ startNodeName, endNodeName, getNodePosition }) => {
     }
   });
 
+  if (!startPos || !endPos) {
+    return null; // Don't render the line if we don't have valid positions
+  }
+
   return (
     <Line
       ref={lineRef}

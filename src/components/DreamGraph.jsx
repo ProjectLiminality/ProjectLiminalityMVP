@@ -68,7 +68,11 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   const nodeRefs = useRef({});
 
   const getNodePosition = useCallback((repoName) => {
-    return nodeRefs.current[repoName]?.position;
+    const node = nodeRefs.current[repoName];
+    if (node && node.position) {
+      return [node.position.x, node.position.y, node.position.z];
+    }
+    return null;
   }, []);
 
   const createRandomConnection = useCallback(() => {
