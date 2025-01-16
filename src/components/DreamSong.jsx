@@ -78,7 +78,6 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
 
   const handleNodeInteraction = useCallback((interaction) => {
     const { type, node, event } = interaction;
-    console.log("DreamSong: handleNodeInteraction called", { type, node });
     
     switch (type) {
       case 'click':
@@ -92,41 +91,26 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
             }
             return newSelected;
           });
-          console.log("DreamSong: Node selection toggled", node.name);
         } else {
-          console.log(`DreamSong: Clicked on ${node.children ? 'folder' : 'file'}: ${node.name}`);
           if (node.children) {
-            console.log("DreamSong: This is a folder, implement folder opening logic here");
+            // Implement folder opening logic here
           } else {
-            console.log("DreamSong: Attempting to open file", repoName, node.name);
             if (window.electron && window.electron.fileSystem) {
               window.electron.fileSystem.openFile(repoName, node.name)
-                .then(() => console.log("DreamSong: File opened successfully"))
-                .catch(error => console.error("DreamSong: Error opening file", error));
-            } else {
-              console.error("DreamSong: window.electron.fileSystem is not available");
+                .catch(error => console.error("Error opening file", error));
             }
           }
         }
         break;
       case 'mouseover':
-        console.log(`DreamSong: Mouse over ${node.children ? 'folder' : 'file'}: ${node.name}`);
         // Implement hover effect or tooltip here
         break;
       case 'mouseout':
-        console.log(`DreamSong: Mouse out ${node.children ? 'folder' : 'file'}: ${node.name}`);
         // Remove hover effect or hide tooltip here
         break;
       // Future cases: 'rightClick', 'select', 'deselect', etc.
     }
   }, [repoName, setSelectedNodes]);
-
-  useEffect(() => {
-    console.log("DreamSong: Component mounted");
-    return () => {
-      console.log("DreamSong: Component unmounted");
-    };
-  }, []);
 
   const renderMediaElement = (file, index) => {
     const mediaItem = dreamSongMedia.find(item => item.filePath === file);

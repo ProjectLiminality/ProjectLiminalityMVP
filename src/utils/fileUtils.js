@@ -75,9 +75,7 @@ async function getAllMediaFiles(repoName) {
 
     const mediaPromises = rootMediaFiles.map(async file => {
       const mediaPath = await electronService.getMediaFilePath(repoName, file);
-      console.log("mediaPath", mediaPath)
       if (!mediaPath) {
-        console.log(`No media path found for file: ${file}`);
         return null;
       }
 
@@ -86,17 +84,13 @@ async function getAllMediaFiles(repoName) {
 
       // Only process image files
       if (!mimeType.startsWith('image/')) {
-        console.log(`Skipping non-image file: ${file}`);
         return null;
       }
 
       const mediaData = await electronService.readFile(mediaPath);
       if (!mediaData) {
-        console.log(`No media data found for file: ${file}`);
         return null;
       }
-
-      console.log(`Processed media file: ${file}, type: ${mimeType}`);
 
       return {
         type: mimeType,
@@ -116,8 +110,6 @@ async function getAllMediaFiles(repoName) {
       if (!aNameMatch && bNameMatch) return 1;
       return a.filename.localeCompare(b.filename);
     });
-
-    console.log(`Total media files found for ${repoName}:`, mediaFiles.length);
     return mediaFiles;
   } catch (error) {
     console.error('Error getting all media files:', error);

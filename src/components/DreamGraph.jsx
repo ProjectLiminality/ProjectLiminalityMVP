@@ -76,10 +76,14 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
       const index1 = Math.floor(Math.random() * nodes.length);
       let index2 = Math.floor(Math.random() * (nodes.length - 1));
       if (index2 >= index1) index2++;
-      setConnection({
+      const newConnection = {
         startRepoName: nodes[index1].repoName,
         endRepoName: nodes[index2].repoName
-      });
+      };
+      console.log('Creating random connection:', newConnection);
+      setConnection(newConnection);
+    } else {
+      console.log('Not creating connection. Nodes:', nodes.length, 'Existing connection:', connection);
     }
   }, [nodes, connection]);
 
@@ -400,6 +404,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, onFileRightClick, onHover, centeredNode]);
 
   const renderedConnection = useMemo(() => {
+    console.log('Rendering connection:', connection);
     if (connection) {
       return (
         <DreamConnection
