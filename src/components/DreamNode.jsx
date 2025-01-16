@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, forwardRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { Billboard, Html } from '@react-three/drei';
 import gsap from 'gsap';
 import DreamTalk from './DreamTalk';
@@ -6,8 +6,10 @@ import DreamSong from './DreamSong';
 import { BLUE, RED } from '../constants/colors';
 import { useThree } from '@react-three/fiber';
 import { getDirectoryStructure } from '../utils/fileUtils';
+import * as THREE from 'three';
 
 const DreamNode = forwardRef(({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, onFileRightClick, onHover, isCentered, onDrop }, ref) => {
+  const [currentPosition, setCurrentPosition] = useState(new THREE.Vector3(position.x, position.y, position.z));
   const [directoryStructure, setDirectoryStructure] = useState(null);
   const { camera } = useThree();
   const firstDreamSongMedia = dreamSongMedia && dreamSongMedia.length > 0 ? dreamSongMedia[0] : null;
@@ -72,7 +74,12 @@ const DreamNode = forwardRef(({ repoName, position, scale, metadata, dreamTalkMe
         y: position.y,
         z: position.z,
         duration: 2,
-        ease: "power2.inOut"
+        ease: "power2.inOut",
+        onUpdate: () => {
+          if (nodeRef.current) {
+            setCurrentPosition(new THREE.Vector3().copy(nodeRef.current.position));
+          }
+        }
       });
       gsap.to(nodeRef.current.scale, {
         x: scale,
@@ -83,6 +90,10 @@ const DreamNode = forwardRef(({ repoName, position, scale, metadata, dreamTalkMe
       });
     }
   }, [position, scale]);
+
+  useImperativeHandle(ref, () => ({
+    getPosition: () => currentPosition
+  }));
 
   const borderColor = metadata?.type === 'person' ? RED : BLUE;
 

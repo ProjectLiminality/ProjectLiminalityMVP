@@ -69,8 +69,9 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
 
   const getNodePosition = useCallback((repoName) => {
     const node = nodeRefs.current[repoName];
-    if (node && node.position) {
-      return [node.position.x, node.position.y, node.position.z];
+    if (node && node.getPosition) {
+      const position = node.getPosition();
+      return [position.x, position.y, position.z];
     }
     return null;
   }, []);
