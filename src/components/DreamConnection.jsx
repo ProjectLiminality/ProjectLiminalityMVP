@@ -32,8 +32,8 @@ const DreamConnection = ({ startNodeName, endNodeName, getNodePosition }) => {
       ref={lineRef}
       points={[startPos, endPos]}
       color="white"
-      lineWidth={1}
-      dashed={true}
+      lineWidth={2}
+      dashed={false}
     />
   );
 };
