@@ -22,6 +22,9 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
         const processed = processDreamSongData(canvasData);
         setProcessedNodes(processed);
         setShowDreamSong(true);
+        if (processed.length > 0 && onProcessedNodesChange) {
+          onProcessedNodesChange(processed);
+        }
       } else {
         setProcessedNodes([]);
         setShowDreamSong(false);
@@ -29,7 +32,7 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
     };
 
     fetchData();
-  }, [repoName]);
+  }, [repoName, onProcessedNodesChange]);
 
   useEffect(() => {
     // Prepare data for circle packing

@@ -8,7 +8,7 @@ import { useThree } from '@react-three/fiber';
 import { getDirectoryStructure } from '../utils/fileUtils';
 import * as THREE from 'three';
 
-const DreamNode = forwardRef(({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, onFileRightClick, onHover, isCentered, onDrop }, ref) => {
+const DreamNode = forwardRef(({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, onFileRightClick, onHover, isCentered, onDrop, onProcessedNodesChange }, ref) => {
   const [currentPosition, setCurrentPosition] = useState(new THREE.Vector3(position.x, position.y, position.z));
   const [directoryStructure, setDirectoryStructure] = useState(null);
   const { camera } = useThree();
@@ -209,6 +209,7 @@ const DreamNode = forwardRef(({ repoName, position, scale, metadata, dreamTalkMe
             borderColor={borderColor}
             onFlip={handleFlip}
             directoryStructureData={directoryStructureData}
+            onProcessedNodesChange={onProcessedNodesChange}
           />
         </Html>
       </group>

@@ -57,6 +57,7 @@ const applyRotationToPosition = (position, rotation) => {
 };
 
 const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, onHover, onFileRightClick, onNodesChange, onSpawnSearchResults, onSpawnRelatedNodes }, ref) => {
+  const [processedNodesData, setProcessedNodesData] = useState({});
   const [nodes, setNodes] = useState([]);
   const [isSphericalLayout, setIsSphericalLayout] = useState(true);
   const [centeredNode, setCenteredNode] = useState(null);
@@ -404,6 +405,13 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
         index={index}
         isCentered={centeredNode === node.repoName}
         isHovered={hoveredNode === node.repoName}
+        onProcessedNodesChange={(processedNodes) => {
+          setProcessedNodesData(prevData => ({
+            ...prevData,
+            [node.repoName]: processedNodes
+          }));
+          console.log(`Processed nodes for ${node.repoName}:`, processedNodes);
+        }}
       />
     ));
   }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, onFileRightClick, onHover, centeredNode]);
