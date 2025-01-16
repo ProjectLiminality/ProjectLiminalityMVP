@@ -202,7 +202,7 @@ const DreamNode = forwardRef(({ repoName, position, scale, metadata, dreamTalkMe
         </Html>
       </group>
     </Billboard>
-  );
-};
+  )
+}
 
 export default forwardRef(DreamNode);
