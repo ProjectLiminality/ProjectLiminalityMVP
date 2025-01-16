@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef, forwardRef, useImperativeHandle } from 'react';
+import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useThree, useFrame } from '@react-three/fiber';
 import DreamNode from './DreamNode';
@@ -65,6 +66,11 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   const [redoStack, setRedoStack] = useState([]);
   const [connection, setConnection] = useState(null);
   const { size, camera } = useThree();
+  const nodeRefs = useRef({});
+
+  const getNodePosition = useCallback((repoName) => {
+    return nodeRefs.current[repoName]?.position;
+  }, []);
 
   const createRandomConnection = useCallback(() => {
     if (nodes.length >= 2 && !connection) {
@@ -72,8 +78,8 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
       let index2 = Math.floor(Math.random() * (nodes.length - 1));
       if (index2 >= index1) index2++;
       setConnection({
-        startIndex: index1,
-        endIndex: index2
+        startRepoName: nodes[index1].repoName,
+        endRepoName: nodes[index2].repoName
       });
     }
   }, [nodes, connection]);
@@ -380,6 +386,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
     return nodes.map((node, index) => (
       <DreamNode
         key={node.repoName}
+        ref={(el) => (nodeRefs.current[node.repoName] = el)}
         {...node}
         scale={node.baseScale * (node.isInLiminalView ? node.liminalScaleFactor : node.viewScaleFactor)}
         onNodeClick={handleNodeClick}
@@ -394,17 +401,18 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
   }, [nodes, hoveredNode, handleNodeClick, onNodeRightClick, onFileRightClick, onHover, centeredNode]);
 
   const renderedConnection = useMemo(() => {
-    if (connection && nodes[connection.startIndex] && nodes[connection.endIndex]) {
+    if (connection) {
       return (
         <DreamConnection
-          key={`${connection.startIndex}-${connection.endIndex}`}
-          start={nodes[connection.startIndex].position}
-          end={nodes[connection.endIndex].position}
+          key={`${connection.startRepoName}-${connection.endRepoName}`}
+          startNodeName={connection.startRepoName}
+          endNodeName={connection.endRepoName}
+          getNodePosition={getNodePosition}
         />
       );
     }
     return null;
-  }, [connection, nodes]);
+  }, [connection, getNodePosition]);
 
   useImperativeHandle(ref, () => ({
     handleUndo: () => {

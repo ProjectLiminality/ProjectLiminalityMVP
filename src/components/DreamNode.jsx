@@ -7,7 +7,7 @@ import { BLUE, RED } from '../constants/colors';
 import { useThree } from '@react-three/fiber';
 import { getDirectoryStructure } from '../utils/fileUtils';
 
-const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, onFileRightClick, onHover, isCentered, onDrop }) => {
+const DreamNode = forwardRef(({ repoName, position, scale, metadata, dreamTalkMedia, dreamSongMedia, onNodeClick, onNodeRightClick, onFileRightClick, onHover, isCentered, onDrop }, ref) => {
   const [directoryStructure, setDirectoryStructure] = useState(null);
   const { camera } = useThree();
   const firstDreamSongMedia = dreamSongMedia && dreamSongMedia.length > 0 ? dreamSongMedia[0] : null;
@@ -121,7 +121,12 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
 
   return (
     <Billboard
-      ref={nodeRef}
+      ref={(el) => {
+        nodeRef.current = el;
+        if (ref) {
+          ref.current = el;
+        }
+      }}
       follow={true}
       lockX={false}
       lockY={false}
@@ -200,4 +205,4 @@ const DreamNode = ({ repoName, position, scale, metadata, dreamTalkMedia, dreamS
   );
 };
 
-export default DreamNode;
+export default forwardRef(DreamNode);
