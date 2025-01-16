@@ -88,7 +88,7 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
       console.log('Creating random connection:', newConnection);
       setConnection(newConnection);
     } else {
-      console.log('Not creating connection. Nodes:', nodes.length, 'Existing connection:', connection);
+      //console.log('Not creating connection. Nodes:', nodes.length, 'Existing connection:', connection);
     }
   }, [nodes, connection]);
 
