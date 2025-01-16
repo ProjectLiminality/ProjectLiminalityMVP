@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { BLACK, WHITE, BLUE, RED } from '../constants/colors';
 import { readDreamSongCanvas, listFiles } from '../utils/fileUtils';
 import { processDreamSongData } from '../utils/dreamSongUtils';
@@ -12,6 +12,8 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
   const [contextMenu, setContextMenu] = useState(null);
   const [circlePackingData, setCirclePackingData] = useState(null);
 
+  const memoizedProcessedNodes = useMemo(() => processedNodes, [processedNodes]);
+
   useEffect(() => {
     const fetchData = async () => {
       const canvasData = await readDreamSongCanvas(repoName);
@@ -22,9 +24,6 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
         const processed = processDreamSongData(canvasData);
         setProcessedNodes(processed);
         setShowDreamSong(true);
-        if (processed.length > 0 && onProcessedNodesChange) {
-          onProcessedNodesChange(processed);
-        }
       } else {
         setProcessedNodes([]);
         setShowDreamSong(false);
@@ -32,7 +31,13 @@ const DreamSong = ({ repoName, dreamSongMedia, onClick, onRightClick, onFileRigh
     };
 
     fetchData();
-  }, [repoName, onProcessedNodesChange]);
+  }, [repoName]);
+
+  useEffect(() => {
+    if (memoizedProcessedNodes.length > 0 && onProcessedNodesChange) {
+      onProcessedNodesChange(memoizedProcessedNodes);
+    }
+  }, [memoizedProcessedNodes, onProcessedNodesChange]);
 
   useEffect(() => {
     // Prepare data for circle packing

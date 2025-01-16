@@ -406,11 +406,16 @@ const DreamGraph = forwardRef(({ initialNodes, onNodeRightClick, resetCamera, on
         isCentered={centeredNode === node.repoName}
         isHovered={hoveredNode === node.repoName}
         onProcessedNodesChange={(processedNodes) => {
-          setProcessedNodesData(prevData => ({
-            ...prevData,
-            [node.repoName]: processedNodes
-          }));
-          console.log(`Processed nodes for ${node.repoName}:`, processedNodes);
+          setProcessedNodesData(prevData => {
+            if (JSON.stringify(prevData[node.repoName]) !== JSON.stringify(processedNodes)) {
+              console.log(`Processed nodes for ${node.repoName}:`, processedNodes);
+              return {
+                ...prevData,
+                [node.repoName]: processedNodes
+              };
+            }
+            return prevData;
+          });
         }}
       />
     ));
