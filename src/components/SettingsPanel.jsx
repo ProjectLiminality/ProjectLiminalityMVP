@@ -7,6 +7,7 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   const [isElectronAvailableState, setIsElectronAvailableState] = useState(false);
   const [isManualInput, setIsManualInput] = useState(false);
   const [initialNodeCount, setInitialNodeCount] = useState(localStorage.getItem('initialNodeCount') || '5');
+  const [githubToken, setGithubToken] = useState('');
 
   useEffect(() => {
     const checkElectronAvailability = async () => {
@@ -53,6 +54,7 @@ const SettingsPanel = ({ isOpen, onClose }) => {
     console.log('Saving DreamVault path:', dreamVaultPath);
     if (isElectronAvailableState) {
       await setDreamVaultPathService(dreamVaultPath);
+      await window.electron.setGithubToken(githubToken);
     }
     localStorage.setItem('initialNodeCount', initialNodeCount);
     setIsManualInput(false);
@@ -62,6 +64,10 @@ const SettingsPanel = ({ isOpen, onClose }) => {
   const handleInitialNodeCountChange = (e) => {
     const value = Math.max(1, parseInt(e.target.value) || 1);
     setInitialNodeCount(value.toString());
+  };
+
+  const handleGithubTokenChange = (e) => {
+    setGithubToken(e.target.value);
   };
 
   if (!isOpen) return null;
@@ -128,6 +134,23 @@ const SettingsPanel = ({ isOpen, onClose }) => {
           value={initialNodeCount}
           onChange={handleInitialNodeCountChange}
           min="1"
+          style={{ 
+            marginLeft: '10px',
+            padding: '5px', 
+            backgroundColor: BLACK, 
+            color: WHITE, 
+            border: `1px solid ${BLUE}` 
+          }}
+        />
+      </div>
+      <div style={{ marginBottom: '15px' }}>
+        <label htmlFor="githubToken" style={{ color: WHITE }}>GitHub Personal Access Token:</label>
+        <input
+          type="password"
+          id="githubToken"
+          value={githubToken}
+          onChange={handleGithubTokenChange}
+          placeholder="Enter GitHub Personal Access Token"
           style={{ 
             marginLeft: '10px',
             padding: '5px', 

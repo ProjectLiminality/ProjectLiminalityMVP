@@ -270,6 +270,18 @@ const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, on
           Open Canvas
         </li>
         <li 
+          onClick={() => handleShareViaGitHub(repoName)}
+          style={{ 
+            padding: '6px 10px',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = BLUE}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+        >
+          Share via GitHub
+        </li>
+        <li 
           onMouseEnter={(e) => {
             e.target.style.backgroundColor = BLUE;
             setShowShareMenu(true);
@@ -410,6 +422,21 @@ const handleOpenCanvas = async (repoName) => {
   } catch (error) {
     console.error('Error opening canvas:', error);
     alert(`Error opening canvas: ${error.message}`);
+  }
+};
+
+const handleShareViaGitHub = async (repoName) => {
+  try {
+    const result = await shareViaGitHub(repoName);
+    if (result.success) {
+      console.log(`Repository shared on GitHub: ${result.url}`);
+      alert(`Repository shared successfully. URL copied to clipboard: ${result.url}`);
+    } else {
+      alert(`Failed to share via GitHub: ${result.error}`);
+    }
+  } catch (error) {
+    console.error('Error sharing via GitHub:', error);
+    alert(`Error sharing via GitHub: ${error.message}`);
   }
 };
 

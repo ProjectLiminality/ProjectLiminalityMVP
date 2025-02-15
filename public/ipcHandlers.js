@@ -8,6 +8,7 @@ const metadataUtils = require('../src/utils/metadataUtils.js');
 const { readMetadata, writeMetadata, updateBidirectionalRelationships } = metadataUtils;
 const { createEmailDraft } = require('../src/utils/emailUtils.js');
 const Store = require('electron-store');
+const { Octokit } = require("@octokit/rest");
 
 function setupHandlers(ipcMain) {
   ipcMain.handle('open-file', async (event, repoName, fileName) => {
@@ -192,6 +193,10 @@ Best regards,
 
   ipcMain.handle('set-dream-vault-path', (event, path) => {
     store.set('dreamVaultPath', path);
+  });
+
+  ipcMain.handle('set-github-token', (event, token) => {
+    store.set('githubToken', token);
   });
 
   ipcMain.handle('scan-dream-vault', async () => {
@@ -1188,6 +1193,35 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
       return { success: true, message: `Opened ${canvasFile} in Obsidian` };
     } catch (error) {
       console.error(`Error opening canvas for repo ${repoName}:`, error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('share-via-github', async (event, repoName) => {
+    console.log(`Sharing repo via GitHub: ${repoName}`);
+    const token = store.get('githubToken');
+    const octokit = new Octokit({ auth: token });
+    const dreamVaultPath = store.get('dreamVaultPath', '');
+    
+    try {
+      // Create GitHub repository
+      const { data } = await octokit.repos.createForAuthenticatedUser({
+        name: repoName,
+        private: true
+      });
+      
+      // Push local repository to GitHub
+      const repoPath = path.join(dreamVaultPath, repoName);
+      await execAsync('git remote add origin ' + data.clone_url, { cwd: repoPath });
+      await execAsync('git push -u origin master', { cwd: repoPath });
+      
+      // Copy URL to clipboard
+      clipboard.writeText(data.html_url);
+      
+      console.log(`Repository shared on GitHub: ${data.html_url}`);
+      return { success: true, url: data.html_url };
+    } catch (error) {
+      console.error('Error sharing via GitHub:', error);
       return { success: false, error: error.message };
     }
   });

@@ -314,3 +314,17 @@ export async function openCanvas(repoName) {
   }
   throw new Error('Electron is not available');
 }
+
+export async function shareViaGitHub(repoName) {
+  if (isElectronAvailable()) {
+    return window.electron.fileSystem.shareViaGitHub(repoName);
+  }
+  throw new Error('Electron is not available');
+}
+
+export async function setGithubToken(token) {
+  if (isElectronAvailable()) {
+    return window.electron.setGithubToken(token);
+  }
+  throw new Error('Electron is not available');
+}
