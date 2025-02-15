@@ -55,13 +55,13 @@ async function createWindow() {
   }
 
   // Setup IPC handlers
-  setupHandlers(ipcMain, store);
+  await setupHandlers(ipcMain, store);
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.whenReady().then(() => {
-  createWindow();
+app.whenReady().then(async () => {
+  await createWindow();
   
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
