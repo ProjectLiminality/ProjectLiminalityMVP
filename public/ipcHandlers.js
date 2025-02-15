@@ -1210,10 +1210,25 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
         private: true
       });
       
-      // Push local repository to GitHub
       const repoPath = path.join(dreamVaultPath, repoName);
-      await execAsync('git remote add origin ' + data.clone_url, { cwd: repoPath });
-      await execAsync('git push -u origin master', { cwd: repoPath });
+      
+      // Configure git if not already done
+      await execAsync('git config user.name "Your Name"', { cwd: repoPath });
+      await execAsync('git config user.email "your.email@example.com"', { cwd: repoPath });
+      
+      // Ensure there's at least one commit
+      try {
+        await execAsync('git log', { cwd: repoPath });
+      } catch (error) {
+        // If there's no commit, create an initial commit
+        await execAsync('git add .', { cwd: repoPath });
+        await execAsync('git commit -m "Initial commit"', { cwd: repoPath });
+      }
+      
+      // Set up the remote and push
+      await execAsync(`git remote remove origin`, { cwd: repoPath }).catch(() => {});
+      await execAsync(`git remote add origin ${data.clone_url}`, { cwd: repoPath });
+      await execAsync(`git push -u origin master`, { cwd: repoPath });
       
       // Copy URL to clipboard
       clipboard.writeText(data.html_url);
