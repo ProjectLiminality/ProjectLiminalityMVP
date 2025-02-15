@@ -1,4 +1,4 @@
-const { dialog, shell, app, ipcMain } = require('electron');
+const { dialog, shell, app, ipcMain, clipboard } = require('electron');
 const fs = require('fs').promises;
 const path = require('path');
 const os = require('os');
