@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BLACK, BLUE, WHITE, RED } from '../constants/colors';
-import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft, getPersonNodes, triggerCoherenceBeacon, runAider, openCanvas } from '../services/electronService';
+import { getAllRepoNamesAndTypes, addSubmodule, updateSubmodules, createEmailDraft, getPersonNodes, triggerCoherenceBeacon, runAider, openCanvas, shareViaGitHub } from '../services/electronService';
 
 const ContextMenu = ({ repoName, position, onClose, onEditMetadata, onRename, onOpenInGitFox }) => {
   const [showSubmoduleMenu, setShowSubmoduleMenu] = useState(false);
