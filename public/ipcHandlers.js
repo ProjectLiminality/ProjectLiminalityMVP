@@ -8,9 +8,9 @@ const metadataUtils = require('../src/utils/metadataUtils.js');
 const { readMetadata, writeMetadata, updateBidirectionalRelationships } = metadataUtils;
 const { createEmailDraft } = require('../src/utils/emailUtils.js');
 const Store = require('electron-store');
-const { Octokit } = require("@octokit/rest");
 
-function setupHandlers(ipcMain) {
+async function setupHandlers(ipcMain) {
+  const { Octokit } = await import("@octokit/rest");
   ipcMain.handle('open-file', async (event, repoName, fileName) => {
     const dreamVaultPath = store.get('dreamVaultPath', '');
     if (!dreamVaultPath) {

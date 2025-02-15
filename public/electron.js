@@ -14,7 +14,7 @@ const fs = require('fs').promises;
 
 const store = new Store();
 
-function createWindow() {
+async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 800,
