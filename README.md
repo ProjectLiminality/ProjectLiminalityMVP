@@ -1,8 +1,8 @@
-# Project Liminality: Transcending Knowledge Management
+# Project Liminality: from Personal Knowledge Management to Collective Knowledge Gardening
 
 ## Introduction
 
-Project Liminality is an innovative knowledge management system that aims to revolutionize the way we structure and interact with information. It transcends the traditional "second brain" paradigm by introducing the concept of an "interbrain" - a dynamic, relational approach to organizing knowledge.
+Project Liminality is an innovative knowledge gardening system that aims to revolutionize the way we collectively relate to our stories. It transcends the traditional "second brain" paradigm by introducing the concept of an "interbrain" - a dynamic, relational approach to organizing knowledge.
 
 ## Core Concepts
 
