@@ -34,7 +34,7 @@ Project Liminality structures knowledge based on social relationships and intera
 DreamNodes self-organise into your unique "Liminal Web" - an emergent structure of the knowledge you hold and the peers you share it with.
 This allows you to navigate your knowledge in an intuitive and organic fashion transcending the need for contrived categorisation or hierarchical management.
 
-![](media/LiminalWeb.mp4)
+![](media/LiminalWeb.gif)
 
 ### Semantic Search
 
