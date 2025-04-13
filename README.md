@@ -68,7 +68,7 @@ Not only do Songlines allow for an organic, decentralised and emergent replaceme
 Since DreamNodes are based on git repositories, prominent AI pair-programming solutions like aider or cursor, being optimised for git, integrate seamlessly with the system. And just like the InterBrain generalises git repos from computer code to all of knowledge, the same can be done out of the box with AI pair-programmers, using them as universal magical co-creators!
 With ever more powerful, local, multi-modal models on the horizon and deeper integrations through frameworks like Model Context Protocol (MCP) truly the sky is the limit in terms of what can be achieved collectively through the InterBrain!
 
-![](AiderIntegration.gif)
+![](media/AiderIntegration.gif)
 
 ### Git Client Integration
 
