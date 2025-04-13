@@ -34,6 +34,8 @@ Project Liminality structures knowledge based on social relationships and intera
 DreamNodes self-organise into your unique "Liminal Web" - an emergent structure of the knowledge you hold and the peers you share it with.
 This allows you to navigate your knowledge in an intuitive and organic fashion transcending the need for contrived categorisation or hierarchical management.
 
+![](media/LiminalWeb.mp4)
+
 ### Semantic Search
 
 Finding relevant DreamNodes is made easy and intuitive through semantic search - no need to worry about typos or remembering the exact name of any given idea!
@@ -54,7 +56,7 @@ Freedom of speech bound by meritocratic reach!
 Through realtime transcription of free flowing conversations (video call or in-person) combined with the existing semantic search functionality the system will constantly filter for the most relevant DreamNodes, making them readily available for reference and sharing during the dialogue - all without interrupting the flow! Say goodbye to awkward interruptions due to not finding a reference!
 And the best part: referencing a DreamNode (implicitly or explicitly) automatically offers your peer to clone it. Which means sharing an idea and collaborating on it is the same thing in this system.
 
-### Songlines
+### Songlines (TBD)
 
 Everytime an idea is shared during a conversation, and thus the corresponding DreamNode is cloned, the relevant clip of the conversation is automatically added to the DreamNode as yet another way of expressing the idea. This way every DreamNode remembers the path it travels in a unique set of conversation clips - its Songline!
 Not only do Songlines allow for an organic, decentralised and emergent replacement for static textbook definitions, they also constitute an invaluable source of community-generated and -owned data for representing knowledge in the most effortless yet high bandwidth way. In anticipation of local, multi-modal LLMs with effectively infinite context windows these Songlines may turn out to be a game changer in terms of leveraging collective knowledge and wisdom into actionable projects.
