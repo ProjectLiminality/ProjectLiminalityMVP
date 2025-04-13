@@ -1127,13 +1127,6 @@ async function initializeSubmodules(repoName, dreamVaultPath) {
         throw new Error('Dream Vault path not set');
       }
       const repoPath = path.join(dreamVaultPath, repoName);
-      const envFilePath = path.join(dreamVaultPath, 'ProjectLiminalityReactThreeJS/.env');
-      const repoEnvPath = path.join(repoPath, '.env');
-
-      // Copy .env file if it doesn't exist in the repo
-      if (!await fs.access(repoEnvPath).then(() => true).catch(() => false)) {
-        await fs.copyFile(envFilePath, repoEnvPath);
-      }
 
       // Run the Aider command
       const { spawn } = require('child_process');
