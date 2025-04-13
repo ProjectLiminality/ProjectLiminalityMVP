@@ -42,6 +42,8 @@ Finding relevant DreamNodes is made easy and intuitive through semantic search -
 Just enter a search query that is close enough in meaning to what you're looking for and it will magically be revealed.
 (This existing feature is the basis for a yet to be implemented realtime conversational copilot that always has the most relevant knowledge at hand for sharing during free flowing conversation)
 
+![](media/SemanticSearch.gif)
+
 ### DreamWeaving
 
 Just like individual software modules can be combined into more sophisticated projects using git repositories, DreamNodes can be woven together into larger wholes. Using the Obsidian canvas DreamTalk symbols can be woven together with text into DreamSongs. The resulting DreamSong can in turn again be distilled into a single DreamTalk symbol. This reciprocal and recursive many-to-one mapping between DreamSong and DreamTalk allows for the emergence of a vertical holarchy of DreamNodes. A universal pattern for performing the Hegelean Dialectic of ideas in the digital!
@@ -66,6 +68,8 @@ Not only do Songlines allow for an organic, decentralised and emergent replaceme
 Since DreamNodes are based on git repositories, prominent AI pair-programming solutions like aider or cursor, being optimised for git, integrate seamlessly with the system. And just like the InterBrain generalises git repos from computer code to all of knowledge, the same can be done out of the box with AI pair-programmers, using them as universal magical co-creators!
 With ever more powerful, local, multi-modal models on the horizon and deeper integrations through frameworks like Model Context Protocol (MCP) truly the sky is the limit in terms of what can be achieved collectively through the InterBrain!
 
+![](AiderIntegration.gif)
+
 ### Git Client Integration
 
 Easily open any given DreamNode in your favourite git client of your choice.
@@ -73,6 +77,8 @@ Easily open any given DreamNode in your favourite git client of your choice.
 ### Organic Content Visualization
 
 The content within a DreamNode is visually accessible on the backside using the beautiful circle packing algorithm of D3. Instantly access files and folders directly from the InterBrain.
+
+![](media/FileAccess.gif)
 
 ### Finder Integration
 
