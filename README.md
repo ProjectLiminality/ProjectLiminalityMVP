@@ -29,9 +29,19 @@ Project Liminality structures knowledge based on social relationships and intera
 
 ## Key Features
 
+### DreamNode Creation
+
+Creating a new DreamNode is as easy as dragging and dropping a visual representation (DreamTalk) onto the interface. This will automatically create a new DreamNode with the same name as the file, containing the file.
+Using the Command-N keyboard shortcut you can also create an empty DreamNode with your name of choice.
+
+![](media/DragAndDrop.gif)
+
 ### Liminal Web
 
-DreamNodes self-organise into your unique "Liminal Web" - an emergent structure of the knowledge you hold and the peers you share it with.
+By linking the ideas you hold to the people you share them with, DreamNodes self-organise into your unique "Liminal Web"
+
+![](media/LinkIdeasToPeople.gif)
+
 This allows you to navigate your knowledge in an intuitive and organic fashion transcending the need for contrived categorisation or hierarchical management.
 
 ![](media/LiminalWeb.gif)
@@ -48,10 +58,14 @@ Just enter a search query that is close enough in meaning to what you're looking
 
 Just like individual software modules can be combined into more sophisticated projects using git repositories, DreamNodes can be woven together into larger wholes. Using the Obsidian canvas DreamTalk symbols can be woven together with text into DreamSongs. The resulting DreamSong can in turn again be distilled into a single DreamTalk symbol. This reciprocal and recursive many-to-one mapping between DreamSong and DreamTalk allows for the emergence of a vertical holarchy of DreamNodes. A universal pattern for performing the Hegelean Dialectic of ideas in the digital!
 
+![](media/DreamWeaving.gif)
+
 ### Coherence Beacon
 
 Every time any Dreamer weaves together DreamNodes into larger wholes, the Coherence Beacon is triggered. This mechanism automatically identifies the subset of peers with whom they share any of the input DreamNodes and offers them the higher order DreamNode (including all input DreamNodes they may or may not already hold). By accepting the invitation they extend the signal to all of their peers and so on. This way only coherent ideas spread based on how much they resonate with the network, solving the virality problem. 
 Freedom of speech bound by meritocratic reach!
+
+![](media/CoherenceBeacon.gif)
 
 ### Conversational Co-Pilot (TBD)
 
