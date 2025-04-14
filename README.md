@@ -79,7 +79,7 @@ With ever more powerful, local, multi-modal models on the horizon and deeper int
 Through realtime transcription of free flowing conversations (video call or in-person) combined with the existing semantic search functionality the system will constantly filter for the most relevant DreamNodes, making them readily available for reference and sharing during the dialogue - all without interrupting the flow! Say goodbye to awkward interruptions due to not finding a reference!
 And the best part: referencing a DreamNode (implicitly or explicitly) automatically offers your peer to clone it. Which means sharing an idea and collaborating on it is the same thing in this system.
 
-![](media/ConversationalCopilot)
+![](media/ConversationalCopilot.gif)
 
 ### Songlines (TBD)
 
