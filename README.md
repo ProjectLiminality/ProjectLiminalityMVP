@@ -67,6 +67,13 @@ Freedom of speech bound by meritocratic reach!
 
 ![](media/CoherenceBeacon.gif)
 
+### Integrated AI Assistant
+
+Since DreamNodes are based on git repositories, prominent AI pair-programming solutions like aider or cursor, being optimised for git, integrate seamlessly with the system. And just like the InterBrain generalises git repos from computer code to all of knowledge, the same can be done out of the box with AI pair-programmers, using them as universal magical co-creators!
+With ever more powerful, local, multi-modal models on the horizon and deeper integrations through frameworks like Model Context Protocol (MCP) truly the sky is the limit in terms of what can be achieved collectively through the InterBrain!
+
+![](media/AiderIntegration.gif)
+
 ### Conversational Co-Pilot (TBD)
 
 Through realtime transcription of free flowing conversations (video call or in-person) combined with the existing semantic search functionality the system will constantly filter for the most relevant DreamNodes, making them readily available for reference and sharing during the dialogue - all without interrupting the flow! Say goodbye to awkward interruptions due to not finding a reference!
@@ -77,16 +84,13 @@ And the best part: referencing a DreamNode (implicitly or explicitly) automatica
 Everytime an idea is shared during a conversation, and thus the corresponding DreamNode is cloned, the relevant clip of the conversation is automatically added to the DreamNode as yet another way of expressing the idea. This way every DreamNode remembers the path it travels in a unique set of conversation clips - its Songline!
 Not only do Songlines allow for an organic, decentralised and emergent replacement for static textbook definitions, they also constitute an invaluable source of community-generated and -owned data for representing knowledge in the most effortless yet high bandwidth way. In anticipation of local, multi-modal LLMs with effectively infinite context windows these Songlines may turn out to be a game changer in terms of leveraging collective knowledge and wisdom into actionable projects.
 
-### Integrated AI Assistant
-
-Since DreamNodes are based on git repositories, prominent AI pair-programming solutions like aider or cursor, being optimised for git, integrate seamlessly with the system. And just like the InterBrain generalises git repos from computer code to all of knowledge, the same can be done out of the box with AI pair-programmers, using them as universal magical co-creators!
-With ever more powerful, local, multi-modal models on the horizon and deeper integrations through frameworks like Model Context Protocol (MCP) truly the sky is the limit in terms of what can be achieved collectively through the InterBrain!
-
-![](media/AiderIntegration.gif)
+![](media/SongLines.gif)
 
 ### Git Client Integration
 
 Easily open any given DreamNode in your favourite git client of your choice.
+
+![](media/GitClientIntegration.gif)
 
 ### Organic Content Visualization
 
@@ -97,6 +101,8 @@ The content within a DreamNode is visually accessible on the backside using the 
 ### Finder Integration
 
 Reveal DreamNodes in your file system with just one click
+
+![](media/FinderIntegration)
 
 ## License
 
