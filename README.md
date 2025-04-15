@@ -1,8 +1,27 @@
-# Project Liminality: From Personal Knowledge Management to Collective Knowledge Gardening
+# The InterBrain: From Personal Knowledge Management to Collective Knowledge Gardening
 
 ## Introduction
 
-Project Liminality is an innovative knowledge gardening system that aims to revolutionize the way we collectively relate to our stories. It transcends the traditional "second brain" paradigm by introducing the concept of an "InteBrain" - a dynamic, relational approach to organizing knowledge as opposed to static, top-down categorization.
+The InterBrain is an innovative knowledge gardening system that aims to revolutionize the way we collectively relate to our ideas and stories. It transcends the traditional "Second Brain" paradigm, popularized by PKM tools like Obsidian, shifting to a dynamic, relational approach to organizing knowledge as opposed to static, top-down categorization.
+
+## Project Status & Roadmap
+
+> ⚡️ **Current Status:**  
+The InterBrain is currently in its initial MVP phase, implemented as a standalone Electron/React desktop app. This implementation served as a rapid prototype to explore and validate core interaction patterns and ideas.
+
+> 🚧 **Next Step:**  
+The project is now entering a transition phase: migrating from an Electron-based standalone app to a native **Obsidian Plugin**, preserving the React-based frontend while refactoring the backend logic for full integration into the Obsidian ecosystem.
+
+> 🌱 **Beyond the Plugin:**  
+The InterBrain is designed as the foundation for a larger vision — **DreamOS** — a decentralized, AI-agent-powered operating system for collective sensemaking and human-computer symbiosis.  
+DreamOS will evolve into its own repository once the core functionality stabilizes.
+
+> 💡 **Roadmap Overview:**
+1. ✅ Electron MVP (completed)  
+2. 🔜 Obsidian Plugin implementation (in progress)  
+3. 🪐 DreamOS system (future repository)  
+
+A detailed technical and conceptual roadmap for the Obsidian plugin development can be found in [`ROADMAP.md`](./ROADMAP.md).
 
 ## Core Concepts
 
