@@ -29,6 +29,9 @@ Each Dream Node consists of two main components:
 ### The InteBrain
 
 Project Liminality structures knowledge based on social relationships and interactions, creating an "InteBrain." This approach allows users to organize information along the lines of their actual relational fields, transcending static, top-down categorization.
+Thus uniting the multiplicity of Second Brains into a singular, interconnected InterBrain structure.
+
+![](media/InterBrainManifesting.gif)
 
 ## Key Features
 
