@@ -13,6 +13,8 @@ The fundamental unit of Project Liminality is the "Dream Node," which is impleme
 1. **Dreams**: Abstract ideas, concepts, or any form of knowledge.
 2. **Dreamers**: Representations of people or peers.
 
+![](media/FundamentalUnit.gif)
+
 This dual nature allows for a flexible and interconnected knowledge structure.
 
 ### Dream Talk and Dream Song
@@ -21,6 +23,8 @@ Each Dream Node consists of two main components:
 
 - **Dream Talk**: A concise, symbolic representation of the idea (like a thumbnail).
 - **Dream Song**: A more elaborate explanation or exploration of the idea, containing multiple references to other Dream Talks.
+
+![](media/DreamNodeSides.gif)
 
 ### The InteBrain
 
